@@ -1,0 +1,23 @@
+package be.uclouvain.jail.vm.autogram;
+
+import net.chefbe.autogram.ast2.parsing.active.ActiveParser;
+
+grammar Jail as jail extends ActiveParser {
+
+	using be.uclouvain.jail.io.commons.UTILS as u;
+	
+	<jail:unit>                            ::= command:<jail:command u:list>
+	                                         ; [u:node]
+
+	<jail:command>                         ::= tor:<jail:plugin_command>
+	                                         ; [u:return]
+
+	<jail:plugin_command>                  ::= namespace:<u:identifier> ':' name:<u:identifier>
+	                                           arg:<jail:argument u:list>?
+	                                         ; [u:node]
+	                                         
+	<jail:argument>                        ::= value:<u:string>
+	                                         ; [u:node]
+	                                             
+
+}

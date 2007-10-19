@@ -1,0 +1,165 @@
+package be.uclouvain.jail.io.commons;
+
+/** Defines reusable utilities on JAIL grammars. */
+grammar UTILS as u {
+
+	// ~~~ LITERALS ~~~
+	<u:d_string_literal>   ::= b:["] i:!{\}["] e:["]
+	                         ; [u:buffer]
+	<u:s_string_literal>   ::= n:['] i:!{\}['] e:[']
+	                         ; [u:buffer]
+	<u:string_literal>     ::= tor:<u:d_string_literal>
+	                         | tor:<u:s_string_literal>
+	                         ; [u:return]
+	<u:integer_literal>    ::= [0-9]+
+	                         ; [u:diff]
+	<u:boolean_literal>    ::= tor:"true"
+	                         | tor:"false"
+	                         ; [u:return]
+
+	// ~~~ LITERAL VALUES ~~~
+	<u:d_string>           ::= ["] tor:!{\}["] ["]
+	                         ; [u:return]
+	<u:s_string>           ::= ['] tor:!{\}['] [']
+	                         ; [u:return]
+	<u:string>             ::= tor:<u:d_string>
+	                         | tor:<u:s_string>
+	                         ; [u:return]
+
+	<u:char>               ::= c:<u:$_char>
+	                         ; [u:char]
+	<u:int>                ::= i:<u:integer_literal>
+	                         ; [u:int]
+	<u:integer>            ::= i:<u:integer_literal>
+	                         ; [u:integer]
+
+	<u:bool>               ::= b:<u:boolean_literal>
+	                         ; [u:bool]
+	<u:boolean>            ::= b:<u:boolean_literal>
+	                         ; [u:boolean]
+
+	// ~~~ WORDS ~~~
+	<u:lowerCase_word>     ::= [a-z]+
+	                         ; [u:diff]
+	<u:upperCase_word>     ::= [A-Z]+
+	                         ; [u:diff]
+	<u:alpha_word>         ::= [a-zA-Z]+
+	                         ; [u:diff]
+	<u:alphaNum_word>      ::= [a-zA-Z0-9]+
+	                         ; [u:diff]
+	<u:num_word>           ::= [0-9]+
+	                         ; [u:diff]
+
+	// ~~~ SPACES ~~~
+	<u:space>              ::= c:' '
+	                         ; [u:char]
+	<u:inline_space>       ::= tor:<u:space>
+	                         | tor:<u:tab>
+	                         ; [u:return]
+	<u:eol>                ::= '\r'? '\n'
+	                         ; [u:diff]
+	<u:eof>                ::= c:'\0'
+	                         ; [u:char]
+	<u:tab>                ::= c:'\t'
+	                         ; [u:char]
+	<u:aSpace>             ::= tor:<u:inline_space>
+	                         | tor:<u:eol>
+	                         ; [u:return]
+	<u:aSpace_string>      ::= <u:aSpace>
+	                         ; [u:diff]
+
+	// ~~~ COMMENTS ~~~
+	<u:comment>            ::= tor:<u:eol_comment>
+	                         | tor:<u:javaDoc_comment>
+	                         | tor:<u:cpp_comment>
+	                         ; [u:return]
+	<u:eol_comment>        ::= "//" !<u:eol> <u:eol>
+	                         ; [u:diff]
+	<u:sql_comment>        ::= ['] !<u:eol> <u:eol>
+	                         ; [u:diff]
+	<u:cpp_comment>        ::= "/*" !"*/" "*/"
+	                         ; [u:diff]
+	<u:javaDoc_comment>    ::= "/**" !"*/" "*/"
+	                         ; [u:diff]
+	
+	// ~~~ SPACING ~~~
+	<u:aSpacing>           ::= tor:<u:comment>
+	                         | tor:<u:aSpace_string>
+	                         ; [u:return]
+	<u:spacing>            ::= <u:aSpacing>+
+	                         ; [u:diff]
+
+	// ~~~ IDENTIFIERS ~~~
+	<u:identifier>         ::= tor:<u:identifier_chars> <u:spacing>?
+	                         ; [u:return]
+	<u:identifier_chars>   ::= [a-zA-Z][a-zA-Z0-9_$#]*
+	                         ; [u:diff]
+	<u:qidentifier>        ::= <u:identifier_chars>
+	                           ('.' tor:<u:identifier_chars>)*
+	                           <u:spacing>?
+	                         ; [u:trim]
+
+	// ~~~ SYMBOLS ~~~
+	{u:symbol}             ::= tor:{T} <u:spacing>?
+	                         ; [u:return]
+	
+	// ~~~ MACROS ~~~
+	{u:list}               ::= f:{T} n:(<u:spacing>? tor:{T})*
+                             ; [u:list]
+	{u:commalist}          ::= f:{T} n:(<',' u:symbol> tor:{T})*
+	                         ; [u:list]
+	{u:barlist}            ::= f:{T} n:(<'|' u:symbol> tor:{T})*
+	                         ; [u:list]
+	{u:semicolonlist}      ::= f:{T} n:(<';' u:symbol> tor:{T})*
+	                         ; [u:list]
+	{u:slashlist}          ::= f:{T} n:(<'/' u:symbol> tor:{T})*
+	                         ; [u:list]
+
+	// ~~~ JAVA PRODUCTIONS ~~~
+	[u:char]               ::= {Character}{}
+	                           {Character.valueOf((Character)_c)}
+	                         ;
+	[u:character]          ::= {Character}{}
+	                           {new Character(Character.valueOf((Character)_c))}
+	                         ;
+	[u:int]                ::= {Integer}{}
+	                           {Integer.parseInt((String)_i)}
+	                         ;
+	[u:integer]            ::= {Integer}{}
+	                           {Integer.valueOf((String)_i)}
+	                         ;
+	[u:bool]               ::= {Boolean}{}
+	                           {Boolean.parseBoolean((String)_b)}
+	                         ;
+	[u:boolean]            ::= {Boolean}{}
+	                           {Boolean.valueOf((String)_b)}
+	                         ;
+	[u:list]               ::= {List<?>}
+	                           {}
+	                           {toList(_f,_n)}
+	                         ;
+	[u:return]             ::= {Object}{}
+	                           {_tor}
+	                         ;
+	[u:diff]               ::= {String}
+	                           {int start = pos.offset();}
+	                           {pos.diff(start)}
+	                         ;
+	[u:trim]               ::= {String}
+	                           {int start = pos.offset();}
+	                           {pos.trim(start)}
+	                         ;
+	[u:buffer]             ::= {String}
+	                           {}
+	                           {buffer(*{ag:*/@prefix}{_${.}}{,}{})}
+	                         ;
+	[u:node]               ::= {Object}{}
+	                           {load(
+	                           		pos,
+	                           		"${../@qName}",
+	                           		new String[]{*{ag:*/@prefix}{"${.}"}{,}{}},
+	                           		new Object[]{*{ag:*/@prefix}{_${.}}{,}{}}
+	                           	)}
+	                         ;
+
+}

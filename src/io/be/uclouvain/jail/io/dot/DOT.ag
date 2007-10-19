@@ -1,0 +1,50 @@
+package be.uclouvain.jail.io.dot;
+
+import net.chefbe.autogram.ast2.parsing.active.ActiveParser;
+
+/** Defines the AutoGram PEG grammar syntax. */
+grammar DOT as dot extends ActiveParser {
+
+	using be.uclouvain.jail.io.commons.UTILS as u;
+
+	<dot:graphdef>             ::= DIGRAPH id:<dot:identifier> <'{' u:symbol>
+	                                  components:<dot:component u:list>
+	                               <'}' u:symbol>
+	                             ; [u:node]
+
+	<dot:component>            ::= tor:<dot:graph_commons>
+                                 | tor:<dot:node_commons>
+                                 | tor:<dot:edge_commons>
+                                 | tor:<dot:edgedef>
+                                 | tor:<dot:nodedef>
+                                 ; [u:return]
+	<dot:graph_commons>        ::= GRAPH attr:<dot:attributes> <';' u:symbol>
+	                             ; [u:node]
+	<dot:node_commons>         ::= NODE attr:<dot:attributes> <';' u:symbol>
+	                             ; [u:node]
+	<dot:edge_commons>         ::= EDGE attr:<dot:attributes> <';' u:symbol>
+	                             ; [u:node]
+	<dot:nodedef>              ::= id:<dot:identifier> attr:<dot:attributes> <';' u:symbol>
+	                             ; [u:node]
+	<dot:edgedef>              ::= src:<dot:identifier> <"->" u:symbol> trg:<dot:identifier> 
+	                                   attr:<dot:attributes> <';' u:symbol>
+	                             ; [u:node]
+
+	<dot:attributes>           ::= <'[' u:symbol>
+	                                   attr:<dot:attribute u:list>
+	                               <']' u:symbol>
+	                             ; [u:node]
+	<dot:attribute>            ::= key:<dot:identifier> <'=' u:symbol> value:<dot:value>
+	                             ; [u:node]
+	<dot:value>                ::= tor:<u:string>
+	                             | tor:<u:integer>
+	                             | tor:<u:boolean>
+	                             ; [u:return]
+
+	<dot:identifier>           ::= tor:<dot:identifier_chars> <u:spacing>?
+	                             ; [u:return]
+	<dot:identifier_chars>     ::= [a-zA-Z0-9_$#]*
+	                             ; [u:diff]
+
+
+}

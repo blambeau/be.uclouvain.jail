@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/core"/>
+	<classpathentry kind="src" path="tests"/>
+	<classpathentry kind="src" path="src/io"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/_libs/others/junit.jar"/>
+	<classpathentry kind="lib" path="/_libs/others/commons-beanutils.jar"/>
+	<classpathentry kind="lib" path="/_libs/others/commons-logging.jar"/>
+	<classpathentry kind="lib" path="/_libs/others/log4j-1.2.12.jar"/>
+	<classpathentry kind="lib" path="/_libs/net.chefbe/net.chefbe.autogram.jar"/>
+	<classpathentry kind="lib" path="/_libs/net.chefbe/net.chefbe.javautils.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

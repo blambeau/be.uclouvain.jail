@@ -1,0 +1,23 @@
+<html>
+	<head>
+		<title>JAIL - Java Automaton and Induction Library</title>
+	</head>
+	<body>
+		<p>Provides the adaptability mechanisms used by many JAIL components.</p>
+		<p>This package contains the interface and classes which install basic adaptability
+		mechanisms used internally by JAIL to keep APIs simple and effective. Main concepts
+		of the adaptability patterns (inspired from Eclipse) are the following:</p>
+		<ul>
+			<li>IAdaptable: this interface allows a component to claim its adaptability. Users
+			of the component may then invoke the adapt(Class) method on the object to adapt it
+			to some instance of a class of interest.</li>
+			<li>IAdapter: this interface allows you to provide adaptabilities from the outside of
+			classes. An adapter adapts instances of some class C to instances of class D (for example).
+			C is not required to declare itself as IAdaptable. Adapters must be registered to the 
+			AdaptUtils utility class.</li>
+			<li>AdaptUtils: this class is the main facade for all adaptibility requests. Adapters may
+			be registered/unregistered to this class. Request for adaptibility may also be made by
+			invoking the adapt method.</li>
+		</ul>
+	</body>
+</html>
