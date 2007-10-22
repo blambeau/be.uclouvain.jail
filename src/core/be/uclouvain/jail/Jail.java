@@ -9,7 +9,7 @@ import be.uclouvain.jail.adapt.AdaptUtils;
 import be.uclouvain.jail.adapt.CreateClassAdapter;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.io.IPrintable;
-import be.uclouvain.jail.io.dot.DirectedGraphPrintable;
+import be.uclouvain.jail.io.dot.DOTDirectedGraphPrintable;
 
 /** 
  * JAIL main class. 
@@ -28,7 +28,7 @@ public class Jail {
 	/** Installs core adapters. */
 	static {
 		AdaptUtils.register(AdjacencyDirectedGraph.class,IPrintable.class,
-				new CreateClassAdapter(DirectedGraphPrintable.class));
+				new CreateClassAdapter(DOTDirectedGraphPrintable.class));
 	}
 	
 	/** Sets a JAIL property. */

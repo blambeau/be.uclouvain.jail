@@ -11,7 +11,7 @@ import be.uclouvain.jail.orders.ITotalOrder;
 /**
  * Printable adapted on DirectedGraph
  */
-public class DirectedGraphPrintable extends AbstractPrintable {
+public class DOTDirectedGraphPrintable extends AbstractPrintable {
 
 	/** Installs default properties. */
 	static {
@@ -26,7 +26,7 @@ public class DirectedGraphPrintable extends AbstractPrintable {
 	private IDirectedGraph graph;
 
 	/** Decorates a graph to a printable. */
-	public DirectedGraphPrintable(IDirectedGraph graph) {
+	public DOTDirectedGraphPrintable(IDirectedGraph graph) {
 		this.graph = graph;
 	}
 

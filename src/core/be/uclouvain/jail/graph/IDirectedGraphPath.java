@@ -1,7 +1,5 @@
 package be.uclouvain.jail.graph;
 
-import java.util.Iterator;
-
 import be.uclouvain.jail.adapt.IAdaptable;
 
 /**
@@ -50,10 +48,10 @@ public interface IDirectedGraphPath extends IAdaptable, Iterable<Object> {
 	public int size();
 
 	/** Returns an iterator on path edges. */
-	public Iterator<Object> edges();
+	public Iterable<Object> edges();
 
 	/** Returns an iterator on path vertices. */
-	public Iterator<Object> vertices();
+	public Iterable<Object> vertices();
 
 	/** Accepts a visitor. */
 	public void accept(IVisitor visitor);

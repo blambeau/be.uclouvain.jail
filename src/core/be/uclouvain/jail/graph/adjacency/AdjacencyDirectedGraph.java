@@ -68,6 +68,17 @@ public class AdjacencyDirectedGraph extends UserInfoCapable implements IDirected
 		}
 	}
 	
+	/** Returns UserInfo attached to a vertex or an edge. */
+	public IUserInfo getUserInfoOf(Object vertexOrEdge) {
+		if (vertexOrEdge instanceof IVertex) {
+			return ((IVertex)vertexOrEdge).getUserInfo();
+		} else if (vertexOrEdge instanceof IEdge) {
+			return ((IEdge)vertexOrEdge).getUserInfo();
+		} else {
+			throw new IllegalArgumentException("Bad edge or vertex.");
+		}
+	}
+
 	/** Returns informations attached to a vertex. */
 	public IUserInfo getVertexInfo(Object vertex) {
 		assertCorrectVertex(vertex);

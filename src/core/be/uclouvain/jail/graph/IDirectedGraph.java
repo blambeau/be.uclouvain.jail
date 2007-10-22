@@ -42,6 +42,9 @@ public interface IDirectedGraph extends IAdaptable, IDirectedGraphWriter {
 	public void setUserInfo(IUserInfo info);
 	
 
+	/** Returns UserInfo attached to an edge or a vertex. */
+	public IUserInfo getUserInfoOf(Object vertexOrEdge);
+	
 	
 	
 	/** Returns informations attached to a vertex. */

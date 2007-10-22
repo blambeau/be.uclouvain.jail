@@ -11,9 +11,4 @@ public class FAStateKindFunction extends AbstractCommutativeFunction<FAStateKind
 		return FAStateKind.supremum(op1, op2);
 	}
 
-	@Override
-	protected FAStateKind neutral() {
-		return FAStateKind.PASSAGE;
-	}
-
 }

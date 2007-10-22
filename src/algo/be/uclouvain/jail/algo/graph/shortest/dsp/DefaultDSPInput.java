@@ -1,6 +1,7 @@
 package be.uclouvain.jail.algo.graph.shortest.dsp;
 
 import be.uclouvain.jail.graph.IDirectedGraph;
+import be.uclouvain.jail.graph.utils.JavaUtils;
 
 /**
  * Provides a default implementation of IDSPInput.
@@ -89,15 +90,7 @@ public class DefaultDSPInput implements IDSPInput, IWeightInformer<Number> {
 		}
 		
 		// other cases
-		if (d instanceof Double || e instanceof Double) {
-			return new Double(d.doubleValue()+e.doubleValue()); 
-		} else if (d instanceof Float || e instanceof Float) {
-			return new Float(d.floatValue()+e.floatValue());
-		} else if (d instanceof Long || e instanceof Long) {
-			return new Long(d.longValue()+e.longValue());
-		} else {
-			return new Integer(d.intValue()+e.intValue());
-		}
+		return JavaUtils.sum(d,e);
 	}
 
 	/** Extracts weight information from the edge when weightAttr is not null, 

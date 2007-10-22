@@ -44,50 +44,54 @@ public class DirectedGraphPath implements IDirectedGraphPath {
 	}
 
 	/** Returns an iterator on path edges. */
-	public Iterator<Object> edges() {
-		return edges.iterator();
+	public Iterable<Object> edges() {
+		return edges;
 	}
 
 	/** Returns an iterator on path edges. */ 
 	public Iterator<Object> iterator() {
-		return edges();
+		return edges.iterator();
 	}
 	
 	/** Returns an iterator on path vertices. */
-	public Iterator<Object> vertices() {
+	public Iterable<Object> vertices() {
 		if (size() == 0) {
-			return Collections.emptyList().iterator();
+			return Collections.emptyList();
 		}
-		return new Iterator<Object>() {
+		return new Iterable<Object>() {
+			public Iterator<Object> iterator() {
+				return new Iterator<Object>() {
 
-			/** Next edge to visit. */
-			private Iterator<Object> it = null;
-			
-			/** Returns true if some vertices has to be iterated. */
-			public boolean hasNext() {
-				return (it == null) || it.hasNext();
-			}
+					/** Next edge to visit. */
+					private Iterator<Object> it = null;
+					
+					/** Returns true if some vertices has to be iterated. */
+					public boolean hasNext() {
+						return (it == null) || it.hasNext();
+					}
 
-			/** Returns the next vertex to iterate. */
-			public Object next() {
-				Object toReturn = null;
-				if (it == null) {
-					// iterator just started
-					toReturn = getRootVertex();
-					it = edges.iterator();
-				} else {
-					// get next edge target
-					Object edge = it.next();
-					toReturn = graph.getEdgeTarget(edge);
-				}
-				return toReturn;
-			}
+					/** Returns the next vertex to iterate. */
+					public Object next() {
+						Object toReturn = null;
+						if (it == null) {
+							// iterator just started
+							toReturn = getRootVertex();
+							it = edges.iterator();
+						} else {
+							// get next edge target
+							Object edge = it.next();					
 
-			/** Throws an UnsupportedOperationException. */
-			public void remove() {
-				throw new UnsupportedOperationException("Cannot remove from this iterator.");
+							toReturn = graph.getEdgeTarget(edge);
+						}
+						return toReturn;
+					}
+
+					/** Throws an UnsupportedOperationException. */
+					public void remove() {
+						throw new UnsupportedOperationException("Cannot remove from this iterator.");
+					}
+				};
 			}
-			
 		};
 	}
 

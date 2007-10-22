@@ -41,7 +41,7 @@ public class DijkstraShortestPath<T> {
 
 		for (Object vertex : graph.getVertices()) {
 			T dist = (vertex.equals(rootVertex)) ? nullDist : infinityDist;
-			output.setDistance(vertex, dist);
+			output.reachVertex(vertex, dist, null);
 			toExplore.add(vertex);
 		}
 		return toExplore;
@@ -69,8 +69,7 @@ public class DijkstraShortestPath<T> {
 		// updates distance
 		T iDistPlusWeight = weightInformer.sum(v1Dist, weight);
 		if (weightInformer.compare(v2Dist, iDistPlusWeight) > 0) {
-			output.setDistance(v2, iDistPlusWeight);
-			output.setIncomingEdge(v2, edge);
+			output.reachVertex(v2, iDistPlusWeight, edge);
 		}
 	}
 

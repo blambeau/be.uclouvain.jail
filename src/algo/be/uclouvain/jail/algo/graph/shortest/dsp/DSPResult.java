@@ -19,7 +19,7 @@ public class DSPResult<T> {
 	private IDSPOutput<T> output;
 	
 	/** Creates a result instance. */
-	protected DSPResult(IDSPInput<T> input, IDSPOutput<T> output) {
+	public DSPResult(IDSPInput<T> input, IDSPOutput<T> output) {
 		this.input = input;
 		this.output = output;
 	}
@@ -36,13 +36,16 @@ public class DSPResult<T> {
 
 	/** Returns the shortest path from the root to the vertex. */
 	public IDirectedGraphPath getPathTo(Object vertex) {
+		IDirectedGraph graph = input.getGraph();
 		Object root = input.getRootVertex();
 		LinkedList<Object> edges = new LinkedList<Object>();
 		
 		// create path in reverse order
 		Object current = vertex;
 		while (current != root) {
-			edges.add(output.getIncommingEdge(current));
+			Object edge = output.getIncommingEdge(current); 
+			edges.addFirst(edge);
+			current = graph.getEdgeSource(edge);
 		}
 		
 		// return path
@@ -50,7 +53,7 @@ public class DSPResult<T> {
 	}
 	
 	/** Flushes this result as a spanning tree. */
-	public void flushSpanningTree(IDirectedGraphWriter output) {
+	public void asSpanningTree(IDirectedGraphWriter output) {
 		IDirectedGraph graph = input.getGraph();
 		// retrieve input vertices and edges
 		ITotalOrder<Object> vertices = graph.getVerticesTotalOrder();
@@ -70,7 +73,9 @@ public class DSPResult<T> {
 		}
 		
 		// create edges
+		Object root = input.getRootVertex();
 		for (Object vertex: vertices) {
+			if (vertex == root) { continue; }
 			Object iEdge = getIncomingEdge(vertex);
 			Object iSource = graph.getEdgeSource(iEdge);
 			eInfo = graph.getEdgeInfo(iEdge);

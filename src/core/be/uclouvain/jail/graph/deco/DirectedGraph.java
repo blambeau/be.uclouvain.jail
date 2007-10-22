@@ -5,8 +5,10 @@ import java.util.List;
 
 import be.uclouvain.jail.adapt.AdaptUtils;
 import be.uclouvain.jail.graph.IDirectedGraph;
+import be.uclouvain.jail.graph.utils.GraphQueryUtils;
 import be.uclouvain.jail.orders.ITotalOrder;
 import be.uclouvain.jail.uinfo.IUserInfo;
+import be.uclouvain.jail.uinfo.functions.IAggregateFunction;
 
 /**
  * Provides a high level API on {@link IDirectedGraph}S.
@@ -133,9 +135,11 @@ public class DirectedGraph implements IDirectedGraph {
 		graph.setUserInfo(info);
 	}
 	
+	/** Returns user info attached to a vertex or an edge. */
+	public IUserInfo getUserInfoOf(Object vertexOrEdge) {
+		return graph.getUserInfoOf(vertexOrEdge);
+	}
 
-	
-	
 	/** Returns informations attached to a vertex. */
 	public IUserInfo getVertexInfo(Object vertex) {
 		return graph.getVertexInfo(vertex);
@@ -257,6 +261,23 @@ public class DirectedGraph implements IDirectedGraph {
 		return (result == null) ?
 				AdaptUtils.externalAdapt(this,c) : 
 				result;
+	}
+	
+	/** Extracts some attribute from a vertex or edge. */
+	@SuppressWarnings("unchecked")
+	public <T> T extract(Object vertexOrEdge, String attr) {
+		return (T) getUserInfoOf(vertexOrEdge).getAttribute(attr);
+	}
+	
+	/** Project a collection of vertices or edges along some attribute. */
+	public <T> Iterable<T> project(Iterable<Object> it, String attr) {
+		return GraphQueryUtils.project(this,it,attr);
+	}
+	
+	/** Computes a aggregate function value along a collection of vertices 
+	 * or edges. */
+	public <T> T compute(Iterable<Object> it, String attr, IAggregateFunction<T> f) {
+		return GraphQueryUtils.compute(this, it, attr, f);
 	}
 	
 }

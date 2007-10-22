@@ -4,18 +4,17 @@ package be.uclouvain.jail.algo.graph.shortest.dsp;
 public interface IDSPOutput<T> {
 
 	/**
-	 * Sets the distance of a vertex from the root vertex.
+	 * Updates reachability of a vertex by updating the distance and
+	 * incoming edge.
 	 * 
 	 * @param vertex vertex to set distance to.
-	 * @param distance distance from root vertex. 
+	 * @param distance distance from root vertex.
+	 * @param edge edge to use to reach the vertex. 
 	 */
-	public void setDistance(Object vertex, T distance);
+	public void reachVertex(Object vertex, T distance, Object edge);
 
 	/** Returns the distance between some vertex and the root. */
 	public T getDistance(Object vertex);
-
-	/** Sets the incoming edge of a vertex. */
-	public void setIncomingEdge(Object vertex, Object edge);
 
 	/** Returns the incoming egde of a vertex. */
 	public Object getIncommingEdge(Object vertex);

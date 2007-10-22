@@ -43,14 +43,18 @@ public class DefaultDSPOutput<T> implements IDSPOutput<T> {
 		return vInfo;
 	}
 	
-	/** Sets the distance of a vertex. */
-	public void setDistance(Object vertex, T distance) {
-		getVertexInfo(vertex,true).distance = distance;
-	}
-
-	/** Sets the incoming edge of a vertex. */
-	public void setIncomingEdge(Object vertex, Object edge) {
-		getVertexInfo(vertex,true).edge = edge;
+	/**
+	 * Updates reachability of a vertex by updating the distance and
+	 * incoming edge.
+	 * 
+	 * @param vertex vertex to set distance to.
+	 * @param distance distance from root vertex.
+	 * @param edge edge to use to reach the vertex. 
+	 */
+	public void reachVertex(Object vertex, T distance, Object edge) {
+		VertexInfo info = getVertexInfo(vertex,true);
+		info.distance = distance;
+		info.edge = edge;
 	}
 
 }

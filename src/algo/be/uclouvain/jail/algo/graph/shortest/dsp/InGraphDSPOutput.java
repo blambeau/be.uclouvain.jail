@@ -1,6 +1,7 @@
 package be.uclouvain.jail.algo.graph.shortest.dsp;
 
 import be.uclouvain.jail.graph.IDirectedGraph;
+import be.uclouvain.jail.uinfo.IUserInfo;
 
 /**
  * Provides a DSP output that keeps distance and incoming vertex inside the graph. 
@@ -40,14 +41,18 @@ public class InGraphDSPOutput<T> implements IDSPOutput<T> {
 		return graph.getVertexInfo(vertex).getAttribute(edgeAttr);
 	}
 
-	/** Sets the distance of a vertex. */
-	public void setDistance(Object vertex, T distance) {
-		graph.getVertexInfo(vertex).setAttribute(distAttr, distance);
+	/**
+	 * Updates reachability of a vertex by updating the distance and
+	 * incoming edge.
+	 * 
+	 * @param vertex vertex to set distance to.
+	 * @param distance distance from root vertex.
+	 * @param edge edge to use to reach the vertex. 
+	 */
+	public void reachVertex(Object vertex, T distance, Object edge) {
+		IUserInfo info = graph.getVertexInfo(vertex);
+		info.setAttribute(distAttr, distance);
+		info.setAttribute(edgeAttr, edge);
 	}
-
-	/** Sets incoming edge of a vertex. */
-	public void setIncomingEdge(Object vertex, Object edge) {
-		graph.getVertexInfo(vertex).setAttribute(edgeAttr, edge);
-	}
-
+	
 }
