@@ -1,7 +1,5 @@
 package be.uclouvain.jail.fa;
 
-import java.util.Collection;
-
 import be.uclouvain.jail.adapt.IAdaptable;
 import be.uclouvain.jail.graph.IDirectedGraph;
 
@@ -35,9 +33,9 @@ public interface DFA extends IAdaptable {
 	public Object target(Object s, Object letter);
 	
 	/** Returns outgoing letters of a state. */
-	public Collection<Object> getIncomingLetters(Object s);
+	public Iterable<Object> getIncomingLetters(Object s);
 	
 	/** Returns outgoing letters of a state. */
-	public Collection<Object> getOutgoingLetters(Object s);
+	public Iterable<Object> getOutgoingLetters(Object s);
 	
 }

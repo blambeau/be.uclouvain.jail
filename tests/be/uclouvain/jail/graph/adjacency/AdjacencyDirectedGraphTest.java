@@ -163,12 +163,4 @@ public class AdjacencyDirectedGraphTest extends TestCase {
 		this.testGetEdgesTotalOrder();
 	}
 	
-	/** Tests copy method. */
-	public void testCopy() {
-		graph = graph.copy();
-		this.testGetVertexInfo();
-		this.testGetVerticesTotalOrder();
-		this.testGetEdgesTotalOrder();
-	}
-	
 }

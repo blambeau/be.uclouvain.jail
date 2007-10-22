@@ -1,0 +1,33 @@
+digraph G {
+	graph [rankdir="LR"];
+	node [shape="circle"];
+	0 [label="SFO"];
+	1 [label="ORD"];
+	2 [label="LAX"];
+	3 [label="DFW"];
+	4 [label="BOS"];
+	5 [label="PVD"];
+	6 [label="JFK"];
+	7 [label="BWI"];
+	8 [label="MIA"];
+	0 -> 4 [label="2704"];
+	1 -> 0 [label="1846"];
+	0 -> 3 [label="1464"];
+	0 -> 2 [label="337"];
+	3 -> 2 [label="1235"];
+	2 -> 8 [label="2342"];
+	3 -> 8 [label="1121"];
+	1 -> 3 [label="802"];
+	3 -> 6 [label="1391"];
+	7 -> 8 [label="946"];
+	7 -> 6 [label="184"];
+	8 -> 6 [label="1090"];
+	8 -> 4 [label="1258"];
+	7 -> 1 [label="621"];
+	7 -> 6 [label="184"];
+	1 -> 4 [label="867"];
+	1 -> 5 [label="849"];
+	1 -> 6 [label="740"];
+	6 -> 5 [label="144"];
+	6 -> 4 [label="187"];
+}

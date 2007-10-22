@@ -49,7 +49,7 @@ public interface IDirectedGraphPath extends IAdaptable, Iterable<Object> {
 	 * by definition. */
 	public int size();
 
-	/** Returns the vertices on path edges. */
+	/** Returns an iterator on path edges. */
 	public Iterator<Object> edges();
 
 	/** Returns an iterator on path vertices. */

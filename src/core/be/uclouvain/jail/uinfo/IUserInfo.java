@@ -15,6 +15,9 @@ public interface IUserInfo extends IAdaptable {
 	/** Returns a user info attribute mapped to a key. */
 	public Object getAttribute(String key);
 
+	/** Returns an iterable on keys. */
+	public Iterable<String> getKeys();
+	
 	/** Returns all attributes. */
 	public Map<String, Object> getAttributes();
 

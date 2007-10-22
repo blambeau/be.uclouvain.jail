@@ -1,8 +1,6 @@
 package be.uclouvain.jail.io.dot;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import net.chefbe.autogram.ast2.IASTNode;
 import net.chefbe.autogram.ast2.parsing.ParseException;
@@ -13,6 +11,8 @@ import net.chefbe.autogram.ast2.parsing.peg.Pos;
 import net.chefbe.autogram.ast2.utils.BaseLocation;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
+import be.uclouvain.jail.graph.deco.DirectedGraph;
+import be.uclouvain.jail.graph.deco.GraphUniqueIndex;
 import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.uinfo.MapUserInfo;
 
@@ -48,10 +48,10 @@ public class DOTDirectedGraphLoader {
 	static class LoaderCallback extends DOTCallback<Object> { 
 	
 		/** Loaded graph. */
-		private IDirectedGraph graph;
+		private DirectedGraph graph;
 		
-		/** States. */
-		private Map<String,Object> vertices;
+		/** Graph unique index. */
+		private GraphUniqueIndex index;
 		
 		/** Last info created. */
 		private IUserInfo info;
@@ -71,11 +71,8 @@ public class DOTDirectedGraphLoader {
 		
 		/** Callback method for GRAPHDEF nodes. */
 		public Object GRAPHDEF(IASTNode node) throws Exception {
-			if (graph == null) {
-				graph = new AdjacencyDirectedGraph();
-				//graph = (DirectedGraph) graph.adapt(DirectedGraph.class);
-			}
-			vertices = new HashMap<String,Object>();
+			graph = (DirectedGraph) new AdjacencyDirectedGraph().adapt(DirectedGraph.class);
+			index = new GraphUniqueIndex(GraphUniqueIndex.VERTEX,"id",true).installOn(graph);
 			super.recurseOnChildren(node);
 			return graph;
 		}
@@ -98,8 +95,7 @@ public class DOTDirectedGraphLoader {
 		/** Callback method for NODEDEF nodes. */
 		public Object NODEDEF(IASTNode node) throws Exception {
 			String id = node.getAttrString("id");
-			Object vertex = graph.createVertex(vInfo(id));
-			vertices.put(id, vertex);
+			graph.createVertex(vInfo(id));
 			super.recurseOnChildren(node);
 			return null;
 		}
@@ -108,8 +104,8 @@ public class DOTDirectedGraphLoader {
 		public Object EDGEDEF(IASTNode node) throws Exception {
 			String src = node.getAttrString("src");
 			String trg = node.getAttrString("trg");
-			Object srcV = vertices.get(src);
-			Object trgV = vertices.get(trg);
+			Object srcV = index.getVertex(src);
+			Object trgV = index.getVertex(trg);
 			graph.createEdge(srcV, trgV, eInfo());
 			return null;
 		}

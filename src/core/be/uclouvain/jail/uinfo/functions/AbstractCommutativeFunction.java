@@ -1,16 +1,15 @@
 package be.uclouvain.jail.uinfo.functions;
 
-import java.util.Set;
 
 /** 
  * Helper to create commutative functions. 
  * 
  * @author blambeau
  */
-public abstract class AbstractCommutativeFunction<T> implements IUserInfoFunction<T> {
+public abstract class AbstractCommutativeFunction<T> implements IAggregateFunction<T> {
 
 	/** Computes function value on operands. */
-	public T compute(Set<T> operands) {
+	public T compute(Iterable<T> operands) {
 		T result = neutral();
 		for (T t : operands) {
 			result = compute(result,t);

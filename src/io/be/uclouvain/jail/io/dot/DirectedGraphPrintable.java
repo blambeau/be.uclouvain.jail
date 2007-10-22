@@ -15,17 +15,11 @@ public class DirectedGraphPrintable extends AbstractPrintable {
 
 	/** Installs default properties. */
 	static {
-		Jail.setProperty("DirectedGraphPrintable.dot.graph.attributes",
-				"rankdir=\"LR\"");
+		Jail.setProperty("DirectedGraphPrintable.dot.graph.attributes","rankdir=\"LR\"");
 		Jail.setProperty("DirectedGraphPrintable.dot.graph.name.uinfo", "name");
-		Jail.setProperty("DirectedGraphPrintable.dot.nodes.attributes",
-				"shape=\"circle\"");
-		Jail
-				.setProperty("DirectedGraphPrintable.dot.node.label.uinfo",
-						"label");
-		Jail
-				.setProperty("DirectedGraphPrintable.dot.edge.label.uinfo",
-						"label");
+		Jail.setProperty("DirectedGraphPrintable.dot.nodes.attributes","shape=\"circle\"");
+		Jail.setProperty("DirectedGraphPrintable.dot.node.label.uinfo","label");
+		Jail.setProperty("DirectedGraphPrintable.dot.edge.label.uinfo","label");
 	}
 
 	/** Graph to print. */

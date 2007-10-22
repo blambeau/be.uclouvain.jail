@@ -564,30 +564,4 @@ public class AdjacencyDirectedGraph extends UserInfoCapable implements IDirected
 		return AdaptUtils.externalAdapt(this,c);
 	}
 
-	/** Copies this graph. */
-	public IDirectedGraph copy() {
-		ITotalOrder<Object> states = getVerticesTotalOrder();
-		ITotalOrder<Object> edges = getEdgesTotalOrder();
-		AdjacencyDirectedGraph copy = new AdjacencyDirectedGraph(this.componentFactory); 
-
-		// create copy states
-		for (Object vertex: states) {
-			copy.createVertex(getVertexInfo(vertex).copy());
-		}
-		
-		// retrieve copy's states
-		ITotalOrder<Object> copyStates = copy.getVerticesTotalOrder();
-
-		// copy edges
-		for (Object edge: edges) {
-			Object source = getEdgeSource(edge);
-			Object copySource = copyStates.getElementAt(states.getElementIndex(source));
-			Object target = getEdgeSource(edge);
-			Object copyTarget = copyStates.getElementAt(states.getElementIndex(target));
-			copy.createEdge(copySource, copyTarget, getEdgeInfo(edge).copy());
-		}
-		
-		return copy;
-	}
-	
 }

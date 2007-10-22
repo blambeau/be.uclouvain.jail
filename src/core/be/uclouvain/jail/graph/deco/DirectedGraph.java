@@ -251,11 +251,6 @@ public class DirectedGraph implements IDirectedGraph {
 		return graph.getEdgesTotalOrder();
 	}
 
-	/** Copies the graph. */
-	public IDirectedGraph copy() {
-		return new DirectedGraph(graph.copy());
-	}
-
 	/** Adapts the graph to some another type. */
 	public <T> Object adapt(Class<T> c) {
 		Object result = graph.adapt(c);

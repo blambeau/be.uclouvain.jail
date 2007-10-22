@@ -1,6 +1,7 @@
 package be.uclouvain.jail.graph;
 
 import be.uclouvain.jail.adapt.IAdaptable;
+import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.orders.ITotalOrder;
 import be.uclouvain.jail.uinfo.IUserInfo;
 
@@ -32,7 +33,7 @@ import be.uclouvain.jail.uinfo.IUserInfo;
  * 
  * @author LAMBEAU Bernard
  */
-public interface IDirectedGraph extends IAdaptable {
+public interface IDirectedGraph extends IAdaptable, IDirectedGraphWriter {
 
 	/** Returns user info attached to the graph. */
 	public IUserInfo getUserInfo();
@@ -106,7 +107,4 @@ public interface IDirectedGraph extends IAdaptable {
 	/** Returns a total order on edges. */
 	public ITotalOrder<Object> getEdgesTotalOrder();
 
-	/** Copies the graph. */
-	public IDirectedGraph copy();
-	
 }

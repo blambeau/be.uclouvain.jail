@@ -18,6 +18,9 @@ public class GraphUniqueIndex implements IGraphConstraint {
 	public static final int VERTEX = GraphChangeEvent.VERTEX_CREATED | GraphChangeEvent.VERTEX_REMOVED 
                                    | GraphChangeEvent.VERTEX_CHANGED;
 	
+	/** Graph on which the constraint is installed. */
+	private DirectedGraph graph;
+	
 	/** Listener. */
 	private IndexListener listener;
 	
@@ -132,7 +135,9 @@ public class GraphUniqueIndex implements IGraphConstraint {
 	}
 	
 	/** Install the constraint on a graph. */
-	public void installOn(DirectedGraph graph) throws GraphConstraintViolationException {
+	@SuppressWarnings("unchecked")
+	public <T extends IGraphConstraint> T installOn(DirectedGraph graph) throws GraphConstraintViolationException {
+		this.graph = graph;
 		int mask = listener.getMask();
 		Iterable<Object> comps = (mask==EDGE) ? graph.getEdges() : graph.getVertices();
 		for (Object comp: comps) {
@@ -144,10 +149,14 @@ public class GraphUniqueIndex implements IGraphConstraint {
 			}
 		}
 		graph.addGraphListener(listener);
+		return (T) GraphUniqueIndex.this;
 	}
 
 	/** Uninstalls on a graph. */
-	public void uninstallOn(DirectedGraph graph) {
+	public void uninstall() {
+		if (graph == null) {
+			throw new IllegalStateException("Constraint has not been installed.");
+		}
 		graph.removeGraphListener(listener);
 	}
 

@@ -22,6 +22,13 @@ public class MapUserInfo implements IUserInfo {
 		this.info.putAll(copy.info);
 	}
 	
+	/* (non-Javadoc)
+	 * @see be.uclouvain.jail.uinfo.IUserInfo#getKeys()
+	 */
+	public Iterable<String> getKeys() {
+		return info.keySet();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see be.uclouvain.jail.uinfo.IUserInfo#getAttribute(java.lang.String)
