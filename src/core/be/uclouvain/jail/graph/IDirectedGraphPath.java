@@ -16,7 +16,7 @@ import be.uclouvain.jail.adapt.IAdaptable;
  * and sould then be implemented.</p>
  * 
  * <p>This interface may be implemented. A default implementation is provided
- * by {@link DefaultDirectedGraphPath}.</p>
+ * by {@link DirectedGraphPath}.</p>
  * 
  * @author blambeau
  */

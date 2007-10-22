@@ -5,7 +5,7 @@ package be.uclouvain.jail.graph.deco;
  * 
  * <p>Contraints are the way to ensure some properties on graphs. They typically
  * implement or use a {@link IGraphListener} to listen to graph changes and throw 
- * @{link GraphConstraintViolationException} when changes tend to violate the 
+ * {@link GraphConstraintViolationException} when changes tend to violate the 
  * graph constraint.</p>
  * 
  * <p>Constraints may be used in two different ways: by installation on graph, or 
