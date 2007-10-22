@@ -50,7 +50,6 @@ public class CitiesDirectedGraph extends DirectedGraph {
 		this.createEdge(dfw, jfk, einfo(1391));
 		
 		this.createEdge(bwi, mia, einfo(946));
-		this.createEdge(bwi, jfk, einfo(184));
 		this.createEdge(mia, jfk, einfo(1090));
 		this.createEdge(mia, bos, einfo(1258));
 		

@@ -6,7 +6,7 @@ package be.uclouvain.jail.uinfo.functions;
  * 
  * @author blambeau
  */
-public abstract class AbstractCommutativeFunction<T> implements IAggregateFunction<T> {
+public abstract class AbstractAggregateFunction<T> implements IAggregateFunction<T> {
 
 	/** Computes function value on operands. */
 	public T compute(Iterable<T> operands) {
@@ -14,9 +14,12 @@ public abstract class AbstractCommutativeFunction<T> implements IAggregateFuncti
 		for (T t : operands) {
 			result = result == null ? t : compute(result,t);
 		}
-		return result;
+		return result == null ? onEmpty() : result;
 	}
 
+	/** Returns the value to return on empty iterable. */
+	protected abstract T onEmpty();
+	
 	/** Returns true if this function is commutative. */
 	public boolean isCommutative() {
 		return true;

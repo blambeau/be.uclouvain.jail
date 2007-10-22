@@ -1,7 +1,7 @@
 package be.uclouvain.jail.uinfo.functions;
 
 /** Boolean AND function. */
-public class BoolAndFunction extends AbstractCommutativeFunction<Boolean> {
+public class BoolAndFunction extends AbstractAggregateFunction<Boolean> {
 
 	/** Computes Boolean OR. */
 	@Override
@@ -9,4 +9,9 @@ public class BoolAndFunction extends AbstractCommutativeFunction<Boolean> {
 		return op1 && op2;
 	}
 
+	/** Returns TRUE. */
+	protected Boolean onEmpty() {
+		return true;
+	}
+	
 }

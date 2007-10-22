@@ -5,7 +5,7 @@ import be.uclouvain.jail.graph.utils.JavaUtils;
 /**
  * Sum function.
  */
-public class SumFunction extends AbstractCommutativeFunction<Number> {
+public class SumFunction extends AbstractAggregateFunction<Number> {
 
 	/** Creates a sum function. */
 	public SumFunction() {
@@ -17,4 +17,9 @@ public class SumFunction extends AbstractCommutativeFunction<Number> {
 		return JavaUtils.sum(op1,op2);
 	}
 
+	/** Returns 0. */
+	protected Number onEmpty() {
+		return 0;
+	}
+	
 }

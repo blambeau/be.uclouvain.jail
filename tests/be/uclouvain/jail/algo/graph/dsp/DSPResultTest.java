@@ -39,14 +39,6 @@ public class DSPResultTest extends TestCase {
 		DSPResult result = dsp();
 		AdjacencyDirectedGraph gresult = new AdjacencyDirectedGraph(); 
 		result.asSpanningTree(gresult);
-		
-		/*
-		Jail.install();
-		IPrintable print = (IPrintable) gresult.adapt(IPrintable.class);
-		Jail.setProperty("DirectedGraphPrintable.dot.node.label.uinfo","distance");
-		Jail.setProperty("DirectedGraphPrintable.dot.edge.label.uinfo","distance");
-		print.print(System.out);
-		*/
 	}
 	
 	/** Tests getPathTo method. */
@@ -56,13 +48,15 @@ public class DSPResultTest extends TestCase {
 		
 		for (Object vertex: graph.getVertices()) {
 			if (vertex == root) { continue; }
-			IDirectedGraphPath path = result.getPathTo(vertex);
+			IDirectedGraphPath path = result.getShortestPathTo(vertex);
 			assertEquals(root,GraphQueryUtils.getFirstVertex(path));
 			assertEquals(vertex,GraphQueryUtils.getLastVertex(path));
 			
 			Object dist = graph.getVertexInfo(vertex).getAttribute("distance");
 			Object cdist = graph.compute(path.edges(), "distance", new SumFunction());
+			Object cdist2 = graph.compute(path, "distance", new SumFunction());
 			assertEquals(dist,cdist);
+			assertEquals(dist,cdist2);
 		}
 	}
 	

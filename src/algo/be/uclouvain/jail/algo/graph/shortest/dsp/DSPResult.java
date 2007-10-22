@@ -35,7 +35,7 @@ public class DSPResult<T> {
 	}
 
 	/** Returns the shortest path from the root to the vertex. */
-	public IDirectedGraphPath getPathTo(Object vertex) {
+	public IDirectedGraphPath getShortestPathTo(Object vertex) {
 		IDirectedGraph graph = input.getGraph();
 		Object root = input.getRootVertex();
 		LinkedList<Object> edges = new LinkedList<Object>();
