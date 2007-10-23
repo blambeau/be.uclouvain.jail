@@ -1,14 +1,23 @@
 package be.uclouvain.jail.fa;
 
+import java.util.Collection;
+
 import be.uclouvain.jail.adapt.IAdaptable;
+import be.uclouvain.jail.fa.impl.GraphDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
 
 /** 
- * Specialization of IFiniteAutomaton to be a deterministic one.
+ * Deterministic Finite Automaton (DFA) contract.
+ * 
+ * <p>Please check the package.html to get some important informations
+ * about the implementation of this contract.</p>
+ * 
+ * <p>This interface may be implemented. A default implementation on top
+ * of a graph is also provided by {@link GraphDFA}.</p>
  * 
  * @author blambeau
  */
-public interface DFA extends IAdaptable {
+public interface IDFA extends IAdaptable {
 
 	/** Retruns underlying graph. */
 	public IDirectedGraph getGraph();
@@ -28,14 +37,14 @@ public interface DFA extends IAdaptable {
 	/** Returns an edge letter. */
 	public Object edgeLetter(Object s);
 	
-	/** Returns the target state reached from using a given letter, null
-	 * if on such state. */
-	public Object target(Object s, Object letter);
+	/** Returns the outgoing edge of s labeled by the given letter, null
+	 * if no such edge. */
+	public Object getOutgoingEdge(Object s, Object letter);
 	
 	/** Returns outgoing letters of a state. */
-	public Iterable<Object> getIncomingLetters(Object s);
+	public Collection<Object> getIncomingLetters(Object s);
 	
 	/** Returns outgoing letters of a state. */
-	public Iterable<Object> getOutgoingLetters(Object s);
+	public Collection<Object> getOutgoingLetters(Object s);
 	
 }

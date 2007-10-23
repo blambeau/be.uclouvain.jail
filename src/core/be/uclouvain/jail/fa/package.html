@@ -1,0 +1,21 @@
+<html>
+	<head>
+		<title>JAIL - Java Automaton and Induction Library</title>    
+	</head>
+ 	<body>
+		<p>Provides automaton abstractions.</p>
+		<p>This package provides the interfaces which installs automaton abstractions
+		used by JAIL.</p>
+		<p>JAIL works with automata created on top of graphs. This choice has been 
+		primary made for the following reason: an automaton can be simply created 
+		by decoration o radaptation of graphs (that is, an automata can be seen as 
+		a view defined on a graph, which allows graph competing implementations, 
+		graph algorithms and graph I/O dialects to be still used when working on 
+		automata.</p>
+		<p>It's important to note that the underlying graph is actually used by 
+		many of the implemented automaton algorithms. In other words the getGraph()
+		method of automaton contracts must be implemented ! If you have some data-structure 
+		that represents an automaton but which cannot be converted to a NFA/DFA simply, 
+		you can use the {@link DFAGraphAdapter} class to implement that method.</p>
+	</body>
+</html>

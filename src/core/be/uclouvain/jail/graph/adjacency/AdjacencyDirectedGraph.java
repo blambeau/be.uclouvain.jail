@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import be.uclouvain.jail.adapt.AdaptUtils;
+import be.uclouvain.jail.adapt.Adaptations;
+import be.uclouvain.jail.adapt.IAdapter;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.deco.DirectedGraph;
 import be.uclouvain.jail.orders.ITotalOrder;
@@ -40,6 +42,9 @@ public class AdjacencyDirectedGraph extends UserInfoCapable implements IDirected
 	/** Factory to use for states and edges. */
 	protected IGraphComponentFactory componentFactory;
 
+	/** External instance adaptations. */
+	protected Adaptations adaptations;
+	
 	/* CONSTRUCTORS SECTION ---------------------------------------------------------------------- */
 	/** Creates a directed graph with DefaultXXX factory. */  
 	public AdjacencyDirectedGraph() {
@@ -215,8 +220,8 @@ public class AdjacencyDirectedGraph extends UserInfoCapable implements IDirected
 		edge.setTarget(target);
 		
 		/* connection continued. */
-		source.addOutgoingEdge(edge);
-		target.addIncomingEdge(edge);
+		source.addOutgoingEdge(this,edge);
+		target.addIncomingEdge(this,edge);
 
 		/* collection adding */
 		edges.add(edge);
@@ -248,9 +253,9 @@ public class AdjacencyDirectedGraph extends UserInfoCapable implements IDirected
 
 		/* remove from source and target */
 		IVertex source = edge.getSource();
-		source.removeOutgoingEdge(edge);
+		source.removeOutgoingEdge(this,edge);
 		IVertex target = edge.getTarget();
-		target.removeIncomingEdge(edge);
+		target.removeIncomingEdge(this,edge);
 
 		/* remove edge */
 		edges.remove(edge);
@@ -567,11 +572,28 @@ public class AdjacencyDirectedGraph extends UserInfoCapable implements IDirected
 
 	}
 
+	/** Adds an instance adaptation. */
+	public void addAdaptation(Class c, IAdapter adapter) {
+		if (adaptations == null) {
+			adaptations = new Adaptations();
+		}
+		adaptations.register(c, adapter);
+	}
+	
 	/** Adaptability implementation. */
 	public <T> Object adapt(Class<T> c) {
+		if (adaptations != null) {
+			// try instance adaptation
+			Object iAdapt = adaptations.adapt(this, c);
+			if (iAdapt != null) { return iAdapt; }
+		}
+		
+		// try specific class adaptation
 		if (DirectedGraph.class.equals(c)) {
 			return new DirectedGraph(this);
 		}
+		
+		// try external class adaptation
 		return AdaptUtils.externalAdapt(this,c);
 	}
 

@@ -23,8 +23,8 @@ public class DOTDirectedGraphLoader {
 	private DOTDirectedGraphLoader() {
 	}
 
-	/** Loads a graph from some source. */
-	public static IDirectedGraph loadGraph(Object source) throws ParseException, IOException {
+	/** Loads a graph. */
+	public static void loadGraph(IDirectedGraph graph, Object source) throws ParseException, IOException {
 		// create parser instance and set loader
 		DOTParser parser = new DOTParser();
 		parser.setActiveLoader(new ASTLoader(new EnumTypeResolver<DOTNodes>(DOTNodes.class)));
@@ -37,11 +37,17 @@ public class DOTDirectedGraphLoader {
 		
 		// load graph using this callback
 		try {
-			IDirectedGraph graph = (IDirectedGraph) node.accept(new LoaderCallback());
-			return graph;
+			node.accept(new LoaderCallback(graph));
 		} catch (Exception e) {
 			throw new RuntimeException("Unexpected exception.",e);
 		}
+	}
+	
+	/** Loads a graph from some source. */
+	public static IDirectedGraph loadGraph(Object source) throws ParseException, IOException {
+		IDirectedGraph graph = new AdjacencyDirectedGraph();
+		loadGraph(graph,source);
+		return graph;
 	}
 	
 	/** Callback class to load graph from AST. */
@@ -55,6 +61,11 @@ public class DOTDirectedGraphLoader {
 		
 		/** Last info created. */
 		private IUserInfo info;
+		
+		/** Creates a loader to fill the specified graph. */
+		public LoaderCallback(IDirectedGraph graph) {
+			this.graph = (DirectedGraph) graph.adapt(DirectedGraph.class);
+		}
 		
 		/** Creates a user info instance. */
 		private IUserInfo vInfo(String id) {
@@ -71,10 +82,10 @@ public class DOTDirectedGraphLoader {
 		
 		/** Callback method for GRAPHDEF nodes. */
 		public Object GRAPHDEF(IASTNode node) throws Exception {
-			graph = (DirectedGraph) new AdjacencyDirectedGraph().adapt(DirectedGraph.class);
 			index = new GraphUniqueIndex(GraphUniqueIndex.VERTEX,"id",true).installOn(graph);
 			super.recurseOnChildren(node);
-			return graph;
+			index.uninstall();
+			return null;
 		}
 	
 		/** Callback method for GRAPH_COMMONS nodes. */
@@ -106,7 +117,9 @@ public class DOTDirectedGraphLoader {
 			String trg = node.getAttrString("trg");
 			Object srcV = index.getVertex(src);
 			Object trgV = index.getVertex(trg);
-			graph.createEdge(srcV, trgV, eInfo());
+			eInfo();
+			super.recurseOnChildren(node);
+			graph.createEdge(srcV, trgV, info);
 			return null;
 		}
 	

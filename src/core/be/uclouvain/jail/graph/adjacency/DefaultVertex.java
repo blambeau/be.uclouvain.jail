@@ -38,46 +38,34 @@ public class DefaultVertex extends UserInfoCapable implements IVertex {
 	}
 
 	/* incoming edges COLLECTION PROPERTY SECTION ------------------------------------------------ */
-	/* (non-Javadoc)
-	 * @see be.ac.ucl.info.rq.jatc.v3model.Vertex#incomingEdges()
-	 */
+	/** Returns incoming edges. */
 	public Collection<IEdge> getIncomingEdges(IDirectedGraph graph) {
 		return incomingEdges;
 	}
 
-	/* (non-Javadoc)
-	 * @see be.ac.ucl.info.rq.jatc.v3model.Vertex#addIncomingEdge(be.ac.ucl.info.rq.automaton.stdmodel.Edge)
-	 */
-	public void addIncomingEdge(IEdge e) {
+	/** Adds an incoming edge. */
+	public void addIncomingEdge(IDirectedGraph graph, IEdge e) {
 		incomingEdges.add(e);
 	}
 
-	/* (non-Javadoc)
-	 * @see be.ac.ucl.info.rq.jatc.v3model.Vertex#removeIncomingEdge(be.ac.ucl.info.rq.automaton.stdmodel.Edge)
-	 */
-	public void removeIncomingEdge(IEdge e) {
+	/** Removes an incoming edge. */
+	public void removeIncomingEdge(IDirectedGraph graph, IEdge e) {
 		incomingEdges.remove(e);
 	}
 
 	/* outgoing edges COLLECTION PROPERTY SECTION ------------------------------------------------ */
-	/* (non-Javadoc)
-	 * @see be.ac.ucl.info.rq.jatc.v3model.Vertex#outgoingEdges()
-	 */
+	/** Returns outgoing edges. */
 	public Collection<IEdge> getOutgoingEdges(IDirectedGraph graph) {
 		return outgoingEdges;
 	}
 
-	/* (non-Javadoc)
-	 * @see be.ac.ucl.info.rq.jatc.v3model.Vertex#addOutgoingEdge(be.ac.ucl.info.rq.automaton.stdmodel.Edge)
-	 */
-	public void addOutgoingEdge(IEdge e) {
+	/** Adds an outgoing edge. */
+	public void addOutgoingEdge(IDirectedGraph graph, IEdge e) {
 		outgoingEdges.add(e);
 	}
 
-	/* (non-Javadoc)
-	 * @see be.ac.ucl.info.rq.jatc.v3model.Vertex#removeOutgoingEdge(be.ac.ucl.info.rq.automaton.stdmodel.Edge)
-	 */
-	public void removeOutgoingEdge(IEdge e) {
+	/** Removes an outgoing edge. */
+	public void removeOutgoingEdge(IDirectedGraph graph, IEdge e) {
 		outgoingEdges.remove(e);
 	}
 

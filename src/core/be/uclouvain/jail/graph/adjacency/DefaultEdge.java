@@ -32,45 +32,33 @@ public class DefaultEdge extends UserInfoCapable implements IEdge {
 	}
 
 	/* source PROPERTY SECTION ------------------------------------------------------------------ */
-	/* (non-Javadoc)
-	 * @see be.ac.ucl.info.rq.jatc.stdmodel.Edge#getSource()
-	 */
+	/** Returns edge source. */
 	public IVertex getSource() {
 		return this.source;
 	}
 
-	/* (non-Javadoc)
-	 * @see be.ac.ucl.info.rq.jatc.stdmodel.Edge#setSource(be.ac.ucl.info.rq.jatc.stdmodel.Vertex)
-	 */
+	/** Sets edge source. */
 	public void setSource(IVertex source) {
 		this.source = source;
 	}
 
-	/* (non-Javadoc)
-	 * @see be.ac.ucl.info.rq.jatc.stdmodel.Edge#isSource(be.ac.ucl.info.rq.jatc.stdmodel.Vertex)
-	 */
+	/** Checks if the vertex is source of this edge. */
 	public boolean isSource(IVertex s) {
 		return source.equals(s);
 	}
 
 	/* target PROPERTY SECTION ------------------------------------------------------------------ */
-	/* (non-Javadoc)
-	 * @see be.ac.ucl.info.rq.jatc.stdmodel.Edge#getTarget()
-	 */
+	/** Returns edge target. */
 	public IVertex getTarget() {
 		return this.target;
 	}
 
-	/* (non-Javadoc)
-	 * @see be.ac.ucl.info.rq.jatc.stdmodel.Edge#setTarget(be.ac.ucl.info.rq.jatc.stdmodel.Vertex)
-	 */
+	/** Sets edge target. */
 	public void setTarget(IVertex target) {
 		this.target = target;
 	}
 
-	/* (non-Javadoc)
-	 * @see be.ac.ucl.info.rq.jatc.stdmodel.Edge#isTarget(be.ac.ucl.info.rq.jatc.stdmodel.Vertex)
-	 */
+	/** Checks if the vertex is the target is this edge. */
 	public boolean isTarget(IVertex s) {
 		return target.equals(s);
 	}

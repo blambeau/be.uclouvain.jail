@@ -6,7 +6,8 @@ import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
 
 /**
- * Contract to be a valid vertex of a DirectedGraph implemented with Adjacency List Structure.
+ * Contract to be a valid vertex of a DirectedGraph implemented with Adjacency 
+ * List Structure.
  * 
  * @author LAMBEAU Bernard
  */
@@ -28,18 +29,18 @@ public interface IVertex {
 	public Collection<IEdge> getIncomingEdges(IDirectedGraph graph);
 
 	/** Adds an incoming edge to the vertex incoming edges collection. */
-	public void addIncomingEdge(IEdge edge);
+	public void addIncomingEdge(IDirectedGraph graph, IEdge edge);
 
 	/** Removes an incoming edge to the vertex incoming edges collection. */
-	public void removeIncomingEdge(IEdge edge);
+	public void removeIncomingEdge(IDirectedGraph graph, IEdge edge);
 
 	/** Returns the outgoing edges of the vertex. */
 	public Collection<IEdge> getOutgoingEdges(IDirectedGraph graph);
 
 	/** Adds an outgoing edge to the vertex outgoing edges collection. */
-	public void addOutgoingEdge(IEdge edge);
+	public void addOutgoingEdge(IDirectedGraph graph, IEdge edge);
 
 	/** Removes an outgoing edge to the vertex outgoing edges collection. */
-	public void removeOutgoingEdge(IEdge edge);
+	public void removeOutgoingEdge(IDirectedGraph graph, IEdge edge);
 
 }

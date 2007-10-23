@@ -8,11 +8,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import net.chefbe.javautils.robust.exceptions.IllegalUsageException;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.IEdge;
 import be.uclouvain.jail.graph.adjacency.IVertex;
-import be.uclouvain.jail.graph.deco.GraphConstraintViolationException;
 import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.uinfo.UserInfoCapable;
 
@@ -21,22 +19,22 @@ import be.uclouvain.jail.uinfo.UserInfoCapable;
  * 
  * @author LAMBEAU Bernard
  */
-public class DFAVertex extends UserInfoCapable implements IVertex {
+public class NFAVertex extends UserInfoCapable implements IVertex {
 
 	/** List of incoming edges. */
 	protected List<IEdge> incomingEdges = new ArrayList<IEdge>();
 	
 	/** The adjacent list for outgoing edges. */
-	protected Map<Object,IEdge> outgoingEdges = new TreeMap<Object,IEdge>();
+	protected Map<Object,List<IEdge>> outgoingEdges = new TreeMap<Object,List<IEdge>>();
 
 	/* CONSTRUCTORS SECTION ---------------------------------------------------------------------- */
 	/** Empty constructor. Installs a MapUserInfo. */
-	public DFAVertex() {
+	public NFAVertex() {
 		this(null);
 	}
 
 	/** Constructor with specific user info. */
-	public DFAVertex(IUserInfo info) {
+	public NFAVertex(IUserInfo info) {
 		super(info);
 	}
 	
@@ -44,9 +42,6 @@ public class DFAVertex extends UserInfoCapable implements IVertex {
 	/** Returns the letter associated to an edge. */
 	protected Object edgeLetter(IDirectedGraph graph, IEdge e) {
 		IGraphFAInformer informer = (IGraphFAInformer) graph.adapt(IGraphFAInformer.class);
-		if (informer == null) {
-			throw new IllegalUsageException("Provided graph must be IGraphFAInformer adaptable.");
-		}
 		return informer.edgeLetter(e.getUserInfo());
 	}
 	
@@ -67,26 +62,35 @@ public class DFAVertex extends UserInfoCapable implements IVertex {
 
 	/** Returns outgoing edges. */
 	public Collection<IEdge> getOutgoingEdges(IDirectedGraph graph) {
-		return outgoingEdges.values();
+		List<IEdge> edges = new ArrayList<IEdge>();
+		for (List<IEdge> oEdges: outgoingEdges.values()) {
+			edges.addAll(oEdges);
+		}
+		return edges;
 	}
 
 	/** Adds an outgoing edge. */
 	public void addOutgoingEdge(IDirectedGraph graph, IEdge e) {
 		Object letter = edgeLetter(graph,e);
-		if (outgoingEdges.containsKey(letter)) {
-			throw new GraphConstraintViolationException(null,"DFA constraint violated.");
+		List<IEdge> edges = outgoingEdges.get(letter);
+		if (edges == null) {
+			edges = new ArrayList<IEdge>();
+			outgoingEdges.put(letter, edges);
 		}
-		outgoingEdges.put(letter,e);
+		edges.add(e);
 	}
 
 	/** Removes an outgoing edge. */
 	public void removeOutgoingEdge(IDirectedGraph graph, IEdge e) {
 		Object letter = edgeLetter(graph,e);
-		outgoingEdges.remove(letter);
+		List<IEdge> edges = outgoingEdges.get(letter);
+		if (edges != null) {
+			edges.remove(e);
+		}
 	}
 
 	/** Returns the outgoing edge labeled with a given letter. */
-	public IEdge getOutgoingEdge(Object letter) {
+	public Collection<IEdge> getOutgoingEdges(Object letter) {
 		return outgoingEdges.get(letter);
 	}
 

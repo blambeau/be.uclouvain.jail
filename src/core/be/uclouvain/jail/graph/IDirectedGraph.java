@@ -1,6 +1,8 @@
 package be.uclouvain.jail.graph;
 
-import be.uclouvain.jail.adapt.IAdaptable;
+import java.util.Collection;
+
+import be.uclouvain.jail.adapt.IOpenAdaptable;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.orders.ITotalOrder;
 import be.uclouvain.jail.uinfo.IUserInfo;
@@ -33,7 +35,7 @@ import be.uclouvain.jail.uinfo.IUserInfo;
  * 
  * @author LAMBEAU Bernard
  */
-public interface IDirectedGraph extends IAdaptable, IDirectedGraphWriter {
+public interface IDirectedGraph extends IOpenAdaptable, IDirectedGraphWriter {
 
 	/** Returns user info attached to the graph. */
 	public IUserInfo getUserInfo();
@@ -68,10 +70,10 @@ public interface IDirectedGraph extends IAdaptable, IDirectedGraphWriter {
 	public void removeVertex(Object vertex);
 
 	/** Returns outgoing edges of a vertex. */
-	public Iterable<Object> getOutgoingEdges(Object vertex);
+	public Collection<Object> getOutgoingEdges(Object vertex);
 	
 	/** Returns incoming edges of a vertex. */
-	public Iterable<Object> getIncomingEdges(Object vertex);
+	public Collection<Object> getIncomingEdges(Object vertex);
 	
 
 	/** Returns informations attached to an edge. */

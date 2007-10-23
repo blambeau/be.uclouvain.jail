@@ -1,9 +1,11 @@
 package be.uclouvain.jail.graph.deco;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import be.uclouvain.jail.adapt.AdaptUtils;
+import be.uclouvain.jail.adapt.IAdapter;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.utils.GraphQueryUtils;
 import be.uclouvain.jail.orders.ITotalOrder;
@@ -181,12 +183,12 @@ public class DirectedGraph implements IDirectedGraph {
 	}
 
 	/** Returns outgoing edges of a vertex. */
-	public Iterable<Object> getOutgoingEdges(Object vertex) {
+	public Collection<Object> getOutgoingEdges(Object vertex) {
 		return graph.getOutgoingEdges(vertex);
 	}
 	
 	/** Returns incoming edges of a vertex. */
-	public Iterable<Object> getIncomingEdges(Object vertex) {
+	public Collection<Object> getIncomingEdges(Object vertex) {
 		return graph.getIncomingEdges(vertex);
 	}
 	
@@ -253,6 +255,11 @@ public class DirectedGraph implements IDirectedGraph {
 	/** Returns a total order on edges. */
 	public ITotalOrder<Object> getEdgesTotalOrder() {
 		return graph.getEdgesTotalOrder();
+	}
+
+	/** Adds an instance adaptation. */
+	public void addAdaptation(Class c, IAdapter adapter) {
+		graph.addAdaptation(c, adapter);
 	}
 
 	/** Adapts the graph to some another type. */
