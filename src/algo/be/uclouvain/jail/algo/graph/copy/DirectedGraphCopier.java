@@ -2,7 +2,7 @@ package be.uclouvain.jail.algo.graph.copy;
 
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.IDirectedGraphWriter;
-import be.uclouvain.jail.orders.ITotalOrder;
+import be.uclouvain.jail.graph.utils.ITotalOrder;
 import be.uclouvain.jail.uinfo.IUserInfo;
 
 /**

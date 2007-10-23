@@ -5,7 +5,7 @@ import java.util.Map;
 
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
-import be.uclouvain.jail.orders.ITotalOrder;
+import be.uclouvain.jail.graph.utils.ITotalOrder;
 
 /** Checks equivalence of two DFAs. */
 public class DFAEquivalence {

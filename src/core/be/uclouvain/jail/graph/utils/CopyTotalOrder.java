@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  
  * 02110-1301, USA.
  */
-package be.uclouvain.jail.orders;
+package be.uclouvain.jail.graph.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;

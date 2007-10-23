@@ -3,6 +3,15 @@
 		<title>JAIL - Java Automaton and Induction Library</title>    
 	</head>
 	<body>
-		Provides a DirectedGraph implementation based on an adjacency list data structure.
+		<p>Provides a DirectedGraph implementation based on an adjacency list data structure.</p>
+		<p>The graph implementation here is kept as widely opened as possible. For this reason,
+		some interface are introduced here:</p>
+		<ul>
+			<li>IEdge and IVertex: these interfaces allows you to create your own edge and vertex
+			implementations to be used as adjacency graph sub-components. Some (maybe) good reason 
+			to implement these interfaces is to provide an efficient special-purpose implementation.</li>
+			<li>IGraphComponentFactory: this interface allows the AdjacencyDirectedGraph class to
+			create actual edge and vertex instances to be used.</li>
+		</ul>
 	</body>
 </html>

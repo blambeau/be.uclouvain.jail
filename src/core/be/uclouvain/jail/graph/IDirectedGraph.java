@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import be.uclouvain.jail.adapt.IOpenAdaptable;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
-import be.uclouvain.jail.orders.ITotalOrder;
+import be.uclouvain.jail.graph.utils.ITotalOrder;
 import be.uclouvain.jail.uinfo.IUserInfo;
 
 /**

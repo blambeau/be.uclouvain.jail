@@ -5,8 +5,8 @@ import java.io.PrintWriter;
 
 import be.uclouvain.jail.Jail;
 import be.uclouvain.jail.graph.IDirectedGraph;
+import be.uclouvain.jail.graph.utils.ITotalOrder;
 import be.uclouvain.jail.io.AbstractPrintable;
-import be.uclouvain.jail.orders.ITotalOrder;
 
 /**
  * Printable adapted on DirectedGraph

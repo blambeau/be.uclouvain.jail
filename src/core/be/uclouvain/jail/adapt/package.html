@@ -12,12 +12,46 @@
 			of the component may then invoke the adapt(Class) method on the object to adapt it
 			to some instance of a class of interest.</li>
 			<li>IAdapter: this interface allows you to provide adaptabilities from the outside of
-			classes. An adapter adapts instances of some class C to instances of class D (for example).
-			C is not required to declare itself as IAdaptable. Adapters must be registered to the 
-			AdaptUtils utility class.</li>
+			classes. An adapter is able to adapt all instances of some class C to instances of another 
+			class D (for example). C is not required to declare itself as IAdaptable. Adapters must be 
+			registered to the AdaptUtils utility class.</li>
+			<li>IOpenAdaptable: this interface, which is an extension of IAdaptable, declares the
+			ability of a component to accept external adaptations, through a addAdaptation() method.
+			In comparison with IAdapter which installs such an adaptation from a class point of view 
+			(that is, for all instances of some class C), open adaptability allows external adaptations
+			from an instance point of view.</li>
 			<li>AdaptUtils: this class is the main facade for all adaptibility requests. Adapters may
 			be registered/unregistered to this class. Request for adaptibility may also be made by
 			invoking the adapt method.</li>
+			<li>Adaptations: provides a collection of external adaptations. This utility class is mainly
+			provided to help implementing the IOpenAdaptable interface.</li>
 		</ul>
+		<p>Because all these adaptability concepts must work together, some priority order is to be 
+		respected when implementing adaptable classes. The following priority order should always be
+		respected:</p>
+		<ul>
+			<li>IOpenAdaptable has always the higher priority. In other words, instance adaptations 
+			must be checked first.</li>
+			<li>IOpenAdaptable has the second priority, in other words internal class adaptations are
+			the checked.</li>
+			<li>IAdapter has the lowest priority</li>
+		</ul>
+		<p>Said otherwise, the following algorithm should always be implemented when implementing 
+		IAdaptable and IOpenAdaptable objects:</p>
+		<pre>
+			public &lt;T&gt; Object adapt(Class&lt;T&gt; c) {
+				// try instance adapation first (when implementing IOpenAdaptable only)
+				if (adaptations != null) {
+					Object iAdapt = adaptations.adapt(this, c);
+					if (iAdapt != null) { return iAdapt; }
+				}
+				
+				// try internal class adaptation
+				[...]
+				
+				// try external class adaptation
+				return AdaptUtils.externalAdapt(this,c);
+			}
+		</pre>
 	</body>
 </html>

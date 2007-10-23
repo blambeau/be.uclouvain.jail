@@ -12,7 +12,11 @@ import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.graph.deco.GraphConstraintViolationException;
 
 /**
- * Default implementation of a non deterministic automaton. 
+ * Default implementation of a non deterministic automaton.
+ * 
+ * <p>This INFA implementation act as a decorator of graph. This decoration
+ * works with any correct graph implementation, but can be tuned according to 
+ * the main specific constructor parameters.</p> 
  */
 public class GraphNFA extends GraphFA implements INFA {
 

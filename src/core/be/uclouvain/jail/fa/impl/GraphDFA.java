@@ -11,6 +11,10 @@ import be.uclouvain.jail.graph.deco.GraphConstraintViolationException;
 
 /**
  * Default implementation of a deterministic automaton. 
+ * 
+ * <p>This INFA implementation act as a decorator of graph. This decoration
+ * works with any correct graph implementation, but can be tuned according to 
+ * the main specific constructor parameters.</p> 
  */
 public class GraphDFA extends GraphFA implements IDFA {
 

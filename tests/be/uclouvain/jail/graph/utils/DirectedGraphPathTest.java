@@ -9,7 +9,6 @@ import junit.framework.TestCase;
 import be.uclouvain.jail.graph.IDirectedGraphPath;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.graph.deco.DirectedGraph;
-import be.uclouvain.jail.orders.ITotalOrder;
 import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.uinfo.MapUserInfo;
 

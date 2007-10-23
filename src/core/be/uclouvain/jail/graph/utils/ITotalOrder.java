@@ -1,16 +1,21 @@
-package be.uclouvain.jail.orders;
+package be.uclouvain.jail.graph.utils;
 
 import java.util.Comparator;
 
 /**
- * <p> Provides a mechanism to get a total order on a collection. Such a total order informer provides methods to get
- * the index of an element or the element at a specific index and extends the Comparator contract for (the real)
- * comparison point of view of a total order. </p>
+ * <p> Provides a mechanism to get a total order on a collection. Such a total order 
+ * provides methods to get the index of an element or the element at a specific index 
+ * and extends the Comparator contract for (the real) comparison point of view of a 
+ * total order. </p>
  * 
- * <p> The comparator must be consistent with equals. The informer must be consistent between the indexing
- * functionalities and the comparison utilities. In other words : <ul> <li>getElementIndex(a) > getElementIndex(b) =>
- * compare(a,b)>0</li> <li>getElementIndex(a) < getElementIndex(b) => compare(a,b)<0</li> <li>getElementIndex(a) =
- * getElementIndex(b) => compare(a,b)=0</li> </ul> </p>
+ * <p>The comparator must be consistent with equals. The informer must be consistent 
+ * between the indexing functionalities and the comparison utilities. 
+ * In other words:</p> 
+ * <ul>
+ *     <li>getElementIndex(a) > getElementIndex(b) => compare(a,b)>0</li>
+ *     <li>getElementIndex(a) < getElementIndex(b) => compare(a,b)<0</li>
+ *     <li>getElementIndex(a) = getElementIndex(b) => compare(a,b)=0</li> 
+ * </ul>
  * 
  * @author blambeau
  * 

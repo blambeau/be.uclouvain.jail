@@ -1,4 +1,4 @@
-package be.uclouvain.jail.orders;
+package be.uclouvain.jail.graph.utils;
 
 import java.util.Iterator;
 import java.util.List;

@@ -5,7 +5,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 import be.uclouvain.jail.graph.IDirectedGraph;
-import be.uclouvain.jail.orders.ITotalOrder;
+import be.uclouvain.jail.graph.utils.ITotalOrder;
 import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.uinfo.MapUserInfo;
 

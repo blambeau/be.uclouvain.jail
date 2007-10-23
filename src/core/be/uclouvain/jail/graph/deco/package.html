@@ -1,0 +1,24 @@
+<html>
+	<head>
+		<title>JAIL - Java Automaton and Induction Library</title>    
+	</head>
+	<body>
+		<p>Provides a useful graph decorator on top of any graph implementation.</p>
+		<p>This package is mainly introduced to keep the IDirectedGraph interface
+		as simple as possible, in order to let users to implement graphs easily.
+		Many methods are however required to use graphs in practice. The DirectedGraph
+		class provides all these useful methods by decoration of any graph.</p>
+		<p>Please always get an instance of DirectedGraph by adaptation instead of
+		explicit constructor invocation (to avoid decoration chains) :</p>
+		<pre>
+			// I've got some graph
+			IDirectedGraph graph = [...]
+			
+			// always prefer adaptation ...
+			DirectedGraph deco = (DirectedGraph) graph.adapt(DirectedGraph.class);
+			
+			// ... to explicit constructor invocation
+			DirectedGraph deco = new DirectedGraph(graph);
+		</pre>
+	</body>
+</html>
