@@ -21,9 +21,11 @@ public class GraphConstraintViolationException extends RuntimeException {
 	/** Creates a constraint exception instance. */
 	public GraphConstraintViolationException(IGraphConstraint constraint, String msg) {
 		super(msg);
+		/*
 		if (constraint == null) {
 			throw new IllegalArgumentException("Constraint argument required.");
 		}
+		*/
 		this.constraint = constraint;
 	}
 	

@@ -11,12 +11,13 @@ import be.uclouvain.jail.adapt.IAdaptable;
  * <code>Iterable</code> implementation always returns an iterator on edges.</p>
  * 
  * <p>This interface provides iterators on vertices and edges as well as a 
- * visitable pattern implementation. Moreover, graph paths are required to 
- * be adaptable ; at least DirectedGraph is indeed a natural adaptation target 
- * and sould then be implemented.</p>
+ * visitable pattern implementation.</p>
  * 
- * <p>This interface may be implemented. A default implementation is provided
- * by {@link DirectedGraphPath}.</p>
+ * <p>A decorator of graph path, providing a useful query API, is implemented in
+ * {@link DirectedGraphPath} and can be obtained by adaptation of this interface.</p> 
+ * 
+ * <p>This interface is not intended to be implemented, a default implementation 
+ * being provided by {@link DefaultDirectedGraphPath}.</p>
  * 
  * @author blambeau
  */
@@ -42,6 +43,9 @@ public interface IDirectedGraphPath extends IAdaptable, Iterable<Object> {
 		
 	}
 	
+	/** Returns the graph from which the path is extracted. */
+	public IDirectedGraph getGraph();
+	
 	/** Returns the size of the path, defined as the number of used edges in 
 	 * the path. The number of visited vertices is equal to getPathSize()+1
 	 * by definition. */
@@ -55,5 +59,8 @@ public interface IDirectedGraphPath extends IAdaptable, Iterable<Object> {
 
 	/** Accepts a visitor. */
 	public void accept(IVisitor visitor);
+	
+	/** Flushes this path in a graph writer. */
+	public void flush(IDirectedGraphWriter writer);
 	
 }

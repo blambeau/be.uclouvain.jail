@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.IDirectedGraphPath;
 import be.uclouvain.jail.graph.IDirectedGraphWriter;
-import be.uclouvain.jail.graph.utils.DirectedGraphPath;
+import be.uclouvain.jail.graph.utils.DefaultDirectedGraphPath;
 import be.uclouvain.jail.graph.utils.ITotalOrder;
 import be.uclouvain.jail.uinfo.IUserInfo;
 
@@ -49,7 +49,7 @@ public class DSPResult<T> {
 		}
 		
 		// return path
-		return new DirectedGraphPath(input.getGraph(),edges);
+		return new DefaultDirectedGraphPath(input.getGraph(),edges);
 	}
 	
 	/** Flushes this result as a spanning tree. */

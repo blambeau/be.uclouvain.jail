@@ -37,7 +37,7 @@ import be.uclouvain.jail.uinfo.IUserInfo;
  * <ul>
  *     <li>Graph copy through {@link DirectedGraphCopier}.</li>
  *     <li>Adaptation of {@link IDirectedGraphPath} to {@link IDirectedGraph}.</li>
- *     <li>Spanning tree of a directed graph using {@link DijkstraShortestPath} result.</li>  
+ *     <li>Spanning tree of a directed graph using {@link DSPAlgo} result.</li>  
  * </ul>
  * 
  * <p>This interface may be implemented for special purpose. Common usage is however to use 

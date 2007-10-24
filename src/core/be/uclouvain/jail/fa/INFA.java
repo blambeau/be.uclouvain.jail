@@ -32,10 +32,10 @@ public interface INFA extends IAdaptable {
 	public boolean isError(Object s);
 	
 	/** Returns NFA initial states. */
-	public Iterable<Object> initialStates();
+	public Iterable<Object> getInitialStates();
 	
 	/** Returns an edge letter. */
-	public Object edgeLetter(Object s);
+	public Object getEdgeLetter(Object s);
 	
 	/** Returns the outgoing edges of s labeled by the given letter, an
 	 * empty iterable if no such edge. */

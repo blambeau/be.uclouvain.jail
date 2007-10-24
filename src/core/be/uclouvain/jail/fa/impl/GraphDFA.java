@@ -53,9 +53,9 @@ public class GraphDFA extends GraphFA implements IDFA {
 	}
 	
 	/** Returns the initialState. */
-	public Object initialState() {
+	public Object getInitialState() {
 		for (Object state: graph.getVertices()) {
-			if (isAccepting(state)) { return state; }
+			if (isInitial(state)) { return state; }
 		}
 		throw new GraphConstraintViolationException(null,"No initial state");
 	}
@@ -67,7 +67,7 @@ public class GraphDFA extends GraphFA implements IDFA {
 			return ((DFAVertex)s).getOutgoingEdge(letter);
 		} else {
 			for (Object edge: graph.getOutgoingEdges(s)) {
-				if (letter.equals(edgeLetter(edge))) {
+				if (letter.equals(getEdgeLetter(edge))) {
 					return edge;
 				}
 			}
@@ -82,7 +82,7 @@ public class GraphDFA extends GraphFA implements IDFA {
 		} else {
 			Set<Object> letters = new HashSet<Object>();
 			for (Object edge: graph.getIncomingEdges(s)) {
-				letters.add(edgeLetter(edge));
+				letters.add(getEdgeLetter(edge));
 			}
 			return letters;
 		}
@@ -95,7 +95,7 @@ public class GraphDFA extends GraphFA implements IDFA {
 		} else {
 			Set<Object> letters = new HashSet<Object>();
 			for (Object edge: graph.getOutgoingEdges(s)) {
-				letters.add(edgeLetter(edge));
+				letters.add(getEdgeLetter(edge));
 			}
 			return letters;
 		}

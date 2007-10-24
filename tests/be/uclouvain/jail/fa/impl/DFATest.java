@@ -3,20 +3,20 @@ package be.uclouvain.jail.fa.impl;
 import java.net.URL;
 
 import junit.framework.TestCase;
-import be.uclouvain.jail.algo.fa.equiv.DFAEquivalence;
+import be.uclouvain.jail.algo.fa.equiv.DFAEquiv;
+import be.uclouvain.jail.dialect.dot.DOTDirectedGraphLoader;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.DefaultGraphComponentFactory;
 import be.uclouvain.jail.graph.adjacency.IGraphComponentFactory;
-import be.uclouvain.jail.io.dot.DOTDirectedGraphLoader;
 import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.uinfo.MapUserInfo;
 
 /** Tests some implementations of DFA. */
 public class DFATest extends TestCase {
 
-	/** DFA to use to check equivalence. */
+	/** DFA used to check equivalence. */
 	/*
 		digraph DFA {
 			graph [rankdir="LR"];
@@ -76,6 +76,8 @@ public class DFATest extends TestCase {
 		graph.createEdge(v3, v2, eInfo("b"));
 		graph.createEdge(v1, v4, eInfo("a"));
 		graph.createEdge(v2, v4, eInfo("b"));
+		
+		assertEquals(v0,reference.getInitialState());
 	}
 
 	/** Returns a graph URL. */
@@ -95,7 +97,7 @@ public class DFATest extends TestCase {
 		IGraphComponentFactory factory = new DFAComponentFactory();
 		IDirectedGraph graph = new AdjacencyDirectedGraph(factory);
 		IDFA dfa = loadDFA(new GraphDFA(graph,informer));
-		assertTrue(DFAEquivalence.isEquivalent(dfa,reference));
+		assertTrue(DFAEquiv.isEquivalentTo(dfa,reference));
 	}
 	
 	/** Tests default GraphDFA implementation. */
@@ -104,7 +106,7 @@ public class DFATest extends TestCase {
 		IGraphComponentFactory factory = new DefaultGraphComponentFactory();
 		IDirectedGraph graph = new AdjacencyDirectedGraph(factory);
 		IDFA dfa = loadDFA(new GraphDFA(graph,informer));
-		assertTrue(DFAEquivalence.isEquivalent(dfa,reference));
+		assertTrue(DFAEquiv.isEquivalentTo(dfa,reference));
 	}
 	
 	/** Tests default GraphDFA implementation. */
@@ -113,7 +115,7 @@ public class DFATest extends TestCase {
 		IGraphComponentFactory factory = new NFAComponentFactory();
 		IDirectedGraph graph = new AdjacencyDirectedGraph(factory);
 		IDFA dfa = loadDFA(new GraphDFA(graph,informer));
-		assertTrue(DFAEquivalence.isEquivalent(dfa,reference));
+		assertTrue(DFAEquiv.isEquivalentTo(dfa,reference));
 	}
 	
 }

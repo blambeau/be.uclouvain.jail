@@ -7,9 +7,9 @@ import org.apache.commons.beanutils.ConvertUtils;
 
 import be.uclouvain.jail.adapt.AdaptUtils;
 import be.uclouvain.jail.adapt.CreateClassAdapter;
+import be.uclouvain.jail.dialect.IPrintable;
+import be.uclouvain.jail.dialect.dot.DOTDirectedGraphPrintable;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
-import be.uclouvain.jail.io.IPrintable;
-import be.uclouvain.jail.io.dot.DOTDirectedGraphPrintable;
 
 /** 
  * JAIL main class. 

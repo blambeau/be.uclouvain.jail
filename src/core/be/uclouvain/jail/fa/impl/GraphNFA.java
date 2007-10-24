@@ -55,10 +55,10 @@ public class GraphNFA extends GraphFA implements INFA {
 	}
 	
 	/** Returns the initialState. */
-	public Iterable<Object> initialStates() {
+	public Iterable<Object> getInitialStates() {
 		List<Object> states = new ArrayList<Object>();
 		for (Object state: graph.getVertices()) {
-			if (isAccepting(state)) { 
+			if (isInitial(state)) { 
 				states.add(state);
 			}
 		}
@@ -75,7 +75,7 @@ public class GraphNFA extends GraphFA implements INFA {
 		} else {
 			List<Object> edges = new ArrayList<Object>();
 			for (Object edge: graph.getOutgoingEdges(s)) {
-				if (letter.equals(edgeLetter(edge))) {
+				if (letter.equals(getEdgeLetter(edge))) {
 					edges.add(edge);
 				}
 			}
@@ -90,7 +90,7 @@ public class GraphNFA extends GraphFA implements INFA {
 		} else {
 			Set<Object> letters = new HashSet<Object>();
 			for (Object edge: graph.getIncomingEdges(s)) {
-				letters.add(edgeLetter(edge));
+				letters.add(getEdgeLetter(edge));
 			}
 			return letters;
 		}
@@ -103,7 +103,7 @@ public class GraphNFA extends GraphFA implements INFA {
 		} else {
 			Set<Object> letters = new HashSet<Object>();
 			for (Object edge: graph.getOutgoingEdges(s)) {
-				letters.add(edgeLetter(edge));
+				letters.add(getEdgeLetter(edge));
 			}
 			return letters;
 		}

@@ -32,10 +32,10 @@ public interface IDFA extends IAdaptable {
 	public boolean isError(Object s);
 	
 	/** Returns DFA initial state. */
-	public Object initialState();
+	public Object getInitialState();
 	
 	/** Returns an edge letter. */
-	public Object edgeLetter(Object s);
+	public Object getEdgeLetter(Object s);
 	
 	/** Returns the outgoing edge of s labeled by the given letter, null
 	 * if no such edge. */

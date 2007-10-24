@@ -56,7 +56,7 @@ public class DSP {
 	
 	/** Computes DSP on the graph. */
 	public void computeDSP() {
-		new DijkstraShortestPath().execute(input, output);
+		new DSPAlgo().execute(input, output);
 		computed = true;
 	}
 

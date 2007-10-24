@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.IOException;
 
 import net.chefbe.autogram.ast2.parsing.ParseException;
+import be.uclouvain.jail.dialect.IPrintable;
+import be.uclouvain.jail.dialect.dot.DOTDirectedGraphLoader;
 import be.uclouvain.jail.graph.IDirectedGraph;
-import be.uclouvain.jail.io.IPrintable;
-import be.uclouvain.jail.io.dot.DOTDirectedGraphLoader;
 
 /**
  * JAIL Core plugin.

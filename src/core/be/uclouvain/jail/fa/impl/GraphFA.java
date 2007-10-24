@@ -77,7 +77,7 @@ public abstract class GraphFA implements IAdaptable {
 	}
 	
 	/** Returns the letter attached to an edge. */
-	public Object edgeLetter(Object edge) {
+	public Object getEdgeLetter(Object edge) {
 		return edgeLetter(graph.getEdgeInfo(edge));
 	}
 	

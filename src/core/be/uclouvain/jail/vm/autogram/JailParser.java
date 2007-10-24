@@ -7,7 +7,7 @@ import net.chefbe.autogram.ast2.parsing.ParseException;
 import net.chefbe.autogram.ast2.parsing.active.ActiveParser;
 import net.chefbe.autogram.ast2.parsing.peg.PEGParser;
 import net.chefbe.autogram.ast2.parsing.peg.Pos;
-import be.uclouvain.jail.io.commons.UTILSParser;
+import be.uclouvain.jail.dialect.commons.UTILSParser;
 
 /** Parser for Jail grammar. */
 public class JailParser extends ActiveParser {
