@@ -19,14 +19,12 @@ A = <§dot
 		0 [label="v0" isInitial=true isAccepting=false isError=false];
 		1 [label="v1" isInitial=false isAccepting=true isError=false shape="doublecircle"];
 		2 [label="v2" isInitial=false isAccepting=true isError=false shape="doublecircle"];
-		0 -> 1 [letter="a"];
-		0 -> 2 [letter="a"];
-		1 -> 1 [letter="b"];
-		2 -> 2 [letter="b"];
-		2 -> 1 [letter="b"];
+		0 -> 1 [letter="a" label="a"];
+		0 -> 2 [letter="a" label="a"];
+		1 -> 1 [letter="b" label="b"];
+		2 -> 2 [letter="b" label="b"];
+		2 -> 1 [letter="b" label="b"];
 	}
 §>;
-B = (minimize (determinize (tmoves (A))));
-(print (B));
-(B);
-B = (tmoves (print (A)));
+B = (jdotty (A));
+C = (print (determinize (B)));

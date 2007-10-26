@@ -12,7 +12,6 @@ import net.chefbe.autogram.ast2.parsing.active.ASTLoader.EnumTypeResolver;
 import net.chefbe.autogram.ast2.parsing.peg.Input;
 import net.chefbe.autogram.ast2.parsing.peg.Pos;
 import net.chefbe.autogram.ast2.utils.BaseLocation;
-import net.chefbe.autogram.ast2.utils.DebugVisitor;
 import be.uclouvain.jail.adapt.AdaptUtils;
 import be.uclouvain.jail.adapt.IAdapter;
 import be.uclouvain.jail.dialect.IPrintable;
@@ -58,7 +57,7 @@ public class JailVM {
 			// execute on callback
 			try {
 				// debug
-				root.accept(new DebugVisitor());
+				//root.accept(new DebugVisitor());
 				root.accept(new JailVMCallback(this));
 			} catch (Exception e) {
 				e.printStackTrace();

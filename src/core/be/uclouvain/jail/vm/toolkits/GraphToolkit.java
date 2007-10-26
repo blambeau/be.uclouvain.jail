@@ -6,6 +6,7 @@ import be.uclouvain.jail.adapt.IAdaptable;
 import be.uclouvain.jail.adapt.IAdapter;
 import be.uclouvain.jail.dialect.IPrintable;
 import be.uclouvain.jail.dialect.dot.DOTDirectedGraphPrintable;
+import be.uclouvain.jail.dialect.dot.JDotty;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.vm.JailVM;
 import be.uclouvain.jail.vm.JailVMException;
@@ -28,6 +29,16 @@ public class GraphToolkit extends ReflectionToolkit implements IAdapter {
 		} catch (IOException e) {
 			throw new JailVMException("Unable to print " + p,e);
 		}
+	}
+	
+	/** Visualizes a graph using jdotty. */
+	public IDirectedGraph jdotty(IDirectedGraph graph) throws JailVMException {
+		try {
+			new JDotty().present(graph);
+		} catch (IOException e) {
+			throw new JailVMException("Unable to present graph using jdotty: ",e);
+		}
+		return graph;
 	}
 	
 	/** Adapts who to the requested type. */
