@@ -1,2 +1,0 @@
-load "train.dot", format:"dot"
-show
