@@ -1,0 +1,86 @@
+package be.uclouvain.jail.fa.utils;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import be.uclouvain.jail.fa.IAlphabet;
+import be.uclouvain.jail.graph.utils.ITotalOrder;
+import be.uclouvain.jail.graph.utils.ListTotalOrder;
+
+/**
+ * Provides a finite alphabet over integers.
+ * 
+ * @author blambeau
+ */
+public class IntegerAlphabet implements IAlphabet<Integer> {
+
+	/** Start number, offset between numbers, number of letters. */
+	private int start, offset, size;
+	
+	/** List of letters. */
+	private List<Integer> letters;
+
+	/** Creates an integer alphabet. */
+	public IntegerAlphabet(int start, int offset, int size) {
+		this.start = start;
+		this.offset = offset;
+		this.size = size;
+	}
+	
+	/** Creates a default alphabet of size letters, starting at 0
+	 * and with offset equal to 1. */
+	public IntegerAlphabet(int size) {
+		this(0,1,size);
+	}
+
+	/** Returns alphabet letters as a total order. */
+	public ITotalOrder<Integer> getLetters() {
+		if (letters == null) {
+			letters = new ArrayList<Integer>();
+			Integer current = start;
+			Integer end = start+(offset*size);
+			while (current<end) {
+				letters.add(current);
+				current += offset;
+			}
+		}
+		return new ListTotalOrder<Integer>(letters);
+	}
+
+	/** Compares two letters. */
+	public int compare(Integer e, Integer f) {
+		return e-f;
+	}
+
+	/** Returns an iterator over letters. */
+	public Iterator<Integer> iterator() {
+		return new Iterator<Integer>() {
+
+			/** Next letter to return. */
+			private Integer next = start;
+			
+			/** Has next letter? */
+			public boolean hasNext() {
+				return next != null;
+			}
+
+			/** Returns next letter. */
+			public Integer next() {
+				Integer toReturn = next;
+				next += offset;
+				if (next > (start+offset*size)) {
+					next = null;
+				}
+				return toReturn;
+			}
+
+			/** Throws a UnsupportedOperationException. */
+			public void remove() {
+				throw new UnsupportedOperationException("Cannot remove letters of alphabets.");
+			}
+			
+		};
+	}
+
+}

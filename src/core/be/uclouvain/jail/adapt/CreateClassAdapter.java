@@ -45,4 +45,9 @@ public class CreateClassAdapter implements IAdapter {
 		return null;
 	}
 
+	/** Returns a string representation. */
+	public String toString() {
+		return decoratorClass.getSimpleName();
+	}
+	
 }

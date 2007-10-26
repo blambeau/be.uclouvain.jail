@@ -4,14 +4,17 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import be.uclouvain.jail.Jail;
+import be.uclouvain.jail.adapt.AdaptUtils;
+import be.uclouvain.jail.adapt.IAdaptable;
 import be.uclouvain.jail.dialect.AbstractPrintable;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.utils.ITotalOrder;
+import be.uclouvain.jail.uinfo.IUserInfo;
 
 /**
  * Printable adapted on DirectedGraph
  */
-public class DOTDirectedGraphPrintable extends AbstractPrintable {
+public class DOTDirectedGraphPrintable extends AbstractPrintable implements IAdaptable {
 
 	/** Installs default properties. */
 	static {
@@ -55,7 +58,7 @@ public class DOTDirectedGraphPrintable extends AbstractPrintable {
 			/* states */
 			for (Object state : vertices) {
 				bw.write("\t");
-				bw.write(Integer.toString(vertices.getElementIndex(state)));
+				bw.write(Integer.toString(vertices.indexOf(state)));
 				bw.write(" [");
 				bw.write(stateAttributes(state));
 				bw.write("];\n");
@@ -66,9 +69,9 @@ public class DOTDirectedGraphPrintable extends AbstractPrintable {
 				Object source = graph.getEdgeSource(edge);
 				Object target = graph.getEdgeTarget(edge);
 				bw.write("\t");
-				bw.write(Integer.toString(vertices.getElementIndex(source)));
+				bw.write(Integer.toString(vertices.indexOf(source)));
 				bw.write(" -> ");
-				bw.write(Integer.toString(vertices.getElementIndex(target)));
+				bw.write(Integer.toString(vertices.indexOf(target)));
 				bw.write(" [");
 				bw.write(edgeAttributes(edge));
 				bw.write("];\n");
@@ -109,8 +112,8 @@ public class DOTDirectedGraphPrintable extends AbstractPrintable {
 				"DirectedGraphPrintable.dot.node.label.uinfo", null);
 		Object label = (key != null) ? graph.getVertexInfo(vertex)
 				.getAttribute(key) : graph.getVerticesTotalOrder()
-				.getElementIndex(vertex);
-		return label == null ? graph.getVerticesTotalOrder().getElementIndex(
+				.indexOf(vertex);
+		return label == null ? graph.getVerticesTotalOrder().indexOf(
 				vertex) : label;
 	}
 
@@ -118,6 +121,12 @@ public class DOTDirectedGraphPrintable extends AbstractPrintable {
 	protected String stateAttributes(Object vertex) {
 		Object label = stateLabel(vertex);
 		String s = "label=\"" + normalize(label) + "\"";
+
+		IUserInfo info = graph.getVertexInfo(vertex);
+		for (String key: info.getKeys()) {
+			Object value = info.getAttribute(key);
+			s += " " + key + "=\"" + normalize(value) + "\"";
+		}
 		return s;
 	}
 
@@ -127,8 +136,8 @@ public class DOTDirectedGraphPrintable extends AbstractPrintable {
 				"DirectedGraphPrintable.dot.edge.label.uinfo", null);
 		Object label = (key != null) ? graph.getEdgeInfo(edge)
 				.getAttribute(key) : graph.getEdgesTotalOrder()
-				.getElementIndex(edge);
-		return label == null ? graph.getEdgesTotalOrder().getElementIndex(edge)
+				.indexOf(edge);
+		return label == null ? graph.getEdgesTotalOrder().indexOf(edge)
 				: label;
 	}
 
@@ -136,7 +145,26 @@ public class DOTDirectedGraphPrintable extends AbstractPrintable {
 	protected String edgeAttributes(Object edge) {
 		Object label = edgeLabel(edge);
 		String s = "label=\"" + normalize(label) + "\"";
+
+		IUserInfo info = graph.getEdgeInfo(edge);
+		for (String key: info.getKeys()) {
+			Object value = info.getAttribute(key);
+			s += " " + key + "=\"" + normalize(value) + "\"";
+		}
 		return s;
+	}
+
+	/** Adapts this object to type c. */
+	public <T> Object adapt(Class<T> c) {
+		if (c.isAssignableFrom(getClass())) {
+			return this;
+		}
+		
+		if (IDirectedGraph.class.equals(c)) {
+			return graph;
+		}
+		
+		return AdaptUtils.externalAdapt(this, c);
 	}
 
 }

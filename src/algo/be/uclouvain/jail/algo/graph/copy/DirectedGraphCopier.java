@@ -37,8 +37,8 @@ public class DirectedGraphCopier {
 			eInfo = graph.getEdgeInfo(edge);
 			Object src = graph.getEdgeSource(edge);
 			Object trg = graph.getEdgeTarget(edge);
-			Object srcCopy = copies[vertices.getElementIndex(src)];
-			Object trgCopy = copies[vertices.getElementIndex(trg)];
+			Object srcCopy = copies[vertices.indexOf(src)];
+			Object trgCopy = copies[vertices.indexOf(trg)];
 			output.createEdge(srcCopy, trgCopy, eInfo);
 		}
 	}

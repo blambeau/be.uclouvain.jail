@@ -19,6 +19,9 @@ import be.uclouvain.jail.graph.IDirectedGraph;
  */
 public interface INFA extends IAdaptable {
 
+	/** Returns the automaton alphabet. */
+	public <T> IAlphabet<T> getAlphabet();
+	
 	/** Retruns underlying graph. */
 	public IDirectedGraph getGraph();
 	

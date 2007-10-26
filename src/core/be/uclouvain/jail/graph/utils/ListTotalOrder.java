@@ -29,7 +29,7 @@ public class ListTotalOrder<T> implements ITotalOrder<T> {
 	/* (non-Javadoc)
 	 * @see be.uclouvain.jail.utils.ITotalOrderInformer#getElementIndex(java.lang.Object)
 	 */
-	public int getElementIndex(T element) {
+	public int indexOf(T element) {
 		return list.indexOf(element);
 	}
 
@@ -44,8 +44,8 @@ public class ListTotalOrder<T> implements ITotalOrder<T> {
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
 	public int compare(T o1, T o2) {
-		int iIndex = getElementIndex(o1);
-		int jIndex = getElementIndex(o2);
+		int iIndex = indexOf(o1);
+		int jIndex = indexOf(o2);
 		return iIndex == jIndex ? 0 : iIndex < jIndex ? -1 : 1;
 	}
 

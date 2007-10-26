@@ -2,6 +2,7 @@ package be.uclouvain.jail.graph.utils;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import be.uclouvain.jail.adapt.AdaptUtils;
@@ -21,6 +22,9 @@ public class DefaultDirectedGraphPath implements IDirectedGraphPath {
 	
 	/** Edges of the path. */
 	private List<Object> edges;
+	
+	/** Vertices of the path. */
+	private List<Object> vertices;
 	
 	/** Creates a path from a graph and some edges. */
 	public DefaultDirectedGraphPath(IDirectedGraph graph, List<Object> edges) {
@@ -50,7 +54,7 @@ public class DefaultDirectedGraphPath implements IDirectedGraphPath {
 	}
 
 	/** Returns an iterator on path edges. */
-	public Iterable<Object> edges() {
+	public List<Object> edges() {
 		return edges;
 	}
 
@@ -60,45 +64,20 @@ public class DefaultDirectedGraphPath implements IDirectedGraphPath {
 	}
 	
 	/** Returns an iterator on path vertices. */
-	public Iterable<Object> vertices() {
-		if (size() == 0) {
-			return Collections.emptyList();
+	public List<Object> vertices() {
+		if (vertices != null) {
+			return vertices;
 		}
-		return new Iterable<Object>() {
-			public Iterator<Object> iterator() {
-				return new Iterator<Object>() {
-
-					/** Next edge to visit. */
-					private Iterator<Object> it = null;
-					
-					/** Returns true if some vertices has to be iterated. */
-					public boolean hasNext() {
-						return (it == null) || it.hasNext();
-					}
-
-					/** Returns the next vertex to iterate. */
-					public Object next() {
-						Object toReturn = null;
-						if (it == null) {
-							// iterator just started
-							toReturn = getRootVertex();
-							it = edges.iterator();
-						} else {
-							// get next edge target
-							Object edge = it.next();					
-
-							toReturn = graph.getEdgeTarget(edge);
-						}
-						return toReturn;
-					}
-
-					/** Throws an UnsupportedOperationException. */
-					public void remove() {
-						throw new UnsupportedOperationException("Cannot remove from this iterator.");
-					}
-				};
+		if (size() == 0) {
+			vertices = Collections.emptyList();
+		} else {
+			vertices = new LinkedList<Object>();
+			vertices.add(getRootVertex());
+			for (Object edge: edges) {
+				vertices.add(graph.getEdgeTarget(edge));
 			}
-		};
+		}
+		return vertices;
 	}
 
 	/** Accepts a visitor. */
@@ -132,6 +111,9 @@ public class DefaultDirectedGraphPath implements IDirectedGraphPath {
 	
 	/** Adapts to another type. */
 	public <T> Object adapt(Class<T> c) {
+		if (c.isAssignableFrom(this.getClass())) {
+			return this;
+		}
 		return AdaptUtils.externalAdapt(this,c);
 	}
 

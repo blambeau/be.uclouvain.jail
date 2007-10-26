@@ -1,9 +1,5 @@
 package be.uclouvain.jail.adapt;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Provides utilities for adaptability. 
  * 
@@ -15,35 +11,19 @@ import java.util.Map;
  */
 public class AdaptUtils {
 
-	/** A class pair. */
-	static class ClassPair {
-		
-		/** Pair of classes. */
-		private Class[] pair;
-		
-		/** Creates a pair instance. */
-		public ClassPair(Class c, Class d) {
-			this.pair = new Class[]{c,d};
-		}
-		
-		/** Equals overriding. */
-		public boolean equals(Object o) {
-			if (o instanceof ClassPair == false) {
-				return false;
-			}
-			return Arrays.equals(pair, ((ClassPair)o).pair);
-		}
-
-		/** hashCode overriding. */
-		public int hashCode() {
-			return Arrays.hashCode(pair);
-		}
-		
+	/** Used tool. */
+	private static IAdaptationTool tool = new NetworkAdaptationTool();
+	
+	/** Returns used adaptation tool. */
+	public static IAdaptationTool getAdaptationTool() {
+		return tool;
 	}
 	
-	/** Adapters by class pairs. */
-	private static Map<ClassPair,IAdapter> adapters = new HashMap<ClassPair,IAdapter>();
-
+	/** Sets the adaptation tool to use. */
+	public static void setAdaptationTool(IAdaptationTool tool) {
+		AdaptUtils.tool = tool;
+	}
+	
 	/** 
 	 * Tries to adapt <code>who</code> to <code>type</code> using external adapters.
 	 * 
@@ -55,25 +35,7 @@ public class AdaptUtils {
 	 * @param type target adaptation type requested.
 	 */ 
 	public static <T> Object externalAdapt(IAdaptable who, Class<T> type) {
-		if (who == null) {
-			throw new IllegalArgumentException("Adapted object may be null.");
-		}
-		if (type == null) {
-			throw new IllegalArgumentException("Requested type may be null.");
-		}
-
-		// check already ok
-		if (type.isAssignableFrom(who.getClass())) {
-			return who;
-		}
-		
-		// find adapter and delegates
-		ClassPair pair = new ClassPair(who.getClass(),type);
-		IAdapter adapter = adapters.get(pair); 
-		if (adapter == null) {
-			return null;
-		}
-		return adapter.adapt(who, type);
+		return AdaptUtils.tool.externalAdapt(who, type);
 	}
 	
 	/** 
@@ -88,30 +50,7 @@ public class AdaptUtils {
 	 * @param type target adaptation type requested.
 	 */
 	public static <T> Object adapt(Object who, Class<T> type) {
-		if (who == null) {
-			throw new IllegalArgumentException("Adapted object may be null.");
-		}
-		if (type == null) {
-			throw new IllegalArgumentException("Requested type may be null.");
-		}
-		
-		// check already ok
-		if (type.isAssignableFrom(who.getClass())) {
-			return who;
-		}
-		
-		// check by component himself
-		if (who instanceof IAdaptable) {
-			return ((IAdaptable)who).adapt(type);
-		} else {
-			// find adapter and delegates
-			ClassPair pair = new ClassPair(who.getClass(),type);
-			IAdapter adapter = adapters.get(pair); 
-			if (adapter == null) {
-				return null;
-			}
-			return adapter.adapt(who, type);
-		}
+		return AdaptUtils.tool.adapt(who, type);
 	}
 	
 	/** 
@@ -122,18 +61,7 @@ public class AdaptUtils {
 	 * @param adapter adapter which provides the adaptation. 
 	 */
 	public static void register(Class src, Class target, IAdapter adapter) {
-		if (src == null) {
-			throw new IllegalArgumentException("Source type may be null.");
-		}
-		if (target == null) {
-			throw new IllegalArgumentException("Target type may be null.");
-		}
-		if (adapter == null) {
-			throw new IllegalArgumentException("Adapter may be null.");
-		}
-
-		ClassPair pair = new ClassPair(src,target);
-		adapters.put(pair,adapter);
+		AdaptUtils.tool.register(src, target, adapter);
 	}
 	
 }

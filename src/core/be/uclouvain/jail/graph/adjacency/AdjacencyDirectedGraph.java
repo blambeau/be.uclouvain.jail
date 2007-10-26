@@ -495,7 +495,7 @@ public class AdjacencyDirectedGraph extends UserInfoCapable implements IDirected
 		}
 
 		/** Returns a vertice index. */
-		public int getElementIndex(Object element) {
+		public int indexOf(Object element) {
 			return ((IVertex) element).getId();
 		}
 
@@ -506,8 +506,8 @@ public class AdjacencyDirectedGraph extends UserInfoCapable implements IDirected
 
 		/** Comparison on the total order. */
 		public int compare(Object arg0, Object arg1) {
-			int iIndex = getElementIndex(arg0);
-			int jIndex = getElementIndex(arg1);
+			int iIndex = indexOf(arg0);
+			int jIndex = indexOf(arg1);
 			return iIndex == jIndex ? 0 : iIndex < jIndex ? -1 : 1;
 		}
 
@@ -547,7 +547,7 @@ public class AdjacencyDirectedGraph extends UserInfoCapable implements IDirected
 		}
 
 		/** Returns an edge index. */
-		public int getElementIndex(Object element) {
+		public int indexOf(Object element) {
 			return ((IEdge) element).getId();
 		}
 
@@ -558,8 +558,8 @@ public class AdjacencyDirectedGraph extends UserInfoCapable implements IDirected
 
 		/** Comparison on the total order. */
 		public int compare(Object arg0, Object arg1) {
-			int iIndex = getElementIndex(arg0);
-			int jIndex = getElementIndex(arg1);
+			int iIndex = indexOf(arg0);
+			int jIndex = indexOf(arg1);
 			return iIndex == jIndex ? 0 : iIndex < jIndex ? -1 : 1;
 		}
 
@@ -582,6 +582,10 @@ public class AdjacencyDirectedGraph extends UserInfoCapable implements IDirected
 	
 	/** Adaptability implementation. */
 	public <T> Object adapt(Class<T> c) {
+		if (c.isAssignableFrom(this.getClass())) {
+			return this;
+		}
+		
 		if (adaptations != null) {
 			// try instance adaptation
 			Object iAdapt = adaptations.adapt(this, c);

@@ -3,7 +3,8 @@ package be.uclouvain.jail.dialect.dot;
 import java.io.IOException;
 
 import junit.framework.TestCase;
-import be.uclouvain.jail.Jail;
+import be.uclouvain.jail.adapt.AdaptUtils;
+import be.uclouvain.jail.adapt.CreateClassAdapter;
 import be.uclouvain.jail.dialect.IPrintable;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
@@ -46,7 +47,6 @@ public class DOTPrintableTest extends TestCase {
 	/** Creates the test graph. */
 	@Override
 	protected void setUp() throws Exception {
-		Jail.install();
 		super.setUp();
 		
 		graph = new AdjacencyDirectedGraph();
@@ -65,6 +65,7 @@ public class DOTPrintableTest extends TestCase {
 
 	/** Test print method. */
 	public void testPrint() throws IOException {
+		AdaptUtils.register(IDirectedGraph.class,IPrintable.class,new CreateClassAdapter(DOTDirectedGraphPrintable.class));
 		IPrintable printable = (IPrintable) graph.adapt(IPrintable.class);
 		assertNotNull("Adaptation worked.", printable);
 		printable.print(System.out);

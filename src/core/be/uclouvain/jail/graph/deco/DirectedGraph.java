@@ -2,7 +2,9 @@ package be.uclouvain.jail.graph.deco;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import be.uclouvain.jail.adapt.AdaptUtils;
 import be.uclouvain.jail.adapt.IAdapter;
@@ -269,6 +271,24 @@ public class DirectedGraph implements IDirectedGraph {
 				AdaptUtils.externalAdapt(this,c) : 
 				result;
 	}
+
+	/** Project a set of vertices to a set of their attached infos. */ 
+	public Set<IUserInfo> getVertexInfos(Set<Object> block) {
+		Set<IUserInfo> infos = new HashSet<IUserInfo>();
+		for (Object vertex: block) {
+			infos.add(getVertexInfo(vertex));
+		}
+		return infos;
+	}
+	
+	/** Project a set of edges to a set of their attached infos. */ 
+	public Set<IUserInfo> getEdgeInfos(Set<Object> block) {
+		Set<IUserInfo> infos = new HashSet<IUserInfo>();
+		for (Object edge: block) {
+			infos.add(getEdgeInfo(edge));
+		}
+		return infos;
+	}
 	
 	/** Extracts some attribute from a vertex or edge. */
 	@SuppressWarnings("unchecked")
@@ -286,5 +306,5 @@ public class DirectedGraph implements IDirectedGraph {
 	public <T> T compute(Iterable<Object> it, String attr, IAggregateFunction<T> f) {
 		return GraphQueryUtils.compute(this, it, attr, f);
 	}
-	
+
 }

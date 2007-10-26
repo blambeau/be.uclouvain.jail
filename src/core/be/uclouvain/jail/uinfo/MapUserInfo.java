@@ -73,7 +73,14 @@ public class MapUserInfo implements IUserInfo {
 	 * @see be.uclouvain.jail.adapt.IAdaptable#adapt(java.lang.Class)
 	 */
 	public <T> Object adapt(Class<T> c) {
+		if (c.isAssignableFrom(this.getClass())) {
+			return this;
+		}
 		return AdaptUtils.externalAdapt(this,c);
 	}
 
+	/** Returns a string representation. */
+	public String toString() {
+		return info.toString();
+	}
 }

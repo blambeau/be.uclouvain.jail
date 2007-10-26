@@ -115,7 +115,7 @@ public class DSP {
 	public <T> T edgePathCompute(Object target, String attr, IAggregateFunction<T> f) {
 		if (!computed) { computeDSP(); }
 		IDirectedGraphPath path = shortestPathTo(target);
-		return GraphQueryUtils.compute(input.getGraph(),path.edges(),attr,f);
+		return path==null ? null : GraphQueryUtils.compute(input.getGraph(),path.edges(),attr,f);
 	}
 	
 	/** 

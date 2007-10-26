@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import be.uclouvain.jail.fa.IAlphabet;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
@@ -42,6 +43,20 @@ public class GraphDFA extends GraphFA implements IDFA {
 	}
 	
 	/** 
+	 * Creates a DFA instance.
+	 * 
+	 * <p>AdjacencyDirectedGraph(DFAComponentFactory) will be used as efficient data 
+	 * structure for automaton implementation.</p>
+	 * 
+	 * @param informer DFA informer to get edge letter and state flags.
+	 */
+	public GraphDFA(IAlphabet alphabet) {
+		this(new AdjacencyDirectedGraph(new DFAComponentFactory()),
+			 new AttributeGraphFAInformer(),
+			 alphabet);
+	}
+	
+	/** 
 	 * Creates a DFA instance. 
 	 * 
 	 * <p>This constructor can be used to decorate any graph as an automaton using
@@ -50,6 +65,17 @@ public class GraphDFA extends GraphFA implements IDFA {
 	 */
 	public GraphDFA(IDirectedGraph graph, IGraphFAInformer informer) {
 		super(graph,informer);
+	}
+	
+	/** 
+	 * Creates a DFA instance. 
+	 * 
+	 * <p>This constructor can be used to decorate any graph as an automaton using
+	 * the informer provided. Efficiency of the DFA cannot be garantied as actual
+	 * data structure used by the underlying graph is unknown.</p>
+	 */
+	public GraphDFA(IDirectedGraph graph, IGraphFAInformer informer, IAlphabet alphabet) {
+		super(graph,informer,alphabet);
 	}
 	
 	/** Returns the initialState. */

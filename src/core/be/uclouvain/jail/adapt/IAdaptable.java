@@ -17,6 +17,10 @@ public interface IAdaptable {
 	 * 
 	 * <p>The algorithm provided by this method should always be the following:</p>
 	 * <pre>
+	 *     if (c.isAssignableFrom(getClass())) {
+	 *        return this;
+	 *    }
+	 * 
 	 *     // test natural adaptabilities of the class,
 	 *     // return adapted instance when adaptibility found 
 	 *     [...] 

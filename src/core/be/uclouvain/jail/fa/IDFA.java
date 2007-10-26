@@ -5,6 +5,7 @@ import java.util.Collection;
 import be.uclouvain.jail.adapt.IAdaptable;
 import be.uclouvain.jail.fa.impl.GraphDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
+import be.uclouvain.jail.uinfo.IUserInfo;
 
 /** 
  * Deterministic Finite Automaton (DFA) contract.
@@ -19,6 +20,9 @@ import be.uclouvain.jail.graph.IDirectedGraph;
  */
 public interface IDFA extends IAdaptable {
 
+	/** Returns the automaton alphabet. */
+	public <T> IAlphabet<T> getAlphabet();
+	
 	/** Retruns underlying graph. */
 	public IDirectedGraph getGraph();
 	
@@ -33,6 +37,9 @@ public interface IDFA extends IAdaptable {
 	
 	/** Returns DFA initial state. */
 	public Object getInitialState();
+	
+	/** Extracts the letter from an edge info. */
+	public Object getEdgeLetter(IUserInfo info);
 	
 	/** Returns an edge letter. */
 	public Object getEdgeLetter(Object s);

@@ -1,0 +1,11 @@
+digraph DFA {
+	graph [rankdir="LR"];
+	node [shape="circle"];
+	0 [label="v0" isInitial=true isAccepting=false isError=false];
+	1 [label="v1" isInitial=false isAccepting=true isError=false shape="doublecircle"];
+	2 [label="v2" isInitial=false isAccepting=true isError=false shape="doublecircle"];
+	0 -> 1 [label="a" letter="a"];
+	0 -> 1 [label="b" letter="b"];
+	1 -> 2 [label="c" letter="c"];
+	2 -> 2 [label="d" letter="d"];
+}

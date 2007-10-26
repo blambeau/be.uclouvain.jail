@@ -106,7 +106,7 @@ public class AdjacencyDirectedGraphTest extends TestCase {
 			for (Object edge: graph.getOutgoingEdges(vertex)) {
 				out.add(edge);
 			}
-			int index = i.getElementIndex(vertex);
+			int index = i.indexOf(vertex);
 			for (int j=0; j<outEdges[index].length; j++) {
 				assertTrue(out.contains(outEdges[index][j]));
 			}

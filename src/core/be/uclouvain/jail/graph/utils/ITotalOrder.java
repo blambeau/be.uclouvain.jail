@@ -42,7 +42,7 @@ public interface ITotalOrder<T> extends Comparator<T>, Iterable<T> {
 	 * @param element an element in the collection.
 	 * @return the index of the element in the underlying collection.
 	 */
-	public int getElementIndex(T element);
+	public int indexOf(T element);
 
 	/**
 	 * <p> Returns the element at a specific index in the underlying collection. </p>

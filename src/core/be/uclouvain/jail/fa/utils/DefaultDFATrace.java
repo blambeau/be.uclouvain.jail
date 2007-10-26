@@ -56,6 +56,9 @@ public class DefaultDFATrace<T> implements IDFATrace<T> {
 
 	/** Adapts this trace to another type. */
 	public <S> Object adapt(Class<S> c) {
+		if (c.isAssignableFrom(this.getClass())) {
+			return this;
+		}
 		return AdaptUtils.externalAdapt(this,c);
 	}
 

@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import be.uclouvain.jail.fa.IAlphabet;
 import be.uclouvain.jail.fa.INFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
@@ -39,6 +40,19 @@ public class GraphNFA extends GraphFA implements INFA {
 	 * 
 	 * @param informer NFA informer to get edge letter and state flags.
 	 */
+	public GraphNFA(IAlphabet alphabet) {
+		this(new AdjacencyDirectedGraph(new NFAComponentFactory()),
+				new AttributeGraphFAInformer(),alphabet);
+	}
+	
+	/** 
+	 * Creates a NFA instance.
+	 * 
+	 * <p>AdjacencyDirectedGraph(NFAComponentFactory) will be used as efficient data 
+	 * structure for automaton implementation.</p>
+	 * 
+	 * @param informer NFA informer to get edge letter and state flags.
+	 */
 	public GraphNFA(IGraphFAInformer informer) {
 		this(new AdjacencyDirectedGraph(new NFAComponentFactory()),informer);
 	}
@@ -54,6 +68,17 @@ public class GraphNFA extends GraphFA implements INFA {
 		super(graph,informer);
 	}
 	
+	/** 
+	 * Creates a NFA instance. 
+	 * 
+	 * <p>This constructor can be used to decorate any graph as an automaton using
+	 * the informer provided. Efficiency of the NFA cannot be garantied as actual
+	 * data structure used by the underlying graph is unknown.</p>
+	 */
+	public GraphNFA(IDirectedGraph graph, IGraphFAInformer informer, IAlphabet alphabet) {
+		super(graph,informer,alphabet);
+	}
+	
 	/** Returns the initialState. */
 	public Iterable<Object> getInitialStates() {
 		List<Object> states = new ArrayList<Object>();
@@ -62,7 +87,11 @@ public class GraphNFA extends GraphFA implements INFA {
 				states.add(state);
 			}
 		}
-		throw new GraphConstraintViolationException(null,"No initial state");
+		if (states.isEmpty()) {
+			throw new GraphConstraintViolationException(null,"No initial state");
+		} else {
+			return states;
+		}
 	}
 	
 	/** Returns the outgoing edge of s labeled by the given letter, null

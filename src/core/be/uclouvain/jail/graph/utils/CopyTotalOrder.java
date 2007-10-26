@@ -50,14 +50,10 @@ import java.util.Map;
  */
 public class CopyTotalOrder<T> implements ITotalOrder<T> {
 
-	/**
-	 * Array used to get fast mapping from index to element;
-	 */
+	/** Array used to get fast mapping from index to element. */
 	public List<T> collectionArray;
 
-	/**
-	 * Map used to get fast mapping from element to index.
-	 */
+	/** Map used to get fast mapping from element to index. */
 	public Map<T, Integer> collectionMap;
 
 	/**
@@ -96,7 +92,7 @@ public class CopyTotalOrder<T> implements ITotalOrder<T> {
 	 * is not in the collection. User of this method is ensured that the index
 	 * is the smallest possible index for that element (duplicates case).
 	 */
-	public int getElementIndex(Object element) {
+	public int indexOf(T element) {
 		Integer index = collectionMap.get(element);
 		if (index == null) {
 			return -1;
@@ -115,9 +111,9 @@ public class CopyTotalOrder<T> implements ITotalOrder<T> {
 	 * Comparison on the total order. This method reuse getElementIndex(...) to
 	 * make it work.
 	 */
-	public int compare(Object arg0, Object arg1) {
-		int iIndex = getElementIndex(arg0);
-		int jIndex = getElementIndex(arg1);
+	public int compare(T arg0, T arg1) {
+		int iIndex = indexOf(arg0);
+		int jIndex = indexOf(arg1);
 		return iIndex == jIndex ? 0 : iIndex < jIndex ? -1 : 1;
 	}
 

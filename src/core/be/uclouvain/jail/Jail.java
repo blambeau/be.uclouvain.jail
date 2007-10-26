@@ -5,12 +5,6 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.ConvertUtils;
 
-import be.uclouvain.jail.adapt.AdaptUtils;
-import be.uclouvain.jail.adapt.CreateClassAdapter;
-import be.uclouvain.jail.dialect.IPrintable;
-import be.uclouvain.jail.dialect.dot.DOTDirectedGraphPrintable;
-import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
-
 /** 
  * JAIL main class. 
  *
@@ -24,12 +18,6 @@ public class Jail {
 	
 	/** Installs jail. */
 	public static void install() {}
-	
-	/** Installs core adapters. */
-	static {
-		AdaptUtils.register(AdjacencyDirectedGraph.class,IPrintable.class,
-				new CreateClassAdapter(DOTDirectedGraphPrintable.class));
-	}
 	
 	/** Sets a JAIL property. */
 	public static void setProperty(String key, Object value) {

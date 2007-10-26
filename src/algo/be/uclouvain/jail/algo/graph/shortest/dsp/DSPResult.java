@@ -44,6 +44,10 @@ public class DSPResult<T> {
 		Object current = vertex;
 		while (current != root) {
 			Object edge = output.getIncommingEdge(current); 
+			if (edge == null) {
+				// unreachable current
+				return null;
+			}
 			edges.addFirst(edge);
 			current = graph.getEdgeSource(edge);
 		}
@@ -79,8 +83,8 @@ public class DSPResult<T> {
 			Object iEdge = getIncomingEdge(vertex);
 			Object iSource = graph.getEdgeSource(iEdge);
 			eInfo = graph.getEdgeInfo(iEdge);
-			output.createEdge(copies[vertices.getElementIndex(iSource)], 
-					copies[vertices.getElementIndex(vertex)], eInfo);
+			output.createEdge(copies[vertices.indexOf(iSource)], 
+					copies[vertices.indexOf(vertex)], eInfo);
 		}
 	}
 	

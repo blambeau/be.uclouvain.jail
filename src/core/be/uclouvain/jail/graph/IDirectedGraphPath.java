@@ -1,6 +1,10 @@
 package be.uclouvain.jail.graph;
 
+import java.util.List;
+
 import be.uclouvain.jail.adapt.IAdaptable;
+import be.uclouvain.jail.graph.utils.DefaultDirectedGraphPath;
+import be.uclouvain.jail.graph.utils.DirectedGraphPath;
 
 /**
  * Defines a path inside a directed graph.
@@ -52,10 +56,10 @@ public interface IDirectedGraphPath extends IAdaptable, Iterable<Object> {
 	public int size();
 
 	/** Returns an iterator on path edges. */
-	public Iterable<Object> edges();
+	public List<Object> edges();
 
 	/** Returns an iterator on path vertices. */
-	public Iterable<Object> vertices();
+	public List<Object> vertices();
 
 	/** Accepts a visitor. */
 	public void accept(IVisitor visitor);

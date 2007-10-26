@@ -3,6 +3,8 @@ package be.uclouvain.jail.fa.impl;
 import be.uclouvain.jail.adapt.AdaptUtils;
 import be.uclouvain.jail.adapt.IAdaptable;
 import be.uclouvain.jail.adapt.IAdapter;
+import be.uclouvain.jail.fa.IAlphabet;
+import be.uclouvain.jail.fa.utils.AutoAlphabet;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
 
@@ -13,6 +15,9 @@ import be.uclouvain.jail.uinfo.IUserInfo;
  */
 public abstract class GraphFA implements IAdaptable {
 
+	/** Automaton alphabet. */
+	protected IAlphabet alphabet;
+	
 	/** Decorated graph. */
 	protected IDirectedGraph graph;
 	
@@ -25,9 +30,10 @@ public abstract class GraphFA implements IAdaptable {
 	 * <p>This constructor can be used to decorate any graph as an automaton using
 	 * the informer provided.</p>
 	 */
-	public GraphFA(IDirectedGraph graph, IGraphFAInformer informer) {
+	public GraphFA(IDirectedGraph graph, IGraphFAInformer informer, IAlphabet alphabet) {
 		this.graph = graph;
 		this.informer = informer;
+		this.alphabet = alphabet;
 		this.graph.addAdaptation(IGraphFAInformer.class, new IAdapter() {
 			/** Adapts the graph to the informer. */
 			public Object adapt(Object who, Class type) {
@@ -35,17 +41,31 @@ public abstract class GraphFA implements IAdaptable {
 			}
 		});
 	}
+
+	/** 
+	 * Creates a FA instance. 
+	 * 
+	 * <p>This constructor can be used to decorate any graph as an automaton using
+	 * the informer provided.</p>
+	 */
+	public GraphFA(IDirectedGraph graph, IGraphFAInformer informer) {
+		this(graph,informer,null);
+	}
+	
+	/** Returns the automaton alphabet. */
+	@SuppressWarnings("unchecked")
+	public <T> IAlphabet<T> getAlphabet() {
+		if (alphabet == null) {
+			alphabet = AutoAlphabet.inferAlphabet(this,null);
+		}
+		return alphabet;
+	}
 	
 	/** Returns underlying graph. */
 	public IDirectedGraph getGraph() {
 		return graph;
 	}
 	
-	/** Extracts the edge letter from a UserInfo */
-	public Object edgeLetter(IUserInfo s) {
-		return informer.edgeLetter(s);
-	}
-
 	/** Extracts the accepting flag from a UserInfo */
 	public boolean isAccepting(IUserInfo s) {
 		return informer.isAccepting(s);
@@ -76,13 +96,21 @@ public abstract class GraphFA implements IAdaptable {
 		return isError(graph.getVertexInfo(s));
 	}
 	
+	/** Extracts the edge letter from a UserInfo */
+	public Object getEdgeLetter(IUserInfo s) {
+		return informer.edgeLetter(s);
+	}
+
 	/** Returns the letter attached to an edge. */
 	public Object getEdgeLetter(Object edge) {
-		return edgeLetter(graph.getEdgeInfo(edge));
+		return getEdgeLetter(graph.getEdgeInfo(edge));
 	}
 	
 	/** Adapts. */
 	public <T> Object adapt(Class<T> c) {
+		if (c.isAssignableFrom(this.getClass())) {
+			return this;
+		}
 		if (IDirectedGraph.class.equals(c)) {
 			return graph;
 		}

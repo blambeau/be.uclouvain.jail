@@ -1,0 +1,73 @@
+package be.uclouvain.jail.vm.autogram;
+
+import net.chefbe.autogram.ast2.parsing.active.ActiveParser;
+
+grammar Jail as jail extends ActiveParser {
+
+	using be.uclouvain.jail.dialect.commons.UTILS as u;
+	
+	/* -------------------------------------------------------------------------------------------- JAIL main commands */
+	<jail:unit>                            ::= <u:spacing>? command:<jail:command u:list> <u:eof>
+	                                         ; [u:node]
+	<jail:command>                         ::= tor:<jail:affectation>
+	                                         | tor:<jail:show>
+	                                         ; [u:return]
+	<jail:affectation>                     ::= var:<jail:identifier> <'=' u:symbol>
+	                                           value:<jail:gexpression> <';' u:symbol>
+	                                         ; [u:node]
+	<jail:show>                            ::= value:<jail:gexpression> <';' u:symbol>
+	                                         ; [u:node]
+
+	/* -------------------------------------------------------------------------------------------- JAIL graph expression */
+	<jail:gexpression>                     ::= tor:<jail:goperator>
+	                                         | tor:<jail:gliteral>
+	                                         | tor:<jail:varref>
+	                                         ; [u:return]
+	                                         
+	// graph literals
+	<jail:gliteral>                        ::= "<§" format:<jail:identifier>
+	                                               literal:!"§>"
+	                                           <"§>" u:symbol>
+	                                         ; [u:node]
+		                                         
+	// graph operator
+	<jail:goperator>                       ::= '(' name:<jail:identifier>
+	                                               operands:<jail:goperands>
+	                                               options:<jail:options>?
+	                                           <')' u:symbol>
+	                                         ; [u:node]
+	<jail:goperands>                       ::= operand:<jail:goperand u:list>
+	                                         ; [u:node]
+	<jail:goperand>                        ::= expr:<jail:gexpression>
+	                                         ; [u:node]
+	<jail:options>                         ::= option:<jail:option u:list>
+	                                         ; [u:node]
+	<jail:option>                          ::= ':' name:<jail:identifier> value:<jail:optvalue>
+	                                         ; [u:node]
+	<jail:optvalue>                        ::= tor:<jail:attrs_expr>
+	                                         | tor:<u:string>
+	                                         | tor:<u:boolean>
+	                                         ; [u:return]
+
+	// attribute expressions
+	<jail:attrs_expr>                      ::= <'/' u:symbol>
+	                                               affectation:<jail:attr_affect u:list>
+	                                           <'/' u:symbol>
+	                                         ; [u:node]
+	<jail:attr_affect>                     ::= name:<jail:attrname> <'=' u:symbol>
+	                                           expr:<jail:attr_expr>
+	                                         ; [u:node]
+	<jail:attr_expr>                       ::= tor:<jail:attrref>
+	                                         ; [u:return]
+	<jail:attrname>                        ::= '@' tor:<jail:identifier>
+	                                         ; [u:return]
+	<jail:attrref>                         ::= name:<jail:attrname>
+	                                         ; [u:node]
+
+	/* -------------------------------------------------------------------------------------------- common utilities */
+	<jail:varref>                          ::= <'(' u:symbol> var:<jail:identifier> <')' u:symbol>
+	                                         ; [u:node]
+	<jail:identifier>                      ::= tor:<u:identifier>
+	                                         ; [u:return]
+
+}
