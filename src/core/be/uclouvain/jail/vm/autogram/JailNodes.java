@@ -39,6 +39,9 @@ public enum JailNodes implements IASTType {
 	/** OPTLITERAL node marker. */
 	OPTLITERAL,
 
+	/** LITERAL node marker. */
+	LITERAL,
+
 	/** VARREF node marker. */
 	VARREF;
 

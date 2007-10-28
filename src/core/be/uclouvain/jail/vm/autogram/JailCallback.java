@@ -66,6 +66,11 @@ public class JailCallback<T> extends CallbackBase<T> {
 		return nonOverrided(node);
 	}
 
+	/** Callback method for LITERAL nodes. */
+	public T LITERAL(IASTNode node) throws Exception {
+		return nonOverrided(node);
+	}
+
 	/** Callback method for VARREF nodes. */
 	public T VARREF(IASTNode node) throws Exception {
 		return nonOverrided(node);

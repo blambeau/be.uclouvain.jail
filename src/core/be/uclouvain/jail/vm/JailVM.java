@@ -13,11 +13,11 @@ import net.chefbe.autogram.ast2.parsing.active.ASTLoader.EnumTypeResolver;
 import net.chefbe.autogram.ast2.parsing.peg.Input;
 import net.chefbe.autogram.ast2.parsing.peg.Pos;
 import net.chefbe.autogram.ast2.utils.BaseLocation;
+import net.chefbe.javautils.robust.exceptions.CoreException;
 import be.uclouvain.jail.adapt.AdaptUtils;
 import be.uclouvain.jail.adapt.IAdapter;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchNodes;
 import be.uclouvain.jail.dialect.IPrintable;
-import be.uclouvain.jail.dialect.dot.DOTDirectedGraphLoader;
 import be.uclouvain.jail.vm.autogram.JailNodes;
 import be.uclouvain.jail.vm.autogram.JailParser;
 import be.uclouvain.jail.vm.toolkits.AutomatonToolkit;
@@ -30,6 +30,9 @@ import be.uclouvain.jail.vm.toolkits.GraphToolkit;
  */
 public class JailVM {
 
+	/** Core toolkit. */
+	private JailCoreToolkit core;
+	
 	/** VM memory. */
 	private Map<String,Object> memory;
 	
@@ -40,10 +43,17 @@ public class JailVM {
 	public JailVM() {
 		memory = new HashMap<String,Object>();
 		toolkits = new HashMap<String,IJailVMToolkit>();
-		register("fa",new AutomatonToolkit());
-		register("graph",new GraphToolkit());
+		core = new JailCoreToolkit();
+		registerToolkit("jail",core);
+		registerToolkit("fa",new AutomatonToolkit());
+		registerToolkit("graph",new GraphToolkit());
 	}
 
+	/** Returns the core toolkit. */
+	public JailCoreToolkit getCoreToolkit() {
+		return core;
+	}
+	
 	/** Executes some commands taken on some source. */
 	public void execute(Object source) throws JailVMException {
 		try {
@@ -63,11 +73,11 @@ public class JailVM {
 			
 			// execute on callback
 			try {
-				// debug
-				//root.accept(new DebugVisitor());
 				root.accept(new JailVMCallback(this));
+			} catch (CoreException e) {
+				handleError(e.getCause());
 			} catch (Exception e) {
-				e.printStackTrace();
+				handleError(e);
 			}
 		} catch (IOException ex) {
 			throw new JailVMException("Unable to parse jail file.",ex);
@@ -76,10 +86,20 @@ public class JailVM {
 		}
 	}
 	
+	/** Handles an error. */
+	private void handleError(Throwable t) {
+		System.out.println("Jail VM error: " + t.getMessage());
+	}
+	
 	/** Registers some plugin. */
-	public void register(String namespace, IJailVMToolkit toolkit) {
+	public void registerToolkit(String namespace, IJailVMToolkit toolkit) {
 		toolkits.put(namespace, toolkit);
 		toolkit.install(this);
+	}
+	
+	/** Registers a loader. */
+	public void registerDialectLoader(String extension, IJailVMDialectLoader loader) {
+		core.registerDialectLoader(extension, loader);
 	}
 	
 	/** Returns a plugin mapped to some namespace. */
@@ -105,21 +125,6 @@ public class JailVM {
 		memory.remove(varName);
 	}
 
-	/** Parses a literal. */
-	public Object parseLiteral(String format, String literal) throws JailVMException {
-		if ("dot".equals(format)) {
-			try {
-				return DOTDirectedGraphLoader.loadGraph(literal);
-			} catch (ParseException e) {
-				throw new JailVMException("Literal parsing failed",e);
-			} catch (IOException e) {
-				throw new JailVMException("Literal parsing failed",e);
-			}
-		} else {
-			throw new JailVMException("Unknown literal format: " + format);
-		}
-	}
-	
 	/** Debugs the memory. */
 	public void debugMemory() {
 		for (String key: memory.keySet()) {

@@ -12,7 +12,7 @@ import java.util.Map;
  * 
  * @author blambeau
  */
-public abstract class ReflectionToolkit implements IJailVMToolkit {
+public abstract class JailReflectionToolkit implements IJailVMToolkit {
 
 	/** Command cache by name. */
 	private Map<String,Method> commands;
@@ -21,7 +21,7 @@ public abstract class ReflectionToolkit implements IJailVMToolkit {
 	private JailVMOptions options;
 	
 	/** Creates the toolkit by reflection. */
-	public ReflectionToolkit() {
+	public JailReflectionToolkit() {
 		infer();
 	}
 	
@@ -62,11 +62,21 @@ public abstract class ReflectionToolkit implements IJailVMToolkit {
 		try {
 			return m.invoke(this, args);
 		} catch (IllegalArgumentException e) {
-			throw new JailVMException("Toolkit command " + command + " failed.",e);
+			throw extractException(command,e);
 		} catch (IllegalAccessException e) {
-			throw new JailVMException("Toolkit command " + command + " failed.",e);
+			throw extractException(command,e);
 		} catch (InvocationTargetException e) {
-			throw new JailVMException("Toolkit command " + command + " failed.",e);
+			throw extractException(command,e);
+		}
+	}
+	
+	/** Extracts an exception. */
+	private JailVMException extractException(String command, Exception e) {
+		Throwable cause = e.getCause();
+		if (cause instanceof JailVMException) {
+			return (JailVMException) cause;
+		} else {
+			return new JailVMException("Toolkit command " + command + " failed.",e);
 		}
 	}
 

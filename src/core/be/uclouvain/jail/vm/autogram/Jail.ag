@@ -40,6 +40,7 @@ grammar Jail as jail extends ActiveParser {
 	<jail:goperands>                       ::= operand:<jail:goperand u:list>
 	                                         ; [u:node]
 	<jail:goperand>                        ::= expr:<jail:gexpression>
+	                                         | expr:<jail:literal>
 	                                         ; [u:node]
 	<jail:options>                         ::= option:<jail:option u:list>
 	                                         ; [u:node]
@@ -51,6 +52,9 @@ grammar Jail as jail extends ActiveParser {
 	<jail:optmatch>                        ::= match:<gm:match_do>
 	                                         ; [u:node]
 	<jail:optliteral>                      ::= value:<u:string>
+	                                         | value:<u:boolean>
+	                                         ; [u:node]
+	<jail:literal>                         ::= value:<u:string>
 	                                         | value:<u:boolean>
 	                                         ; [u:node]
 

@@ -2,39 +2,49 @@ package be.uclouvain.jail.vm.toolkits;
 
 import java.io.IOException;
 
+import net.chefbe.autogram.ast2.parsing.ParseException;
 import be.uclouvain.jail.adapt.IAdaptable;
 import be.uclouvain.jail.adapt.IAdapter;
 import be.uclouvain.jail.algo.graph.copy.DirectedGraphCopier;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchPopulator;
 import be.uclouvain.jail.dialect.IPrintable;
+import be.uclouvain.jail.dialect.dot.DOTDirectedGraphLoader;
 import be.uclouvain.jail.dialect.dot.DOTDirectedGraphPrintable;
 import be.uclouvain.jail.dialect.dot.JDotty;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.graph.utils.DirectedGraphWriter;
+import be.uclouvain.jail.vm.IJailVMDialectLoader;
 import be.uclouvain.jail.vm.JailVM;
 import be.uclouvain.jail.vm.JailVMException;
-import be.uclouvain.jail.vm.ReflectionToolkit;
+import be.uclouvain.jail.vm.JailReflectionToolkit;
 
 /** Provides a graph tolkit. */
-public class GraphToolkit extends ReflectionToolkit implements IAdapter {
+public class GraphToolkit extends JailReflectionToolkit implements IAdapter {
 
 	/** Installs the toolkit on the virtual machine. */
 	public void install(JailVM vm) {
 		vm.registerAdaptation(IDirectedGraph.class, IPrintable.class, this);
 		vm.registerAdaptation(DOTDirectedGraphPrintable.class, IDirectedGraph.class, this);
+		
+		// register dot dialect
+		vm.registerDialectLoader("dot", new IJailVMDialectLoader() {
+			public Object load(Object source, String format) throws JailVMException {
+				if ("dot".equals(format)) {
+					try {
+						return DOTDirectedGraphLoader.loadGraph(source);
+					} catch (ParseException e) {
+						throw new JailVMException("graphviz .dot parsing failed: " + e.getMessage(),e);
+					} catch (IOException e) {
+						throw new JailVMException("graphviz .dot parsing failed: " + e.getMessage(),e);
+					}
+				} else {
+					throw new IllegalStateException("Unknown format (not graphviz .dot): " + format);
+				}
+			}
+		});
 	}
 
-	/** Prints a printable. */
-	public IPrintable print(IPrintable p) throws JailVMException {
-		try {
-			p.print(System.out);
-			return p;
-		} catch (IOException e) {
-			throw new JailVMException("Unable to print " + p,e);
-		}
-	}
-	
 	/** Visualizes a graph using jdotty. */
 	public IDirectedGraph jdotty(IDirectedGraph graph) throws JailVMException {
 		try {
@@ -77,7 +87,7 @@ public class GraphToolkit extends ReflectionToolkit implements IAdapter {
 	}
 	
 	/** Adapts an object to a directed graph. */
-	public IDirectedGraph adaptToDirectedGraph(Object who) {
+	private IDirectedGraph adaptToDirectedGraph(Object who) {
 		if (who instanceof DOTDirectedGraphPrintable) {
 			return (IDirectedGraph) ((IAdaptable)who).adapt(IDirectedGraph.class);
 		} else {
@@ -86,7 +96,7 @@ public class GraphToolkit extends ReflectionToolkit implements IAdapter {
 	}
 	
 	/** Adapts who to a printable. */
-	public IPrintable adaptToPrintable(Object who) {
+	private IPrintable adaptToPrintable(Object who) {
 		if (who instanceof IDirectedGraph) {
 			return new DOTDirectedGraphPrintable((IDirectedGraph)who);
 		} else {

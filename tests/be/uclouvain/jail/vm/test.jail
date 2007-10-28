@@ -22,4 +22,4 @@ C = (copy (A)
 		:edge  {@label      -> @letter}
      );
 (jdotty (C));
-
+D = (jdotty (load '/home/blambeau/work/development/java/be.uclouvain.jail/tests/be/uclouvain/jail/vm/graph.dot'));

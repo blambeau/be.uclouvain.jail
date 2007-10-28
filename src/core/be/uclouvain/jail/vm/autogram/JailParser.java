@@ -251,7 +251,8 @@ public class JailParser extends ActiveParser {
 	/** &lt;jail:goperands&gt; */
 	public final Object pGoperands(Pos pos) throws ParseException {
 		char _alt_c = pos.charAt();
-		if (((_alt_c == '(') || (_alt_c == '<'))) {
+		if (((_alt_c == '"') || (_alt_c == '\'') || (_alt_c == '(')
+				|| (_alt_c == '<') || (_alt_c == 'f') || (_alt_c == 't'))) {
 			Object _operand = null;
 			_operand = jail.pJailGoperandUList(pos);
 			return load(pos, "jail:goperands", new String[] { "operand" },
@@ -265,15 +266,34 @@ public class JailParser extends ActiveParser {
 	/** &lt;jail:goperand&gt; */
 	public final Object pGoperand(Pos pos) throws ParseException {
 		char _alt_c = pos.charAt();
+		_alt_c = pos.charAt();
 		if (((_alt_c == '(') || (_alt_c == '<'))) {
-			Object _expr = null;
-			_expr = jail.pGexpression(pos);
-			return load(pos, "jail:goperand", new String[] { "expr" },
-					new Object[] { _expr });
-		} else {
-			throw new ParseException("<jail:goperand> expected, "
-					+ pos.charAt() + " found.", pos.location());
+			try {
+				pos.save();
+				Object _expr = null;
+				_expr = jail.pGexpression(pos);
+				pos.commit();
+				return load(pos, "jail:goperand", new String[] { "expr" },
+						new Object[] { _expr });
+			} catch (ParseException ex) {
+				pos.rollback(ex);
+			}
 		}
+		_alt_c = pos.charAt();
+		if (((_alt_c == '"') || (_alt_c == '\'') || (_alt_c == 'f') || (_alt_c == 't'))) {
+			try {
+				pos.save();
+				Object _expr = null;
+				_expr = jail.pLiteral(pos);
+				pos.commit();
+				return load(pos, "jail:goperand", new String[] { "expr" },
+						new Object[] { _expr });
+			} catch (ParseException ex) {
+				pos.rollback(ex);
+			}
+		}
+		return (Object) pos.error("<jail:goperand> expected, " + pos.charAt()
+				+ " found.");
 	}
 
 	/** &lt;jail:options&gt; */
@@ -382,6 +402,39 @@ public class JailParser extends ActiveParser {
 			}
 		}
 		return (Object) pos.error("<jail:optliteral> expected, " + pos.charAt()
+				+ " found.");
+	}
+
+	/** &lt;jail:literal&gt; */
+	public final Object pLiteral(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		_alt_c = pos.charAt();
+		if (((_alt_c == '"') || (_alt_c == '\''))) {
+			try {
+				pos.save();
+				Object _value = null;
+				_value = u.pString(pos);
+				pos.commit();
+				return load(pos, "jail:literal", new String[] { "value" },
+						new Object[] { _value });
+			} catch (ParseException ex) {
+				pos.rollback(ex);
+			}
+		}
+		_alt_c = pos.charAt();
+		if (((_alt_c == 'f') || (_alt_c == 't'))) {
+			try {
+				pos.save();
+				Object _value = null;
+				_value = u.pBoolean(pos);
+				pos.commit();
+				return load(pos, "jail:literal", new String[] { "value" },
+						new Object[] { _value });
+			} catch (ParseException ex) {
+				pos.rollback(ex);
+			}
+		}
+		return (Object) pos.error("<jail:literal> expected, " + pos.charAt()
 				+ " found.");
 	}
 
@@ -609,13 +662,16 @@ public class JailParser extends ActiveParser {
 	/** &lt;jail:jail_goperand_u_list&gt; */
 	public final List<?> pJailGoperandUList(Pos pos) throws ParseException {
 		char _alt_c = pos.charAt();
-		if (((_alt_c == '(') || (_alt_c == '<'))) {
+		if (((_alt_c == '"') || (_alt_c == '\'') || (_alt_c == '(')
+				|| (_alt_c == '<') || (_alt_c == 'f') || (_alt_c == 't'))) {
 			Object _f = null;
 			_f = jail.pGoperand(pos);
 			List<Object> _n = new ArrayList<Object>();
 			_alt_c = pos.charAt();
 			while (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
-					|| (_alt_c == ' ') || (_alt_c == '(') || (_alt_c == '/') || (_alt_c == '<'))) {
+					|| (_alt_c == ' ') || (_alt_c == '"') || (_alt_c == '\'')
+					|| (_alt_c == '(') || (_alt_c == '/') || (_alt_c == '<')
+					|| (_alt_c == 'f') || (_alt_c == 't'))) {
 				try {
 					pos.save();
 					_n.add(jail.pJailGoperandUList11(pos));
@@ -1063,7 +1119,9 @@ public class JailParser extends ActiveParser {
 	public final Object pJailGoperandUList11(Pos pos) throws ParseException {
 		char _alt_c = pos.charAt();
 		if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
-				|| (_alt_c == ' ') || (_alt_c == '(') || (_alt_c == '/') || (_alt_c == '<'))) {
+				|| (_alt_c == ' ') || (_alt_c == '"') || (_alt_c == '\'')
+				|| (_alt_c == '(') || (_alt_c == '/') || (_alt_c == '<')
+				|| (_alt_c == 'f') || (_alt_c == 't'))) {
 			_alt_c = pos.charAt();
 			if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
 					|| (_alt_c == ' ') || (_alt_c == '/'))) {

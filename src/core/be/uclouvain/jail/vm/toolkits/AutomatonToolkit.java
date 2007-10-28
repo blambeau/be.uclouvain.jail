@@ -12,10 +12,10 @@ import be.uclouvain.jail.fa.impl.GraphDFA;
 import be.uclouvain.jail.fa.impl.GraphNFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.vm.JailVM;
-import be.uclouvain.jail.vm.ReflectionToolkit;
+import be.uclouvain.jail.vm.JailReflectionToolkit;
 
 /** Installs automaton toolkit. */
-public class AutomatonToolkit extends ReflectionToolkit implements IAdapter {
+public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter {
 
 	/** Installs the toolkit on the virtual machine. */
 	public void install(JailVM vm) {

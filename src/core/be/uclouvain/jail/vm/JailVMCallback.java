@@ -62,7 +62,7 @@ public class JailVMCallback extends JailCallback<Object> {
 	public Object GLITERAL(IASTNode node) throws Exception {
 		String format = node.getAttrString("format");
 		String literal = node.getAttrString("literal");
-		return vm.parseLiteral(format,literal);
+		return vm.getCoreToolkit().load(literal, format);
 	}
 
 	/** Callback method for GOPERATOR nodes. */
@@ -116,6 +116,12 @@ public class JailVMCallback extends JailCallback<Object> {
 	/** Callback method for OPTLITERAL nodes. */
 	@Override
 	public Object OPTLITERAL(IASTNode node) throws Exception {
+		return node.getAttr("value");
+	}
+
+	/** Callback method for LITERAL nodes. */
+	@Override
+	public Object LITERAL(IASTNode node) throws Exception {
 		return node.getAttr("value");
 	}
 
