@@ -1,5 +1,6 @@
 package be.uclouvain.jail.vm;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import be.uclouvain.jail.adapt.AdaptUtils;
@@ -9,10 +10,10 @@ import be.uclouvain.jail.adapt.AdaptUtils;
  * 
  * @author blambeau
  */
-public class Options {
+public class JailVMOptions {
 
 	/** Options as a map (name,value). */
-	private Map<String,Object> options;
+	private Map<String,Object> options  = new HashMap<String,Object>();
 	
 	/** Returns true if an option has been explicited. */
 	public boolean hasOption(String name) {
@@ -54,6 +55,11 @@ public class Options {
 			
 			return (T) adapted;
 		}
+	}
+
+	/** Sets an option value. */
+	public void setOptionValue(String key, Object value) {
+		options.put(key, value);
 	}
 	
 }

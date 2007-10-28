@@ -1,4 +1,4 @@
-package be.uclouvain.jail.io.commons;
+package be.uclouvain.jail.dialect.commons;
 
 /** Defines reusable utilities on JAIL grammars. */
 grammar UTILS as u {

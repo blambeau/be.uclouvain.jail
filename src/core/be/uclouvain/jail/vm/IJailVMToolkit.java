@@ -18,6 +18,6 @@ public interface IJailVMToolkit {
 			String command, 
 			JailVM vm, 
 			JailVMStack stack, 
-			Options options) throws JailVMException;
+			JailVMOptions options) throws JailVMException;
 	
 }

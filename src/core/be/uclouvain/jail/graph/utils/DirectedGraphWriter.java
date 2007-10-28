@@ -39,7 +39,7 @@ public class DirectedGraphWriter<T> implements IDirectedGraphWriter {
 	
 	/** Returns edge info creator. */
 	public UserInfoCopier getEdgeCopier() {
-		return vInfoCopier;
+		return eInfoCopier;
 	}
 	
 	/** Clones some vertex IUserInfo. */

@@ -1,0 +1,44 @@
+state     ->   {};
+state/@*  ->   {};
+edge      ->   {};
+edge/@*   ->   {};
+
+state     ->   {@id -> true};
+state     ->   {@id -> 'coucou'};
+state     ->   {@id -> true};
+state     ->   {@id -> 0};
+state     ->   {@id -> 109};
+state     ->   {@id -> true, @name -> 'coucou'};
+state     ->   {@p.id -> @id};
+state     ->   {@id -> true, @name -> @p.name};
+state     ->   {@id -> value()};
+state     ->   {@id -> value(@id)};
+state     ->   {@id -> concat('p.',@id)};
+
+state     ->   {@color -> when true then 'coucou'};
+state     ->   {@color -> when @isIdentity then 'coucou'};
+state     ->   {@color -> when @isIdentity then 'coucou'
+                          else 'hello'};
+
+state     ->   {@color -> when (@isError=true) then 'red'};
+state     ->   {@color -> when @isError=true then 'red'};
+state     ->   {@color -> when (@isError=true) then 'red'
+                          when (@isInitial=true) then 'green'
+                          else 'white'};
+state     ->   {@color -> when (@isError=true) then concat('r','e','d')
+                          when (@isInitial=true) then 'green'
+                          else 'white'};
+state     ->   {@color -> when (@isError=true) then concat('r','e','d')
+                          when (@isInitial=true) then 'green'
+                          else 'white',
+                @color -> when (@isError=true) then concat('r','e','d')
+                          when (@isInitial=true) then 'green'
+                          else 'white'};
+state     ->   {@shape -> when (@isAccepting=true) then 'doublecircle'
+                          else 'circle',
+                @color -> when (@isError=true) then concat('r','e','d')
+                          when (@isInitial=true) then 'green'
+                          else 'white'};
+state     ->   {@color -> when (@isError=true and @isAccepting=false) then 'red'};
+state     ->   {@color -> when @isError=true and @isAccepting=false then 'red'};
+                          

@@ -4,10 +4,14 @@ import java.io.IOException;
 
 import be.uclouvain.jail.adapt.IAdaptable;
 import be.uclouvain.jail.adapt.IAdapter;
+import be.uclouvain.jail.algo.graph.copy.DirectedGraphCopier;
+import be.uclouvain.jail.algo.graph.copy.match.GMatchPopulator;
 import be.uclouvain.jail.dialect.IPrintable;
 import be.uclouvain.jail.dialect.dot.DOTDirectedGraphPrintable;
 import be.uclouvain.jail.dialect.dot.JDotty;
 import be.uclouvain.jail.graph.IDirectedGraph;
+import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
+import be.uclouvain.jail.graph.utils.DirectedGraphWriter;
 import be.uclouvain.jail.vm.JailVM;
 import be.uclouvain.jail.vm.JailVMException;
 import be.uclouvain.jail.vm.ReflectionToolkit;
@@ -39,6 +43,27 @@ public class GraphToolkit extends ReflectionToolkit implements IAdapter {
 			throw new JailVMException("Unable to present graph using jdotty: ",e);
 		}
 		return graph;
+	}
+	
+	/** Copies a graph. */
+	public IDirectedGraph copy(IDirectedGraph graph) throws JailVMException {
+		AdjacencyDirectedGraph copy = new AdjacencyDirectedGraph();
+		DirectedGraphWriter writer = new DirectedGraphWriter(copy);
+
+		// add state populator
+		if (hasOption("state")) {
+			GMatchPopulator populator = getOptionValue("state",GMatchPopulator.class,null);
+			writer.getVertexCopier().addPopulator(populator);
+		}
+		
+		// add edge populator
+		if (hasOption("edge")) {
+			GMatchPopulator populator = getOptionValue("edge",GMatchPopulator.class,null);
+			writer.getEdgeCopier().addPopulator(populator);
+		}
+		
+		DirectedGraphCopier.copy(graph,writer);
+		return copy;
 	}
 	
 	/** Adapts who to the requested type. */

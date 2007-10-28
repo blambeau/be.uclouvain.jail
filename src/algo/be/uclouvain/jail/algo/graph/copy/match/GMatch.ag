@@ -1,0 +1,103 @@
+package be.uclouvain.jail.algo.graph.copy.match;
+
+import net.chefbe.autogram.ast2.parsing.active.ActiveParser;
+
+grammar GMatch as gm extends ActiveParser {
+	
+	using be.uclouvain.jail.dialect.commons.UTILS as u;
+	
+	<gm:match_test>                    ::= rule:<gm:match_testone u:list> <u:eof>
+	                                     ; [u:node]
+	<gm:match_testone>                 ::= tor:<gm:match_rule> <';' u:symbol>
+	                                     ; [u:return]
+	
+	<gm:match_rule>                    ::= match:<gm:match_path> <"->" u:symbol>
+	                                       do:<gm:match_do>
+	                                     ; [u:node]
+
+	<gm:match_path>                    ::= expr:"state/@*" <u:spacing>
+	                                     | expr:"state"<u:spacing>
+	                                     | expr:"edge/@*" <u:spacing>
+	                                     | expr:"edge" <u:spacing>
+	                                     ; [u:node]
+
+	<gm:match_do>                      ::= <'{' u:symbol>
+	                                           attr:<gm:match_doattr u:commalist>?
+	                                       <'}' u:symbol>
+	                                     ; [u:node]
+
+	<gm:match_doattr>                  ::= key:<gm:attr_expr> <"->" u:symbol> value:<gm:attr_value>
+	                                     ; [u:node]
+
+	<gm:attr_expr>                     ::= tor:<gm:attr_namedef>
+	                                     ; [u:return]
+
+	<gm:attr_namedef>                  ::= name:<gm:attr_name>
+	                                     ; [u:node]
+	                                     
+	<gm:attr_name>                     ::= '@' tor:<u:qidentifier>
+	                                     ; [u:return]
+
+	<gm:attr_value>                    ::= tor:<gm:case_expr>
+	                                     | tor:<gm:function_call>
+	                                     | tor:<gm:attr_ref>
+	                                     | tor:<gm:literal> <u:spacing>?
+	                                     ; [u:return]
+	                                     
+	<gm:attr_ref>                      ::= name:<gm:attr_name>
+	                                     ; [u:node]
+
+	<gm:case_expr>                     ::= when:<gm:when_expr u:list>
+	                                       else:<gm:else_expr>?
+	                                     ; [u:node]
+	<gm:when_expr>                     ::= WHEN test:<gm:bool_expr> THEN value:<gm:attr_value>
+	                                     ; [u:node]
+	<gm:else_expr>                     ::= ELSE value:<gm:attr_value>
+	                                     ; [u:node]
+
+	<gm:function_call>                 ::= name:<u:identifier> <'(' u:symbol>
+	                                          arg:<gm:function_arg u:commalist>?
+	                                       <')' u:symbol>
+	                                     ; [u:node]
+	<gm:function_arg>                  ::= tor:<gm:attr_value>
+	                                     ; [u:return]
+
+	<gm:literal>                       ::= value:<u:string>
+	                                     | value:<u:boolean>
+	                                     | value:<u:integer>
+	                                     ; [u:node]
+	                                     
+	
+	<gm:bool_expr>                     ::= tor:<gm:bool_orexpr>
+	                                     ; [u:return]
+	<gm:bool_orexpr>                   ::= left:<gm:bool_andexpr> OR right:<gm:bool_orexpr>
+	                                    => <gm:bool_andexpr>
+	                                     ; [u:node]
+	<gm:bool_andexpr>                  ::= left:<gm:bool_notexpr> AND right:<gm:bool_andexpr>
+	                                    => <gm:bool_notexpr>
+	                                     ; [u:node]
+	<gm:bool_notexpr>                  ::= NOT <'(' u:symbol> expr:<gm:bool_expr> <')' u:symbol>
+	                                    => <gm:bool_dyadexpr>
+	                                     ; [u:node]
+	<gm:bool_dyadexpr>                 ::= left:<gm:bool_dyadlr> op:<gm:bool_dyadop> right:<gm:bool_dyadlr>
+	                                    => <gm:bool_termexpr>
+	                                     ; [u:node]
+	<gm:bool_dyadlr>                   ::= tor:<gm:function_call>
+	                                     | tor:<gm:attr_ref>
+	                                     | tor:<gm:literal> <u:spacing>?
+	                                     ; [u:return]
+	<gm:bool_dyadop>                   ::= tor:<'!=' u:symbol>
+	                                     | tor:<'>=' u:symbol>
+	                                     | tor:<'>' u:symbol>
+	                                     | tor:<'<=' u:symbol>
+	                                     | tor:<'<' u:symbol>
+	                                     | tor:<'=' u:symbol>
+	                                     ; [u:return]
+	<gm:bool_termexpr>                 ::= tor:<gm:attr_ref>
+	                                     | tor:<gm:bool_boolterm>
+	                                     | <'(' u:symbol> tor:<gm:bool_expr> <')' u:symbol>
+	                                     ; [u:return]
+	<gm:bool_boolterm>                 ::= value:<u:boolean> <u:spacing>
+	                                     ; [u:node]
+	
+}

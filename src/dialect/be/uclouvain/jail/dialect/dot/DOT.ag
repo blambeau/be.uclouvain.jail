@@ -1,11 +1,11 @@
-package be.uclouvain.jail.io.dot;
+package be.uclouvain.jail.dialect.dot;
 
 import net.chefbe.autogram.ast2.parsing.active.ActiveParser;
 
 /** Defines the AutoGram PEG grammar syntax. */
 grammar DOT as dot extends ActiveParser {
 
-	using be.uclouvain.jail.io.commons.UTILS as u;
+	using be.uclouvain.jail.dialect.commons.UTILS as u;
 
 	<dot:graphdef>             ::= DIGRAPH id:<dot:identifier> <'{' u:symbol>
 	                                  components:<dot:component u:list>

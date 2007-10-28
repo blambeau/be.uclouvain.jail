@@ -8,11 +8,13 @@ import net.chefbe.autogram.ast2.IASTNode;
 import net.chefbe.autogram.ast2.ILocation;
 import net.chefbe.autogram.ast2.parsing.ParseException;
 import net.chefbe.autogram.ast2.parsing.active.ASTLoader;
+import net.chefbe.autogram.ast2.parsing.active.ActiveParser;
 import net.chefbe.autogram.ast2.parsing.active.ASTLoader.EnumTypeResolver;
 import net.chefbe.autogram.ast2.parsing.peg.Input;
 import net.chefbe.autogram.ast2.parsing.peg.Pos;
 import net.chefbe.autogram.ast2.utils.BaseLocation;
 import net.chefbe.autogram.ast2.utils.DebugVisitor;
+import be.uclouvain.jail.algo.graph.copy.match.GMatchNodes;
 import be.uclouvain.jail.vm.autogram.JailNodes;
 import be.uclouvain.jail.vm.autogram.JailParser;
 
@@ -33,7 +35,12 @@ public class JailParsingTest extends TestCase {
 			
 			// create parser and parse
 			JailParser parser = new JailParser();
-			parser.setActiveLoader(new ASTLoader(new EnumTypeResolver<JailNodes>(JailNodes.class)));
+			((ActiveParser)parser.getParser("gm")).setActiveLoader(
+				new ASTLoader(new EnumTypeResolver<GMatchNodes>(GMatchNodes.class))
+			);
+			parser.setActiveLoader(
+				new ASTLoader(new EnumTypeResolver<JailNodes>(JailNodes.class))
+			);
 			IASTNode root = (IASTNode) parser.pUnit(pos);
 			
 			// debug parsed grammar

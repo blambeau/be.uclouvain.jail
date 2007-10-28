@@ -56,18 +56,13 @@ public class JailCallback<T> extends CallbackBase<T> {
 		return nonOverrided(node);
 	}
 
-	/** Callback method for ATTRS_EXPR nodes. */
-	public T ATTRS_EXPR(IASTNode node) throws Exception {
+	/** Callback method for OPTMATCH nodes. */
+	public T OPTMATCH(IASTNode node) throws Exception {
 		return nonOverrided(node);
 	}
 
-	/** Callback method for ATTR_AFFECT nodes. */
-	public T ATTR_AFFECT(IASTNode node) throws Exception {
-		return nonOverrided(node);
-	}
-
-	/** Callback method for ATTRREF nodes. */
-	public T ATTRREF(IASTNode node) throws Exception {
+	/** Callback method for OPTLITERAL nodes. */
+	public T OPTLITERAL(IASTNode node) throws Exception {
 		return nonOverrided(node);
 	}
 

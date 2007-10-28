@@ -5,6 +5,7 @@ import net.chefbe.autogram.ast2.parsing.active.ActiveParser;
 grammar Jail as jail extends ActiveParser {
 
 	using be.uclouvain.jail.dialect.commons.UTILS as u;
+	using be.uclouvain.jail.algo.graph.copy.match.GMatch as gm;
 	
 	/* -------------------------------------------------------------------------------------------- JAIL main commands */
 	<jail:unit>                            ::= <u:spacing>? command:<jail:command u:list> <u:eof>
@@ -44,24 +45,13 @@ grammar Jail as jail extends ActiveParser {
 	                                         ; [u:node]
 	<jail:option>                          ::= ':' name:<jail:identifier> value:<jail:optvalue>
 	                                         ; [u:node]
-	<jail:optvalue>                        ::= tor:<jail:attrs_expr>
-	                                         | tor:<u:string>
-	                                         | tor:<u:boolean>
+	<jail:optvalue>                        ::= tor:<jail:optmatch>
+	                                         | tor:<jail:optliteral>
 	                                         ; [u:return]
-
-	// attribute expressions
-	<jail:attrs_expr>                      ::= <'/' u:symbol>
-	                                               affectation:<jail:attr_affect u:list>
-	                                           <'/' u:symbol>
+	<jail:optmatch>                        ::= match:<gm:match_do>
 	                                         ; [u:node]
-	<jail:attr_affect>                     ::= name:<jail:attrname> <'=' u:symbol>
-	                                           expr:<jail:attr_expr>
-	                                         ; [u:node]
-	<jail:attr_expr>                       ::= tor:<jail:attrref>
-	                                         ; [u:return]
-	<jail:attrname>                        ::= '@' tor:<jail:identifier>
-	                                         ; [u:return]
-	<jail:attrref>                         ::= name:<jail:attrname>
+	<jail:optliteral>                      ::= value:<u:string>
+	                                         | value:<u:boolean>
 	                                         ; [u:node]
 
 	/* -------------------------------------------------------------------------------------------- common utilities */

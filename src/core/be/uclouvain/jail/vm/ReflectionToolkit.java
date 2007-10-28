@@ -18,7 +18,7 @@ public abstract class ReflectionToolkit implements IJailVMToolkit {
 	private Map<String,Method> commands;
 
 	/** Current options to use. */
-	private Options options;
+	private JailVMOptions options;
 	
 	/** Creates the toolkit by reflection. */
 	public ReflectionToolkit() {
@@ -49,7 +49,7 @@ public abstract class ReflectionToolkit implements IJailVMToolkit {
 	}
 	
 	/** Executes a command on the virtual machine. */
-	public Object executeCommand(String command, JailVM vm, JailVMStack stack, Options options) throws JailVMException {
+	public Object executeCommand(String command, JailVM vm, JailVMStack stack, JailVMOptions options) throws JailVMException {
 		this.options = options;
 		
 		// retrieve method

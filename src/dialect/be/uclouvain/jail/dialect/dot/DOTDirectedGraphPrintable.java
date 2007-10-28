@@ -106,50 +106,28 @@ public class DOTDirectedGraphPrintable extends AbstractPrintable implements IAda
 				"shape=\"circle\"");
 	}
 
-	/** Returns the label of a state. */
-	protected Object stateLabel(Object vertex) {
-		String key = Jail.getStringProperty(
-				"DirectedGraphPrintable.dot.node.label.uinfo", null);
-		Object label = (key != null) ? graph.getVertexInfo(vertex)
-				.getAttribute(key) : graph.getVerticesTotalOrder()
-				.indexOf(vertex);
-		return label == null ? graph.getVerticesTotalOrder().indexOf(
-				vertex) : label;
-	}
-
 	/** Returns a string containing the dot attributes to set to a vertex. */
 	protected String stateAttributes(Object vertex) {
-		Object label = stateLabel(vertex);
-		String s = "label=\"" + normalize(label) + "\"";
-
+		String s = "";
+		int i=0;
 		IUserInfo info = graph.getVertexInfo(vertex);
 		for (String key: info.getKeys()) {
+			if (i++ != 0) { s += " "; }
 			Object value = info.getAttribute(key);
-			s += " " + key + "=\"" + normalize(value) + "\"";
+			s += key + "=\"" + normalize(value) + "\"";
 		}
 		return s;
 	}
 
-	/** Returns label of an edge. */
-	protected Object edgeLabel(Object edge) {
-		String key = Jail.getStringProperty(
-				"DirectedGraphPrintable.dot.edge.label.uinfo", null);
-		Object label = (key != null) ? graph.getEdgeInfo(edge)
-				.getAttribute(key) : graph.getEdgesTotalOrder()
-				.indexOf(edge);
-		return label == null ? graph.getEdgesTotalOrder().indexOf(edge)
-				: label;
-	}
-
 	/** Returns a String containing the dot attributes to set to an edge. */
 	protected String edgeAttributes(Object edge) {
-		Object label = edgeLabel(edge);
-		String s = "label=\"" + normalize(label) + "\"";
-
+		String s = "";
+		int i=0;
 		IUserInfo info = graph.getEdgeInfo(edge);
 		for (String key: info.getKeys()) {
+			if (i++ != 0) { s += " "; }
 			Object value = info.getAttribute(key);
-			s += " " + key + "=\"" + normalize(value) + "\"";
+			s += key + "=\"" + normalize(value) + "\"";
 		}
 		return s;
 	}

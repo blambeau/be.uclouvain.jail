@@ -8,12 +8,14 @@ import net.chefbe.autogram.ast2.IASTNode;
 import net.chefbe.autogram.ast2.ILocation;
 import net.chefbe.autogram.ast2.parsing.ParseException;
 import net.chefbe.autogram.ast2.parsing.active.ASTLoader;
+import net.chefbe.autogram.ast2.parsing.active.ActiveParser;
 import net.chefbe.autogram.ast2.parsing.active.ASTLoader.EnumTypeResolver;
 import net.chefbe.autogram.ast2.parsing.peg.Input;
 import net.chefbe.autogram.ast2.parsing.peg.Pos;
 import net.chefbe.autogram.ast2.utils.BaseLocation;
 import be.uclouvain.jail.adapt.AdaptUtils;
 import be.uclouvain.jail.adapt.IAdapter;
+import be.uclouvain.jail.algo.graph.copy.match.GMatchNodes;
 import be.uclouvain.jail.dialect.IPrintable;
 import be.uclouvain.jail.dialect.dot.DOTDirectedGraphLoader;
 import be.uclouvain.jail.vm.autogram.JailNodes;
@@ -51,7 +53,12 @@ public class JailVM {
 			
 			// create parser and parse
 			JailParser parser = new JailParser();
-			parser.setActiveLoader(new ASTLoader(new EnumTypeResolver<JailNodes>(JailNodes.class)));
+			((ActiveParser)parser.getParser("gm")).setActiveLoader(
+				new ASTLoader(new EnumTypeResolver<GMatchNodes>(GMatchNodes.class))
+			);
+			parser.setActiveLoader(
+				new ASTLoader(new EnumTypeResolver<JailNodes>(JailNodes.class))
+			);
 			IASTNode root = (IASTNode) parser.pUnit(pos);
 			
 			// execute on callback
@@ -130,7 +137,7 @@ public class JailVM {
 	/** Executes a command on a specific toolkit. */
 	public Object executeCommand(
 			IJailVMToolkit toolkit, String command, 
-			JailVMStack stack, Options options) throws JailVMException {
+			JailVMStack stack, JailVMOptions options) throws JailVMException {
 		if (!toolkit.hasCommand(command)) {
 			throw new JailVMException("Unknown command: " + command);
 		} else {
@@ -141,7 +148,7 @@ public class JailVM {
 	/** Executes a named command. */
 	public Object executeCommand(
 			String namespace, String command, 
-			JailVMStack stack, Options options) throws JailVMException {
+			JailVMStack stack, JailVMOptions options) throws JailVMException {
 		if (namespace != null) {
 			IJailVMToolkit toolkit = getToolkit(namespace);
 			return executeCommand(toolkit,command,stack,options);

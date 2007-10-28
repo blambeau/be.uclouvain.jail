@@ -33,14 +33,11 @@ public enum JailNodes implements IASTType {
 	/** OPTION node marker. */
 	OPTION,
 
-	/** ATTRS_EXPR node marker. */
-	ATTRS_EXPR,
+	/** OPTMATCH node marker. */
+	OPTMATCH,
 
-	/** ATTR_AFFECT node marker. */
-	ATTR_AFFECT,
-
-	/** ATTRREF node marker. */
-	ATTRREF,
+	/** OPTLITERAL node marker. */
+	OPTLITERAL,
 
 	/** VARREF node marker. */
 	VARREF;

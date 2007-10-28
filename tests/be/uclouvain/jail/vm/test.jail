@@ -1,30 +1,25 @@
-/*
-A = (B);
-A = (copy (A) :state 'bernie' :check true);
-A = <§fsp INIT = a->b->INIT | b->a->INIT. §>;
-A = (copy <§fsp INIT = a->b->INIT | b->a->INIT. §>);
-A = (compose (copy (B)) (A));
-A = (copy (B) 
-          :state /@pid=@id/)
-  ;
-
-E = <§fsp INIT = a->b->INIT | b->a->INIT. §>;
-A = (minimize (determinize (tmoves (E))));
-*/
-
 A = <§dot 
 	digraph DFA {
 		graph [rankdir="LR"];
 		node [shape="circle"];
 		0 [label="v0" isInitial=true isAccepting=false isError=false];
-		1 [label="v1" isInitial=false isAccepting=true isError=false shape="doublecircle"];
-		2 [label="v2" isInitial=false isAccepting=true isError=false shape="doublecircle"];
-		0 -> 1 [letter="a" label="a"];
-		0 -> 2 [letter="a" label="a"];
-		1 -> 1 [letter="b" label="b"];
-		2 -> 2 [letter="b" label="b"];
-		2 -> 1 [letter="b" label="b"];
+		1 [label="v1" isInitial=false isAccepting=true isError=false];
+		2 [label="v2" isInitial=false isAccepting=true isError=false];
+		0 -> 1 [letter="a"];
+		0 -> 2 [letter="a"];
+		1 -> 1 [letter="b"];
+		2 -> 2 [letter="b"];
+		2 -> 1 [letter="b"];
 	}
 §>;
-B = (jdotty (A));
-C = (print (determinize (B)));
+C = (copy (A) 
+        :state {@shape      -> when @isAccepting=true then 'doublecircle'
+                               else 'circle',
+				@style      -> 'filled',
+                @fillcolor  -> when @isError=true then 'red'
+                               when @isInitial=true then 'green'
+                               else 'white'}
+		:edge  {@label      -> @letter}
+     );
+(jdotty (C));
+

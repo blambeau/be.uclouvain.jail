@@ -11,44 +11,30 @@ public class DOTCallback<T> extends CallbackBase<T> {
 		super(DOTNodes.values(), DOTCallback.class);
 	}
 
-	/** Callback method for GRAPHDEF nodes. */
+		/** Callback method for GRAPHDEF nodes. */
 	public T GRAPHDEF(IASTNode node) throws Exception {
 		return nonOverrided(node);
-	}
-
-	/** Callback method for GRAPH_COMMONS nodes. */
+	}	/** Callback method for GRAPH_COMMONS nodes. */
 	public T GRAPH_COMMONS(IASTNode node) throws Exception {
 		return nonOverrided(node);
-	}
-
-	/** Callback method for NODE_COMMONS nodes. */
+	}	/** Callback method for NODE_COMMONS nodes. */
 	public T NODE_COMMONS(IASTNode node) throws Exception {
 		return nonOverrided(node);
-	}
-
-	/** Callback method for EDGE_COMMONS nodes. */
+	}	/** Callback method for EDGE_COMMONS nodes. */
 	public T EDGE_COMMONS(IASTNode node) throws Exception {
 		return nonOverrided(node);
-	}
-
-	/** Callback method for NODEDEF nodes. */
+	}	/** Callback method for NODEDEF nodes. */
 	public T NODEDEF(IASTNode node) throws Exception {
 		return nonOverrided(node);
-	}
-
-	/** Callback method for EDGEDEF nodes. */
+	}	/** Callback method for EDGEDEF nodes. */
 	public T EDGEDEF(IASTNode node) throws Exception {
 		return nonOverrided(node);
-	}
-
-	/** Callback method for ATTRIBUTES nodes. */
+	}	/** Callback method for ATTRIBUTES nodes. */
 	public T ATTRIBUTES(IASTNode node) throws Exception {
 		return nonOverrided(node);
-	}
-
-	/** Callback method for ATTRIBUTE nodes. */
+	}	/** Callback method for ATTRIBUTE nodes. */
 	public T ATTRIBUTE(IASTNode node) throws Exception {
 		return nonOverrided(node);
 	}
-
 }
+
