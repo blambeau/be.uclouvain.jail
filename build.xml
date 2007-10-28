@@ -53,8 +53,16 @@
     <!-- distribution target -->
     <target name="dist" depends="jar" description="generates the distribution">
         <!-- start javadoc util -->
-        <javadoc destdir="${dist}/docs/api" author="true" version="true" use="true" windowtitle="Jail"
-            excludepackagenames="xtc.**" encoding="UTF-8">
+        <javadoc destdir="${dist}/docs/api" author="true" version="true" use="true" windowtitle="Jail" encoding="UTF-8">
+            <packageset dir="src/core" defaultexcludes="yes">
+                <include name="be/uclouvain/jail/**"/>
+            </packageset>
+            <packageset dir="src/dialect" defaultexcludes="yes">
+                <include name="be/uclouvain/jail/**"/>
+            </packageset>
+                <packageset dir="src/algo" defaultexcludes="yes">
+                    <include name="be/uclouvain/jail/**"/>
+                </packageset>
             <classpath>
                 <fileset dir="${lib}">
                     <include name="**/*.jar"/>

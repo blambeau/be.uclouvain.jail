@@ -1,9 +1,13 @@
 package be.uclouvain.jail;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.beanutils.ConvertUtils;
+
+import be.uclouvain.jail.vm.JailVM;
+import be.uclouvain.jail.vm.JailVMException;
 
 /** 
  * JAIL main class. 
@@ -62,6 +66,21 @@ public class Jail {
 	public static String getStringProperty(String key, String def) {
 		Object prop = getProperty(key,def);
 		return prop == null ? def : prop.toString();
+	}
+	
+	/** Starts the Jail VM on a file. */
+	public static void main(String[] args) throws JailVMException {
+		if (args.length != 1) {
+			System.out.println("Usage: jail jailfile");
+		} else {
+			File f = new File(args[0]);
+			if (!f.exists() || !f.canRead()) {
+				System.err.println("Unable to read file " + f);
+			} else {
+				JailVM vm = new JailVM();
+				vm.execute(f);
+			}
+		}
 	}
 	
 }
