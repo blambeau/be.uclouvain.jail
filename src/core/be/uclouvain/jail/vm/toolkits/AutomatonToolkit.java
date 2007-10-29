@@ -5,14 +5,15 @@ import be.uclouvain.jail.algo.fa.determinize.NFADeterminizer;
 import be.uclouvain.jail.algo.fa.minimize.DFAMinimizer;
 import be.uclouvain.jail.algo.fa.tmoves.ITauInformer;
 import be.uclouvain.jail.algo.fa.tmoves.TauRemover;
+import be.uclouvain.jail.dialect.seqp.SEQPGraphDialect;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.INFA;
 import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.fa.impl.GraphDFA;
 import be.uclouvain.jail.fa.impl.GraphNFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
-import be.uclouvain.jail.vm.JailVM;
 import be.uclouvain.jail.vm.JailReflectionToolkit;
+import be.uclouvain.jail.vm.JailVM;
 
 /** Installs automaton toolkit. */
 public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter {
@@ -23,6 +24,8 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 		vm.registerAdaptation(IDirectedGraph.class, INFA.class, this);
 		vm.registerAdaptation(INFA.class, IDirectedGraph.class, this);
 		vm.registerAdaptation(IDFA.class, IDirectedGraph.class, this);
+		
+		vm.registerDialectLoader("seqp", new SEQPGraphDialect());
 	}
 
 	/** Determinizes a NDA. */

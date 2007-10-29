@@ -3,6 +3,9 @@ package be.uclouvain.jail.vm;
 /**
  * Toolkit for JAIL command line tool.
  * 
+ * <p>This interface is not intended to be implemented directly. Extend
+ * JailReflectionToolkit instead.</p>
+ * 
  * @author blambeau
  */
 public interface IJailVMToolkit {

@@ -17,6 +17,7 @@ import net.chefbe.javautils.robust.exceptions.CoreException;
 import be.uclouvain.jail.adapt.AdaptUtils;
 import be.uclouvain.jail.adapt.IAdapter;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchNodes;
+import be.uclouvain.jail.dialect.IGraphDialect;
 import be.uclouvain.jail.dialect.IPrintable;
 import be.uclouvain.jail.vm.autogram.JailNodes;
 import be.uclouvain.jail.vm.autogram.JailParser;
@@ -89,6 +90,7 @@ public class JailVM {
 	/** Handles an error. */
 	private void handleError(Throwable t) {
 		System.out.println("Jail VM error: " + t.getMessage());
+		t.printStackTrace();
 	}
 	
 	/** Registers some plugin. */
@@ -98,7 +100,7 @@ public class JailVM {
 	}
 	
 	/** Registers a loader. */
-	public void registerDialectLoader(String extension, IJailVMDialectLoader loader) {
+	public void registerDialectLoader(String extension, IGraphDialect loader) {
 		core.registerDialectLoader(extension, loader);
 	}
 	
@@ -182,6 +184,11 @@ public class JailVM {
 	/** Registers an adaptation. */
 	public void registerAdaptation(Class src, Class target, IAdapter adapter) {
 		AdaptUtils.register(src, target, adapter);
+	}
+
+	/** Creates a user command. */
+	public void defineUserCommand(JailVMUserCommand command) {
+		core.addUserCommand(command);
 	}
 
 }

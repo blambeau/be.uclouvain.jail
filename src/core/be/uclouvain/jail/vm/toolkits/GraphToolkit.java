@@ -2,22 +2,20 @@ package be.uclouvain.jail.vm.toolkits;
 
 import java.io.IOException;
 
-import net.chefbe.autogram.ast2.parsing.ParseException;
 import be.uclouvain.jail.adapt.IAdaptable;
 import be.uclouvain.jail.adapt.IAdapter;
 import be.uclouvain.jail.algo.graph.copy.DirectedGraphCopier;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchPopulator;
 import be.uclouvain.jail.dialect.IPrintable;
-import be.uclouvain.jail.dialect.dot.DOTDirectedGraphLoader;
 import be.uclouvain.jail.dialect.dot.DOTDirectedGraphPrintable;
+import be.uclouvain.jail.dialect.dot.DOTGraphDialect;
 import be.uclouvain.jail.dialect.dot.JDotty;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.graph.utils.DirectedGraphWriter;
-import be.uclouvain.jail.vm.IJailVMDialectLoader;
+import be.uclouvain.jail.vm.JailReflectionToolkit;
 import be.uclouvain.jail.vm.JailVM;
 import be.uclouvain.jail.vm.JailVMException;
-import be.uclouvain.jail.vm.JailReflectionToolkit;
 
 /** Provides a graph tolkit. */
 public class GraphToolkit extends JailReflectionToolkit implements IAdapter {
@@ -28,21 +26,7 @@ public class GraphToolkit extends JailReflectionToolkit implements IAdapter {
 		vm.registerAdaptation(DOTDirectedGraphPrintable.class, IDirectedGraph.class, this);
 		
 		// register dot dialect
-		vm.registerDialectLoader("dot", new IJailVMDialectLoader() {
-			public Object load(Object source, String format) throws JailVMException {
-				if ("dot".equals(format)) {
-					try {
-						return DOTDirectedGraphLoader.loadGraph(source);
-					} catch (ParseException e) {
-						throw new JailVMException("graphviz .dot parsing failed: " + e.getMessage(),e);
-					} catch (IOException e) {
-						throw new JailVMException("graphviz .dot parsing failed: " + e.getMessage(),e);
-					}
-				} else {
-					throw new IllegalStateException("Unknown format (not graphviz .dot): " + format);
-				}
-			}
-		});
+		vm.registerDialectLoader("dot", new DOTGraphDialect());
 	}
 
 	/** Visualizes a graph using jdotty. */

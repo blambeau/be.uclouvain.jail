@@ -7,6 +7,7 @@ import java.util.List;
 import be.uclouvain.jail.adapt.ChainAdapter.AwareAdapter;
 import be.uclouvain.jail.algo.graph.shortest.dsp.DSP;
 import be.uclouvain.jail.dialect.dot.DOTDirectedGraphPrintable;
+import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.graph.deco.DirectedGraph;
 import be.uclouvain.jail.graph.deco.GraphUniqueIndex;
@@ -49,6 +50,11 @@ public class NetworkAdaptationTool implements IAdaptationTool {
 		byClassIndex = new GraphUniqueIndex(GraphUniqueIndex.VERTEX,"class",true).installOn(graph);
 	}
 
+	/** Returns the adaptation graph. */
+	public IDirectedGraph getGraph() {
+		return graph;
+	}
+	
 	/** Creates a vertex info. */
 	private IUserInfo vertexInfo(Class domain) {
 		MapUserInfo info = new MapUserInfo();

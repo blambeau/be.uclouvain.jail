@@ -1,0 +1,19 @@
+/** Looping INIT */
+INIT=INIT.
+
+/** Single SEQP expression. */
+INIT=start.
+
+/** One single path. */
+INIT=start->stop.
+
+/** One single cycle. */
+INIT=start->stop->INIT.
+
+/** Simple train example. */
+STOPPED=start->STARTED|alarm->open->OPENED,
+STARTED=stop->STOPPED|alarm->stop->eopen->OPENED,
+OPENED=close->STOPPED.
+
+/** With passing state. */
+INIT=start->Z->stop.

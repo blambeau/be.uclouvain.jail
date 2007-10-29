@@ -1,3 +1,14 @@
+define (adot <A>) 
+	(copy <A>
+        :state {@shape      -> when @isAccepting=true then 'doublecircle'
+                               else 'circle',
+				@style      -> 'filled',
+                @fillcolor  -> when @isError=true then 'red'
+                               when @isInitial=true then 'green'
+                               else 'white'}
+		:edge  {@label      -> @letter}
+	);
+define (show <A>) (jdotty (adot <A>));
 A = <§dot 
 	digraph DFA {
 		graph [rankdir="LR"];
@@ -12,7 +23,8 @@ A = <§dot
 		2 -> 1 [letter="b"];
 	}
 §>;
-C = (copy (A) 
+/*
+(copy (A) 
         :state {@shape      -> when @isAccepting=true then 'doublecircle'
                                else 'circle',
 				@style      -> 'filled',
@@ -21,5 +33,8 @@ C = (copy (A)
                                else 'white'}
 		:edge  {@label      -> @letter}
      );
-(jdotty (C));
-D = (jdotty (load '/home/blambeau/work/development/java/be.uclouvain.jail/tests/be/uclouvain/jail/vm/graph.dot'));
+(show (minimize (A)));
+*/
+(print (A) :format 'dot');
+(save (A) "mygraph.dot");
+(jdotty (adaptations (A)) :format 'dot');

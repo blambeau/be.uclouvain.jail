@@ -77,5 +77,10 @@ public class JailVMStack {
 		
 		return args;
 	}
+
+	/** Returns stack size. */
+	public int size() {
+		return stack.size();
+	}
 	
 }

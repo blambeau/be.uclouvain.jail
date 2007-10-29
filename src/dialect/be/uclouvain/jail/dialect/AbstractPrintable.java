@@ -12,9 +12,7 @@ import java.io.PrintWriter;
  */
 public abstract class AbstractPrintable implements IPrintable {
 
-	/* (non-Javadoc)
-	 * @see be.uclouvain.jail.io.IPrintable#print(java.io.OutputStream)
-	 */
+	/** Prints this resource to a stream. */
 	public void print(OutputStream stream) throws IOException {
 		PrintWriter writer = new PrintWriter(new OutputStreamWriter(stream));
 		print(writer);

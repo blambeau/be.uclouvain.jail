@@ -1,0 +1,43 @@
+/** 
+ * Loads a Jail resource from an accessible path. 
+ * 
+ * When format option is not specified, the file extension is used to
+ * autodetect the parser to use.
+ *
+ * <path>   (string) path to an accessible file where the resource
+ *          must be loaded from.
+ * <format> (string) input format of the resource ('dot' for example).
+ */
+define native (load <path> :format? <format>) returns object;
+
+
+
+/**
+ * Saves a Jail resource to an accessible path.
+ *
+ * When format option is not specified, the file extension is used to
+ * autodetect the writer to use.
+ *
+ * This commands simply returns its resource argument so that it can be
+ * chained easily for debugging purposes.
+ * 
+ * <G>      (IPrintable adaptable) a resource expression whose result
+ *           must be saved. 
+ * <path>   (string) path to an accessible file where the resource must 
+ *          be saved to.
+ * <format> (string) output format of the resource ('dot' for example).
+ */
+define native (save <G> <path> :format? <format>) returns <G>;
+
+
+
+/**
+ * Prints a resource on the console.
+ *
+ * This commands simply returns its resource argument so that it can be
+ * chained easily for debugging purposes.
+ * 
+ * <G>      (IPrintable adaptable) a resource expression whose result
+ *           must be printed. 
+ */
+native (print <G>) returns <G>;

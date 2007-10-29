@@ -1,0 +1,7 @@
+S1 = <§seqp 
+	STOPPED=start->STARTED|alarm->open->OPENED,
+	STARTED=stop->STOPPED|alarm->stop->eopen->OPENED,
+	OPENED=close->STOPPED.
+§>;
+(print (S1) :format 'dot');
+(jdotty (S1));

@@ -1,11 +1,10 @@
 package be.uclouvain.jail.vm;
 
 import java.util.List;
+import java.util.Map;
 
 import net.chefbe.autogram.ast2.IASTNode;
-import be.uclouvain.jail.adapt.AdaptUtils;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchPopulator;
-import be.uclouvain.jail.dialect.IPrintable;
 import be.uclouvain.jail.vm.autogram.JailCallback;
 
 /**
@@ -18,9 +17,18 @@ public class JailVMCallback extends JailCallback<Object> {
 	/** The virtual machine. */
 	private JailVM vm;
 	
+	/** Placeholder variables. */
+	private Map<String,Object> variables;
+	
 	/** Creates a callback instance. */
 	public JailVMCallback(JailVM vm) {
+		this(vm,null);
+	}
+	
+	/** Installs a sub callback. */
+	public JailVMCallback(JailVM vm, Map<String,Object> variables) {
 		this.vm = vm;
+		this.variables = variables;
 	}
 	
 	/** Concats some children results. */
@@ -50,11 +58,21 @@ public class JailVMCallback extends JailCallback<Object> {
 	@Override
 	public Object SHOW(IASTNode node) throws Exception {
 		Object toShow = makeCall(node.childFor("value"));
+		/*
 		IPrintable printable = (IPrintable) AdaptUtils.adapt(toShow,IPrintable.class);
 		if (printable != null) {
 			printable.print(System.out);
 		}
+		*/
 		return toShow;
+	}
+
+	/** Callback method for DEFINE nodes. */
+	@Override
+	public Object DEFINE(IASTNode node) throws Exception {
+		JailVMUserCommand command = new JailVMUserCommand(node);
+		vm.defineUserCommand(command);
+		return null;
 	}
 
 	/** Callback method for GLITERAL nodes. */
@@ -123,6 +141,16 @@ public class JailVMCallback extends JailCallback<Object> {
 	@Override
 	public Object LITERAL(IASTNode node) throws Exception {
 		return node.getAttr("value");
+	}
+
+	/** Callback method for PHOLDERREF nodes. */
+	public Object PHOLDERREF(IASTNode node) throws Exception {
+		String name = node.getAttrString("name");
+		if (variables != null && variables.containsKey(name)) {
+			return variables.get(name);
+		} else {
+			throw new JailVMException("Unbounded placeholer: " + name);
+		}
 	}
 
 	/** Callback method for VARREF nodes. */

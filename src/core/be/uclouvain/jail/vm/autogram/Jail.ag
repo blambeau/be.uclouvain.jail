@@ -10,13 +10,14 @@ grammar Jail as jail extends ActiveParser {
 	/* -------------------------------------------------------------------------------------------- JAIL main commands */
 	<jail:unit>                            ::= <u:spacing>? command:<jail:command u:list> <u:eof>
 	                                         ; [u:node]
-	<jail:command>                         ::= tor:<jail:affectation>
-	                                         | tor:<jail:show>
+	<jail:command>                         ::= tor:<jail:affectation> <';' u:symbol>
+	                                         | tor:<jail:define> <';' u:symbol>
+	                                         | tor:<jail:show> <';' u:symbol>
 	                                         ; [u:return]
 	<jail:affectation>                     ::= var:<jail:identifier> <'=' u:symbol>
-	                                           value:<jail:gexpression> <';' u:symbol>
+	                                           value:<jail:gexpression>
 	                                         ; [u:node]
-	<jail:show>                            ::= value:<jail:gexpression> <';' u:symbol>
+	<jail:show>                            ::= value:<jail:gexpression>
 	                                         ; [u:node]
 
 	/* -------------------------------------------------------------------------------------------- JAIL graph expression */
@@ -41,6 +42,7 @@ grammar Jail as jail extends ActiveParser {
 	                                         ; [u:node]
 	<jail:goperand>                        ::= expr:<jail:gexpression>
 	                                         | expr:<jail:literal>
+	                                         | expr:<jail:pholderref>
 	                                         ; [u:node]
 	<jail:options>                         ::= option:<jail:option u:list>
 	                                         ; [u:node]
@@ -58,7 +60,29 @@ grammar Jail as jail extends ActiveParser {
 	                                         | value:<u:boolean>
 	                                         ; [u:node]
 
+	/* -------------------------------------------------------------------------------------------- JAIL define */
+	<jail:define>                          ::= DEFINE header:<jail:def_header>
+	                                                  body:<jail:def_body>
+	                                         ; [u:node]
+	<jail:def_header>                      ::= '(' name:<jail:identifier>
+	                                               operand:<jail:def_operands>
+	                                               option:<jail:def_options>?
+	                                           <')' u:symbol>
+	                                         ; [u:node]
+	<jail:def_operands>                    ::= placeholer:<jail:pholderdef u:list>
+	                                         ; [u:node]
+	<jail:def_options>                     ::= option:<jail:def_option u:list>
+	                                         ; [u:node]
+	<jail:def_option>                      ::= ':' name:<jail:identifier> placeholer:<jail:pholderdef>
+	                                         ; [u:node]
+	<jail:def_body>                        ::= op:<jail:goperator>
+	                                         ; [u:node]
+	
 	/* -------------------------------------------------------------------------------------------- common utilities */
+	<jail:pholderdef>                      ::= '<' name:<jail:identifier> <'>' u:symbol>
+	                                         ; [u:node]
+	<jail:pholderref>                      ::= '<' name:<jail:identifier> <'>' u:symbol>
+	                                         ; [u:node]
 	<jail:varref>                          ::= <'(' u:symbol> var:<jail:identifier> <')' u:symbol>
 	                                         ; [u:node]
 	<jail:identifier>                      ::= tor:<u:identifier>

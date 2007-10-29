@@ -1,0 +1,3 @@
+STOPPED=start->STARTED|alarm->open->OPENED,
+STARTED=stop->STOPPED|alarm->stop->eopen->OPENED,
+OPENED=close->STOPPED;

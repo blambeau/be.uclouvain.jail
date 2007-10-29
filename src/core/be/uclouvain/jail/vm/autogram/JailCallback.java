@@ -71,6 +71,46 @@ public class JailCallback<T> extends CallbackBase<T> {
 		return nonOverrided(node);
 	}
 
+	/** Callback method for DEFINE nodes. */
+	public T DEFINE(IASTNode node) throws Exception {
+		return nonOverrided(node);
+	}
+
+	/** Callback method for DEF_HEADER nodes. */
+	public T DEF_HEADER(IASTNode node) throws Exception {
+		return nonOverrided(node);
+	}
+
+	/** Callback method for DEF_OPERANDS nodes. */
+	public T DEF_OPERANDS(IASTNode node) throws Exception {
+		return nonOverrided(node);
+	}
+
+	/** Callback method for DEF_OPTIONS nodes. */
+	public T DEF_OPTIONS(IASTNode node) throws Exception {
+		return nonOverrided(node);
+	}
+
+	/** Callback method for DEF_OPTION nodes. */
+	public T DEF_OPTION(IASTNode node) throws Exception {
+		return nonOverrided(node);
+	}
+
+	/** Callback method for DEF_BODY nodes. */
+	public T DEF_BODY(IASTNode node) throws Exception {
+		return nonOverrided(node);
+	}
+
+	/** Callback method for PHOLDERDEF nodes. */
+	public T PHOLDERDEF(IASTNode node) throws Exception {
+		return nonOverrided(node);
+	}
+
+	/** Callback method for PHOLDERREF nodes. */
+	public T PHOLDERREF(IASTNode node) throws Exception {
+		return nonOverrided(node);
+	}
+
 	/** Callback method for VARREF nodes. */
 	public T VARREF(IASTNode node) throws Exception {
 		return nonOverrided(node);

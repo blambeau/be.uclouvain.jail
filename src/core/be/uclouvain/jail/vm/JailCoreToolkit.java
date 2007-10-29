@@ -1,11 +1,18 @@
 package be.uclouvain.jail.vm;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import be.uclouvain.jail.dialect.IPrintable;
+import net.chefbe.autogram.ast2.parsing.ParseException;
+import be.uclouvain.jail.adapt.AdaptUtils;
+import be.uclouvain.jail.adapt.NetworkAdaptationTool;
+import be.uclouvain.jail.dialect.IGraphDialect;
+import be.uclouvain.jail.fa.IDFA;
+import be.uclouvain.jail.graph.IDirectedGraph;
+import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 
 /**
  * Core JAIL toolkit. 
@@ -14,29 +21,36 @@ import be.uclouvain.jail.dialect.IPrintable;
  */
 public class JailCoreToolkit extends JailReflectionToolkit {
 
-	/** Loades by file extension. */
-	private Map<String,IJailVMDialectLoader> loaders = new HashMap<String,IJailVMDialectLoader>();
+	/** Loaders by file extension. */
+	private Map<String,IGraphDialect> loaders = new HashMap<String,IGraphDialect>();
 	
 	/** Installs the tollkit on a virtual machine. */
 	public void install(JailVM vm) {
 	}
 
 	/** Registers an external loader. */
-	public void registerDialectLoader(String extension, IJailVMDialectLoader loader) {
+	protected void registerDialectLoader(String extension, IGraphDialect loader) {
 		loaders.put(extension, loader);
 	}
 	
 	/** Loads an object from a source using a given format. */
 	protected Object load(Object source, String format) throws JailVMException {
-		IJailVMDialectLoader loader = loaders.get(format);
+		IGraphDialect loader = loaders.get(format);
 		if (loader == null) {
 			throw new JailVMException("Unknown loading format: " + format);
 		}
-		return loader.load(source, format);
+		try {
+			return loader.load(source, format);
+		} catch (IOException e) {
+			throw new JailVMException("Unable to load resource.",e);
+		} catch (ParseException e) {
+			throw new JailVMException("Unable to load resource.",e);
+		}
 	}
 	
 	/** Loads an object from a path. */
 	public Object load(String path) throws JailVMException {
+		// find file
 		File f = new File(path);
 		if (!f.exists()) {
 			throw new JailVMException("Unable to find file: " + path);
@@ -44,23 +58,96 @@ public class JailCoreToolkit extends JailReflectionToolkit {
 			throw new JailVMException("Unable to read file: " + path);
 		}
 		
-		String name = f.getName();
-		if (name.contains(".")) {
-			String extension = name.substring(name.lastIndexOf('.')+1);
-			return load(f,extension);
+		// format to use
+		String extension = null;
+		if (hasOption("format")) {
+			extension = getOptionValue("format",String.class,null);
 		} else {
-			throw new JailVMException("Unable to find extension of: " + path);
+			String name = f.getName();
+			if (name.contains(".")) {
+				extension = name.substring(name.lastIndexOf('.')+1);
+			} else {
+				throw new JailVMException("Unable to find extension of: " + path);
+			}
 		}
+		
+		// load it
+		return load(f,extension);
 	}
 	
-	/** Prints a printable. */
-	public IPrintable print(IPrintable p) throws JailVMException {
+	/** Prints a jail resource. */
+	protected Object print(Object source, String format) throws JailVMException {
+		IGraphDialect loader = loaders.get(format);
+		if (loader == null) {
+			throw new JailVMException("Unknown printing format: " + format);
+		}
 		try {
-			p.print(System.out);
-			return p;
+			loader.print(source, format, System.out);
 		} catch (IOException e) {
-			throw new JailVMException("Unable to print " + p,e);
+			throw new JailVMException("Unable to print resource.",e);
+		}
+		return source;
+	}
+	
+	/** Prints a jail resource. */
+	public Object print(Object source) throws JailVMException {
+		String format = null;
+		if (hasOption("format")) {
+			format = getOptionValue("format",String.class,null);
+		} else {
+			throw new JailVMException("print usage: (print <G> :format <format>).");
+		}
+		return print(source,format);
+	}
+	
+	/** Saves a jail resource to a file. */
+	public Object save(Object source, String path) throws JailVMException {
+		try {
+			// find file
+			File f = new File(path);
+			
+			// format to use
+			String extension = null;
+			if (hasOption("format")) {
+				extension = getOptionValue("format",String.class,null);
+			} else {
+				String name = f.getName();
+				if (name.contains(".")) {
+					extension = name.substring(name.lastIndexOf('.')+1);
+				} else {
+					throw new JailVMException("Unable to find extension of: " + path);
+				}
+			}
+			
+			// handle file writing
+			if (!f.exists()) {
+				if (!f.createNewFile()) {
+					throw new JailVMException("Unable to create file: " + path);
+				}
+			} else if (!f.canWrite()) {
+				throw new JailVMException("Unable to write file: " + path);
+			}
+			
+			// find dialect
+			IGraphDialect dialect = loaders.get(extension);
+			if (dialect == null) {
+				throw new JailVMException("Unknown printing format: " + extension);
+			} else {
+				FileOutputStream stream = new FileOutputStream(f);
+				dialect.print(source, extension, stream);
+				stream.flush();
+				stream.close();
+			}
+			
+			return source;
+		} catch (IOException ex) {
+			throw new JailVMException("Unable to save resource",ex);
 		}
 	}
 	
+	public IDirectedGraph adaptations(Object source) {
+		AdaptUtils.adapt(new AdjacencyDirectedGraph(),IDFA.class);
+		return ((NetworkAdaptationTool)AdaptUtils.getAdaptationTool()).getGraph();
+	}
+
 }

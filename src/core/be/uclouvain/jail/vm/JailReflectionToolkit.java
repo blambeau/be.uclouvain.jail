@@ -12,7 +12,7 @@ import java.util.Map;
  * 
  * @author blambeau
  */
-public abstract class JailReflectionToolkit implements IJailVMToolkit {
+public abstract class JailReflectionToolkit extends AbstractJailToolkit {
 
 	/** Command cache by name. */
 	private Map<String,Method> commands;
@@ -39,7 +39,8 @@ public abstract class JailReflectionToolkit implements IJailVMToolkit {
 	
 	/** Checks if a command exists. */
 	public boolean hasCommand(String command) {
-		return commands.containsKey(command);
+		return super.hasCommand(command) 
+		    || commands.containsKey(command);
 	}
 	
 	/** Create the arguments array. */
@@ -50,6 +51,10 @@ public abstract class JailReflectionToolkit implements IJailVMToolkit {
 	
 	/** Executes a command on the virtual machine. */
 	public Object executeCommand(String command, JailVM vm, JailVMStack stack, JailVMOptions options) throws JailVMException {
+		if (super.hasCommand(command)) {
+			return super.executeCommand(command, vm, stack, options);
+		}
+		
 		this.options = options;
 		
 		// retrieve method
@@ -70,29 +75,27 @@ public abstract class JailReflectionToolkit implements IJailVMToolkit {
 		}
 	}
 	
-	/** Extracts an exception. */
-	private JailVMException extractException(String command, Exception e) {
-		Throwable cause = e.getCause();
-		if (cause instanceof JailVMException) {
-			return (JailVMException) cause;
-		} else {
-			return new JailVMException("Toolkit command " + command + " failed.",e);
-		}
-	}
-
 	/** Returns an option value. */
 	public <T> T getOptionValue(String name, Class type, T def) throws JailVMException {
+		if (options == null && def == null) {
+			throw new JailVMException("Option required: " + name);
+		} else if (options == null && def != null) {
+			return def;
+		}
 		return options.getOptionValue(name, type, def);
 	}
 
 	/** Returns an option value. */
 	public Object getOptionValue(String name) throws JailVMException {
+		if (options == null) {
+			throw new JailVMException("Option required: name");
+		}
 		return options.getOptionValue(name);
 	}
 
 	/** Checks if an option exists. */
 	public boolean hasOption(String name) {
-		return options.hasOption(name);
+		return options != null && options.hasOption(name);
 	}
 
 }

@@ -51,7 +51,8 @@ public class JailParser extends ActiveParser {
 		char _alt_c = pos.charAt();
 		if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
 				|| (_alt_c == ' ') || (_alt_c == '(') || (_alt_c == '/')
-				|| (_alt_c == '<') || (_alt_c >= 'A' && _alt_c <= 'Z') || (_alt_c >= 'a' && _alt_c <= 'z'))) {
+				|| (_alt_c == '<') || (_alt_c >= 'A' && _alt_c <= 'Z')
+				|| (_alt_c >= 'a' && _alt_c <= 'z') || (_alt_c == 'd'))) {
 			_alt_c = pos.charAt();
 			if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
 					|| (_alt_c == ' ') || (_alt_c == '/'))) {
@@ -83,6 +84,20 @@ public class JailParser extends ActiveParser {
 				pos.save();
 				Object _tor = null;
 				_tor = jail.pAffectation(pos);
+				jail.pSy$59USymbol(pos);
+				pos.commit();
+				return _tor;
+			} catch (ParseException ex) {
+				pos.rollback(ex);
+			}
+		}
+		_alt_c = pos.charAt();
+		if ((_alt_c == 'd')) {
+			try {
+				pos.save();
+				Object _tor = null;
+				_tor = jail.pDefine(pos);
+				jail.pSy$59USymbol(pos);
 				pos.commit();
 				return _tor;
 			} catch (ParseException ex) {
@@ -95,6 +110,7 @@ public class JailParser extends ActiveParser {
 				pos.save();
 				Object _tor = null;
 				_tor = jail.pShow(pos);
+				jail.pSy$59USymbol(pos);
 				pos.commit();
 				return _tor;
 			} catch (ParseException ex) {
@@ -114,7 +130,6 @@ public class JailParser extends ActiveParser {
 			jail.pSy$61USymbol(pos);
 			Object _value = null;
 			_value = jail.pGexpression(pos);
-			jail.pSy$59USymbol(pos);
 			return load(pos, "jail:affectation",
 					new String[] { "var", "value" }, new Object[] { _var,
 							_value });
@@ -130,7 +145,6 @@ public class JailParser extends ActiveParser {
 		if (((_alt_c == '(') || (_alt_c == '<'))) {
 			Object _value = null;
 			_value = jail.pGexpression(pos);
-			jail.pSy$59USymbol(pos);
 			return load(pos, "jail:show", new String[] { "value" },
 					new Object[] { _value });
 		} else {
@@ -292,6 +306,19 @@ public class JailParser extends ActiveParser {
 				pos.rollback(ex);
 			}
 		}
+		_alt_c = pos.charAt();
+		if ((_alt_c == '<')) {
+			try {
+				pos.save();
+				Object _expr = null;
+				_expr = jail.pPholderref(pos);
+				pos.commit();
+				return load(pos, "jail:goperand", new String[] { "expr" },
+						new Object[] { _expr });
+			} catch (ParseException ex) {
+				pos.rollback(ex);
+			}
+		}
 		return (Object) pos.error("<jail:goperand> expected, " + pos.charAt()
 				+ " found.");
 	}
@@ -436,6 +463,144 @@ public class JailParser extends ActiveParser {
 		}
 		return (Object) pos.error("<jail:literal> expected, " + pos.charAt()
 				+ " found.");
+	}
+
+	/** &lt;jail:define&gt; */
+	public final Object pDefine(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if ((_alt_c == 'd')) {
+			p$Keyword(pos, "define");
+			Object _header = null;
+			_header = jail.pDefHeader(pos);
+			Object _body = null;
+			_body = jail.pDefBody(pos);
+			return load(pos, "jail:define", new String[] { "header", "body" },
+					new Object[] { _header, _body });
+		} else {
+			throw new ParseException("<jail:define> expected, " + pos.charAt()
+					+ " found.", pos.location());
+		}
+	}
+
+	/** &lt;jail:def_header&gt; */
+	public final Object pDefHeader(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if ((_alt_c == '(')) {
+			p$Char(pos, '(');
+			Object _name = null;
+			_name = jail.pIdentifier(pos);
+			Object _operand = null;
+			_operand = jail.pDefOperands(pos);
+			Object _option = null;
+			_alt_c = pos.charAt();
+			if ((_alt_c == ':')) {
+				try {
+					pos.save();
+					_option = jail.pDefOptions(pos);
+					pos.commit();
+				} catch (ParseException ex) {
+					pos.rollback();
+				}
+			}
+			jail.pSy$41USymbol(pos);
+			return load(pos, "jail:def_header", new String[] { "name",
+					"operand", "option" }, new Object[] { _name, _operand,
+					_option });
+		} else {
+			throw new ParseException("<jail:def_header> expected, "
+					+ pos.charAt() + " found.", pos.location());
+		}
+	}
+
+	/** &lt;jail:def_operands&gt; */
+	public final Object pDefOperands(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if ((_alt_c == '<')) {
+			Object _placeholer = null;
+			_placeholer = jail.pJailPholderdefUList(pos);
+			return load(pos, "jail:def_operands",
+					new String[] { "placeholer" }, new Object[] { _placeholer });
+		} else {
+			throw new ParseException("<jail:def_operands> expected, "
+					+ pos.charAt() + " found.", pos.location());
+		}
+	}
+
+	/** &lt;jail:def_options&gt; */
+	public final Object pDefOptions(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if ((_alt_c == ':')) {
+			Object _option = null;
+			_option = jail.pJailDefOptionUList(pos);
+			return load(pos, "jail:def_options", new String[] { "option" },
+					new Object[] { _option });
+		} else {
+			throw new ParseException("<jail:def_options> expected, "
+					+ pos.charAt() + " found.", pos.location());
+		}
+	}
+
+	/** &lt;jail:def_option&gt; */
+	public final Object pDefOption(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if ((_alt_c == ':')) {
+			p$Char(pos, ':');
+			Object _name = null;
+			_name = jail.pIdentifier(pos);
+			Object _placeholer = null;
+			_placeholer = jail.pPholderdef(pos);
+			return load(pos, "jail:def_option", new String[] { "name",
+					"placeholer" }, new Object[] { _name, _placeholer });
+		} else {
+			throw new ParseException("<jail:def_option> expected, "
+					+ pos.charAt() + " found.", pos.location());
+		}
+	}
+
+	/** &lt;jail:def_body&gt; */
+	public final Object pDefBody(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if ((_alt_c == '(')) {
+			Object _op = null;
+			_op = jail.pGoperator(pos);
+			return load(pos, "jail:def_body", new String[] { "op" },
+					new Object[] { _op });
+		} else {
+			throw new ParseException("<jail:def_body> expected, "
+					+ pos.charAt() + " found.", pos.location());
+		}
+	}
+
+	/** &lt;jail:pholderdef&gt; */
+	public final Object pPholderdef(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if ((_alt_c == '<')) {
+			p$Char(pos, '<');
+			Object _name = null;
+			_name = jail.pIdentifier(pos);
+			jail.pSy$62USymbol(pos);
+			return load(pos, "jail:pholderdef", new String[] { "name" },
+					new Object[] { _name });
+		} else {
+			throw new ParseException("<jail:pholderdef> expected, "
+					+ pos.charAt() + " found.", pos.location());
+		}
+	}
+
+	/** &lt;jail:pholderref&gt; */
+	public final Object pPholderref(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if ((_alt_c == '<')) {
+			p$Char(pos, '<');
+			Object _name = null;
+			_name = jail.pIdentifier(pos);
+			jail.pSy$62USymbol(pos);
+			return load(pos, "jail:pholderref", new String[] { "name" },
+					new Object[] { _name });
+		} else {
+			throw new ParseException("<jail:pholderref> expected, "
+					+ pos.charAt() + " found.", pos.location());
+		}
 	}
 
 	/** &lt;jail:varref&gt; */
@@ -634,14 +799,16 @@ public class JailParser extends ActiveParser {
 	public final List<?> pJailCommandUList(Pos pos) throws ParseException {
 		char _alt_c = pos.charAt();
 		if (((_alt_c == '(') || (_alt_c == '<')
-				|| (_alt_c >= 'A' && _alt_c <= 'Z') || (_alt_c >= 'a' && _alt_c <= 'z'))) {
+				|| (_alt_c >= 'A' && _alt_c <= 'Z')
+				|| (_alt_c >= 'a' && _alt_c <= 'z') || (_alt_c == 'd'))) {
 			Object _f = null;
 			_f = jail.pCommand(pos);
 			List<Object> _n = new ArrayList<Object>();
 			_alt_c = pos.charAt();
 			while (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
 					|| (_alt_c == ' ') || (_alt_c == '(') || (_alt_c == '/')
-					|| (_alt_c == '<') || (_alt_c >= 'A' && _alt_c <= 'Z') || (_alt_c >= 'a' && _alt_c <= 'z'))) {
+					|| (_alt_c == '<') || (_alt_c >= 'A' && _alt_c <= 'Z')
+					|| (_alt_c >= 'a' && _alt_c <= 'z') || (_alt_c == 'd'))) {
 				try {
 					pos.save();
 					_n.add(jail.pJailCommandUList11(pos));
@@ -655,6 +822,33 @@ public class JailParser extends ActiveParser {
 			return toList(_f, _n);
 		} else {
 			throw new ParseException("<jail:jail_command_u_list> expected, "
+					+ pos.charAt() + " found.", pos.location());
+		}
+	}
+
+	/** &lt;jail:jail_def_option_u_list&gt; */
+	public final List<?> pJailDefOptionUList(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if ((_alt_c == ':')) {
+			Object _f = null;
+			_f = jail.pDefOption(pos);
+			List<Object> _n = new ArrayList<Object>();
+			_alt_c = pos.charAt();
+			while (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
+					|| (_alt_c == ' ') || (_alt_c == '/') || (_alt_c == ':'))) {
+				try {
+					pos.save();
+					_n.add(jail.pJailDefOptionUList11(pos));
+					pos.commit();
+				} catch (ParseException ex) {
+					pos.rollback();
+					break;
+				}
+				_alt_c = pos.charAt();
+			}
+			return toList(_f, _n);
+		} else {
+			throw new ParseException("<jail:jail_def_option_u_list> expected, "
 					+ pos.charAt() + " found.", pos.location());
 		}
 	}
@@ -712,6 +906,33 @@ public class JailParser extends ActiveParser {
 			return toList(_f, _n);
 		} else {
 			throw new ParseException("<jail:jail_option_u_list> expected, "
+					+ pos.charAt() + " found.", pos.location());
+		}
+	}
+
+	/** &lt;jail:jail_pholderdef_u_list&gt; */
+	public final List<?> pJailPholderdefUList(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if ((_alt_c == '<')) {
+			Object _f = null;
+			_f = jail.pPholderdef(pos);
+			List<Object> _n = new ArrayList<Object>();
+			_alt_c = pos.charAt();
+			while (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
+					|| (_alt_c == ' ') || (_alt_c == '/') || (_alt_c == '<'))) {
+				try {
+					pos.save();
+					_n.add(jail.pJailPholderdefUList11(pos));
+					pos.commit();
+				} catch (ParseException ex) {
+					pos.rollback();
+					break;
+				}
+				_alt_c = pos.charAt();
+			}
+			return toList(_f, _n);
+		} else {
+			throw new ParseException("<jail:jail_pholderdef_u_list> expected, "
 					+ pos.charAt() + " found.", pos.location());
 		}
 	}
@@ -1093,7 +1314,8 @@ public class JailParser extends ActiveParser {
 		char _alt_c = pos.charAt();
 		if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
 				|| (_alt_c == ' ') || (_alt_c == '(') || (_alt_c == '/')
-				|| (_alt_c == '<') || (_alt_c >= 'A' && _alt_c <= 'Z') || (_alt_c >= 'a' && _alt_c <= 'z'))) {
+				|| (_alt_c == '<') || (_alt_c >= 'A' && _alt_c <= 'Z')
+				|| (_alt_c >= 'a' && _alt_c <= 'z') || (_alt_c == 'd'))) {
 			_alt_c = pos.charAt();
 			if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
 					|| (_alt_c == ' ') || (_alt_c == '/'))) {
@@ -1112,6 +1334,32 @@ public class JailParser extends ActiveParser {
 			throw new ParseException(
 					"<jail:jail_command_u_list_1_1> expected, " + pos.charAt()
 							+ " found.", pos.location());
+		}
+	}
+
+	/** &lt;jail:jail_def_option_u_list_1_1&gt; */
+	public final Object pJailDefOptionUList11(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
+				|| (_alt_c == ' ') || (_alt_c == '/') || (_alt_c == ':'))) {
+			_alt_c = pos.charAt();
+			if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
+					|| (_alt_c == ' ') || (_alt_c == '/'))) {
+				try {
+					pos.save();
+					u.pSpacing(pos);
+					pos.commit();
+				} catch (ParseException ex) {
+					pos.rollback();
+				}
+			}
+			Object _tor = null;
+			_tor = jail.pDefOption(pos);
+			return _tor;
+		} else {
+			throw new ParseException(
+					"<jail:jail_def_option_u_list_1_1> expected, "
+							+ pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -1165,6 +1413,32 @@ public class JailParser extends ActiveParser {
 		} else {
 			throw new ParseException("<jail:jail_option_u_list_1_1> expected, "
 					+ pos.charAt() + " found.", pos.location());
+		}
+	}
+
+	/** &lt;jail:jail_pholderdef_u_list_1_1&gt; */
+	public final Object pJailPholderdefUList11(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
+				|| (_alt_c == ' ') || (_alt_c == '/') || (_alt_c == '<'))) {
+			_alt_c = pos.charAt();
+			if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
+					|| (_alt_c == ' ') || (_alt_c == '/'))) {
+				try {
+					pos.save();
+					u.pSpacing(pos);
+					pos.commit();
+				} catch (ParseException ex) {
+					pos.rollback();
+				}
+			}
+			Object _tor = null;
+			_tor = jail.pPholderdef(pos);
+			return _tor;
+		} else {
+			throw new ParseException(
+					"<jail:jail_pholderdef_u_list_1_1> expected, "
+							+ pos.charAt() + " found.", pos.location());
 		}
 	}
 

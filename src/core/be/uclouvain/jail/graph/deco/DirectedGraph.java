@@ -248,6 +248,15 @@ public class DirectedGraph implements IDirectedGraph {
 	}
 	
 
+	/** Returns the number of vertices. */
+	public int getVerticesCount() {
+		return this.getVerticesTotalOrder().size();
+	}
+	
+	/** Returns the number of edges. */
+	public int getEdgesCount() {
+		return this.getEdgesTotalOrder().size();
+	}
 	
 	/** Returns a total order on vertices. */
 	public ITotalOrder<Object> getVerticesTotalOrder() {

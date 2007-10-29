@@ -42,6 +42,30 @@ public enum JailNodes implements IASTType {
 	/** LITERAL node marker. */
 	LITERAL,
 
+	/** DEFINE node marker. */
+	DEFINE,
+
+	/** DEF_HEADER node marker. */
+	DEF_HEADER,
+
+	/** DEF_OPERANDS node marker. */
+	DEF_OPERANDS,
+
+	/** DEF_OPTIONS node marker. */
+	DEF_OPTIONS,
+
+	/** DEF_OPTION node marker. */
+	DEF_OPTION,
+
+	/** DEF_BODY node marker. */
+	DEF_BODY,
+
+	/** PHOLDERDEF node marker. */
+	PHOLDERDEF,
+
+	/** PHOLDERREF node marker. */
+	PHOLDERREF,
+
 	/** VARREF node marker. */
 	VARREF;
 

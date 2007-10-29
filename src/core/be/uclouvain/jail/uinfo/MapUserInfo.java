@@ -22,6 +22,13 @@ public class MapUserInfo implements IUserInfo {
 		this.info.putAll(copy.info);
 	}
 	
+	/** Creates single (key,value) user info. */ 
+	public static IUserInfo factor(String key, Object value) {
+		MapUserInfo info = new MapUserInfo();
+		info.setAttribute(key, value);
+		return info;
+	}
+	
 	/* (non-Javadoc)
 	 * @see be.uclouvain.jail.uinfo.IUserInfo#getKeys()
 	 */
@@ -83,4 +90,5 @@ public class MapUserInfo implements IUserInfo {
 	public String toString() {
 		return info.toString();
 	}
+
 }

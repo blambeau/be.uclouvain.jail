@@ -114,6 +114,8 @@ grammar UTILS as u {
 	                         ; [u:list]
 	{u:slashlist}          ::= f:{T} n:(<'/' u:symbol> tor:{T})*
 	                         ; [u:list]
+	{u:arrowlist}          ::= f:{T} n:(<"->" u:symbol> tor:{T})*
+	                         ; [u:list]
 
 	// ~~~ JAVA PRODUCTIONS ~~~
 	[u:char]               ::= {Character}{}

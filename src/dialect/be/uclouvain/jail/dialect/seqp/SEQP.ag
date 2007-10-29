@@ -1,0 +1,44 @@
+package be.uclouvain.jail.dialect.seqp;
+
+import net.chefbe.autogram.ast2.parsing.active.ActiveParser;
+
+grammar SEQP as seqp extends ActiveParser {
+
+	using be.uclouvain.jail.dialect.commons.UTILS as u;
+
+	<seqp:testunit>                         ::= <u:spacing>? def:<seqp:seqp_def u:list> <u:eof>
+	                                          ; [u:node]
+
+	<seqp:seqp_def>                         ::= state:<seqp:statedef u:commalist> <'.' u:symbol>
+	                                          ; [u:node]
+
+	<seqp:statedef>                         ::= label:<seqp:statename> <'=' u:symbol>
+	                                            def:<seqp:path u:barlist>
+	                                          ; [u:node]
+
+	<seqp:path>                             ::= root:<seqp:pathcomp>
+	                                          ; [u:node]
+
+	<seqp:pathcomp>                         ::= tor:<seqp:eventref>
+	                                          | tor:<seqp:stateref>
+	                                          ; [u:return]
+
+	<seqp:eventref>                         ::= letter:<seqp:eventname> <"->" u:symbol> to:<seqp:pathcomp>
+	                                          | letter:<seqp:eventname>
+	                                          ; [u:node]
+
+	<seqp:stateref>                         ::= label:<seqp:statename> <"->" u:symbol> to:<seqp:pathcomp>
+	                                          | label:<seqp:statename>
+	                                          ; [u:node]
+	                                          
+	<seqp:eventname>                        ::= tor:<seqp:eventname_word> <u:spacing>?
+	                                          ; [u:return]
+	<seqp:eventname_word>                   ::= [a-z][a-zA-Z0-9_$#]*
+	                                          ; [u:diff]
+	                                          
+	<seqp:statename>                        ::= tor:<seqp:statename_word> <u:spacing>?
+	                                          ; [u:return]
+	<seqp:statename_word>                   ::= [A-Z][a-zA-Z0-9_$#]*
+	                                          ; [u:diff]
+
+}
