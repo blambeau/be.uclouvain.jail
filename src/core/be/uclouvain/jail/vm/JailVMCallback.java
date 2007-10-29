@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import net.chefbe.autogram.ast2.IASTNode;
+import be.uclouvain.jail.adapt.IAdaptable;
+import be.uclouvain.jail.algo.graph.copy.match.GMatchAggregator;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchPopulator;
 import be.uclouvain.jail.vm.autogram.JailCallback;
 
@@ -127,8 +129,17 @@ public class JailVMCallback extends JailCallback<Object> {
 
 	/** Callback method for OPTMATCH nodes. */
 	@Override
-	public Object OPTMATCH(IASTNode node) throws Exception {
-		return new GMatchPopulator(node.childFor("match"));
+	public Object OPTMATCH(final IASTNode node) throws Exception {
+		return new IAdaptable() {
+			/** Adapts to populator or aggregator. */
+			public <T> Object adapt(Class<T> c) {
+				if (GMatchPopulator.class.equals(c)) {
+					return new GMatchPopulator(node.childFor("match"));
+				} else if (GMatchAggregator.class.equals(c)) {
+					return new GMatchAggregator(node.childFor("match"));
+				} else return null;
+			}
+		};
 	}
 
 	/** Callback method for OPTLITERAL nodes. */

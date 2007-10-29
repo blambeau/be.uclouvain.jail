@@ -1,15 +1,14 @@
 package be.uclouvain.jail.uinfo;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+import net.chefbe.javautils.collections.set.ListOrderedSet;
 import be.uclouvain.jail.uinfo.functions.BoolAndFunction;
 import be.uclouvain.jail.uinfo.functions.BoolOrFunction;
-import be.uclouvain.jail.uinfo.functions.FirstFunction;
 import be.uclouvain.jail.uinfo.functions.IAggregateFunction;
+import be.uclouvain.jail.uinfo.functions.PickUpFunction;
 
 /**
  * Provides a base class to create IUserInfo instance by aggregations.
@@ -18,14 +17,50 @@ import be.uclouvain.jail.uinfo.functions.IAggregateFunction;
  */
 public class UserInfoAggregator implements IUserInfoCreator<Set<IUserInfo>> {
 
-	/** Registered functions. */
-	private Map<String[],IAggregateFunction> functions;
+	/** Aggregate function as a populator. */
+	class AggregateFunctionPopulator implements IUserInfoPopulator<Set<IUserInfo>> {
+
+		/** Function to use. */
+		private IAggregateFunction function;
+		
+		/** Source and target attributes. */
+		private String sourceAttr, targetAttr;
+		
+		/** Creates a populator instance. */
+		public AggregateFunctionPopulator(IAggregateFunction function, String sourceAttr, String targetAttr) {
+			this.function = function;
+			this.sourceAttr = sourceAttr;
+			this.targetAttr = targetAttr;
+		}
+
+		@SuppressWarnings("unchecked")
+		public void populate(IUserInfo target, Set<IUserInfo> source) {
+			Set<Object> values = new ListOrderedSet<Object>();
+			for (IUserInfo info: source) {
+				values.add(info.getAttribute(sourceAttr));
+			}
+			target.setAttribute(targetAttr, function.compute(values));
+		}
+		
+	}
 	
+	/** Populators to use. */
+	private List<IUserInfoPopulator<Set<IUserInfo>>> populators;
+
 	/** Creates an aggregator instance. */
 	public UserInfoAggregator() {
-		functions = new HashMap<String[],IAggregateFunction>();
+		populators = new ArrayList<IUserInfoPopulator<Set<IUserInfo>>>();
 	}
 
+	/** Adds a populator. */
+	public UserInfoAggregator addPopulator(IUserInfoPopulator<Set<IUserInfo>> populator) {
+		if (populator == null) {
+			throw new IllegalArgumentException("populator cannot be null.");
+		}
+		this.populators.add(populator);
+		return this;
+	}
+	
 	/** Registers a function for a given attribute. */
 	public void register(String attr, IAggregateFunction function) {
 		register(attr,attr,function);
@@ -33,7 +68,7 @@ public class UserInfoAggregator implements IUserInfoCreator<Set<IUserInfo>> {
 	
 	/** Registers a function for a given attribute. */
 	public void register(String source, String target, IAggregateFunction function) {
-		functions.put(new String[]{source,target}, function);
+		addPopulator(new AggregateFunctionPopulator(function,source,target));
 	}
 	
 	/** Registers a Boolean-OR function for a given attribute. */ 
@@ -48,33 +83,29 @@ public class UserInfoAggregator implements IUserInfoCreator<Set<IUserInfo>> {
 	
 	/** Registers a first function. */
 	public void first(String attr) {
-		register(attr,new FirstFunction());
+		register(attr,new PickUpFunction());
 	}
 	
-	/** Extracts the operands. */
-	private List<Object> extractOperands(String attr, Set<IUserInfo> sources) {
-		List<Object> operands = new ArrayList<Object>();
-		for (IUserInfo info: sources) {
-			operands.add(info.getAttribute(attr));
-		}
-		return operands;
+	/** 
+	 * Factors a IUserInfo instance.
+	 * 
+	 * <p>This method creates a MapUserInfo instance by default
+	 * and may be overrided to create instances of another class.</p>
+	 * 
+	 * @return newly created instance of a IUserInfo.
+	 */
+	protected IUserInfo factor() {
+		return new MapUserInfo();
 	}
 	
-	/** Creates a user info instance. */
-	@SuppressWarnings("unchecked")
+
+	/** Creates a IUserInfo instance from another one. */
 	public IUserInfo create(Set<IUserInfo> info) {
-		IUserInfo target = new MapUserInfo();
-		for (Map.Entry<String[],IAggregateFunction> entry: functions.entrySet()) {
-			String[] attrs = entry.getKey();
-			IAggregateFunction function = entry.getValue();
-			
-			// compute value
-			Object value = function.compute(extractOperands(attrs[0],info));
-			
-			// set as new attr
-			target.setAttribute(attrs[1], value);
+		IUserInfo copy = factor();
+		for (IUserInfoPopulator<Set<IUserInfo>> p : populators) {
+			p.populate(copy, info);
 		}
-		return target;
+		return copy;
 	}
 
 }

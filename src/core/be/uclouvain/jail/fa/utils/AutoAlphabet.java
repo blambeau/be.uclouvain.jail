@@ -81,6 +81,11 @@ public class AutoAlphabet<T> implements IAlphabet<T> {
 		return alphabet;
 	}
 	
+	/** Returns true if the letter is known. */
+	public boolean contains(T letter) {
+		return letters.contains(letter);
+	}
+
 	/** Adds a letter inside this alphabet. */
 	public void addLetter(T letter) {
 		this.letters.add(letter);

@@ -11,6 +11,7 @@ import be.uclouvain.jail.graph.utils.ListTotalOrder;
 /**
  * Provides a finite alphabet over integers.
  * 
+ * TODO: IntegerAlphabet.contains() is really inefficient, but so simple like this ;-)
  * @author blambeau
  */
 public class IntegerAlphabet implements IAlphabet<Integer> {
@@ -34,16 +35,27 @@ public class IntegerAlphabet implements IAlphabet<Integer> {
 		this(0,1,size);
 	}
 
+	/** Builds the letters. */
+	private void buildLetters() {
+		letters = new ArrayList<Integer>();
+		Integer current = start;
+		Integer end = start+(offset*size);
+		while (current<end) {
+			letters.add(current);
+			current += offset;
+		}
+	}
+	
+	/** Returns true if the letter is known. */
+	public boolean contains(Integer letter) {
+		buildLetters();
+		return letters.contains(letter);
+	}
+
 	/** Returns alphabet letters as a total order. */
 	public ITotalOrder<Integer> getLetters() {
 		if (letters == null) {
-			letters = new ArrayList<Integer>();
-			Integer current = start;
-			Integer end = start+(offset*size);
-			while (current<end) {
-				letters.add(current);
-				current += offset;
-			}
+			buildLetters();
 		}
 		return new ListTotalOrder<Integer>(letters);
 	}

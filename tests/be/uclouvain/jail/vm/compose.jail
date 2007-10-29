@@ -1,0 +1,32 @@
+define (adot <A>) 
+	(copy <A>
+        :state {@shape      -> when @isAccepting=true then 'doublecircle'
+                               else 'circle',
+				@style      -> 'filled',
+                @fillcolor  -> when @isError=true then 'red'
+                               when @isInitial=true then 'green'
+                               else 'white'}
+		:edge  {@label      -> @letter}
+	);
+
+TRAIN = <§seqp 
+	STOPPED=start->STARTED|alarm->open->OPENED,
+	STARTED=stop->STOPPED|alarm->stop->eopen->OPENED,
+	OPENED=close->STOPPED.
+§>;
+RUNNING = <§seqp
+	NO=start->YES|stop->NO,
+	YES=stop->NO|start->YES.
+§>;
+COMPOSE = (compose (RUNNING) (TRAIN)  
+               :state {@label -> pickUp(@label)}
+           );
+
+(print (COMPOSE) :format 'dot');
+(jdotty (adot (COMPOSE)));
+
+/*
+(jdotty (adot (TRAIN)) :format 'dot');
+(jdotty (adot (RUNNING)) :format 'dot');
+(jdotty (adot (compose (TRAIN) (RUNNING))));
+*/

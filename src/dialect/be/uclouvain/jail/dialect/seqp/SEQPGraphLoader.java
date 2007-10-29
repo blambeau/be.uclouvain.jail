@@ -24,6 +24,12 @@ import be.uclouvain.jail.uinfo.MapUserInfo;
  */
 public class SEQPGraphLoader extends SEQPCallback<Object> {
 
+	/** State label to set. */
+	private static final String STATELABEL = "label";
+	
+	/** Edge label to set. */
+	private static final String EDGELABEL = "letter";
+	
 	/** Writer to use */
 	private IDirectedGraphWriter writer;
 
@@ -65,12 +71,16 @@ public class SEQPGraphLoader extends SEQPCallback<Object> {
 
 	/** Creates a vertex user info. */
 	private IUserInfo vInfo(String label) {
-		return MapUserInfo.factor("label", label == null ? "" : label);
+		IUserInfo info = MapUserInfo.factor(STATELABEL, label == null ? "" : label);
+		info.setAttribute("isAccepting", true);
+		info.setAttribute("isError", false);
+		info.setAttribute("isInitial", vertices.size()==0);
+		return info;
 	}
 
 	/** Creates an edge user info. */
 	private IUserInfo eInfo(String letter) {
-		return MapUserInfo.factor("label", letter);
+		return MapUserInfo.factor(EDGELABEL, letter);
 	}
 
 	/** Ensures a vertex in the graph. */

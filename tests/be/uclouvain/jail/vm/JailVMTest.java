@@ -19,11 +19,15 @@ public class JailVMTest extends TestCase {
 		vm.execute(getJailURL());
 		//vm.debugMemory();
 	}
+	
+	/** Tests composition. */
+	public void testCompose() throws Exception {
+		new JailVM().execute(JailVMTest.class.getResource("compose.jail"));
+	}
 
 	/** Just because JUnit force the java vm to exit. */
 	public static void main(String[] args) throws Exception {
-		new JailVMTest().testJailVM();
+		new JailVMTest().testCompose();
 	}
-	
 	
 }

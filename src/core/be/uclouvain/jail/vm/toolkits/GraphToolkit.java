@@ -43,7 +43,9 @@ public class GraphToolkit extends JailReflectionToolkit implements IAdapter {
 	public IDirectedGraph copy(IDirectedGraph graph) throws JailVMException {
 		AdjacencyDirectedGraph copy = new AdjacencyDirectedGraph();
 		DirectedGraphWriter writer = new DirectedGraphWriter(copy);
-
+		writer.getVertexCopier().keepAll();
+		writer.getEdgeCopier().keepAll();
+		
 		// add state populator
 		if (hasOption("state")) {
 			GMatchPopulator populator = getOptionValue("state",GMatchPopulator.class,null);

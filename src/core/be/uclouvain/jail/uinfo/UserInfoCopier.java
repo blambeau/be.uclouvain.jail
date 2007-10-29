@@ -77,10 +77,7 @@ public class UserInfoCopier implements IUserInfoCreator<IUserInfo> {
 	 * 
 	 * <p>This method creates a MapUserInfo instance by default
 	 * and may be overrided to create instances of another class.</p>
-	 * 		if (attrs == null || attrs.length==0) {
-			throw new IllegalArgumentException("At least one attribute must be provided.");
-		}
-
+	 * 
 	 * @return newly created instance of a IUserInfo.
 	 */
 	protected IUserInfo factor() {

@@ -1,10 +1,14 @@
 package be.uclouvain.jail.vm.toolkits;
 
 import be.uclouvain.jail.adapt.IAdapter;
+import be.uclouvain.jail.algo.fa.compose.DFAComposerAlgo;
+import be.uclouvain.jail.algo.fa.compose.DefaultDFAComposerInput;
+import be.uclouvain.jail.algo.fa.compose.DefaultDFAComposerResult;
 import be.uclouvain.jail.algo.fa.determinize.NFADeterminizer;
 import be.uclouvain.jail.algo.fa.minimize.DFAMinimizer;
 import be.uclouvain.jail.algo.fa.tmoves.ITauInformer;
 import be.uclouvain.jail.algo.fa.tmoves.TauRemover;
+import be.uclouvain.jail.algo.graph.copy.match.GMatchAggregator;
 import be.uclouvain.jail.dialect.seqp.SEQPGraphDialect;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.INFA;
@@ -14,6 +18,7 @@ import be.uclouvain.jail.fa.impl.GraphNFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.vm.JailReflectionToolkit;
 import be.uclouvain.jail.vm.JailVM;
+import be.uclouvain.jail.vm.JailVMException;
 
 /** Installs automaton toolkit. */
 public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter {
@@ -45,6 +50,22 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 				return "tau".equals(letter);
 			}
 		}).getResultingNFA();
+	}
+	
+	/** Composes two DFAs. */
+	public IDFA compose(IDFA dfa1, IDFA dfa2) throws JailVMException {
+		IDFA ret = new GraphDFA();
+		DefaultDFAComposerInput input = new DefaultDFAComposerInput(new IDFA[]{dfa1,dfa2}); 
+		DefaultDFAComposerResult result = new DefaultDFAComposerResult(ret); 
+
+		// add state populator
+		if (hasOption("state")) {
+			GMatchAggregator aggregator = getOptionValue("state",GMatchAggregator.class,null);
+			result.getStateAggregator().addPopulator(aggregator);
+		}
+		
+		new DFAComposerAlgo().execute(input,result);
+		return ret;
 	}
 
 	/** Adapts an object. */

@@ -11,6 +11,9 @@ import be.uclouvain.jail.graph.utils.ITotalOrder;
  */
 public interface IAlphabet<L> extends Comparator<L>, Iterable<L> {
 
+	/** Returns true if the letter is known by its alphabet. */
+	public boolean contains(L letter);
+	
 	/** Returns the letters as a total order. */
 	public ITotalOrder<L> getLetters();
 	
