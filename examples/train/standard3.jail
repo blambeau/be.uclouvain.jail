@@ -1,0 +1,18 @@
+/* Imports common definitions. */
+(execute 'commons.jail');
+
+/* removes tau-transition */
+NFA = (tmoves (TRAIN) :tau 'alarm');
+
+/* determinizes result */
+DFA = (determinize (NFA));
+
+/* minimizes result. */
+MIN = (minimize (DFA));
+
+/* show all */
+(show (TRAIN));
+(show (NFA));
+(show (DFA));
+(show (MIN));
+

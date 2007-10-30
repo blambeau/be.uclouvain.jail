@@ -1,0 +1,22 @@
+/** Automaton dot command. */
+define (adot <A>) 
+	     (copy (A)
+             :vertex {@shape -> when @isAccepting=true then 'doublecircle'
+                                else 'circle',
+        				      @style -> 'filled',
+                      @fillcolor -> when @isError=true then 'red'
+                                    when @isInitial=true then 'green'
+                                    else 'white'}
+		          :edge  {@label -> @letter});
+
+/** JDotty for automaton dot. */
+define (show <A>)
+	     (jdotty (adot (A)));
+
+/** Train automaton. */
+TRAIN = <§seqp 
+	STOPPED=start->STARTED|alarm->eopen->OPENED|open->OPENED,
+	STARTED=stop->STOPPED|alarm->stop->eopen->OPENED,
+	OPENED=close->STOPPED.
+§>;
+

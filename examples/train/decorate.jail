@@ -1,0 +1,26 @@
+/* import commons definitions. */
+(execute 'commons.jail');
+
+/* RUNNING = <start,stop> initially false */
+RUNNING = <§seqp
+	NO[@label='stopped' @running='stopped']=start->YES|stop->NO,
+	YES[@label='running' @running='running']=stop->NO|start->YES.
+§>;
+
+/* DOORS = <open,close> initially false */
+DOORS = <§seqp
+	CLOSED[@label='closed' @closed='closed']=open->OPENED|eopen->OPENED|close->CLOSED,
+	OPENED[@label='opened' @closed='opened']=close->CLOSED|open->OPENED|eopen->OPENED.
+§>;
+
+/* Decorates the TRAIN. */
+DECORATED = (compose (RUNNING) (DOORS) (TRAIN) 
+                 :state {@running -> pickUp(@running),
+                         @doors -> pickUp(@closed),
+												 @label -> pickUp(@closed)});
+
+/* Show all. */
+(show (TRAIN));
+(show (RUNNING));
+(show (DOORS));
+(show (DECORATED));
