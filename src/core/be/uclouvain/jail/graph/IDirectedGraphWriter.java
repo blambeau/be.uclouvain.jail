@@ -1,5 +1,8 @@
 package be.uclouvain.jail.graph;
 
+import be.uclouvain.jail.adapt.IAdaptable;
+import be.uclouvain.jail.algo.graph.copy.DirectedGraphCopier;
+import be.uclouvain.jail.algo.graph.shortest.dsp.DSPAlgo;
 import be.uclouvain.jail.uinfo.IUserInfo;
 
 /** 
@@ -43,7 +46,10 @@ import be.uclouvain.jail.uinfo.IUserInfo;
  * <p>This interface may be implemented for special purpose. Common usage is however to use 
  * some real graph implementation as writer.</p>  
  */
-public interface IDirectedGraphWriter {
+public interface IDirectedGraphWriter extends IAdaptable {
+	
+	/** Creates the graph info. */
+	public void setUserInfo(IUserInfo info);
 	
 	/** Creates a vertex. */
 	public Object createVertex(IUserInfo info);

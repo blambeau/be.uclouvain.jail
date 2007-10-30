@@ -11,6 +11,7 @@ import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.graph.deco.DirectedGraph;
 import be.uclouvain.jail.graph.deco.GraphUniqueIndex;
+import be.uclouvain.jail.graph.utils.DirectedGraphWriter;
 import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.uinfo.MapUserInfo;
 import be.uclouvain.jail.uinfo.functions.NonCommutativeFunction;
@@ -182,6 +183,21 @@ public class NetworkAdaptationTool implements IAdaptationTool {
 		
 		// create edge
 		graph.createEdge(sourceVertex, targetVertex, edgeInfo(adapter,target));
+	}
+
+	/** Returns a DSP tree for some adaptation. */
+	public IDirectedGraph getAdaptationsOf(Class domain) {
+		Object rootVertex = ensureVertex(domain);
+		DSP dsp = new DSP(this.graph,rootVertex);
+		
+		IDirectedGraph result = new AdjacencyDirectedGraph();
+		DirectedGraphWriter writer = new DirectedGraphWriter(result);
+		writer.getVertexCopier().keepAll();
+		writer.getEdgeCopier().keepAll();
+		
+		// compute spanning tree
+		dsp.getSpanningTree(writer);
+		return result;
 	}
 
 	/** Returns a string expression. */

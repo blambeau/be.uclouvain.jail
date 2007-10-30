@@ -89,15 +89,116 @@ public class SEQPParser extends ActiveParser {
 		if ((_alt_c >= 'A' && _alt_c <= 'Z')) {
 			Object _label = null;
 			_label = seqp.pStatename(pos);
+			Object _attr = null;
+			_alt_c = pos.charAt();
+			if ((_alt_c == '[')) {
+				try {
+					pos.save();
+					_attr = seqp.pAttributes(pos);
+					pos.commit();
+				} catch (ParseException ex) {
+					pos.rollback();
+				}
+			}
 			seqp.pSy$61USymbol(pos);
 			Object _def = null;
 			_def = seqp.pSeqpPathUBarlist(pos);
-			return load(pos, "seqp:statedef", new String[] { "label", "def" },
-					new Object[] { _label, _def });
+			return load(pos, "seqp:statedef", new String[] { "label", "attr",
+					"def" }, new Object[] { _label, _attr, _def });
 		} else {
 			throw new ParseException("<seqp:statedef> expected, "
 					+ pos.charAt() + " found.", pos.location());
 		}
+	}
+
+	/** &lt;seqp:attributes&gt; */
+	public final Object pAttributes(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if ((_alt_c == '[')) {
+			seqp.pSy$91USymbol(pos);
+			Object _attr = null;
+			_attr = seqp.pSeqpAttrdefUList(pos);
+			seqp.pSy$93USymbol(pos);
+			return load(pos, "seqp:attributes", new String[] { "attr" },
+					new Object[] { _attr });
+		} else {
+			throw new ParseException("<seqp:attributes> expected, "
+					+ pos.charAt() + " found.", pos.location());
+		}
+	}
+
+	/** &lt;seqp:attrdef&gt; */
+	public final Object pAttrdef(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if ((_alt_c == '@')) {
+			p$Char(pos, '@');
+			Object _name = null;
+			_name = seqp.pAttrname(pos);
+			seqp.pSy$61USymbol(pos);
+			Object _value = null;
+			_value = seqp.pLiteral(pos);
+			return load(pos, "seqp:attrdef", new String[] { "name", "value" },
+					new Object[] { _name, _value });
+		} else {
+			throw new ParseException("<seqp:attrdef> expected, " + pos.charAt()
+					+ " found.", pos.location());
+		}
+	}
+
+	/** &lt;seqp:attrname&gt; */
+	public final Object pAttrname(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if (((_alt_c >= 'A' && _alt_c <= 'Z') || (_alt_c >= 'a' && _alt_c <= 'z'))) {
+			Object _tor = null;
+			_tor = u.pIdentifier(pos);
+			return _tor;
+		} else {
+			throw new ParseException("<seqp:attrname> expected, "
+					+ pos.charAt() + " found.", pos.location());
+		}
+	}
+
+	/** &lt;seqp:literal&gt; */
+	public final Object pLiteral(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		_alt_c = pos.charAt();
+		if (((_alt_c == 'f') || (_alt_c == 't'))) {
+			try {
+				pos.save();
+				Object _tor = null;
+				_tor = u.pBoolean(pos);
+				pos.commit();
+				return _tor;
+			} catch (ParseException ex) {
+				pos.rollback(ex);
+			}
+		}
+		_alt_c = pos.charAt();
+		if (((_alt_c == '"') || (_alt_c == '\''))) {
+			try {
+				pos.save();
+				Object _tor = null;
+				_tor = u.pString(pos);
+				pos.commit();
+				return _tor;
+			} catch (ParseException ex) {
+				pos.rollback(ex);
+			}
+		}
+		_alt_c = pos.charAt();
+		if ((_alt_c >= '0' && _alt_c <= '9')) {
+			try {
+				pos.save();
+				Object _tor = null;
+				_tor = u.pInteger(pos);
+				pos.commit();
+				return _tor;
+			} catch (ParseException ex) {
+				pos.rollback(ex);
+			}
+		}
+		return (Object) pos.error("<seqp:literal> expected, " + pos.charAt()
+				+ " found.");
 	}
 
 	/** &lt;seqp:path&gt; */
@@ -359,6 +460,33 @@ public class SEQPParser extends ActiveParser {
 		}
 	}
 
+	/** &lt;seqp:seqp_attrdef_u_list&gt; */
+	public final List<?> pSeqpAttrdefUList(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if ((_alt_c == '@')) {
+			Object _f = null;
+			_f = seqp.pAttrdef(pos);
+			List<Object> _n = new ArrayList<Object>();
+			_alt_c = pos.charAt();
+			while (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
+					|| (_alt_c == ' ') || (_alt_c == '/') || (_alt_c == '@'))) {
+				try {
+					pos.save();
+					_n.add(seqp.pSeqpAttrdefUList11(pos));
+					pos.commit();
+				} catch (ParseException ex) {
+					pos.rollback();
+					break;
+				}
+				_alt_c = pos.charAt();
+			}
+			return toList(_f, _n);
+		} else {
+			throw new ParseException("<seqp:seqp_attrdef_u_list> expected, "
+					+ pos.charAt() + " found.", pos.location());
+		}
+	}
+
 	/** &lt;seqp:seqp_path_u_barlist&gt; */
 	public final List<?> pSeqpPathUBarlist(Pos pos) throws ParseException {
 		char _alt_c = pos.charAt();
@@ -511,6 +639,54 @@ public class SEQPParser extends ActiveParser {
 		}
 	}
 
+	/** &lt;seqp:sy$91_u_symbol&gt; */
+	public final Object pSy$91USymbol(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if ((_alt_c == '[')) {
+			Object _tor = null;
+			_tor = p$Char(pos, '[');
+			_alt_c = pos.charAt();
+			if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
+					|| (_alt_c == ' ') || (_alt_c == '/'))) {
+				try {
+					pos.save();
+					u.pSpacing(pos);
+					pos.commit();
+				} catch (ParseException ex) {
+					pos.rollback();
+				}
+			}
+			return _tor;
+		} else {
+			throw new ParseException("<seqp:sy$91_u_symbol> expected, "
+					+ pos.charAt() + " found.", pos.location());
+		}
+	}
+
+	/** &lt;seqp:sy$93_u_symbol&gt; */
+	public final Object pSy$93USymbol(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if ((_alt_c == ']')) {
+			Object _tor = null;
+			_tor = p$Char(pos, ']');
+			_alt_c = pos.charAt();
+			if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
+					|| (_alt_c == ' ') || (_alt_c == '/'))) {
+				try {
+					pos.save();
+					u.pSpacing(pos);
+					pos.commit();
+				} catch (ParseException ex) {
+					pos.rollback();
+				}
+			}
+			return _tor;
+		} else {
+			throw new ParseException("<seqp:sy$93_u_symbol> expected, "
+					+ pos.charAt() + " found.", pos.location());
+		}
+	}
+
 	/** &lt;seqp:sy$124_u_symbol&gt; */
 	public final Object pSy$124USymbol(Pos pos) throws ParseException {
 		char _alt_c = pos.charAt();
@@ -532,6 +708,32 @@ public class SEQPParser extends ActiveParser {
 		} else {
 			throw new ParseException("<seqp:sy$124_u_symbol> expected, "
 					+ pos.charAt() + " found.", pos.location());
+		}
+	}
+
+	/** &lt;seqp:seqp_attrdef_u_list_1_1&gt; */
+	public final Object pSeqpAttrdefUList11(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
+				|| (_alt_c == ' ') || (_alt_c == '/') || (_alt_c == '@'))) {
+			_alt_c = pos.charAt();
+			if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
+					|| (_alt_c == ' ') || (_alt_c == '/'))) {
+				try {
+					pos.save();
+					u.pSpacing(pos);
+					pos.commit();
+				} catch (ParseException ex) {
+					pos.rollback();
+				}
+			}
+			Object _tor = null;
+			_tor = seqp.pAttrdef(pos);
+			return _tor;
+		} else {
+			throw new ParseException(
+					"<seqp:seqp_attrdef_u_list_1_1> expected, " + pos.charAt()
+							+ " found.", pos.location());
 		}
 	}
 

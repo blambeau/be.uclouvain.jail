@@ -68,23 +68,38 @@ public class DSPResult<T> {
 		// edge info and creator
 		IUserInfo eInfo = null;
 		
+		// root vertex
+		Object root = input.getRootVertex();
+
 		// copy all vertices
 		Object[] copies = new Object[vertices.size()];
 		int i=0;
 		for (Object vertex: vertices) {
+			
+			// bypass unreachable vertices
+			if (vertex != root && getIncomingEdge(vertex) == null) {
+				i++;
+				continue;
+			}
+			
+			// create reachable ones
 			vInfo = graph.getVertexInfo(vertex);
 			copies[i++] = output.createVertex(vInfo);
 		}
 		
 		// create edges
-		Object root = input.getRootVertex();
 		for (Object vertex: vertices) {
+			// bypass root
 			if (vertex == root) { continue; }
+			
+			// bypass unreachable vertices
 			Object iEdge = getIncomingEdge(vertex);
+			if (iEdge == null) { continue; }
+			
+			// create edge
 			Object iSource = graph.getEdgeSource(iEdge);
 			eInfo = graph.getEdgeInfo(iEdge);
-			output.createEdge(copies[vertices.indexOf(iSource)], 
-					copies[vertices.indexOf(vertex)], eInfo);
+			output.createEdge(copies[vertices.indexOf(iSource)], copies[vertices.indexOf(vertex)], eInfo);
 		}
 	}
 	

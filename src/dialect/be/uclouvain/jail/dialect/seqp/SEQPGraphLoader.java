@@ -38,6 +38,9 @@ public class SEQPGraphLoader extends SEQPCallback<Object> {
 
 	/** Init state. */
 	private Object init;
+	
+	/** Current user info. */
+	private IUserInfo info;
 
 	/** Creates a graph loader. */
 	public SEQPGraphLoader(IDirectedGraphWriter writer) {
@@ -71,7 +74,7 @@ public class SEQPGraphLoader extends SEQPCallback<Object> {
 
 	/** Creates a vertex user info. */
 	private IUserInfo vInfo(String label) {
-		IUserInfo info = MapUserInfo.factor(STATELABEL, label == null ? "" : label);
+		info = MapUserInfo.factor(STATELABEL, label == null ? "" : label);
 		info.setAttribute("isAccepting", true);
 		info.setAttribute("isError", false);
 		info.setAttribute("isInitial", vertices.size()==0);
@@ -91,9 +94,6 @@ public class SEQPGraphLoader extends SEQPCallback<Object> {
 			if (label != null) {
 				vertices.put(label, vertex);
 			}
-			//System.out.println("Vertex created: " + label + " " + vertex);
-		} else if (vertex != null) {
-			//System.out.println("Vertex found: " + label + " " + vertex);
 		}
 		return vertex;
 	}
@@ -101,7 +101,6 @@ public class SEQPGraphLoader extends SEQPCallback<Object> {
 	/** Callback method for SEQP_DEF nodes. */
 	@Override
 	public Object SEQP_DEF(IASTNode node) throws Exception {
-		//node.accept(new DebugVisitor());
 		super.recurseOnChildren(node);
 		return null;
 	}
@@ -112,7 +111,25 @@ public class SEQPGraphLoader extends SEQPCallback<Object> {
 		// retrieve vertex
 		String label = node.getAttrString("label");
 		this.init = ensureVertex(label, true);
+
+		// install attributes and vertex continuation path
 		recurseOnChildren(node);
+		return null;
+	}
+
+	/** Callback method for ATTRIBUTES nodes. */
+	@Override
+	public Object ATTRIBUTES(IASTNode node) throws Exception {
+		super.recurseOnChildren(node);
+		return null;
+	}
+
+	/** Callback method for ATTRDEF nodes. */
+	@Override
+	public Object ATTRDEF(IASTNode node) throws Exception {
+		String key = node.getAttrString("name");
+		Object value = node.getAttr("value");
+		info.setAttribute(key, value);
 		return null;
 	}
 
@@ -120,7 +137,6 @@ public class SEQPGraphLoader extends SEQPCallback<Object> {
 	@Override
 	public Object PATH(IASTNode node) throws Exception {
 		Object[] target = (Object[]) makeCall(node.childFor("root"));
-		//System.out.println("PATH: [" + target[0] + "," + target[1] + "]");
 		if (target[0] == null) {
 			target[0] = "";
 		}

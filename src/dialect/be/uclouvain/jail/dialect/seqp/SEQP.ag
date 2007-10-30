@@ -12,10 +12,27 @@ grammar SEQP as seqp extends ActiveParser {
 	<seqp:seqp_def>                         ::= state:<seqp:statedef u:commalist> <'.' u:symbol>
 	                                          ; [u:node]
 
-	<seqp:statedef>                         ::= label:<seqp:statename> <'=' u:symbol>
+	<seqp:statedef>                         ::= label:<seqp:statename> attr:<seqp:attributes>? <'=' u:symbol>
 	                                            def:<seqp:path u:barlist>
 	                                          ; [u:node]
 
+	<seqp:attributes>                       ::= <'[' u:symbol> 
+	                                                attr:<seqp:attrdef u:list>
+	                                            <']' u:symbol> 
+                                              ; [u:node]
+
+	<seqp:attrdef>                          ::= '@' name:<seqp:attrname> <'=' u:symbol>
+	                                                value:<seqp:literal>
+	                                          ; [u:node]
+	                                          
+	<seqp:attrname>                         ::= tor:<u:identifier>
+	                                          ; [u:return]
+	                                          
+	<seqp:literal>                          ::= tor:<u:boolean>
+	                                          | tor:<u:string>
+	                                          | tor:<u:integer>
+	                                          ; [u:return]
+                                              
 	<seqp:path>                             ::= root:<seqp:pathcomp>
 	                                          ; [u:node]
 

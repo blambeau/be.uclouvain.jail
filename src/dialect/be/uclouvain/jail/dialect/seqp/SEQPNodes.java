@@ -15,6 +15,12 @@ public enum SEQPNodes implements IASTType {
 	/** STATEDEF node marker. */
 	STATEDEF,
 
+	/** ATTRIBUTES node marker. */
+	ATTRIBUTES,
+
+	/** ATTRDEF node marker. */
+	ATTRDEF,
+
 	/** PATH node marker. */
 	PATH,
 

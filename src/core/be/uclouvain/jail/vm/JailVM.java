@@ -19,6 +19,7 @@ import be.uclouvain.jail.adapt.IAdapter;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchNodes;
 import be.uclouvain.jail.dialect.IGraphDialect;
 import be.uclouvain.jail.dialect.IPrintable;
+import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.vm.autogram.JailNodes;
 import be.uclouvain.jail.vm.autogram.JailParser;
 import be.uclouvain.jail.vm.toolkits.AutomatonToolkit;
@@ -115,6 +116,11 @@ public class JailVM {
 			throw new IllegalArgumentException("varName as well as value are mandatory.");
 		}
 		memory.put(varName, value);
+		
+		IUserInfo info = (IUserInfo) AdaptUtils.adapt(value, IUserInfo.class);
+		if (info != null) {
+			info.setAttribute("JailVM.VarName", varName);
+		}
 	}
 	
 	/** Returns the value mapped to name in memory. */

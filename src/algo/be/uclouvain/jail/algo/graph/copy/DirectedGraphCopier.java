@@ -14,6 +14,8 @@ public class DirectedGraphCopier {
 
 	/** Copies some directed graph. */
 	public static void copy(IDirectedGraph graph, IDirectedGraphWriter output) {
+		output.setUserInfo(graph.getUserInfo());
+		
 		// retrieve input vertices and edges
 		ITotalOrder<Object> vertices = graph.getVerticesTotalOrder();
 		ITotalOrder<Object> edges = graph.getEdgesTotalOrder();

@@ -52,6 +52,11 @@ public class DirectedGraphWriter<T> implements IDirectedGraphWriter {
 		return eInfoCopier.create(info);
 	}
 	
+	/** Creates the graph info. */
+	public void setUserInfo(IUserInfo info) {
+		writer.setUserInfo(info.copy());
+	}
+	
 	/** Creates a vertex. */
 	public Object createVertex(IUserInfo info) {
 		info = cloneVertexInfo(info);
@@ -62,6 +67,15 @@ public class DirectedGraphWriter<T> implements IDirectedGraphWriter {
 	public Object createEdge(Object source, Object target, IUserInfo info) {
 		info = cloneEdgeInfo(info);
 		return writer.createEdge(source, target, info);
+	}
+
+	/** Adapts this writer to a specific class. */
+	public <S> Object adapt(Class<S> c) {
+		if (c.isAssignableFrom(getClass())) {
+			return this;
+		}
+		
+		return writer.adapt(c);
 	}
 	
 }

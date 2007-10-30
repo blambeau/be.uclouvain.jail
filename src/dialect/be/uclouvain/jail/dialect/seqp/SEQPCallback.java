@@ -26,6 +26,16 @@ public class SEQPCallback<T> extends CallbackBase<T> {
 		return nonOverrided(node);
 	}
 
+	/** Callback method for ATTRIBUTES nodes. */
+	public T ATTRIBUTES(IASTNode node) throws Exception {
+		return nonOverrided(node);
+	}
+
+	/** Callback method for ATTRDEF nodes. */
+	public T ATTRDEF(IASTNode node) throws Exception {
+		return nonOverrided(node);
+	}
+
 	/** Callback method for PATH nodes. */
 	public T PATH(IASTNode node) throws Exception {
 		return nonOverrided(node);

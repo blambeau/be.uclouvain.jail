@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 
 import att.grappa.Graph;
 import att.grappa.GrappaPanel;
@@ -23,15 +25,20 @@ public class JDotty extends JFrame {
 	/** Serial version UID. */
 	private static final long serialVersionUID = 1755521514008407690L;
 
+	/** Tabs. */
+	private JTabbedPane tabs;
+
 	/** Creates a JDotty instance. */
 	public JDotty() {
 		super();
 		super.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		tabs = new JTabbedPane();
+		super.getContentPane().add(tabs);
 		super.setSize(800, 600);
 	}
 	
 	/** Presents a graph using dot. */
-	public void present(IDirectedGraph graph) throws IOException {
+	public void present(IDirectedGraph graph, String labelAttr) throws IOException {
 		final IPrintable p = new DOTDirectedGraphPrintable(graph);
 		String dotPath = (String) Jail.getProperty("be.uclouvain.jail.dot.JDotty.dotpath","dot");
 		
@@ -61,12 +68,12 @@ public class JDotty extends JFrame {
 			Graph grappaGraph = dotParser.getGraph();
 			grappaGraph.setEditable(false);
 			grappaGraph.repaint();
-		
 			dotIs.close();
 			
 			// create a frame for presentation
+			Object name = graph.getUserInfo().getAttribute(labelAttr);
 			GrappaPanel panel = new GrappaPanel(grappaGraph);
-			getContentPane().add(panel);
+			tabs.addTab(name == null ? "Noname" : name.toString(), new JScrollPane(panel));
 			super.setVisible(true);
 		} catch (Exception ex2) {
 			throw new IOException("Unable to start jdotty: " + ex2.getMessage());

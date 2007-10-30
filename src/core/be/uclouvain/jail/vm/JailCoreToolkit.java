@@ -10,9 +10,7 @@ import net.chefbe.autogram.ast2.parsing.ParseException;
 import be.uclouvain.jail.adapt.AdaptUtils;
 import be.uclouvain.jail.adapt.NetworkAdaptationTool;
 import be.uclouvain.jail.dialect.IGraphDialect;
-import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
-import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 
 /**
  * Core JAIL toolkit. 
@@ -145,9 +143,10 @@ public class JailCoreToolkit extends JailReflectionToolkit {
 		}
 	}
 	
+	/** Returns adaptations of a source class. */
 	public IDirectedGraph adaptations(Object source) {
-		AdaptUtils.adapt(new AdjacencyDirectedGraph(),IDFA.class);
-		return ((NetworkAdaptationTool)AdaptUtils.getAdaptationTool()).getGraph();
+		NetworkAdaptationTool tool = (NetworkAdaptationTool) AdaptUtils.getAdaptationTool();
+		return tool.getAdaptationsOf(source.getClass());
 	}
 
 }
