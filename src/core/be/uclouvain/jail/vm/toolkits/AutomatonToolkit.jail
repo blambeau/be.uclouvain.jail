@@ -1,1 +1,56 @@
-native 
+/**
+ * Standard determinization algorithm from automata theory. This algorithm 
+ * computes the DFA which is (language) equivalent to the input NFA.
+ *
+ * <N>             + (INFA) non deterministic automaton to determinize.
+ * <S>             + (<gm:match_do>) matching rules to use for the states.
+ * <E>             + (<gm:match_do>) matching rules to use for the edges.
+ *                 + (syntax of the matching rules follows the GMatch grammar, 
+ *                    see javadoc).
+ * <D>             + (IDFA) returns the language equivalent DFA.
+ */
+define native (determinize <N> :state? <S> :edge? <E>) returns <D>;
+
+/**
+ * Standard minimization algorithm from automata theory. This algorithm 
+ * computes the minimal DFA which is (language) equivalent to the input (non
+ * minimal) DFA.
+ *
+ * <D>             + (IDFA) (non minimal) automaton to minimize.
+ * <S>             + (<gm:match_do>) matching rules to use for the states.
+ * <E>             + (<gm:match_do>) matching rules to use for the edges.
+ *                 + (syntax of the matching rules follows the GMatch grammar, 
+ *                    see javadoc).
+ * <M>             + (IDFA) returns the minimal language equivalent DFA.
+ */
+define native (minimize <D> :state? <S> :edge? <E>) returns <M>;
+
+/**
+ * Removes tau-transitions of the input DFA. This algorithm (aka 'epsilon moves 
+ * removal') computes a NFA which is (language) equivalent to the input DFA
+ * but do not contain tau transitions anymore.
+ *
+ * <D>             + (IDFA) automaton with tau-transitions.
+ * <t>             + (String) alphabet letter to consider as tau transitions.
+ *                 + The default value for tau letter is "".
+ * <S>             + (<gm:match_do>) matching rules to use for the states.
+ * <E>             + (<gm:match_do>) matching rules to use for the edges.
+ *                 + (syntax of the matching rules follows the GMatch grammar, 
+ *                    see javadoc).
+ * <M>             + (IDFA) returns the language equivalent NFA without 
+ *                   tau-transitions.
+ */
+define native (tmoves <D> :tau? <t> :state? <S> :edge? <E>) returns <M>;
+
+/**
+ * Standard composition algorithm from automata theory. This algorithm
+ * computes the synchronized product of the input DFAs.
+ *
+ * <D...>          + (IDFA) some DFAs to compose.
+ * <S>             + (<gm:match_do>) matching rules to use for the states.
+ * <E>             + (<gm:match_do>) matching rules to use for the edges.
+ *                 + (syntax of the matching rules follows the GMatch grammar, 
+ *                    see javadoc).
+ * <C>             + (IDFA) returns the synchronized product of input DFAs.
+ */
+define native (compose <D...> :state? <S> :edge? <E>) returns <C>;

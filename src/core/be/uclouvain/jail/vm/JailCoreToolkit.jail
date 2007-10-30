@@ -1,16 +1,10 @@
-/** 
- * Loads a Jail resource from an accessible path. 
- * 
- * When format option is not specified, the file extension is used to
- * autodetect the parser to use.
+/**
+ * Executes the .jail file located to the path.
  *
- * <path>   (string) path to an accessible file where the resource
- *          must be loaded from.
- * <format> (string) input format of the resource ('dot' for example).
+ * <path>          + (String) path to an accessible file containing jail 
+ *                   commands.
  */
-define native (load <path> :format? <format>) returns object;
-
-
+define native (execute <path>);
 
 /**
  * Saves a Jail resource to an accessible path.
@@ -21,15 +15,25 @@ define native (load <path> :format? <format>) returns object;
  * This commands simply returns its resource argument so that it can be
  * chained easily for debugging purposes.
  * 
- * <G>      (IPrintable adaptable) a resource expression whose result
- *           must be saved. 
- * <path>   (string) path to an accessible file where the resource must 
- *          be saved to.
- * <format> (string) output format of the resource ('dot' for example).
+ * <G>             + (IPrintable) a resource expression whose result must be 
+ *                    saved. 
+ * <path>          + (String) path to an accessible file where the resource must 
+ *                    be saved to.
+ * <format>        + (String) output format of the resource ('dot' for example).
  */
 define native (save <G> <path> :format? <format>) returns <G>;
 
-
+/** 
+ * Loads a Jail resource from an accessible path. 
+ * 
+ * When format option is not specified, the file extension is used to
+ * autodetect the parser to use.
+ *
+ * <path>          + (String) path to an accessible file where the resource
+ *                   must be loaded from.
+ * <format>        + (String) input format of the resource ('dot' for example).
+ */
+define native (load <path> :format? <format>) returns object;
 
 /**
  * Prints a resource on the console.
@@ -37,7 +41,18 @@ define native (save <G> <path> :format? <format>) returns <G>;
  * This commands simply returns its resource argument so that it can be
  * chained easily for debugging purposes.
  * 
- * <G>      (IPrintable adaptable) a resource expression whose result
- *           must be printed. 
+ * <G...>          + (IPrintable) resource expressions whose results must be 
+ *                   printed. 
+ * <format>        + (String) output format to use ('dot' for example).
  */
-native (print <G>) returns <G>;
+define native (print <G...> :format <format>) returns <G[0]>;
+
+/**
+ * Returns a graph (actually a tree) which presents all possible
+ * adaptations of <A>.
+ *
+ * <A>             + (Object) any expression that returns a typed result.
+ * <G>             + (IDirectedGraph) directed graph representing adaptation
+ *                   tree of <A>
+ */
+define native (adaptations <A>) returns <G>;

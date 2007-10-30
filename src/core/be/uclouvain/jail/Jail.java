@@ -1,11 +1,16 @@
 package be.uclouvain.jail;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import jline.ConsoleReader;
+
 import org.apache.commons.beanutils.ConvertUtils;
 
+import be.uclouvain.jail.vm.IJailVMEnvironment;
 import be.uclouvain.jail.vm.JailVM;
 import be.uclouvain.jail.vm.JailVMException;
 
@@ -15,7 +20,7 @@ import be.uclouvain.jail.vm.JailVMException;
  * <p>This class provides the jail command line program and acts as the 
  * repository for all JAIL properties.</p> 
  */
-public class Jail {
+public class Jail implements IJailVMEnvironment {
 
 	/** JAIL properties. */
 	private static Map<String,Object> properties = new HashMap<String,Object>();
@@ -68,19 +73,63 @@ public class Jail {
 		return prop == null ? def : prop.toString();
 	}
 	
-	/** Starts the Jail VM on a file. */
-	public static void main(String[] args) throws JailVMException {
-		if (args.length != 1) {
-			System.out.println("Usage: jail jailfile");
-		} else {
-			File f = new File(args[0]);
-			if (!f.exists() || !f.canRead()) {
-				System.err.println("Unable to read file " + f);
-			} else {
-				JailVM vm = new JailVM();
-				vm.execute(f);
+	/** Out writer to use. */
+	private PrintWriter out;
+	
+	/** Starts the virtual machine. */
+	public void startVM(String jailFile) throws IOException {
+		// create the virtual machine
+		JailVM vm = new JailVM(this);
+
+		// create a in and out
+		ConsoleReader reader = new ConsoleReader();
+        out = new PrintWriter(System.out);
+        
+        // executes jailFile if any
+        if (jailFile != null) {
+        	try {
+				vm.execute(new File(jailFile));
+			} catch (JailVMException e) {
+				out.println("Unable to execute " + jailFile + " file: " + e.getMessage());
 			}
+        }
+        
+		// parse all lines
+		String line;
+        while ((line = reader.readLine("jail> ")) != null) {
+        	if ("\\q".equals(line.trim())) {
+        		System.exit(0);
+        	}
+        	try {
+        		vm.execute(line + "\n");
+        	} catch (JailVMException ex) {
+        		out.println("Fatal error: " + ex.getMessage());
+        	}
+        }		
+	}
+	
+	/** Starts the Jail VM on a file. */
+	public static void main(String[] args) throws Exception {
+		try {
+			new Jail().startVM(args.length==1 ? args[0] : null);
+		} catch (IOException ex) {
+			System.out.println("An IOException occured when starting Jail.");
+			ex.printStackTrace();
 		}
+	}
+
+	/** Handles an error. */
+	public void handleError(Throwable t) {
+		out.println(t.getMessage());
+		out.println();
+		out.flush();
+	}
+
+	/** Prints to the console. */
+	public void printConsole(String message, LEVEL level) {
+		out.println(message);
+		out.println();
+		out.flush();
 	}
 	
 }

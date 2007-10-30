@@ -7,6 +7,7 @@ import java.util.Stack;
 
 import net.chefbe.javautils.robust.exceptions.CoreException;
 import be.uclouvain.jail.adapt.AdaptUtils;
+import be.uclouvain.jail.vm.JailVMException.ERROR_TYPE;
 
 /**
  * Stack for command invocation.
@@ -100,7 +101,7 @@ public class JailVMStack {
 		// adapt it
 		Object adapted = AdaptUtils.adapt(arg,type);
 		if (adapted == null) {
-			throw new JailVMException("Unable to convert " + arg + " to " + type.getSimpleName());
+			throw new JailVMException(ERROR_TYPE.ADAPTABILITY_ERROR,null,"Unable to adapt argument " + offset + " to " + type.getSimpleName());
 		}
 		
 		args[index] = adapted;
@@ -108,11 +109,11 @@ public class JailVMStack {
 	}
 	
 	/** Pops some arguments of the stack. */
-	public Object[] popArgs(Class<?>[] types) throws JailVMException {
+	public Object[] popArgs(Class<?>[] types, JailVM vm, JailVMOptions options) throws JailVMException {
 		// first check stack size
 		int size = types.length;
-		if (stack.size() < size) {
-			throw new JailVMException("Unexpected stack exception (no args enough)");
+		if (stack.size() < size-2) {
+			throw new JailVMException(ERROR_TYPE.BAD_COMMAND_USAGE,null);
 		}
 		
 		// count is the actual number of eat args on stack
@@ -122,7 +123,13 @@ public class JailVMStack {
 		Object[] args = new Object[size];
 		int i=0;
 		for (Class<?> type: types) {
-			count += popArg(type,count,args,i++);
+			if (JailVM.class.equals(type)) {
+				args[i++] = vm;
+			} else if (JailVMOptions.class.equals(type)) {
+				args[i++] = options;
+			} else {
+				count += popArg(type,count,args,i++);
+			}
 		}
 		
 		// pop all

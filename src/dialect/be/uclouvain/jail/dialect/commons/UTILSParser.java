@@ -620,6 +620,56 @@ public class UTILSParser extends PEGParser {
 		}
 	}
 
+	/** &lt;u:spaces&gt; */
+	public final String pSpaces(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r') || (_alt_c == ' '))) {
+			int start = pos.offset();
+			u.pASpaceString(pos);
+			_alt_c = pos.charAt();
+			while (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r') || (_alt_c == ' '))) {
+				try {
+					pos.save();
+					u.pASpaceString(pos);
+					pos.commit();
+				} catch (ParseException ex) {
+					pos.rollback();
+					break;
+				}
+				_alt_c = pos.charAt();
+			}
+			return pos.diff(start);
+		} else {
+			throw new ParseException("<u:spaces> expected, " + pos.charAt()
+					+ " found.", pos.location());
+		}
+	}
+
+	/** &lt;u:eol_spaces&gt; */
+	public final String pEolSpaces(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r') || (_alt_c == ' '))) {
+			int start = pos.offset();
+			_alt_c = pos.charAt();
+			while (((_alt_c == '\t') || (_alt_c == ' '))) {
+				try {
+					pos.save();
+					u.pInlineSpace(pos);
+					pos.commit();
+				} catch (ParseException ex) {
+					pos.rollback();
+					break;
+				}
+				_alt_c = pos.charAt();
+			}
+			u.pEol(pos);
+			return pos.diff(start);
+		} else {
+			throw new ParseException("<u:eol_spaces> expected, " + pos.charAt()
+					+ " found.", pos.location());
+		}
+	}
+
 	/** &lt;u:comment&gt; */
 	public final Object pComment(Pos pos) throws ParseException {
 		char _alt_c = pos.charAt();

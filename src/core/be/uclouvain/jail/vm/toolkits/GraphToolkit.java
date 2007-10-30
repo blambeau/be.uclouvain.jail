@@ -1,5 +1,7 @@
 package be.uclouvain.jail.vm.toolkits;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 
 import be.uclouvain.jail.adapt.IAdaptable;
@@ -17,6 +19,8 @@ import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.vm.JailReflectionToolkit;
 import be.uclouvain.jail.vm.JailVM;
 import be.uclouvain.jail.vm.JailVMException;
+import be.uclouvain.jail.vm.JailVMOptions;
+import be.uclouvain.jail.vm.JailVMException.ERROR_TYPE;
 
 /** Provides a graph tolkit. */
 public class GraphToolkit extends JailReflectionToolkit implements IAdapter {
@@ -40,33 +44,46 @@ public class GraphToolkit extends JailReflectionToolkit implements IAdapter {
 	public IDirectedGraph jdotty(IDirectedGraph[] graphs) throws JailVMException {
 		if (jdotty == null) {
 			jdotty = new JDotty();
+			jdotty.addWindowListener(new WindowAdapter() {
+				@Override
+				public void windowClosed(WindowEvent arg0) {
+					jdotty = null;
+				}
+			});
 		}
 		try {
 			for (IDirectedGraph graph: graphs) { 
 				jdotty.present(graph,"JailVM.VarName");
 			}
 		} catch (IOException e) {
-			throw new JailVMException("Unable to present graph using jdotty: ",e);
+			throw new JailVMException(ERROR_TYPE.INTERNAL_ERROR,null,"Unable to execute jdotty.",e);
 		}
 		return graphs[0];
 	}
 	
 	/** Copies a graph. */
-	public IDirectedGraph copy(IDirectedGraph graph) throws JailVMException {
+	public IDirectedGraph copy(IDirectedGraph graph, JailVMOptions options) throws JailVMException {
 		AdjacencyDirectedGraph copy = new AdjacencyDirectedGraph();
 		DirectedGraphWriter writer = new DirectedGraphWriter(copy);
 		writer.getVertexCopier().keepAll();
 		writer.getEdgeCopier().keepAll();
 		
 		// add state populator
-		if (hasOption("state")) {
-			GMatchPopulator populator = getOptionValue("state",GMatchPopulator.class,null);
+		if (options.hasOption("vertex")) {
+			GMatchPopulator populator = options.getOptionValue("vertex",GMatchPopulator.class,null);
+			writer.getVertexCopier().addPopulator(populator);
+		}
+		
+		// add state populator
+		if (options.hasOption("state")) {
+			System.err.println("Warning, using depreacated :state on graph copy.");
+			GMatchPopulator populator = options.getOptionValue("state",GMatchPopulator.class,null);
 			writer.getVertexCopier().addPopulator(populator);
 		}
 		
 		// add edge populator
-		if (hasOption("edge")) {
-			GMatchPopulator populator = getOptionValue("edge",GMatchPopulator.class,null);
+		if (options.hasOption("edge")) {
+			GMatchPopulator populator = options.getOptionValue("edge",GMatchPopulator.class,null);
 			writer.getEdgeCopier().addPopulator(populator);
 		}
 		
@@ -83,7 +100,7 @@ public class GraphToolkit extends JailReflectionToolkit implements IAdapter {
 		} else if (IUserInfo.class.equals(type)) {
 			return adaptToUserInfo(who);
 		}
-		return null;
+		return super.adapt(who, type);
 	}
 	
 	/** Adapts an object to a directed graph. */

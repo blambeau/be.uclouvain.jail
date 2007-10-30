@@ -1,0 +1,26 @@
+define (adot <A>) 
+	(copy (A)
+        :state {@shape -> when @isAccepting=true then 'doublecircle'
+                          else 'circle',
+        				@style -> 'filled',
+                @fillcolor -> when @isError=true then 'red'
+                              when @isInitial=true then 'green'
+                              else 'white'}
+		    :edge  {@label -> @letter}
+	);
+define (show <A>)
+	     (jdotty (adot (A)));
+
+TRAIN = <§seqp 
+	STOPPED=start->STARTED|alarm->open->OPENED,
+	STARTED=stop->STOPPED|alarm->stop->open->OPENED,
+	OPENED=close->STOPPED.
+§>;
+NFA = (tmoves (TRAIN) :tau 'alarm');
+DFA = (determinize (NFA));
+MIN = (minimize (DFA));
+
+(show (TRAIN));
+(show (NFA));
+(show (DFA));
+(show (MIN));

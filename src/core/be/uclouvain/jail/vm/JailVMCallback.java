@@ -1,5 +1,6 @@
 package be.uclouvain.jail.vm;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.chefbe.autogram.ast2.IASTNode;
@@ -46,6 +47,23 @@ public class JailVMCallback extends JailCallback<Object> {
 		return null;
 	}
 
+	/** Callback method for SYSTEMC nodes. */
+	public Object SYSTEMC(IASTNode node) throws Exception {
+		String name = node.getAttrString("name");
+		List<Object> args = new ArrayList<Object>();
+		for (IASTNode child: node.children()) {
+			Object value = makeCall(child);
+			if (value != null) args.add(value);
+		}
+		vm.executeSystemCommand(name,args.toArray());
+		return null;
+	}
+
+	/** Callback method for SYSTEMARG nodes. */
+	public Object SYSTEMARG(IASTNode node) throws Exception {
+		return node.getAttr("value");
+	}
+
 	/** Callback method for AFFECTATION nodes. */
 	@Override
 	public Object AFFECTATION(IASTNode node) throws Exception {
@@ -71,8 +89,8 @@ public class JailVMCallback extends JailCallback<Object> {
 	/** Callback method for DEFINE nodes. */
 	@Override
 	public Object DEFINE(IASTNode node) throws Exception {
-		JailVMUserCommand command = new JailVMUserCommand(node);
-		vm.defineUserCommand(command);
+		JailVMUserCommand command = new JailVMUserCommand(node,vm.getCoreToolkit());
+		vm.addCommand(command);
 		return null;
 	}
 
@@ -160,7 +178,7 @@ public class JailVMCallback extends JailCallback<Object> {
 		if (scope.knows(name)) {
 			return scope.valueOf(name);
 		} else {
-			throw new JailVMException("Unknown variable " + name); 
+			throw JailVMException.unknownVariable(name); 
 		}
 	}
 

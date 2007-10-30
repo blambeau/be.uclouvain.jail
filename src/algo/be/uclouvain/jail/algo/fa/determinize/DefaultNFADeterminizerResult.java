@@ -44,6 +44,16 @@ public class DefaultNFADeterminizerResult implements INFADeterminizerResult {
 		this.dfa = dfa;
 		this.graph = dfa.getGraph();
 	}
+	
+	/** Returns the state aggregator. */
+	public UserInfoAggregator getStateAggregator() {
+		return stateAggregator;
+	}
+
+	/** Returns the edge aggregator. */
+	public UserInfoAggregator getEdgeAggregator() {
+		return edgeAggregator;
+	}
 
 	/**
 	 * "Algorithm started" event.
@@ -65,9 +75,13 @@ public class DefaultNFADeterminizerResult implements INFADeterminizerResult {
 	@SuppressWarnings("unused")
 	private String debugStateDef(Set<IUserInfo> def) {
 		StringBuffer sb = new StringBuffer();
-		for (IUserInfo info : def) {
-			sb.append(info.getAttribute("id") + ",");
+		sb.append('[');
+		int i=0;
+		for (Object d: def) {
+			if (i++ != 0) { sb.append(','); }
+			sb.append(d);
 		}
+		sb.append(']');
 		return sb.toString();
 	}
 	
@@ -89,9 +103,10 @@ public class DefaultNFADeterminizerResult implements INFADeterminizerResult {
 	 * @return an identifier of the resulting state in the equivalent DFA. 
 	 */
 	public Object createTargetState(Set<IUserInfo> def) {
-		//System.out.println("CREATING target state for: " + debugStateDef(def));
+		//System.out.println("Creating target state for: " + debugStateDef(def));
 		IUserInfo info = stateAggregator.create(def);
-		return graph.createVertex(info);
+		Object vertex = graph.createVertex(info);
+		return vertex;
 	}
 
 	/**
@@ -104,13 +119,9 @@ public class DefaultNFADeterminizerResult implements INFADeterminizerResult {
 	 * (a result state identifier, previously returned by {@link #createTargetState(Set<Object>)} method). 
 	 */
 	public void createTargetTransitions(Object source, Object target, Set<IUserInfo> edges) {
+		//System.out.println("Creating transition between: " + source + " and " + target);
 		IUserInfo info = edgeAggregator.create(edges);
 		graph.createEdge(source, target, info);
-		/*
-		System.out.println("Creating edge " + debugEdge(first) + " between " 
-				           + dfa.getGraph().getVerticesTotalOrder().indexOf(source) + " and "
-				           + dfa.getGraph().getVerticesTotalOrder().indexOf(target));
-		 */
 	}
 
 	/** Returns the computed DFA. */

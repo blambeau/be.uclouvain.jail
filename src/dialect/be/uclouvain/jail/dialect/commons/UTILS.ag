@@ -67,6 +67,10 @@ grammar UTILS as u {
 	                         ; [u:return]
 	<u:aSpace_string>      ::= <u:aSpace>
 	                         ; [u:diff]
+	<u:spaces>             ::= <u:aSpace_string>+
+	                         ; [u:diff]
+	<u:eol_spaces>         ::= <u:inline_space>* <u:eol>
+	                         ; [u:diff]
 
 	// ~~~ COMMENTS ~~~
 	<u:comment>            ::= tor:<u:eol_comment>

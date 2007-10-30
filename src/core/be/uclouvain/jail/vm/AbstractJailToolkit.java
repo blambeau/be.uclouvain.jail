@@ -1,7 +1,24 @@
 package be.uclouvain.jail.vm;
 
-import java.util.HashMap;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
+
+import net.chefbe.autogram.ast2.IASTNode;
+import net.chefbe.autogram.ast2.ILocation;
+import net.chefbe.autogram.ast2.parsing.ParseException;
+import net.chefbe.autogram.ast2.parsing.active.ASTLoader;
+import net.chefbe.autogram.ast2.parsing.active.ActiveParser;
+import net.chefbe.autogram.ast2.parsing.active.ASTLoader.EnumTypeResolver;
+import net.chefbe.autogram.ast2.parsing.peg.Input;
+import net.chefbe.autogram.ast2.parsing.peg.Pos;
+import net.chefbe.autogram.ast2.utils.BaseLocation;
+import be.uclouvain.jail.adapt.IAdapter;
+import be.uclouvain.jail.algo.graph.copy.match.GMatchNodes;
+import be.uclouvain.jail.vm.autogram.JailNodes;
+import be.uclouvain.jail.vm.autogram.JailParser;
 
 /**
  * Provides an implementation of IJailVMToolkit that allows user-defined operators 
@@ -15,49 +32,84 @@ import java.util.Map;
  * 
  * @author blambeau
  */
-public class AbstractJailToolkit implements IJailVMToolkit {
+public abstract class AbstractJailToolkit implements IJailVMToolkit, IAdapter {
 
 	/** Attached commands. */
-	private Map<String,JailVMUserCommand> commands;
+	private Map<String,IJailVMCommand> commands;
 	
+	/** Creates a toolkit instance. */
+	public AbstractJailToolkit() {
+		commands = new TreeMap<String,IJailVMCommand>(); 
+	}
+
+	/** Iterable implementation. */
+	public final Iterator<IJailVMCommand> iterator() {
+		return commands.values().iterator();
+	}
+
 	/** Installs the toolkiy on a virtual machine. */
 	public void install(JailVM vm) {
 	}
 	
 	/** Returns true if a command is recognized. */
-	public boolean hasCommand(String command) {
-		return (commands != null && commands.containsKey(command));
-	}
-	
-	/** Executes a command on the virtual machine. */
-	public Object executeCommand(
-			String command, 
-			JailVM vm, 
-			JailVMStack stack, 
-			JailVMOptions options) throws JailVMException {
-		if (commands != null && commands.containsKey(command)) {
-			return commands.get(command).execute(command,vm,stack,options);
-		} else {
-			throw new JailVMException("Unknown command: " + command);
-		}
+	public final boolean hasCommand(String command) {
+		return commands.containsKey(command);
 	}
 	
 	/** Adds a user command. */
-	public void addUserCommand(JailVMUserCommand command) {
-		if (commands == null) {
-			commands = new HashMap<String,JailVMUserCommand>(); 
-		}
+	public final void addCommand(IJailVMCommand command) {
 		commands.put(command.getName(), command);
 	}
 	
-	/** Extracts an exception. */
-	protected JailVMException extractException(String command, Exception e) {
-		Throwable cause = e.getCause();
-		if (cause instanceof JailVMException) {
-			return (JailVMException) cause;
+	/** Returns the command mapped to a specific name. */
+	public final IJailVMCommand getCommand(String command) {
+		if (!hasCommand(command)) {
+			throw new IllegalStateException("hasCommand() should be checked first.");
+		}
+		return commands.get(command);
+	}
+
+	/** Ensures that the documentation has been loaded. */
+	protected void ensureDocumentation() {
+		Class c = getClass();
+		String name = c.getSimpleName();
+		URL url = c.getResource(name + ".jail");
+		if (url == null) {
+			//System.err.println("Warning: no documentation found for " + name);
 		} else {
-			return new JailVMException("Toolkit command " + command + " failed.",e);
+			try {
+				// create parser and parse
+				JailParser parser = new JailParser();
+				((ActiveParser)parser.getParser("gm")).setActiveLoader(
+					new ASTLoader(new EnumTypeResolver<GMatchNodes>(GMatchNodes.class))
+				);
+				parser.setActiveLoader(
+					new ASTLoader(new EnumTypeResolver<JailNodes>(JailNodes.class))
+				);
+				
+				// create pos
+				ILocation loc = new BaseLocation(url);
+				Pos pos = new Pos(Input.input(loc),0);
+				
+				// parse
+				IASTNode node = (IASTNode) parser.pNativedoc(pos);
+				
+				// compile
+				node.accept(new JailVMDocumentationCallback(this));
+				
+			} catch (IOException ex) {
+				throw new IllegalStateException("Unable to load documentation of " + name,ex);
+			} catch (ParseException ex) {
+				throw new IllegalStateException("Documentation of " + name + " corrupted.",ex);
+			} catch (Exception ex) {
+				throw new IllegalStateException("Documentation of " + name + " corrupted.",ex);
+			}
 		}
 	}
 
+	/** Adaptation method. */
+	public Object adapt(Object who, Class type) {
+		return null;
+	}
+	
 }

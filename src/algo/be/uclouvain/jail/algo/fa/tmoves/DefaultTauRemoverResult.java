@@ -43,6 +43,16 @@ public class DefaultTauRemoverResult implements ITauRemoverResult {
 		edgeAggregator.first("letter");
 	}
 
+	/** Returns the state copier. */
+	public UserInfoCopier getStateCopier() {
+		return stateCopier;
+	}
+	
+	/** Returns the edge aggregator. */
+	public UserInfoAggregator getEdgeAggregator() {
+		return edgeAggregator;
+	}
+	
 	/** "Algorithm started" event. */
 	public void started(IDFA dfa) {
 		if (nfa == null) {

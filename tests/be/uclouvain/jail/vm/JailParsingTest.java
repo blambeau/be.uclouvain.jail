@@ -1,12 +1,10 @@
 package be.uclouvain.jail.vm;
 
-import java.io.IOException;
 import java.net.URL;
 
 import junit.framework.TestCase;
 import net.chefbe.autogram.ast2.IASTNode;
 import net.chefbe.autogram.ast2.ILocation;
-import net.chefbe.autogram.ast2.parsing.ParseException;
 import net.chefbe.autogram.ast2.parsing.active.ASTLoader;
 import net.chefbe.autogram.ast2.parsing.active.ActiveParser;
 import net.chefbe.autogram.ast2.parsing.active.ASTLoader.EnumTypeResolver;
@@ -21,37 +19,50 @@ import be.uclouvain.jail.vm.autogram.JailParser;
 /** Tests Jail Autogram parser classes. */
 public class JailParsingTest extends TestCase {
 
-	/** Returns a graph URL. */
-	public URL getJailURL() {
-		return JailParsingTest.class.getResource("test.jail");
+	/** Creates a JAIL parser instance. */
+	private JailParser createParser() throws Exception {
+		// create parser and parse
+		JailParser parser = new JailParser();
+		((ActiveParser)parser.getParser("gm")).setActiveLoader(
+			new ASTLoader(new EnumTypeResolver<GMatchNodes>(GMatchNodes.class))
+		);
+		parser.setActiveLoader(
+			new ASTLoader(new EnumTypeResolver<JailNodes>(JailNodes.class))
+		);
+		return parser;
+	}
+
+	/** Creates a Pos instance. */
+	private Pos createPos(URL url) throws Exception {
+		// create location and pos
+		ILocation loc = new BaseLocation(url);
+		Pos pos = new Pos(Input.input(loc),0);
+		return pos;
 	}
 	
 	/** Tests parsing classes. */
-	public void testParsing() throws Exception {
-		try {
-			// create location and pos
-			ILocation loc = new BaseLocation(getJailURL());
-			Pos pos = new Pos(Input.input(loc),0);
-			
-			// create parser and parse
-			JailParser parser = new JailParser();
-			((ActiveParser)parser.getParser("gm")).setActiveLoader(
-				new ASTLoader(new EnumTypeResolver<GMatchNodes>(GMatchNodes.class))
-			);
-			parser.setActiveLoader(
-				new ASTLoader(new EnumTypeResolver<JailNodes>(JailNodes.class))
-			);
-			IASTNode root = (IASTNode) parser.pUnit(pos);
-			
-			// debug parsed grammar
-			root.accept(new DebugVisitor());
-			
-		} catch (IOException ex) {
-			throw new Exception("Unable to parse jail file.",ex);
-		} catch (ParseException ex) {
-			throw new Exception("Jail parsing failed.",ex);
-		}
+	public void testParsing(URL url) throws Exception {
+		JailParser parser = createParser();
+		IASTNode root = (IASTNode) parser.pUnit(createPos(url));
+		root.accept(new DebugVisitor());
 	}
 	
+	/** Tests expressions parsing. */
+	public void testExpressionsParsing() throws Exception {
+		testParsing(JailParsingTest.class.getResource("test.jail"));
+	}
+	
+	/** Tests expressions parsing. */
+	public void testSystemcParsing() throws Exception {
+		testParsing(JailParsingTest.class.getResource("systemc.jail"));
+	}
+	
+	/** Tests parsing documentations. */
+	public void testDocParsing() throws Exception {
+		URL url = JailCoreToolkit.class.getResource("JailCoreToolkit.jail");
+		JailParser parser = createParser();
+		IASTNode root = (IASTNode) parser.pNativedoc(createPos(url));
+		root.accept(new DebugVisitor());
+	}
 	
 }

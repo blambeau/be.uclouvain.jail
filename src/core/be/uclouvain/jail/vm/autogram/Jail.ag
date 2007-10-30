@@ -10,14 +10,26 @@ grammar Jail as jail extends ActiveParser {
 	/* -------------------------------------------------------------------------------------------- JAIL main commands */
 	<jail:unit>                            ::= <u:spacing>? command:<jail:command u:list> <u:eof>
 	                                         ; [u:node]
-	<jail:command>                         ::= tor:<jail:affectation> <';' u:symbol>
+	<jail:command>                         ::= tor:<jail:systemc>
+	                                         | tor:<jail:affectation> <';' u:symbol>
 	                                         | tor:<jail:define> <';' u:symbol>
 	                                         | tor:<jail:show> <';' u:symbol>
 	                                         ; [u:return]
+	<jail:systemc>                         ::= '\' name:<jail:identifier>
+	                                                arg:<jail:systemarg u:list>?
+	                                                <';' u:symbol>
+	                                         | '\' name:<jail:identifier>
+	                                                arg:<jail:systemarg u:list>?
+	                                                <u:spacing>?
+	                                         ; [u:node]
+	<jail:systemarg>                       ::= value:<jail:identifier>
+	                                         ; [u:node]
 	<jail:affectation>                     ::= var:<jail:identifier> <'=' u:symbol>
 	                                           value:<jail:gexpression>
 	                                         ; [u:node]
 	<jail:show>                            ::= value:<jail:gexpression>
+	                                         ; [u:node]
+	<jail:nativedoc>                       ::= <u:spaces>? doc:<jail:doc>+ <u:eof>
 	                                         ; [u:node]
 
 	/* -------------------------------------------------------------------------------------------- JAIL graph expression */
@@ -83,6 +95,13 @@ grammar Jail as jail extends ActiveParser {
 	<jail:varref>                          ::= <'(' u:symbol> var:<jail:identifier> <')' u:symbol>
 	                                         ; [u:node]
 	<jail:identifier>                      ::= tor:<u:identifier>
+	                                         ; [u:return]
+
+	/* -------------------------------------------------------------------------------------------- documentation */
+	<jail:doc>                             ::= help:<u:javaDoc_comment> <u:spaces>
+	                                           signature:<jail:signature> ';' <u:spaces>
+	                                         ; [u:node]
+	<jail:signature>                       ::= DEFINE NATIVE tor:!';'
 	                                         ; [u:return]
 
 }

@@ -25,9 +25,14 @@ public class JailVMTest extends TestCase {
 		new JailVM().execute(JailVMTest.class.getResource("compose.jail"));
 	}
 
+	/** Tests TRAIN standard algorithms. */
+	public void testTRAIN() throws Exception {
+		new JailVM().execute(JailVMTest.class.getResource("TRAIN.jail"));
+	}
+	
 	/** Just because JUnit force the java vm to exit. */
 	public static void main(String[] args) throws Exception {
-		new JailVMTest().testCompose();
+		new JailVMTest().testTRAIN();
 	}
 	
 }

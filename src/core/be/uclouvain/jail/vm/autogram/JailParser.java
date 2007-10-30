@@ -52,7 +52,7 @@ public class JailParser extends ActiveParser {
 		if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
 				|| (_alt_c == ' ') || (_alt_c == '(') || (_alt_c == '/')
 				|| (_alt_c == '<') || (_alt_c >= 'A' && _alt_c <= 'Z')
-				|| (_alt_c >= 'a' && _alt_c <= 'z') || (_alt_c == 'd'))) {
+				|| (_alt_c == '\\') || (_alt_c >= 'a' && _alt_c <= 'z') || (_alt_c == 'd'))) {
 			_alt_c = pos.charAt();
 			if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
 					|| (_alt_c == ' ') || (_alt_c == '/'))) {
@@ -78,6 +78,18 @@ public class JailParser extends ActiveParser {
 	/** &lt;jail:command&gt; */
 	public final Object pCommand(Pos pos) throws ParseException {
 		char _alt_c = pos.charAt();
+		_alt_c = pos.charAt();
+		if ((_alt_c == '\\')) {
+			try {
+				pos.save();
+				Object _tor = null;
+				_tor = jail.pSystemc(pos);
+				pos.commit();
+				return _tor;
+			} catch (ParseException ex) {
+				pos.rollback(ex);
+			}
+		}
 		_alt_c = pos.charAt();
 		if (((_alt_c >= 'A' && _alt_c <= 'Z') || (_alt_c >= 'a' && _alt_c <= 'z'))) {
 			try {
@@ -121,6 +133,91 @@ public class JailParser extends ActiveParser {
 				+ " found.");
 	}
 
+	/** &lt;jail:systemc&gt; */
+	public final Object pSystemc(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		_alt_c = pos.charAt();
+		if ((_alt_c == '\\')) {
+			try {
+				pos.save();
+				p$Char(pos, '\\');
+				Object _name = null;
+				_name = jail.pIdentifier(pos);
+				Object _arg = null;
+				_alt_c = pos.charAt();
+				if (((_alt_c >= 'A' && _alt_c <= 'Z') || (_alt_c >= 'a' && _alt_c <= 'z'))) {
+					try {
+						pos.save();
+						_arg = jail.pJailSystemargUList(pos);
+						pos.commit();
+					} catch (ParseException ex) {
+						pos.rollback();
+					}
+				}
+				jail.pSy$59USymbol(pos);
+				pos.commit();
+				return load(pos, "jail:systemc",
+						new String[] { "name", "arg" }, new Object[] { _name,
+								_arg });
+			} catch (ParseException ex) {
+				pos.rollback(ex);
+			}
+		}
+		_alt_c = pos.charAt();
+		if ((_alt_c == '\\')) {
+			try {
+				pos.save();
+				p$Char(pos, '\\');
+				Object _name = null;
+				_name = jail.pIdentifier(pos);
+				Object _arg = null;
+				_alt_c = pos.charAt();
+				if (((_alt_c >= 'A' && _alt_c <= 'Z') || (_alt_c >= 'a' && _alt_c <= 'z'))) {
+					try {
+						pos.save();
+						_arg = jail.pJailSystemargUList(pos);
+						pos.commit();
+					} catch (ParseException ex) {
+						pos.rollback();
+					}
+				}
+				_alt_c = pos.charAt();
+				if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
+						|| (_alt_c == ' ') || (_alt_c == '/'))) {
+					try {
+						pos.save();
+						u.pSpacing(pos);
+						pos.commit();
+					} catch (ParseException ex) {
+						pos.rollback();
+					}
+				}
+				pos.commit();
+				return load(pos, "jail:systemc",
+						new String[] { "name", "arg" }, new Object[] { _name,
+								_arg });
+			} catch (ParseException ex) {
+				pos.rollback(ex);
+			}
+		}
+		return (Object) pos.error("<jail:systemc> expected, " + pos.charAt()
+				+ " found.");
+	}
+
+	/** &lt;jail:systemarg&gt; */
+	public final Object pSystemarg(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if (((_alt_c >= 'A' && _alt_c <= 'Z') || (_alt_c >= 'a' && _alt_c <= 'z'))) {
+			Object _value = null;
+			_value = jail.pIdentifier(pos);
+			return load(pos, "jail:systemarg", new String[] { "value" },
+					new Object[] { _value });
+		} else {
+			throw new ParseException("<jail:systemarg> expected, "
+					+ pos.charAt() + " found.", pos.location());
+		}
+	}
+
 	/** &lt;jail:affectation&gt; */
 	public final Object pAffectation(Pos pos) throws ParseException {
 		char _alt_c = pos.charAt();
@@ -150,6 +247,44 @@ public class JailParser extends ActiveParser {
 		} else {
 			throw new ParseException("<jail:show> expected, " + pos.charAt()
 					+ " found.", pos.location());
+		}
+	}
+
+	/** &lt;jail:nativedoc&gt; */
+	public final Object pNativedoc(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
+				|| (_alt_c == ' ') || (_alt_c == '/'))) {
+			_alt_c = pos.charAt();
+			if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r') || (_alt_c == ' '))) {
+				try {
+					pos.save();
+					u.pSpaces(pos);
+					pos.commit();
+				} catch (ParseException ex) {
+					pos.rollback();
+				}
+			}
+			List<Object> _doc = new ArrayList<Object>();
+			_doc.add(jail.pDoc(pos));
+			_alt_c = pos.charAt();
+			while ((_alt_c == '/')) {
+				try {
+					pos.save();
+					_doc.add(jail.pDoc(pos));
+					pos.commit();
+				} catch (ParseException ex) {
+					pos.rollback();
+					break;
+				}
+				_alt_c = pos.charAt();
+			}
+			u.pEof(pos);
+			return load(pos, "jail:nativedoc", new String[] { "doc" },
+					new Object[] { _doc });
+		} else {
+			throw new ParseException("<jail:nativedoc> expected, "
+					+ pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -603,6 +738,58 @@ public class JailParser extends ActiveParser {
 		}
 	}
 
+	/** &lt;jail:doc&gt; */
+	public final Object pDoc(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if ((_alt_c == '/')) {
+			Object _help = null;
+			_help = u.pJavaDocComment(pos);
+			u.pSpaces(pos);
+			Object _signature = null;
+			_signature = jail.pSignature(pos);
+			p$Char(pos, ';');
+			u.pSpaces(pos);
+			return load(pos, "jail:doc", new String[] { "help", "signature" },
+					new Object[] { _help, _signature });
+		} else {
+			throw new ParseException("<jail:doc> expected, " + pos.charAt()
+					+ " found.", pos.location());
+		}
+	}
+
+	/** &lt;jail:signature&gt; */
+	public final Object pSignature(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if ((_alt_c == 'd')) {
+			p$Keyword(pos, "define");
+			p$Keyword(pos, "native");
+			String _tor = null;
+			{
+				StringBuffer _sb_tor = new StringBuffer();
+				char _zz_first = ';';
+				int _zz_start = pos.offset();
+				while (!pos.isEof()) {
+					char f = pos.charAt();
+					if (f == _zz_first) {
+						break;
+					} else {
+						pos.more();
+						_sb_tor.append(f);
+					}
+				}
+				if (_zz_start == pos.offset()) {
+					throw new ParseException("!<symbol> expected, "
+							+ pos.charAt() + " found.", pos.location());
+				}
+				_tor = _sb_tor.toString();
+			}
+			return _tor;
+		} else {
+			throw new ParseException("<jail:signature> expected, "
+					+ pos.charAt() + " found.", pos.location());
+		}
+	}
+
 	/** &lt;jail:ex$45$62_u_symbol&gt; */
 	public final Object pEx$45$62USymbol(Pos pos) throws ParseException {
 		char _alt_c = pos.charAt();
@@ -770,7 +957,7 @@ public class JailParser extends ActiveParser {
 	public final List<?> pJailCommandUList(Pos pos) throws ParseException {
 		char _alt_c = pos.charAt();
 		if (((_alt_c == '(') || (_alt_c == '<')
-				|| (_alt_c >= 'A' && _alt_c <= 'Z')
+				|| (_alt_c >= 'A' && _alt_c <= 'Z') || (_alt_c == '\\')
 				|| (_alt_c >= 'a' && _alt_c <= 'z') || (_alt_c == 'd'))) {
 			Object _f = null;
 			_f = jail.pCommand(pos);
@@ -779,7 +966,7 @@ public class JailParser extends ActiveParser {
 			while (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
 					|| (_alt_c == ' ') || (_alt_c == '(') || (_alt_c == '/')
 					|| (_alt_c == '<') || (_alt_c >= 'A' && _alt_c <= 'Z')
-					|| (_alt_c >= 'a' && _alt_c <= 'z') || (_alt_c == 'd'))) {
+					|| (_alt_c == '\\') || (_alt_c >= 'a' && _alt_c <= 'z') || (_alt_c == 'd'))) {
 				try {
 					pos.save();
 					_n.add(jail.pJailCommandUList11(pos));
@@ -904,6 +1091,34 @@ public class JailParser extends ActiveParser {
 			return toList(_f, _n);
 		} else {
 			throw new ParseException("<jail:jail_pholderdef_u_list> expected, "
+					+ pos.charAt() + " found.", pos.location());
+		}
+	}
+
+	/** &lt;jail:jail_systemarg_u_list&gt; */
+	public final List<?> pJailSystemargUList(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if (((_alt_c >= 'A' && _alt_c <= 'Z') || (_alt_c >= 'a' && _alt_c <= 'z'))) {
+			Object _f = null;
+			_f = jail.pSystemarg(pos);
+			List<Object> _n = new ArrayList<Object>();
+			_alt_c = pos.charAt();
+			while (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
+					|| (_alt_c == ' ') || (_alt_c == '/')
+					|| (_alt_c >= 'A' && _alt_c <= 'Z') || (_alt_c >= 'a' && _alt_c <= 'z'))) {
+				try {
+					pos.save();
+					_n.add(jail.pJailSystemargUList11(pos));
+					pos.commit();
+				} catch (ParseException ex) {
+					pos.rollback();
+					break;
+				}
+				_alt_c = pos.charAt();
+			}
+			return toList(_f, _n);
+		} else {
+			throw new ParseException("<jail:jail_systemarg_u_list> expected, "
 					+ pos.charAt() + " found.", pos.location());
 		}
 	}
@@ -1286,7 +1501,7 @@ public class JailParser extends ActiveParser {
 		if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
 				|| (_alt_c == ' ') || (_alt_c == '(') || (_alt_c == '/')
 				|| (_alt_c == '<') || (_alt_c >= 'A' && _alt_c <= 'Z')
-				|| (_alt_c >= 'a' && _alt_c <= 'z') || (_alt_c == 'd'))) {
+				|| (_alt_c == '\\') || (_alt_c >= 'a' && _alt_c <= 'z') || (_alt_c == 'd'))) {
 			_alt_c = pos.charAt();
 			if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
 					|| (_alt_c == ' ') || (_alt_c == '/'))) {
@@ -1409,6 +1624,33 @@ public class JailParser extends ActiveParser {
 		} else {
 			throw new ParseException(
 					"<jail:jail_pholderdef_u_list_1_1> expected, "
+							+ pos.charAt() + " found.", pos.location());
+		}
+	}
+
+	/** &lt;jail:jail_systemarg_u_list_1_1&gt; */
+	public final Object pJailSystemargUList11(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
+				|| (_alt_c == ' ') || (_alt_c == '/')
+				|| (_alt_c >= 'A' && _alt_c <= 'Z') || (_alt_c >= 'a' && _alt_c <= 'z'))) {
+			_alt_c = pos.charAt();
+			if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
+					|| (_alt_c == ' ') || (_alt_c == '/'))) {
+				try {
+					pos.save();
+					u.pSpacing(pos);
+					pos.commit();
+				} catch (ParseException ex) {
+					pos.rollback();
+				}
+			}
+			Object _tor = null;
+			_tor = jail.pSystemarg(pos);
+			return _tor;
+		} else {
+			throw new ParseException(
+					"<jail:jail_systemarg_u_list_1_1> expected, "
 							+ pos.charAt() + " found.", pos.location());
 		}
 	}

@@ -1,7 +1,6 @@
 package be.uclouvain.jail.vm;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import net.chefbe.autogram.ast2.IASTNode;
@@ -13,12 +12,15 @@ import net.chefbe.autogram.ast2.parsing.active.ASTLoader.EnumTypeResolver;
 import net.chefbe.autogram.ast2.parsing.peg.Input;
 import net.chefbe.autogram.ast2.parsing.peg.Pos;
 import net.chefbe.autogram.ast2.utils.BaseLocation;
+import net.chefbe.javautils.collections.map.ListOrderedMap;
 import net.chefbe.javautils.robust.exceptions.CoreException;
 import be.uclouvain.jail.adapt.AdaptUtils;
 import be.uclouvain.jail.adapt.IAdapter;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchNodes;
 import be.uclouvain.jail.dialect.IGraphDialect;
 import be.uclouvain.jail.uinfo.IUserInfo;
+import be.uclouvain.jail.vm.IJailVMEnvironment.LEVEL;
+import be.uclouvain.jail.vm.JailVMException.ERROR_TYPE;
 import be.uclouvain.jail.vm.autogram.JailNodes;
 import be.uclouvain.jail.vm.autogram.JailParser;
 import be.uclouvain.jail.vm.toolkits.AutomatonToolkit;
@@ -40,14 +42,23 @@ public class JailVM implements IJailVMScope {
 	/** Installed plugins. */
 	private Map<String,IJailVMToolkit> toolkits;
 	
+	/** External environnement. */
+	private IJailVMEnvironment env;
+	
 	/** Creates a VM instance. */
-	public JailVM() {
+	public JailVM(IJailVMEnvironment env) {
+		this.env = env;
 		memory = new JailVMMapScope();
-		toolkits = new HashMap<String,IJailVMToolkit>();
+		toolkits = new ListOrderedMap<String,IJailVMToolkit>();
 		core = new JailCoreToolkit();
 		registerToolkit("jail",core);
 		registerToolkit("fa",new AutomatonToolkit());
 		registerToolkit("graph",new GraphToolkit());
+	}
+	
+	/** Creates a virtual machine with default environment. */
+	public JailVM() {
+		this(new DefaultJailVMEnvironment());
 	}
 
 	/** Returns the core toolkit. */
@@ -81,16 +92,21 @@ public class JailVM implements IJailVMScope {
 				handleError(e);
 			}
 		} catch (IOException ex) {
-			throw new JailVMException("Unable to parse jail file.",ex);
+			handleError(new JailVMException(ERROR_TYPE.INTERNAL_ERROR,null,"Unable to read input jail commands.",ex));
 		} catch (ParseException ex) {
-			throw new JailVMException("Jail parsing failed.",ex);
+			handleError(new JailVMException(ERROR_TYPE.PARSE_ERROR,null,null,ex));
 		}
 	}
 	
 	/** Handles an error. */
 	private void handleError(Throwable t) {
-		System.out.println("Jail VM error: " + t.getMessage());
-		t.printStackTrace();
+		if (t instanceof JailVMException) {
+			env.handleError((JailVMException)t);
+		} else if (t.getCause() instanceof JailVMException) {
+			env.handleError((JailVMException)t.getCause());
+		} else {
+			env.handleError(t);
+		}
 	}
 	
 	/** Registers some plugin. */
@@ -133,14 +149,69 @@ public class JailVM implements IJailVMScope {
 		return memory.valueOf(var);
 	}
 
+	/** Executes a system command. */
+	public void executeSystemCommand(String name, Object[] args) throws JailVMException {
+		if ("help".equals(name)) {
+			help(name,args);
+		} else {
+			throw JailVMException.unknownCommand(name);
+		}
+	}
+	
+	/** Helps a command. */
+	public void help(String command, Object[] args) throws JailVMException {
+		if (args.length<1) {
+			StringBuffer sb = new StringBuffer();
+			for (IJailVMToolkit toolkit: toolkits.values()) {
+				sb.append("\nCommands contributed by ")
+				  .append(toolkit.getClass().getSimpleName())
+				  .append(":\n");
+				for (IJailVMCommand c: toolkit) {
+					String signature = c.getSignature();
+					if (signature == null) {
+						signature = c.getName() + " [no signature available]";
+					}
+					sb.append("  + ").append(signature).append("\n");
+				}
+			}
+			env.printConsole(sb.toString(), LEVEL.USER);
+		} else {
+			for (Object arg: args) {
+				IJailVMCommand c = findCommand(arg.toString());
+				if (c == null) {
+					throw JailVMException.unknownCommand(arg.toString());
+				} else {
+					env.printConsole("\n" + c.getHelp() + "\n" + c.getSignature(), LEVEL.USER);
+				}
+			}
+		}
+	}
+	
+	/** Finds a command by name. */
+	private IJailVMCommand findCommand(String name) {
+		for (IJailVMToolkit toolkit: toolkits.values()) {
+			if (toolkit.hasCommand(name)) {
+				return toolkit.getCommand(name);
+			}
+		}
+		return null;
+	}
+	
 	/** Executes a command on a specific toolkit. */
 	public Object executeCommand(
 			IJailVMToolkit toolkit, String command, 
 			JailVMStack stack, JailVMOptions options) throws JailVMException {
+		
+		// create empty options if null
+		if (options == null) {
+			options = new JailVMOptions();
+		}
+		
+		// invoke command
 		if (!toolkit.hasCommand(command)) {
-			throw new JailVMException("Unknown command: " + command);
+			throw JailVMException.unknownCommand(command);
 		} else {
-			return toolkit.executeCommand(command, this, stack, options);
+			return toolkit.getCommand(command).execute(this, stack, options);
 		}		
 	}
 
@@ -148,7 +219,9 @@ public class JailVM implements IJailVMScope {
 	public Object executeCommand(
 			String namespace, String command, 
 			JailVMStack stack, JailVMOptions options) throws JailVMException {
+		
 		if (namespace != null) {
+			// find toolkit by namespace
 			IJailVMToolkit toolkit = getToolkit(namespace);
 			return executeCommand(toolkit,command,stack,options);
 		} else {
@@ -156,17 +229,13 @@ public class JailVM implements IJailVMScope {
 			IJailVMToolkit found = null;
 			for (IJailVMToolkit toolkit: toolkits.values()) {
 				if (toolkit.hasCommand(command)) {
-					if (found != null) {
-						throw new JailVMException("Ambiguous command: " + command);
-					} else {
-						found = toolkit;
-					}
+					found = toolkit;
 				}
 			}
 			
 			// execute command on found toolkit
 			if (found == null) {
-				throw new JailVMException("Unknown command: " + command);
+				throw JailVMException.unknownCommand(command);
 			} else {
 				return executeCommand(found,command,stack,options);
 			}
@@ -179,8 +248,21 @@ public class JailVM implements IJailVMScope {
 	}
 
 	/** Creates a user command. */
-	public void defineUserCommand(JailVMUserCommand command) {
-		core.addUserCommand(command);
+	public void addCommand(IJailVMToolkit toolkit, IJailVMCommand command) {
+		toolkit.addCommand(command);
 	}
-
+	
+	/** Adds a command to a namespace resolved toolkit. */
+	public void addCommand(String namespace, IJailVMCommand command) throws JailVMException {
+		IJailVMToolkit toolkit = getToolkit(namespace);
+		if (toolkit == null) {
+			throw new JailVMException(ERROR_TYPE.INTERNAL_ERROR,null,"Unknwon toolkit " + namespace);
+		}
+	}
+	
+	/** Adds a command in the user toolkit. */
+	public void addCommand(IJailVMCommand command) {
+		addCommand(core,command);
+	}
+	
 }

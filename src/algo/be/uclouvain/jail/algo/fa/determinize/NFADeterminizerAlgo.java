@@ -118,6 +118,18 @@ public class NFADeterminizerAlgo {
 	 */
 	private Object createOne(Set<Object> def) {
 		IDirectedGraph g = nfa.getGraph();
+		/*
+		StringBuffer sb = new StringBuffer();
+		sb.append('[');
+		int i=0;
+		for (Object d: def) {
+			if (i++ != 0) { sb.append(','); }
+			sb.append(g.getVerticesTotalOrder().indexOf(d));
+		}
+		sb.append(']');
+		System.out.println("Creating one for " + sb.toString());
+		*/
+		
 		Set<IUserInfo> infos = new HashSet<IUserInfo>();
 		for (Object state: def) {
 			infos.add(g.getVertexInfo(state));

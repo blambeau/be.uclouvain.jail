@@ -8,19 +8,18 @@ package be.uclouvain.jail.vm;
  * 
  * @author blambeau
  */
-public interface IJailVMToolkit {
+public interface IJailVMToolkit extends Iterable<IJailVMCommand> {
 
 	/** Installs the toolkiy on a virtual machine. */
 	public void install(JailVM vm);
 	
+	/** Adds a command to the toolkit. */
+	public void addCommand(IJailVMCommand command);
+	
 	/** Returns true if a command is recognized. */
 	public boolean hasCommand(String command);
 	
-	/** Executes a command on the virtual machine. */
-	public Object executeCommand(
-			String command, 
-			JailVM vm, 
-			JailVMStack stack, 
-			JailVMOptions options) throws JailVMException;
+	/** Returns the command mapped to a specific name. */
+	public IJailVMCommand getCommand(String command);
 	
 }

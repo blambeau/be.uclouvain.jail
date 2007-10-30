@@ -11,6 +11,7 @@ import be.uclouvain.jail.adapt.AdaptUtils;
 import be.uclouvain.jail.adapt.NetworkAdaptationTool;
 import be.uclouvain.jail.dialect.IGraphDialect;
 import be.uclouvain.jail.graph.IDirectedGraph;
+import be.uclouvain.jail.vm.JailVMException.ERROR_TYPE;
 
 /**
  * Core JAIL toolkit. 
@@ -31,41 +32,70 @@ public class JailCoreToolkit extends JailReflectionToolkit {
 		loaders.put(extension, loader);
 	}
 	
+	/** Ensures a file instance. */
+	private File ensureFileAccess(String path, String mode, boolean create) throws JailVMException {
+		// find file
+		File f = new File(path);
+		if (!f.exists()) {
+			if (!create) {
+				throw new JailVMException(ERROR_TYPE.FILE_ACCESS_ERROR,null,"Unable to find file: " + path);
+			} else if (f.canWrite()) {
+				try {
+					f.createNewFile();
+				} catch (IOException ex) {
+					throw new JailVMException(ERROR_TYPE.FILE_ACCESS_ERROR,null,"Unable to create file: " + path,ex);
+				}
+			} else {
+				throw new JailVMException(ERROR_TYPE.FILE_ACCESS_ERROR,null,"Unable to create file: " + path);
+			}
+		} else if (!f.canRead()) {
+			throw new JailVMException(ERROR_TYPE.FILE_ACCESS_ERROR,null,"Unable to read file: " + path);
+		}
+		return f;
+	}
+	
+	/** Ensures that a dialect is recognized. */
+	private IGraphDialect ensureDialect(String name) throws JailVMException {
+		IGraphDialect dialect = loaders.get(name);
+		if (dialect == null) {
+			throw JailVMException.unknownDialect(name);
+		} else {
+			return dialect;
+		}
+	}
+	
+	/** Executes jail commands in a file. */
+	public void execute(String path, JailVM vm) throws JailVMException {
+		File f = ensureFileAccess(path,"r",false);
+		vm.execute(f);
+	}
+	
 	/** Loads an object from a source using a given format. */
 	protected Object load(Object source, String format) throws JailVMException {
-		IGraphDialect loader = loaders.get(format);
-		if (loader == null) {
-			throw new JailVMException("Unknown loading format: " + format);
-		}
+		IGraphDialect loader = ensureDialect(format);
 		try {
 			return loader.load(source, format);
 		} catch (IOException e) {
-			throw new JailVMException("Unable to load resource.",e);
+			throw new JailVMException(ERROR_TYPE.FILE_ACCESS_ERROR,null,"Unable to read resource: " + source,e);
 		} catch (ParseException e) {
-			throw new JailVMException("Unable to load resource.",e);
+			throw new JailVMException(ERROR_TYPE.PARSE_ERROR,null,e);
 		}
 	}
 	
 	/** Loads an object from a path. */
-	public Object load(String path) throws JailVMException {
-		// find file
-		File f = new File(path);
-		if (!f.exists()) {
-			throw new JailVMException("Unable to find file: " + path);
-		} else if (!f.canRead()) {
-			throw new JailVMException("Unable to read file: " + path);
-		}
+	public Object load(String path, JailVMOptions options) throws JailVMException {
+		File f = ensureFileAccess(path,"r",false);
 		
 		// format to use
 		String extension = null;
-		if (hasOption("format")) {
-			extension = getOptionValue("format",String.class,null);
+		if (options.hasOption("format")) {
+			extension = options.getOptionValue("format",String.class,null);
 		} else {
 			String name = f.getName();
 			if (name.contains(".")) {
 				extension = name.substring(name.lastIndexOf('.')+1);
 			} else {
-				throw new JailVMException("Unable to find extension of: " + path);
+				throw new JailVMException(ERROR_TYPE.FILE_ACCESS_ERROR,null,"Unable to autodetect dialect: " + path);
 			}
 		}
 		
@@ -75,73 +105,58 @@ public class JailCoreToolkit extends JailReflectionToolkit {
 	
 	/** Prints a jail resource. */
 	protected Object print(Object[] sources, String format) throws JailVMException {
-		IGraphDialect loader = loaders.get(format);
-		if (loader == null) {
-			throw new JailVMException("Unknown printing format: " + format);
-		}
+		IGraphDialect loader = ensureDialect(format);
 		try {
 			for (Object source: sources) {
 				loader.print(source, format, System.out);
 			}
 		} catch (IOException e) {
-			throw new JailVMException("Unable to print resource.",e);
+			throw new JailVMException(ERROR_TYPE.INTERNAL_ERROR,null,"Unable to print resource.",e);
 		}
 		return sources[0];
 	}
 	
 	/** Prints a jail resource. */
-	public Object print(Object[] sources) throws JailVMException {
+	public Object print(Object[] sources, JailVMOptions options) throws JailVMException {
 		String format = null;
-		if (hasOption("format")) {
-			format = getOptionValue("format",String.class,null);
+		if (options.hasOption("format")) {
+			format = options.getOptionValue("format",String.class,null);
 		} else {
-			throw new JailVMException("print usage: (print <G> :format <format>).");
+			throw new JailVMException(ERROR_TYPE.BAD_COMMAND_USAGE,null);
 		}
 		return print(sources,format);
 	}
 	
 	/** Saves a jail resource to a file. */
-	public Object save(Object source, String path) throws JailVMException {
+	public Object save(Object source, String path, JailVMOptions options) throws JailVMException {
 		try {
-			// find file
-			File f = new File(path);
-			
 			// format to use
 			String extension = null;
-			if (hasOption("format")) {
-				extension = getOptionValue("format",String.class,null);
+			if (options.hasOption("format")) {
+				extension = options.getOptionValue("format",String.class,null);
 			} else {
-				String name = f.getName();
-				if (name.contains(".")) {
-					extension = name.substring(name.lastIndexOf('.')+1);
+				if (path.contains(".")) {
+					extension = path.substring(path.lastIndexOf('.')+1);
 				} else {
-					throw new JailVMException("Unable to find extension of: " + path);
+					throw new JailVMException(ERROR_TYPE.FILE_ACCESS_ERROR,null,"Unable to autodetect dialect: " + path);
 				}
-			}
-			
-			// handle file writing
-			if (!f.exists()) {
-				if (!f.createNewFile()) {
-					throw new JailVMException("Unable to create file: " + path);
-				}
-			} else if (!f.canWrite()) {
-				throw new JailVMException("Unable to write file: " + path);
 			}
 			
 			// find dialect
-			IGraphDialect dialect = loaders.get(extension);
-			if (dialect == null) {
-				throw new JailVMException("Unknown printing format: " + extension);
-			} else {
-				FileOutputStream stream = new FileOutputStream(f);
-				dialect.print(source, extension, stream);
-				stream.flush();
-				stream.close();
-			}
+			IGraphDialect dialect = ensureDialect(extension);
+			
+			// handle file writing
+			File f = ensureFileAccess(path,"w",true);
+			
+			// create 
+			FileOutputStream stream = new FileOutputStream(f);
+			dialect.print(source, extension, stream);
+			stream.flush();
+			stream.close();
 			
 			return source;
 		} catch (IOException ex) {
-			throw new JailVMException("Unable to save resource",ex);
+			throw new JailVMException(ERROR_TYPE.FILE_ACCESS_ERROR,null,"Unable to write file: " + path,ex);
 		}
 	}
 	

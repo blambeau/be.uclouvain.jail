@@ -35,7 +35,7 @@ public class DefaultDFAMergingResult implements IGraphMergingResult {
 	public DefaultDFAMergingResult() {
 		this.stateAggregator = new UserInfoAggregator();
 		this.edgeAggregator = new UserInfoAggregator();
-		stateAggregator.boolAnd("isInitial");
+		stateAggregator.boolOr("isInitial");
 		stateAggregator.boolOr("isAccepting");
 		stateAggregator.boolOr("isError");
 		edgeAggregator.first("letter");
@@ -47,20 +47,26 @@ public class DefaultDFAMergingResult implements IGraphMergingResult {
 		this.dfa = dfa;
 		this.graph = dfa.getGraph();
 	}
+	
+	/** Sets the DFA. */
+	public void setDFA(IDFA dfa) {
+		this.dfa = dfa;
+		this.graph = dfa.getGraph();
+	}
+
+	/** Returns the state aggregator. */
+	public UserInfoAggregator getStateAggregator() {
+		return stateAggregator;
+	}
+
+	/** Returns the edge aggregator. */
+	public UserInfoAggregator getEdgeAggregator() {
+		return edgeAggregator;
+	}
 
 	/** Creates a vertex. */
 	public Object createVertex(Set<IUserInfo> infos) {
-		/*
-		System.out.print("Creating a vertex for: {");
-		int i=0;
-		for (IUserInfo info: infos) {
-			if (i++ != 0) { System.out.print(","); }
-			System.out.print(info.toString());
-		}
-		System.out.println("}");
-		*/
 		IUserInfo info = stateAggregator.create(infos);
-		//System.out.println("Leading to: " + info);
 		return graph.createVertex(info);
 	}
 

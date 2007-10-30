@@ -67,12 +67,14 @@ public class DFAMinimizerAlgo {
 		
 		// iterate the little one
 		int toCompare = block.size();
+		/*
 		if (block.size() < reachable.size()) {
 			Set<Object> temp = reachable;
 			reachable = block;
 			block = temp;
-			toCompare = block.size();
+			toCompare = reachable.size();
 		}
+		*/
 		
 		// block can be refined if reachable contains at least
 		// one of its states, but not all
@@ -159,6 +161,12 @@ public class DFAMinimizerAlgo {
 						}
 					}
 					jBlock.removeAll(unreachable);
+
+					// just a check
+					if (jBlock.size()==0 || unreachable.size()==0) {
+						System.out.println(reachable.containsAll(jBlock));
+						throw new AssertionError("Refinements leads to non empty sets.");
+					}
 
 					// let result now that the jBlock has been refined
 					int k = result.refined(jBlock,unreachable);

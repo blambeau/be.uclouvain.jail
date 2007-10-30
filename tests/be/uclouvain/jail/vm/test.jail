@@ -38,3 +38,6 @@ A = <§dot
 (print (A) :format 'dot');
 /* (save (A) "mygraph.dot"); */
 (jdotty (adaptations (A)) :format 'dot');
+\help
+\help save
+\help load save

@@ -1,0 +1,25 @@
+/**
+ * Copies a graph and affect vertex and edge attributes according to some 
+ * rules.
+ *
+ * <G>             + (IDirectedGraph) some graph to copy.
+ * <S>             + (<gm:match_do>) matching rules to use for the vertices 
+ * <E>             + (<gm:match_do>) matching rules to use for the edges
+ *                 + (syntax of the matching rules follows the GMatch grammar, 
+ *                    see javadoc).
+ * <G'>            + (IDirectedGraph) returns a graph structurally equivalent
+ *                   to G but with renamed/created/copies attributes on edges
+ *                   and vertices.
+ */
+define native (copy <G> :vertex? <S> :edge? <E>) returns <G'>;
+
+/**
+ * Presents some graph using Java version of dotty (which
+ * is the dot visualization tool).
+ *
+ * <G...>          + (IDirectedGraph) graphs to present.
+ * <G[O]>          + Returns the first element of G, in order to allow
+ *                   visualization chaining (for debugging purposes for
+ *                   example).
+ */
+define native (jdotty <G...>) returns <G[0]>;

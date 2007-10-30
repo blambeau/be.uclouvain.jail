@@ -40,13 +40,16 @@
         <mkdir dir="${dist}/lib"/>
         <mkdir dir="${dist}/docs/api"/>
         
-        <!-- Put everything in ${build} into the net.chefbe.javautils.${DSTAMP}.jar file -->
+        <!-- Put everything in dist/jail/lib jar file -->
+        <jar jarfile="${dist}/jail/lib/be.uclouvain.jail.jar" basedir="${build}" />
+        
+        <!-- Put everything in ${build} into the be.uclouvain.jail.${DSTAMP}.jar file -->
         <jar jarfile="${dist}/lib/be.uclouvain.jail.${DSTAMP}.jar" basedir="${build}" />
         
-        <!-- Put everything in ${build} into the net.chefbe.javautils.${DSTAMP}.jar file -->
+        <!-- Put everything in ${build} into the be.uclouvain.jail.${DSTAMP}.jar file -->
         <jar jarfile="${dist}/lib/be.uclouvain.jail.jar" basedir="${build}" />
         
-        <!-- jarying to common chefbe libraries -->
+        <!-- jarying to common be.uclouvain libraries -->
         <jar jarfile="${lib}/be.uclouvain/be.uclouvain.jail.jar" basedir="${build}"/>
 	</target>
 	

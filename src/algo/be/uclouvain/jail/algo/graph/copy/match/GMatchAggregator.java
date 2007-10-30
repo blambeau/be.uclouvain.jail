@@ -54,7 +54,7 @@ public class GMatchAggregator implements IUserInfoPopulator<Set<IUserInfo>> {
 					// check single argument attribute
 					IASTNode argNode = node.childFor("arg");
 					if (!GMatchNodes.ATTR_REF.equals(argNode.type())) {
-						throw new JailVMException("Bad aggregation function usage");
+						throw new IllegalStateException("Bad aggregation function usage, ATTR_REF expected.");
 					}
 					
 					// retrieve attribute key
@@ -63,7 +63,7 @@ public class GMatchAggregator implements IUserInfoPopulator<Set<IUserInfo>> {
 					// find function
 					IAggregateFunction func = AggregateFunctionFactory.getAggregateFunction(name);
 					if (func == null) {
-						throw new JailVMException("Unknown aggregate function: " + name);
+						throw JailVMException.unknownFunction(name);
 					}
 					
 					Set<Object> values = new ListOrderedSet<Object>();

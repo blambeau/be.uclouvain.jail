@@ -16,6 +16,16 @@ public class JailCallback<T> extends CallbackBase<T> {
 		return nonOverrided(node);
 	}
 
+	/** Callback method for SYSTEMC nodes. */
+	public T SYSTEMC(IASTNode node) throws Exception {
+		return nonOverrided(node);
+	}
+
+	/** Callback method for SYSTEMARG nodes. */
+	public T SYSTEMARG(IASTNode node) throws Exception {
+		return nonOverrided(node);
+	}
+
 	/** Callback method for AFFECTATION nodes. */
 	public T AFFECTATION(IASTNode node) throws Exception {
 		return nonOverrided(node);
@@ -23,6 +33,11 @@ public class JailCallback<T> extends CallbackBase<T> {
 
 	/** Callback method for SHOW nodes. */
 	public T SHOW(IASTNode node) throws Exception {
+		return nonOverrided(node);
+	}
+
+	/** Callback method for NATIVEDOC nodes. */
+	public T NATIVEDOC(IASTNode node) throws Exception {
 		return nonOverrided(node);
 	}
 
@@ -108,6 +123,11 @@ public class JailCallback<T> extends CallbackBase<T> {
 
 	/** Callback method for VARREF nodes. */
 	public T VARREF(IASTNode node) throws Exception {
+		return nonOverrided(node);
+	}
+
+	/** Callback method for DOC nodes. */
+	public T DOC(IASTNode node) throws Exception {
 		return nonOverrided(node);
 	}
 }

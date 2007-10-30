@@ -9,11 +9,20 @@ public enum JailNodes implements IASTType {
 	/** UNIT node marker. */
 	UNIT,
 
+	/** SYSTEMC node marker. */
+	SYSTEMC,
+
+	/** SYSTEMARG node marker. */
+	SYSTEMARG,
+
 	/** AFFECTATION node marker. */
 	AFFECTATION,
 
 	/** SHOW node marker. */
 	SHOW,
+
+	/** NATIVEDOC node marker. */
+	NATIVEDOC,
 
 	/** GLITERAL node marker. */
 	GLITERAL,
@@ -64,7 +73,10 @@ public enum JailNodes implements IASTType {
 	PHOLDERDEF,
 
 	/** VARREF node marker. */
-	VARREF;
+	VARREF,
+
+	/** DOC node marker. */
+	DOC;
 
 	/** ID of AGPEG Grammar. */
 	public static final String GRAMMAR_ID = "jail";
