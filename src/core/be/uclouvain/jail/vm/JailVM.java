@@ -18,7 +18,6 @@ import be.uclouvain.jail.adapt.AdaptUtils;
 import be.uclouvain.jail.adapt.IAdapter;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchNodes;
 import be.uclouvain.jail.dialect.IGraphDialect;
-import be.uclouvain.jail.dialect.IPrintable;
 import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.vm.autogram.JailNodes;
 import be.uclouvain.jail.vm.autogram.JailParser;
@@ -30,20 +29,20 @@ import be.uclouvain.jail.vm.toolkits.GraphToolkit;
  * 
  * @author blambeau
  */
-public class JailVM {
+public class JailVM implements IJailVMScope {
 
 	/** Core toolkit. */
 	private JailCoreToolkit core;
 	
 	/** VM memory. */
-	private Map<String,Object> memory;
+	private IJailVMScope memory;
 	
 	/** Installed plugins. */
 	private Map<String,IJailVMToolkit> toolkits;
 	
 	/** Creates a VM instance. */
 	public JailVM() {
-		memory = new HashMap<String,Object>();
+		memory = new JailVMMapScope();
 		toolkits = new HashMap<String,IJailVMToolkit>();
 		core = new JailCoreToolkit();
 		registerToolkit("jail",core);
@@ -115,38 +114,25 @@ public class JailVM {
 		if (varName == null || value == null) {
 			throw new IllegalArgumentException("varName as well as value are mandatory.");
 		}
-		memory.put(varName, value);
-		
+		memory.affect(varName, value);
+
+		// sets name if possible
 		IUserInfo info = (IUserInfo) AdaptUtils.adapt(value, IUserInfo.class);
 		if (info != null) {
 			info.setAttribute("JailVM.VarName", varName);
 		}
 	}
-	
-	/** Returns the value mapped to name in memory. */
-	public Object getVarValue(String name) {
-		return memory.get(name);
-	}
-		
-	/** Destroys a variable. */
-	public void destroy(String varName) {
-		memory.remove(varName);
+
+	/** Checks if a variable is known. */
+	public boolean knows(String var) {
+		return memory.knows(var);
 	}
 
-	/** Debugs the memory. */
-	public void debugMemory() {
-		for (String key: memory.keySet()) {
-			Object value = memory.get(key);
-			IPrintable adapted = (IPrintable) AdaptUtils.adapt(value,IPrintable.class);
-			if (adapted != null) {
-				System.out.println(key + ":");
-				try { adapted.print(System.out); } catch (IOException e) {}
-			} else {
-				System.out.println(key + ": " + value.toString());
-			}
-		}
+	/** Returns the value of a variable. */
+	public Object valueOf(String var) {
+		return memory.valueOf(var);
 	}
-	
+
 	/** Executes a command on a specific toolkit. */
 	public Object executeCommand(
 			IJailVMToolkit toolkit, String command, 

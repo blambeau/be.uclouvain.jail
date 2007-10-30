@@ -4,9 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Provides an implementation of IJailVMToolkit that allows user-defined
- * operators to be attached. 
- *  
+ * Provides an implementation of IJailVMToolkit that allows user-defined operators 
+ * to be attached at runtime.
+ * 
+ * <p>This class may be extended to implement your own toolkit. However, in many 
+ * situations it will be simpler to extend {@link JailReflectionToolkit} instead.
+ * However, if you extend this class directly, make sure that you always check 
+ * super methods (hasCommand, executeCommand) in order to avoid bypassing user-defined 
+ * commands (which have higher priority moreover).</p>
+ * 
  * @author blambeau
  */
 public class AbstractJailToolkit implements IJailVMToolkit {

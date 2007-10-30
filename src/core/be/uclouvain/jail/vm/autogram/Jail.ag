@@ -42,7 +42,6 @@ grammar Jail as jail extends ActiveParser {
 	                                         ; [u:node]
 	<jail:goperand>                        ::= expr:<jail:gexpression>
 	                                         | expr:<jail:literal>
-	                                         | expr:<jail:pholderref>
 	                                         ; [u:node]
 	<jail:options>                         ::= option:<jail:option u:list>
 	                                         ; [u:node]
@@ -80,8 +79,6 @@ grammar Jail as jail extends ActiveParser {
 	
 	/* -------------------------------------------------------------------------------------------- common utilities */
 	<jail:pholderdef>                      ::= '<' name:<jail:identifier> <'>' u:symbol>
-	                                         ; [u:node]
-	<jail:pholderref>                      ::= '<' name:<jail:identifier> <'>' u:symbol>
 	                                         ; [u:node]
 	<jail:varref>                          ::= <'(' u:symbol> var:<jail:identifier> <')' u:symbol>
 	                                         ; [u:node]

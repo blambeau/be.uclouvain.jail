@@ -63,9 +63,6 @@ public enum JailNodes implements IASTType {
 	/** PHOLDERDEF node marker. */
 	PHOLDERDEF,
 
-	/** PHOLDERREF node marker. */
-	PHOLDERREF,
-
 	/** VARREF node marker. */
 	VARREF;
 

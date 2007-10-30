@@ -1,7 +1,11 @@
 package be.uclouvain.jail.vm;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
+import net.chefbe.javautils.robust.exceptions.CoreException;
 import be.uclouvain.jail.adapt.AdaptUtils;
 
 /**
@@ -38,9 +42,58 @@ public class JailVMStack {
 		return stack.peek();
 	}
 	
+	/** Extracts the class for an array of classes. */
+	public static Class extractArrayClass(Class c) {
+		String s = c.getName();
+		s = s.substring(2,s.length()-1);
+		try {
+			return Class.forName(s);
+		} catch (ClassNotFoundException e) {
+			throw new CoreException("Unable to retrieve class: " + s);
+		}
+	}
+
+	/** Pops an array argument. */
+	private int popArrayArg(Class<?> type, int offset, Object[] args, int index) throws JailVMException {
+		// extract requested type
+		type = extractArrayClass(type);
+
+		// adapted values
+		List<Object> values = new ArrayList<Object>();
+		boolean ok=true;
+		int i=1;
+		while (ok) {
+			// compute stack index
+			int where = stack.size()-offset-i;
+			if (where < 0) { break; }
+			
+			// get from stack
+			Object arg = stack.get(where);
+
+			// adapt it
+			Object adapted = AdaptUtils.adapt(arg,type);
+			if (adapted == null) {
+				ok = false;
+			} else {
+				values.add(adapted);
+				i++;
+			}
+		}
+		
+		// put created array at the correct place
+		Object[] array = (Object[]) Array.newInstance(type,i-1);
+		args[index] = values.toArray(array);
+		
+		return i-1;
+	}
+	
 	/** Pops an argument from the stack and place it at index-th position 
 	 * in the args array. */
 	private int popArg(Class<?> type, int offset, Object[] args, int index) throws JailVMException {
+		if (type.isArray()) {
+			return popArrayArg(type,offset,args,index);
+		}
+		
 		// get from stack
 		Object arg = stack.get(stack.size()-offset-1);
 		

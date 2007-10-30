@@ -1,9 +1,7 @@
 package be.uclouvain.jail.vm;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import net.chefbe.autogram.ast2.IASTNode;
 import be.uclouvain.jail.vm.autogram.JailCallback;
@@ -50,6 +48,7 @@ public class JailVMUserCommand extends JailCallback<Object> {
 	}
 	
 	/** Callback method for DEFINE nodes. */
+	@Override
 	public Object DEFINE(IASTNode node) throws Exception {
 		JailVMCallback callback = (JailVMCallback) makeCall(node.childFor("header"));
 		IASTNode body = node.childFor("body").childFor("op");
@@ -58,9 +57,10 @@ public class JailVMUserCommand extends JailCallback<Object> {
 
 	/** Callback method for DEF_HEADER nodes. */
 	@SuppressWarnings("unchecked")
+	@Override
 	public Object DEF_HEADER(IASTNode node) throws Exception {
 		// create variables
-		Map<String,Object> params = new HashMap<String,Object>();
+		IJailVMScope scope = new JailVMMapScope();
 
 		// parse operands
 		List<String> names = (List<String>) makeCall(node.childFor("operand"));
@@ -68,16 +68,17 @@ public class JailVMUserCommand extends JailCallback<Object> {
 			throw new JailVMException("Invalid number of operands.");
 		}
 		for (String key: names) {
-			params.put(key, stack.pop());
+			scope.affect(key, stack.pop());
 		}
 
 		// parse options
 		// TODO: implement options in user-defined commands
 		
-		return new JailVMCallback(vm,params);
+		return new JailVMCallback(vm,scope);
 	}
 
 	/** Callback method for DEF_OPERANDS nodes. */
+	@Override
 	public Object DEF_OPERANDS(IASTNode node) throws Exception {
 		List<String> names = new ArrayList<String>();
 		for (IASTNode child: node.children()) {
@@ -87,16 +88,19 @@ public class JailVMUserCommand extends JailCallback<Object> {
 	}
 
 	/** Callback method for DEF_OPTIONS nodes. */
+	@Override
 	public Object DEF_OPTIONS(IASTNode node) throws Exception {
 		return nonOverrided(node);
 	}
 
 	/** Callback method for DEF_OPTION nodes. */
+	@Override
 	public Object DEF_OPTION(IASTNode node) throws Exception {
 		return nonOverrided(node);
 	}
 
 	/** Callback method for PHOLDERDEF nodes. */
+	@Override
 	public Object PHOLDERDEF(IASTNode node) throws Exception {
 		return node.getAttrString("name");
 	}

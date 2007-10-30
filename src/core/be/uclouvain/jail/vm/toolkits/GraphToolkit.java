@@ -36,17 +36,19 @@ public class GraphToolkit extends JailReflectionToolkit implements IAdapter {
 		vm.registerAdaptation(IDirectedGraph.class, IUserInfo.class, this);
 	}
 
-	/** Visualizes a graph using jdotty. */
-	public IDirectedGraph jdotty(IDirectedGraph graph) throws JailVMException {
+	/** Visualizes graphs using jdotty. */
+	public IDirectedGraph jdotty(IDirectedGraph[] graphs) throws JailVMException {
 		if (jdotty == null) {
 			jdotty = new JDotty();
 		}
 		try {
-			jdotty.present(graph,"JailVM.VarName");
+			for (IDirectedGraph graph: graphs) { 
+				jdotty.present(graph,"JailVM.VarName");
+			}
 		} catch (IOException e) {
 			throw new JailVMException("Unable to present graph using jdotty: ",e);
 		}
-		return graph;
+		return graphs[0];
 	}
 	
 	/** Copies a graph. */

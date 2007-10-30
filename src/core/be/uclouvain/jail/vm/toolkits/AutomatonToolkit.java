@@ -53,9 +53,9 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 	}
 	
 	/** Composes two DFAs. */
-	public IDFA compose(IDFA dfa1, IDFA dfa2) throws JailVMException {
+	public IDFA compose(IDFA[] dfas) throws JailVMException {
 		IDFA ret = new GraphDFA();
-		DefaultDFAComposerInput input = new DefaultDFAComposerInput(new IDFA[]{dfa1,dfa2}); 
+		DefaultDFAComposerInput input = new DefaultDFAComposerInput(dfas); 
 		DefaultDFAComposerResult result = new DefaultDFAComposerResult(ret); 
 
 		// add state populator

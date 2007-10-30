@@ -1,5 +1,5 @@
 define (adot <A>) 
-	(copy <A>
+	(copy (A)
         :state {@shape      -> when @isAccepting=true then 'doublecircle'
                                else 'circle',
 				@style      -> 'filled',

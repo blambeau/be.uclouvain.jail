@@ -1,5 +1,5 @@
 define (adot <A>) 
-	(copy <A>
+	(copy (A)
         :state {@shape      -> when @isAccepting=true then 'doublecircle'
                                else 'circle',
 				@style      -> 'filled',
@@ -8,7 +8,7 @@ define (adot <A>)
                                else 'white'}
 		:edge  {@label      -> @letter}
 	);
-define (show <A>) (jdotty (adot <A>));
+define (show <A>) (jdotty (adot (A)));
 A = <§dot 
 	digraph DFA {
 		graph [rankdir="LR"];
@@ -36,5 +36,5 @@ A = <§dot
 (show (minimize (A)));
 */
 (print (A) :format 'dot');
-(save (A) "mygraph.dot");
+/* (save (A) "mygraph.dot"); */
 (jdotty (adaptations (A)) :format 'dot');

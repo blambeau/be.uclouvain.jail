@@ -306,19 +306,6 @@ public class JailParser extends ActiveParser {
 				pos.rollback(ex);
 			}
 		}
-		_alt_c = pos.charAt();
-		if ((_alt_c == '<')) {
-			try {
-				pos.save();
-				Object _expr = null;
-				_expr = jail.pPholderref(pos);
-				pos.commit();
-				return load(pos, "jail:goperand", new String[] { "expr" },
-						new Object[] { _expr });
-			} catch (ParseException ex) {
-				pos.rollback(ex);
-			}
-		}
 		return (Object) pos.error("<jail:goperand> expected, " + pos.charAt()
 				+ " found.");
 	}
@@ -583,22 +570,6 @@ public class JailParser extends ActiveParser {
 					new Object[] { _name });
 		} else {
 			throw new ParseException("<jail:pholderdef> expected, "
-					+ pos.charAt() + " found.", pos.location());
-		}
-	}
-
-	/** &lt;jail:pholderref&gt; */
-	public final Object pPholderref(Pos pos) throws ParseException {
-		char _alt_c = pos.charAt();
-		if ((_alt_c == '<')) {
-			p$Char(pos, '<');
-			Object _name = null;
-			_name = jail.pIdentifier(pos);
-			jail.pSy$62USymbol(pos);
-			return load(pos, "jail:pholderref", new String[] { "name" },
-					new Object[] { _name });
-		} else {
-			throw new ParseException("<jail:pholderref> expected, "
 					+ pos.charAt() + " found.", pos.location());
 		}
 	}

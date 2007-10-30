@@ -1,7 +1,6 @@
 package be.uclouvain.jail.vm;
 
 import java.util.List;
-import java.util.Map;
 
 import net.chefbe.autogram.ast2.IASTNode;
 import be.uclouvain.jail.adapt.IAdaptable;
@@ -19,18 +18,18 @@ public class JailVMCallback extends JailCallback<Object> {
 	/** The virtual machine. */
 	private JailVM vm;
 	
-	/** Placeholder variables. */
-	private Map<String,Object> variables;
+	/** Scoping. */
+	private IJailVMScope scope;
 	
 	/** Creates a callback instance. */
 	public JailVMCallback(JailVM vm) {
-		this(vm,null);
+		this(vm,vm);
 	}
 	
 	/** Installs a sub callback. */
-	public JailVMCallback(JailVM vm, Map<String,Object> variables) {
+	public JailVMCallback(JailVM vm, IJailVMScope scope) {
 		this.vm = vm;
-		this.variables = variables;
+		this.scope = scope;
 	}
 	
 	/** Concats some children results. */
@@ -154,25 +153,14 @@ public class JailVMCallback extends JailCallback<Object> {
 		return node.getAttr("value");
 	}
 
-	/** Callback method for PHOLDERREF nodes. */
-	public Object PHOLDERREF(IASTNode node) throws Exception {
-		String name = node.getAttrString("name");
-		if (variables != null && variables.containsKey(name)) {
-			return variables.get(name);
-		} else {
-			throw new JailVMException("Unbounded placeholer: " + name);
-		}
-	}
-
 	/** Callback method for VARREF nodes. */
 	@Override
 	public Object VARREF(IASTNode node) throws Exception {
 		String name = node.getAttrString("var");
-		Object value = vm.getVarValue(name);
-		if (value == null) { 
-			throw new JailVMException("Unknown variable " + name); 
+		if (scope.knows(name)) {
+			return scope.valueOf(name);
 		} else {
-			return value;
+			throw new JailVMException("Unknown variable " + name); 
 		}
 	}
 

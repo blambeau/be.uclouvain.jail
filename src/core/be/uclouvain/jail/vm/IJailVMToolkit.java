@@ -4,7 +4,7 @@ package be.uclouvain.jail.vm;
  * Toolkit for JAIL command line tool.
  * 
  * <p>This interface is not intended to be implemented directly. Extend
- * JailReflectionToolkit instead.</p>
+ * {@link AbstractJailToolkit} or {@link JailReflectionToolkit} instead.</p>
  * 
  * @author blambeau
  */

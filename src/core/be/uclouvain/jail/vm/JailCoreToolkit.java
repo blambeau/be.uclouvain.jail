@@ -74,28 +74,30 @@ public class JailCoreToolkit extends JailReflectionToolkit {
 	}
 	
 	/** Prints a jail resource. */
-	protected Object print(Object source, String format) throws JailVMException {
+	protected Object print(Object[] sources, String format) throws JailVMException {
 		IGraphDialect loader = loaders.get(format);
 		if (loader == null) {
 			throw new JailVMException("Unknown printing format: " + format);
 		}
 		try {
-			loader.print(source, format, System.out);
+			for (Object source: sources) {
+				loader.print(source, format, System.out);
+			}
 		} catch (IOException e) {
 			throw new JailVMException("Unable to print resource.",e);
 		}
-		return source;
+		return sources[0];
 	}
 	
 	/** Prints a jail resource. */
-	public Object print(Object source) throws JailVMException {
+	public Object print(Object[] sources) throws JailVMException {
 		String format = null;
 		if (hasOption("format")) {
 			format = getOptionValue("format",String.class,null);
 		} else {
 			throw new JailVMException("print usage: (print <G> :format <format>).");
 		}
-		return print(source,format);
+		return print(sources,format);
 	}
 	
 	/** Saves a jail resource to a file. */
