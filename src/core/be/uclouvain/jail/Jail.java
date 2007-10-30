@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import jline.ConsoleReader;
+import jline.History;
 
 import org.apache.commons.beanutils.ConvertUtils;
 
@@ -85,6 +86,19 @@ public class Jail implements IJailVMEnvironment {
 		ConsoleReader reader = new ConsoleReader();
         out = new PrintWriter(System.out);
         
+        // reload history
+        String homeDir = System.getProperty("user.home");
+        File homeDirF = new File(homeDir);
+        File history = null;
+        if (homeDirF.isDirectory() && homeDirF.canWrite()) {
+        	history = new File(homeDirF,".jail");
+        	if (history.exists() || history.createNewFile()) {
+        		reader.setHistory(new History(history));
+        	} else {
+        		history = null;
+        	}
+        }
+        
         // executes jailFile if any
         if (jailFile != null) {
         	try {
@@ -106,6 +120,8 @@ public class Jail implements IJailVMEnvironment {
         		out.println("Fatal error: " + ex.getMessage());
         	}
         }		
+        
+        reader.getHistory().flushBuffer();
 	}
 	
 	/** Starts the Jail VM on a file. */
