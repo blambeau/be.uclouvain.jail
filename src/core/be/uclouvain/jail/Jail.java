@@ -123,6 +123,14 @@ public class Jail implements IJailVMEnvironment {
 		out.println(t.getMessage());
 		out.println();
 		out.flush();
+
+		if (t instanceof JailVMException) {
+			JailVMException ex = (JailVMException) t;
+			if (JailVMException.ERROR_TYPE.INTERNAL_ERROR.equals(ex.getType())) {
+				ex.printStackTrace(out);
+				out.flush();
+			}
+		}
 	}
 
 	/** Prints to the console. */

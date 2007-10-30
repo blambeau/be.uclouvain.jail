@@ -91,8 +91,8 @@ public class DefaultDirectedGraphPath implements IDirectedGraphPath {
 	}
 
 	/** Flushes this path in a graph writer. */
-	public void flush(IDirectedGraphWriter writer) {
-		if (size()==0) { return; }
+	public Object flush(IDirectedGraphWriter writer) {
+		if (size()==0) { return null; }
 
 		// create vertices and save it
 		Object[] vertices = new Object[size()+1];
@@ -107,6 +107,8 @@ public class DefaultDirectedGraphPath implements IDirectedGraphPath {
 			writer.createEdge(vertices[i], vertices[i+1], graph.getEdgeInfo(edge));
 			i++;
 		}
+		
+		return vertices[vertices.length-1];
 	}
 	
 	/** Adapts to another type. */

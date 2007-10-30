@@ -33,11 +33,6 @@ public class GMatchPopulator implements IUserInfoPopulator<IUserInfo> {
 					return source.getAttribute(key);
 				}
 				
-				/** Callback method for FUNCTION_CALL nodes. */
-				public Object FUNCTION_CALL(IASTNode node) throws Exception {
-					throw new UnsupportedOperationException("Function calls non implemented yet!");
-				}
-				
 			});
 		} catch (Exception e) {
 			throw new IllegalStateException("Error while GMatch populating ...",e);

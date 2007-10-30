@@ -1,6 +1,11 @@
 package be.uclouvain.jail.algo.graph.copy.match;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.chefbe.autogram.ast2.IASTNode;
+import be.uclouvain.jail.algo.graph.copy.match.functions.GMatchFunctionFactory;
+import be.uclouvain.jail.algo.graph.copy.match.functions.IGMatchFunction;
 import be.uclouvain.jail.uinfo.IUserInfo;
 
 /** A match callback. */
@@ -58,8 +63,19 @@ public abstract class GMatchPopulatorCallback<T> extends GMatchCallback<Object> 
 	}
 
 	/** Callback method for FUNCTION_CALL nodes. */
-	public abstract Object FUNCTION_CALL(IASTNode node) throws Exception;
-	
+	public Object FUNCTION_CALL(IASTNode node) throws Exception {
+		String name = node.getAttrString("name");
+		IGMatchFunction func = GMatchFunctionFactory.getGMatchFunction(name);
+		List<Object> args = new ArrayList<Object>();
+		for (IASTNode child: node.children()) {
+			if ("name".equals(child.key())) {
+				continue;
+			}
+			args.add(makeCall(child));
+		}
+		return func.execute(args.toArray());
+	}
+		
 	/** Callback method for LITERAL nodes. */
 	public Object LITERAL(IASTNode node) throws Exception {
 		return node.getAttr("value");

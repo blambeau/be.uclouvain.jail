@@ -8,7 +8,6 @@ import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.uinfo.IUserInfoPopulator;
 import be.uclouvain.jail.uinfo.functions.AggregateFunctionFactory;
 import be.uclouvain.jail.uinfo.functions.IAggregateFunction;
-import be.uclouvain.jail.vm.JailVMException;
 
 /**
  * Populator by GMatch expression.
@@ -51,21 +50,22 @@ public class GMatchAggregator implements IUserInfoPopulator<Set<IUserInfo>> {
 					// function name
 					String name = node.getAttrString("name");
 					
+					// find function
+					IAggregateFunction func = AggregateFunctionFactory.getAggregateFunction(name);
+					if (func == null) {
+						return super.FUNCTION_CALL(node);
+					}
+					
 					// check single argument attribute
 					IASTNode argNode = node.childFor("arg");
 					if (!GMatchNodes.ATTR_REF.equals(argNode.type())) {
-						throw new IllegalStateException("Bad aggregation function usage, ATTR_REF expected.");
+						return super.FUNCTION_CALL(node);
 					}
 					
 					// retrieve attribute key
 					String attr = argNode.getAttrString("name");
 					
-					// find function
-					IAggregateFunction func = AggregateFunctionFactory.getAggregateFunction(name);
-					if (func == null) {
-						throw JailVMException.unknownFunction(name);
-					}
-					
+					// extracts IUserInfo
 					Set<Object> values = new ListOrderedSet<Object>();
 					for (IUserInfo info: source) {
 						values.add(info.getAttribute(attr));

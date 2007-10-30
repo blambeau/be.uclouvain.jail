@@ -3,6 +3,8 @@ package be.uclouvain.jail.uinfo.functions;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import be.uclouvain.jail.vm.JailVMException;
+
 /** Factory for aggregate functions. */
 public final class AggregateFunctionFactory {
 
@@ -40,7 +42,7 @@ public final class AggregateFunctionFactory {
 	}
 
 	/** Returns a function by name. */
-	public static IAggregateFunction getAggregateFunction(String name) {
+	public static IAggregateFunction getAggregateFunction(String name) throws JailVMException {
 		try {
 			Method m = AggregateFunctionFactory.class.getMethod(name, new Class[0]);
 			if (m == null) {
@@ -49,13 +51,12 @@ public final class AggregateFunctionFactory {
 				return (IAggregateFunction) m.invoke(null, new Object[0]);
 			}
 		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
+			return null;
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			throw new AssertionError("Method invocation worked.");
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			throw new AssertionError("Method invocation worked.");
 		}
-		return null;
 	}
 	
 }

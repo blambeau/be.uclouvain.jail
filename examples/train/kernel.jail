@@ -1,0 +1,10 @@
+/* Imports common declarations. */
+(execute 'commons.jail');
+
+/* Extract kernel. */
+KERNEL = (kernel (TRAIN));
+
+/* Show all. */
+(show (TRAIN));
+(show (KERNEL));
+(show (determinize (KERNEL)));

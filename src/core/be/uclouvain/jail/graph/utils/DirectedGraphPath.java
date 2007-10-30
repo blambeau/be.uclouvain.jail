@@ -56,8 +56,8 @@ public class DirectedGraphPath implements IDirectedGraphPath {
 	}
 	
 	/** Flushes this path in a graph writer. */
-	public void flush(IDirectedGraphWriter writer) {
-		path.flush(writer);
+	public Object flush(IDirectedGraphWriter writer) {
+		return path.flush(writer);
 	}
 
 	/** Adapts this path to another type. */

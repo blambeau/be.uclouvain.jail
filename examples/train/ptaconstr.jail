@@ -1,0 +1,13 @@
+(execute 'commons.jail');
+
+SCS = <§seqp
+    SC1[@isInitial=true]=start->stop->start->alarm->stop->eopen,
+		SC2[@isInitial=true]=open->close->start->stop,
+		SC3[@isInitial=true]=start->stop->alarm->stop->eopen->close,
+		SC4[@isInitial=true]=open->close->alarm->eopen.
+§>;
+
+PTA = (determinize (SCS));
+
+(show (SCS));
+(show (PTA));

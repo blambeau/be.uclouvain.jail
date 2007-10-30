@@ -7,6 +7,11 @@ import be.uclouvain.jail.algo.fa.compose.DefaultDFAComposerResult;
 import be.uclouvain.jail.algo.fa.determinize.DefaultNFADeterminizerInput;
 import be.uclouvain.jail.algo.fa.determinize.DefaultNFADeterminizerResult;
 import be.uclouvain.jail.algo.fa.determinize.NFADeterminizerAlgo;
+import be.uclouvain.jail.algo.fa.kernel.DFAKernelExtractorAlgo;
+import be.uclouvain.jail.algo.fa.kernel.DefaultDFAKernelExtractorInput;
+import be.uclouvain.jail.algo.fa.kernel.DefaultDFAKernelExtractorResult;
+import be.uclouvain.jail.algo.fa.kernel.IDFAKernelExtractorInput;
+import be.uclouvain.jail.algo.fa.kernel.IDFAKernelExtractorResult;
 import be.uclouvain.jail.algo.fa.minimize.DFAMinimizerAlgo;
 import be.uclouvain.jail.algo.fa.minimize.DefaultDFAMinimizerInput;
 import be.uclouvain.jail.algo.fa.minimize.DefaultDFAMinimizerResult;
@@ -140,6 +145,30 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 		return ret;
 	}
 
+	/** Extracts the kernel of a dfa. */
+	public IDFAKernelExtractorResult kernel(IDFA dfa, JailVMOptions options) throws JailVMException {
+		IDFAKernelExtractorInput input = new DefaultDFAKernelExtractorInput(dfa);
+		DefaultDFAKernelExtractorResult result = new DefaultDFAKernelExtractorResult();
+		result.getStateCopier().keepAll();
+		result.getEdgeCopier().keepAll();
+		
+		// add state populator
+		if (options.hasOption("state")) {
+			System.err.println("Warning, using depreacated :state on graph copy.");
+			GMatchPopulator populator = options.getOptionValue("state",GMatchPopulator.class,null);
+			result.getStateCopier().addPopulator(populator);
+		}
+		
+		// add edge populator
+		if (options.hasOption("edge")) {
+			GMatchPopulator populator = options.getOptionValue("edge",GMatchPopulator.class,null);
+			result.getEdgeCopier().addPopulator(populator);
+		}
+		
+		new DFAKernelExtractorAlgo().execute(input,result);
+		return result;
+	}
+	
 	/** Adapts an object. */
 	public Object adapt(Object who, Class type) {
 		if (type.equals(IDFA.class)) {

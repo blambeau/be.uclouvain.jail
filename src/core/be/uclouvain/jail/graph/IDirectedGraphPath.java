@@ -64,7 +64,8 @@ public interface IDirectedGraphPath extends IAdaptable, Iterable<Object> {
 	/** Accepts a visitor. */
 	public void accept(IVisitor visitor);
 	
-	/** Flushes this path in a graph writer. */
-	public void flush(IDirectedGraphWriter writer);
+	/** Flushes this path in a graph writer, returning the last created
+	 *  vertex. */
+	public Object flush(IDirectedGraphWriter writer);
 	
 }
