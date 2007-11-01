@@ -40,6 +40,11 @@ public final class AggregateFunctionFactory {
 	public static IAggregateFunction<?> pickUp() {
 		return new PickUpFunction();
 	}
+	
+	/** Factors a group function. */
+	public static IAggregateFunction<?> group() {
+		return new GroupFunction();
+	}
 
 	/** Returns a function by name. */
 	public static IAggregateFunction getAggregateFunction(String name) throws JailVMException {

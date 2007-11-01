@@ -1,0 +1,52 @@
+(execute 'commons.jail');
+
+DIAG = <§dot
+    digraph DIAG {
+        // vertices
+		INIT [type='state'];
+	    CONSULTATION [label='Consultation' type='op'];
+		IFDIAG [label='Diagnostic connu?' type='cond'];
+        THEN [label='Intervention' type='op'];
+		ELSE [label='Endoscopie' type='op'];
+		END [type='state'];
+
+		// edges
+        INIT -> CONSULTATION [label=' '];
+		CONSULTATION -> IFDIAG [label=' '];
+		IFDIAG -> THEN [label='oui'];
+		IFDIAG -> ELSE [label='non'];
+		THEN -> END [label=' '];
+		ELSE -> CONSULTATION [label=' '];
+    }
+§>;
+
+AUTOMATON = <§seqp
+    INIT=consultation->CONSULTATION,
+	CONSULTATION=diagOk->INTERVENTION|diagKo->ENDOSCOPIE,
+	INTERVENTION=intervention->END,
+	ENDOSCOPIE=endoscopie->INIT,
+	END=recurse->INIT.
+§>;
+
+DIAG_FLUENT = <§seqp
+   NO = endoscopie->YES|diagKo->NO,
+   YES = endoscopie->YES|diagOk->YES|intervention->NO. 
+§>;
+
+COMPOSE = (compose (DIAG_FLUENT) (AUTOMATON)
+                   :state {@label -> @label});
+ACCLANG = (standard3
+              (copy (COMPOSE) 
+                    :vertex {@label -> @label}
+                    :edge {@letter -> when @letter='diagKo' then 'tau'
+                                      when @letter='diagOk' then 'tau'
+                                      when @letter='recurse' then 'tau'
+                                      else @letter}
+              )
+          );
+
+(diag_show (DIAG));
+(automaton_show (AUTOMATON));
+(automaton_show (DIAG_FLUENT));
+(automaton_show (COMPOSE));
+(automaton_show (ACCLANG));

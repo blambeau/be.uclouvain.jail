@@ -108,7 +108,7 @@ public abstract class GMatchPopulatorCallback<T> extends GMatchCallback<Object> 
 
 	/** Callback method for ELSE_EXPR nodes. */
 	public Object ELSE_EXPR(IASTNode node) throws Exception {
-		return node.getAttr("value");
+		return makeCall(node.childFor("value"));
 	}
 
 	/** Callback method for BOOL_OREXPR nodes. */

@@ -1,0 +1,44 @@
+/** Automaton dot command. */
+define (adot <A>) 
+	     (copy (A)
+             :vertex {@shape -> when @isAccepting=true then 'doublecircle'
+                                else 'circle',
+        				      @style -> 'filled',
+                      @fillcolor -> when @isError=true then 'red'
+                                    when @isInitial=true then 'green'
+                                    else 'white',
+                      @label     -> @label}
+		          :edge  {@label -> @letter});
+
+/** JDotty for automaton dot. */
+define (show <A>)
+	     (jdotty (adot (A)));
+
+/** 3 standard algorithms chain. */
+define (standard3 <A>)
+       (minimize (determinize (tmoves (A))));
+
+HMSC = <§seqp
+    INIT=ONOFF|ONRESET,
+    ONOFF=INIT,
+    ONRESET=OFF,
+    OFF=INIT.
+§>;
+ONEKTEST = <§seqp
+	INIT=onoff->ONOFF|onreset->ONRESET,
+	ONOFF=INIT,
+	ONRESET=off->OFF,
+	OFF=INIT.
+§>; 
+REVERSE = <§seqp 
+	INIT=ONOFF|ONRESET,
+	ONOFF=onoff->INIT,
+	ONRESET=onreset->OFF,
+	OFF=off->INIT.
+§>;
+
+(show (HMSC));
+(show (ONEKTEST));
+(show (standard3 (ONEKTEST)));
+(show (REVERSE));
+(show (standard3 (REVERSE)));

@@ -1,0 +1,37 @@
+/** Automaton dot command. */
+define (adot <A>) 
+	     (copy (A)
+             :vertex {@shape -> when @isAccepting=true then 'doublecircle'
+                                else 'circle',
+        				      @style -> 'filled',
+                      @fillcolor -> when @isError=true then 'red'
+                                    when @isInitial=true then 'green'
+                                    else 'white',
+                      @label     -> @label}
+		          :edge  {@label -> @letter});
+
+/** JDotty for automaton dot. */
+define (show <A>)
+	     (jdotty (adot (A)));
+
+HMSC = <§seqp 
+    INIT=ARRIVES,
+    ARRIVES=BADPASSWORD|BADACCOUNT|CANCEL1|CANCEL2,
+	BADPASSWORD=BADPASSWORD|BADACCOUNT|CANCEL1|CANCEL2,
+	BADACCOUNT=ARRIVES,
+	CANCEL1=ARRIVES,
+	CANCEL2=ARRIVES.
+§>;
+
+AUTO = <§seqp
+    INIT=arrives->ARRIVES,
+    ARRIVES=badpass->BADPASS|badacc->BADACC|cancel1->CANCEL1|cancel2->CANCEL2,
+    BADPASS=badacc->BADACC|cancel1->CANCEL1|cancel2->CANCEL2|badpass->BADPASS,
+    BADACC=arrives->ARRIVES,
+    CANCEL1=arrives->ARRIVES,
+    CANCEL2=arrives->ARRIVES.
+§>;
+
+(show (HMSC));
+(show (AUTO));
+(show (minimize (AUTO)));

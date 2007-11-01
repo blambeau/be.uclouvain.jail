@@ -1,0 +1,38 @@
+/** DOT output for automata. */
+define (automaton_dot <A>) 
+	   (copy (A)
+             :vertex {@shape -> when @isAccepting=true then 'doublecircle'
+                                else 'circle',
+       			      @style -> 'filled',
+                      @fillcolor -> when @isError=true then 'red'
+                                    when @isInitial=true then 'green'
+                                    else 'white'}
+		      :edge  {@label -> @letter});
+
+/** JDOTTY vizualization for automata. */
+define (automaton_show <A>)
+	   (jdotty (automaton_dot (A)));
+
+/** DOT output for diag. */
+define (diag_dot <A>)
+       (copy (A) :vertex {@shape -> when @type='state' then 'circle'
+                                    when @type='op' then 'box'
+                                    when @type='cond' then 'diamond',
+                          @label -> when @type='state' then ' '
+                                    else @label});
+
+/** JDOTTY vizualization for diag. */
+define (diag_show <A>)
+	   (jdotty (diag_dot (A)));
+
+/** label preserving version of 3 standard algo chain. */
+define (standard3 <A>)
+       (minimize 
+           (determinize 
+               (tmoves (A) :tau 'tau'
+                           :state {@label -> @label})
+               :state {@label -> @label}
+           )
+           :state {@label -> @label}
+       );
+

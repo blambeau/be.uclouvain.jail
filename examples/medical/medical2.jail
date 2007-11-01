@@ -1,0 +1,64 @@
+(execute 'commons.jail');
+
+DIAG = <§dot
+    digraph DIAG {
+        // vertices
+		INIT [type='state'];
+	    CONSULTATION [label='Consultation' type='op'];
+        OPA [label='Operation A' type='op'];
+        OPB [label='Operation B' type='op'];
+        OPC [label='Operation C' type='op'];
+        CHIRURGIE [label='Chirurgie' type='op'];
+		IFA [label='Operation A?' shape='diamond' type='cond'];
+        THEN [label='Chimiothérapie' type='op'];
+		ELSE [label='Radiothérapie' type='op'];
+        END [type='state'];
+
+		// edges
+        INIT -> CONSULTATION [label=' '];
+		CONSULTATION -> OPA [label=' '];
+		CONSULTATION -> OPB [label=' '];
+		CONSULTATION -> OPC [label=' '];
+		OPA -> CHIRURGIE [label=' '];
+		OPB -> CHIRURGIE [label=' '];
+		OPC -> CHIRURGIE [label=' '];
+		CHIRURGIE -> IFA [label=' '];
+		IFA -> THEN [label='oui'];
+		IFA -> ELSE [label='non'];
+		THEN -> END [label=' '];
+		ELSE -> END [label=' '];
+		END -> INIT [label=' '];
+    }
+§>;
+
+AUTOMATON = <§seqp
+    INIT=consultation->CONSULTATION,
+	CONSULTATION=opA->CHIRURGIE|opB->CHIRURGIE|opC->CHIRURGIE,
+	CHIRURGIE=chirurgie->IF,
+	IF=opA_ok->CHIMIOTHERAPIE|opA_ko->RADIOTHERAPIE,
+    CHIMIOTHERAPIE=chimio->END,
+	RADIOTHERAPIE=radio->END.
+§>;
+
+OPA_FLUENT = <§seqp
+   NO = opA->YES|opA_ko->NO,
+   YES = opA->YES|opA_ok->YES. 
+§>;
+
+COMPOSE = (compose (OPA_FLUENT) (AUTOMATON)
+                   :state {@label -> @label});
+ACCLANG = (standard3
+              (copy (COMPOSE) 
+                    :vertex {@label -> @label}
+                    :edge {@letter -> when @letter='opA_ok' then 'tau'
+                                      when @letter='opA_ko' then 'tau'
+                                      when @letter='recurse' then 'tau'
+                                      else @letter}
+              )
+          );
+
+(diag_show (DIAG));
+(automaton_show (AUTOMATON));
+(automaton_show (OPA_FLUENT));
+(automaton_show (COMPOSE));
+(automaton_show (ACCLANG));
