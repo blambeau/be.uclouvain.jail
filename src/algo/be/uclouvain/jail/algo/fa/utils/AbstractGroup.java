@@ -1,4 +1,4 @@
-package be.uclouvain.jail.algo.fa.compose;
+package be.uclouvain.jail.algo.fa.utils;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -9,7 +9,9 @@ import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.utils.ITotalOrder;
 import be.uclouvain.jail.uinfo.IUserInfo;
 
-/** State definition. */
+/** 
+ * Provides common implementation for group of states or edges. 
+ */
 public abstract class AbstractGroup implements Iterable<Object> {
 	
 	/** Indexes. */
@@ -18,17 +20,20 @@ public abstract class AbstractGroup implements Iterable<Object> {
 	/** Hash code. */
 	private int hash = -1;
 	
+	/** Complete group? */
+	private Boolean complete;
+	
 	/** Creates an empty group. */
 	public AbstractGroup() {
 		this(new int[0]);
 	}
 	
-	/** Creates a state definition. */
+	/** Creates a group from components indexes. */
 	public AbstractGroup(int[] components) {
-		this.components = components;
+		this.setComponents(components);
 	}
 	
-	/** Sets the components. */
+	/** Sets the component indexes. */
 	public final void setComponents(int[] components) {
 		this.components = components;
 		this.hash = -1;
@@ -45,6 +50,20 @@ public abstract class AbstractGroup implements Iterable<Object> {
 		this.hash = -1;
 	}
 	
+	/** Group is complete? */
+	public boolean isComplete() {
+		if (complete == null) {
+			for (int i: components) {
+				if (i == -1) {
+					complete = false;
+					break;
+				}
+			}
+			complete = true;
+		}
+		return complete;
+	}
+	
 	/** Returns size of the group. */
 	public final int size() {
 		return components.length;
@@ -55,7 +74,7 @@ public abstract class AbstractGroup implements Iterable<Object> {
 		return components[i] == -1 ? null : getTotalOrder(i).getElementAt(components[i]);
 	}
 	
-	/** Returns the i-th value. */
+	/** Returns the i-th component index. */
 	public final int getComponentIndex(int i) {
 		return components[i];
 	}

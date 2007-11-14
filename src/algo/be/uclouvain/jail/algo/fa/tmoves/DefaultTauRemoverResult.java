@@ -78,13 +78,10 @@ public class DefaultTauRemoverResult implements ITauRemoverResult {
 	/**
 	 * Creates transitions in the result.
 	 */
-	public void createTargetTransitions(Set<Object> sources,
-			Set<Object> targets, Set<IUserInfo> edges) {
+	public void createTargetTransitions(Object source, Set<Object> targets, Set<IUserInfo> edges) {
 		IUserInfo agg = edgeAggregator.create(edges);
-		for (Object source : sources) {
-			for (Object target : targets) {
-				graph.createEdge(source, target, agg.copy());
-			}
+		for (Object target : targets) {
+			graph.createEdge(source, target, agg.copy());
 		}
 	}
 

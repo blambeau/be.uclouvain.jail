@@ -1,0 +1,41 @@
+/** Automaton dot command. */
+define (adot <A>) 
+	     (copy (A)
+             :vertex {@shape -> when @isAccepting=true then 'doublecircle'
+                                else 'circle',
+        				      @style -> 'filled',
+                      @fillcolor -> when @isError=true then 'red'
+                                    when @isInitial=true then 'green'
+                                    else 'white'}
+		          :edge  {@label -> @letter});
+
+/** JDotty for automaton dot. */
+define (show <A>)
+	     (jdotty (adot (A)));
+
+/*
+DFA155 = <§seqp
+    A[@isAccepting=false] = l0->B|l1->F,
+    B[@isAccepting=false] = l0->G|l1->C,
+    C[@isAccepting=true] = l0->A|l1->C,
+    D[@isAccepting=false] = l0->C|l1->G,
+    E[@isAccepting=false] = l0->H|l1->F,
+    F[@isAccepting=false] = l0->C|l1->G,
+    G[@isAccepting=false] = l0->G|l1->E,
+    H[@isAccepting=false] = l0->G|l1->C.
+§>;
+
+DFA162 = <§seqp
+    AE [@isAccepting=false] = l0->BH|l1->DF,
+    G  [@isAccepting=false] = l0->G|l1->AE,
+    DF [@isAccepting=false] = l0->C|l1->G,
+    BH [@isAccepting=false] = l0->G|l1->C,
+    C  [@isAccepting=true]  = l0->AE|l1->C.
+§>;
+
+MIN = (minimize (DFA155) :state {@label -> group(@label)});
+
+(show (DFA155));
+(show (DFA162));
+(show (MIN));
+*/

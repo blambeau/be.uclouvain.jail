@@ -183,17 +183,13 @@ public class TauRemoverAlgo {
 				Set<Object> targets = eclosure(outEdgesAndTargets[1]);
 				
 				// get equivalent states in target
-				Set<Object> cSources = new HashSet<Object>();
-				for (Object source: sources) {
-					cSources.add(createdStates.get(source));
-				}
 				Set<Object> cTargets = new HashSet<Object>();
 				for (Object target: targets) {
 					cTargets.add(createdStates.get(target));
 				}
 				
 				/* create transitions */
-				result.createTargetTransitions(cSources, cTargets, outEdges);
+				result.createTargetTransitions(createdStates.get(sourceState), cTargets, outEdges);
 			}
 		}
 

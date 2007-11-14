@@ -1,4 +1,4 @@
-package be.uclouvain.jail.algo.fa.compose;
+package be.uclouvain.jail.algo.fa.utils;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -21,8 +21,9 @@ public class DFAStateGroup extends AbstractGroup {
 	
 	/** Creates a state group instance. */
 	public DFAStateGroup(int[] components, IDFAGroupInformer informer) {
-		super(components);
+		super();
 		this.informer = informer;
+		super.setComponents(components);
 	}
 
 	/** Creates a state group instance. */
@@ -49,28 +50,49 @@ public class DFAStateGroup extends AbstractGroup {
 		return getGraph(i).getVerticesTotalOrder();
 	}
 
-	/** Returns the outgoing letters. */
+	/** Returns the outgoing letters of the group. */
 	public Iterator<Object> getOutgoingLetters() {
 		Set<Object> letters = new HashSet<Object>();
+
+		// iterate the states in the group
 		int size = size();
 		for (int i=0; i<size; i++) {
 			Object state = getComponent(i);
+			
+			// ignore uncomplete group
+			if (state == null) { continue; }
+			
+			// iterate outgoing letters of the current state
 			for (Object letter: getDFA(i).getOutgoingLetters(state)) {
+				
+				// add letter
 				letters.add(letter);
 			}
 		}
+		
+		// returns letters
 		return letters.iterator();
 	}
 	
-	/** Creates an edge group through a given letter. */
+	/** Creates a group of reachable edges from this state group
+	 *  through a given letter. */
 	public DFAEdgeGroup delta(Object letter) {
+		// loop variables
 		IDFA dfa = null;
+		Object state = null;
+		Object edge = null;
+		
+		// iterate the states in the group
 		int size = size();
 		int[] edges = new int[size];
 		for (int i=0; i<size; i++) {
+			
+			// retrieve outgoing edge of the current state
 			dfa = getDFA(i);
-			Object state = getComponent(i);
-			Object edge = dfa.getOutgoingEdge(state, letter);
+			state = getComponent(i);
+			edge = dfa.getOutgoingEdge(state, letter);
+			
+			// no such edge?
 			if (edge == null) {
 				if (dfa.getAlphabet().contains(letter)) {
 					return null;
@@ -78,6 +100,7 @@ public class DFAStateGroup extends AbstractGroup {
 					edges[i] = -1;
 				}
 			} else {
+				// edge found, set its index
 				edges[i] = getEdgesTotalOrder(i).indexOf(edge);
 			}
 		}

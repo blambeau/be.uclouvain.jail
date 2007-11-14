@@ -55,7 +55,6 @@ public class DFAEquivAlgo {
 		}
 		
 		
-		
 	};
 	
 	/** Input of the algorithm. */

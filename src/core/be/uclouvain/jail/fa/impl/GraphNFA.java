@@ -61,6 +61,17 @@ public class GraphNFA extends GraphFA implements INFA {
 	 * Creates a NFA instance. 
 	 * 
 	 * <p>This constructor can be used to decorate any graph as an automaton using
+	 * a default informer. Efficiency of the NFA cannot be garantied as actual
+	 * data structure used by the underlying graph is unknown.</p>
+	 */
+	public GraphNFA(IDirectedGraph graph) {
+		this(graph,new AttributeGraphFAInformer());
+	}
+	
+	/** 
+	 * Creates a NFA instance. 
+	 * 
+	 * <p>This constructor can be used to decorate any graph as an automaton using
 	 * the informer provided. Efficiency of the NFA cannot be garantied as actual
 	 * data structure used by the underlying graph is unknown.</p>
 	 */

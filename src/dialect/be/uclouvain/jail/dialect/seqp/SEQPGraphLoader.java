@@ -36,6 +36,9 @@ public class SEQPGraphLoader extends SEQPCallback<Object> {
 	/** Creates vertices. */
 	private Map<String, Object> vertices;
 
+	/** Informations. */
+	private Map<Object,IUserInfo> infos;
+	
 	/** Init state. */
 	private Object init;
 	
@@ -46,6 +49,7 @@ public class SEQPGraphLoader extends SEQPCallback<Object> {
 	public SEQPGraphLoader(IDirectedGraphWriter writer) {
 		this.writer = writer;
 		vertices = new HashMap<String, Object>();
+		this.infos = new HashMap<Object,IUserInfo>();
 	}
 
 	/** Loads a source inside a graph writer. */
@@ -90,10 +94,14 @@ public class SEQPGraphLoader extends SEQPCallback<Object> {
 	private Object ensureVertex(String label, boolean create) {
 		Object vertex = label == null ? null : vertices.get(label);
 		if (vertex == null && create) {
-			vertex = writer.createVertex(vInfo(label));
+			IUserInfo info = vInfo(label);
+			vertex = writer.createVertex(info);
 			if (label != null) {
 				vertices.put(label, vertex);
 			}
+			infos.put(vertex, info);
+		} else if (vertex != null) {
+			info = infos.get(vertex);
 		}
 		return vertex;
 	}

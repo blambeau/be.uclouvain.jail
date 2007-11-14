@@ -1,5 +1,7 @@
 package be.uclouvain.jail.algo.fa.compose;
 
+import be.uclouvain.jail.algo.fa.utils.DFAEdgeGroup;
+import be.uclouvain.jail.algo.fa.utils.DFAStateGroup;
 import be.uclouvain.jail.fa.IDFA;
 
 /**

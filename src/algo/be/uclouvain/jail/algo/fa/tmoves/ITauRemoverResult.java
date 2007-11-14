@@ -16,26 +16,26 @@ import be.uclouvain.jail.uinfo.IUserInfo;
  */
 public interface ITauRemoverResult {
 
-  /** "Algorithm started" event. */
-  public void started(IDFA dfa);
+	/** "Algorithm started" event. */
+	public void started(IDFA dfa);
 
-  /** "Algorithm ended" event. */
-  public void ended();
-  
-  /**
-   * Creates a result target state mapped to a source state.
-   * 
-   * @param sourceState a source NFA state.
-   * @return an identifier for created target state (when id support is enabled). 
-   */
-  public Object createTargetState(IUserInfo sourceState);
+	/** "Algorithm ended" event. */
+	public void ended();
 
-  /**
-   * Creates transitions in the result.
-   */
-  public void createTargetTransitions(Set<Object> sources, Set<Object> targets, Set<IUserInfo> edges);
+	/**
+	 * Creates a result target state mapped to a source state.
+	 * 
+	 * @param sourceState a source NFA state.
+	 * @return an identifier for created target state (when id support is enabled). 
+	 */
+	public Object createTargetState(IUserInfo sourceState);
 
-  /** Returns resulting NFA. */
-  public INFA getResultingNFA();
-  
+	/**
+	 * Creates transitions in the result.
+	 */
+	public void createTargetTransitions(Object source, Set<Object> targets, Set<IUserInfo> edges);
+
+	/** Returns resulting NFA. */
+	public INFA getResultingNFA();
+
 }

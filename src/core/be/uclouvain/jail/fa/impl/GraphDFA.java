@@ -71,6 +71,17 @@ public class GraphDFA extends GraphFA implements IDFA {
 	 * Creates a DFA instance. 
 	 * 
 	 * <p>This constructor can be used to decorate any graph as an automaton using
+	 * a default informer. Efficiency of the DFA cannot be garantied as actual
+	 * data structure used by the underlying graph is unknown.</p>
+	 */
+	public GraphDFA(IDirectedGraph graph) {
+		super(graph,new AttributeGraphFAInformer());
+	}
+	
+	/** 
+	 * Creates a DFA instance. 
+	 * 
+	 * <p>This constructor can be used to decorate any graph as an automaton using
 	 * the informer provided. Efficiency of the DFA cannot be garantied as actual
 	 * data structure used by the underlying graph is unknown.</p>
 	 */

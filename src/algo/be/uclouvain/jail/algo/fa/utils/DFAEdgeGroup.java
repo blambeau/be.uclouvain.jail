@@ -1,4 +1,4 @@
-package be.uclouvain.jail.algo.fa.compose;
+package be.uclouvain.jail.algo.fa.utils;
 
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
@@ -6,7 +6,7 @@ import be.uclouvain.jail.graph.utils.ITotalOrder;
 
 /** 
  * Specialization of AbstractGroup that provides useful utilities in case
- * of state groups.
+ * of edge groups.
  * 
  * @author blambeau
  */
@@ -17,8 +17,9 @@ public class DFAEdgeGroup extends AbstractGroup {
 	
 	/** Creates a state group instance. */
 	public DFAEdgeGroup(int[] components, IDFAGroupInformer informer) {
-		super(components);
+		super();
 		this.informer = informer;
+		super.setComponents(components);
 	}
 
 	/** Creates a state group instance. */
@@ -51,13 +52,15 @@ public class DFAEdgeGroup extends AbstractGroup {
 		int size = size();
 		int[] targets = new int[size];
 		
-		// i-th graph
-		IDirectedGraph graph;
+		// loop variables
+		IDirectedGraph graph = null;
+		Object edge = null;
+		Object state = null;
 		
 		// find each target index
 		for (int i=0; i<size; i++) {
 			graph = getGraph(i);
-			Object edge = getComponent(i);
+			edge = getComponent(i);
 			if (edge == null) {
 				if (resolve == null) {
 					return null;
@@ -65,7 +68,7 @@ public class DFAEdgeGroup extends AbstractGroup {
 					targets[i] = resolve.getComponentIndex(i);
 				}
 			} else {
-				Object state = graph.getEdgeTarget(edge);
+				state = graph.getEdgeTarget(edge);
 				targets[i] = getVerticesTotalOrder(i).indexOf(state);
 			}
 		}

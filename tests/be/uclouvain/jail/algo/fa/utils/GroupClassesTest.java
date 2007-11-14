@@ -1,4 +1,4 @@
-package be.uclouvain.jail.algo.fa.compose;
+package be.uclouvain.jail.algo.fa.utils;
 
 import junit.framework.TestCase;
 import be.uclouvain.jail.dialect.seqp.SEQPGraphLoader;

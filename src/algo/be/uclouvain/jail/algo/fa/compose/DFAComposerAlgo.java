@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import be.uclouvain.jail.algo.fa.utils.DFAEdgeGroup;
+import be.uclouvain.jail.algo.fa.utils.DFAStateGroup;
+import be.uclouvain.jail.algo.fa.utils.IDFAGroupInformer;
 import be.uclouvain.jail.fa.IDFA;
 
 /**
