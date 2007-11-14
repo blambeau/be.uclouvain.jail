@@ -1,0 +1,23 @@
+(execute 'commons.jail');
+
+HMSC = <§seqp
+	INIT=LIGHTING|LAMPOFF|STOPPED|SC,
+
+    LAMPOFF=on->LAMPON,
+	LAMPON=off->LAMPOFF,
+
+	LIGHTING=dark->LIGHTDARK,
+	LIGHTDARK=light->LIGHTING,
+
+	STOPPED=start->RUNNING,
+    RUNNING=stop->STOPPED|end->STOPPED,
+
+	SC=start->dark->on->stop->start->end->off.
+
+§>;
+
+STD = (minimize (determinize (tmoves (HMSC))));
+
+(show (HMSC));
+(show (STD));
+

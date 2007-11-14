@@ -1,0 +1,26 @@
+/** Automaton dot command. */
+define (adot <A>) 
+	     (copy (A)
+             :vertex {@shape -> when @isAccepting=true then 'doublecircle'
+                                else 'circle',
+        				      @style -> 'filled',
+                      @fillcolor -> when @isError=true then 'red'
+                                    when @isInitial=true then 'green'
+                                    else 'white'}
+		          :edge  {@label -> @letter});
+
+/** JDotty for automaton dot. */
+define (show <A>)
+	     (jdotty (adot (A)));
+
+/** label preserving version of 3 standard algo chain. */
+define (standard3 <A>)
+       (minimize 
+           (determinize 
+               (tmoves (A) :tau 'tau'
+                           :state {@label -> @label})
+               :state {@label -> @label}
+           )
+           :state {@label -> @label}
+       );
+

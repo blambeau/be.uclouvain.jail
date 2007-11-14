@@ -58,35 +58,23 @@ public class DFAMinimizerAlgo {
 		return delta;
 	}
 
-	/** Checks if a block can be refined. */
+	/** Checks if a block can be refined, that is if block contains somes states
+	 * of reachable but not all. */
 	private boolean canBeRefined(Set<Object> block, Set<Object> reachable) {
 		// avoid trying to refine one state only blocks
 		if (block.size() <= 1) {
 			return false;
 		}
 		
-		// iterate the little one
-		int toCompare = block.size();
-		/*
-		if (block.size() < reachable.size()) {
-			Set<Object> temp = reachable;
-			reachable = block;
-			block = temp;
-			toCompare = reachable.size();
-		}
-		*/
-		
-		// block can be refined if reachable contains at least
-		// one of its states, but not all
+		// block can be refined if it contains at least one state
+		// of reachable
 		int count = 0;
-		for (Object reach: reachable) {
-			if (block.contains(reach)) {
+		for (Object reach: block) {
+			if (reachable.contains(reach)) {
 				count++;
-			} else if (count != 0) {
-				return true;
 			}
 		}
-		return count != 0 && count != toCompare;
+		return count != 0 && count != block.size();
 	}
 	
 	/** Debugs a block. */
