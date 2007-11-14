@@ -1,9 +1,12 @@
 package be.uclouvain.jail.algo.fa.determinize;
 
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
+import be.uclouvain.jail.adapt.AdaptUtils;
+import be.uclouvain.jail.algo.fa.utils.FAEdgeGroup;
+import be.uclouvain.jail.algo.fa.utils.FAStateGroup;
 import be.uclouvain.jail.fa.IDFA;
-import be.uclouvain.jail.fa.INFA;
 import be.uclouvain.jail.fa.impl.GraphDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
@@ -19,9 +22,9 @@ public class DefaultNFADeterminizerResult implements INFADeterminizerResult {
 	/** DFA under construction. */
 	private IDFA dfa;
 
-	/** Underlying graph. */
-	private IDirectedGraph graph;
-
+	/** Resulting states. */
+	private Map<FAStateGroup,Object> rStates;
+	
 	/** Aggregator to use for states. */
 	private UserInfoAggregator stateAggregator;
 	
@@ -42,7 +45,6 @@ public class DefaultNFADeterminizerResult implements INFADeterminizerResult {
 	public DefaultNFADeterminizerResult(IDFA dfa) {
 		this();
 		this.dfa = dfa;
-		this.graph = dfa.getGraph();
 	}
 	
 	/** Returns the state aggregator. */
@@ -55,78 +57,47 @@ public class DefaultNFADeterminizerResult implements INFADeterminizerResult {
 		return edgeAggregator;
 	}
 
-	/**
-	 * "Algorithm started" event.
-	 * 
-	 * @param source the source NFA which is being determinized.
-	 */
-	public void started(INFA nfa) {
+	/** "Algorithm started" event. */
+	public void started(INFADeterminizerInput input) {
 		if (dfa == null) {
-			dfa = new GraphDFA(nfa.getAlphabet());
-			graph = dfa.getGraph();
+			dfa = new GraphDFA(input.getNFA().getAlphabet());
 		}
+		rStates = new HashMap<FAStateGroup,Object>();
 	}
 
 	/** "Algorithm ended" event. */
 	public void ended() {
 	}
 
-	/** Debus a state def. */
-	@SuppressWarnings("unused")
-	private String debugStateDef(Set<IUserInfo> def) {
-		StringBuffer sb = new StringBuffer();
-		sb.append('[');
-		int i=0;
-		for (Object d: def) {
-			if (i++ != 0) { sb.append(','); }
-			sb.append(d);
+	/** Ensures that a target state has been created. */
+	private Object ensure(FAStateGroup state) {
+		if (!rStates.containsKey(state)) {
+			IDirectedGraph graph = dfa.getGraph();
+			IUserInfo info = stateAggregator.create(state.getUserInfos());
+			Object vertex = graph.createVertex(info);
+			rStates.put(state,vertex);
 		}
-		sb.append(']');
-		return sb.toString();
+		return rStates.get(state);
 	}
 	
-	/** Debugs an edge def. */
-	@SuppressWarnings("unused")
-	private String debugEdge(IUserInfo info) {
-		return info.getAttribute("letter").toString();
-	}
-	
-	/**
-	 * Creates a result state from a definition (a collection of source NFA states).
-	 * 
-	 * <p>This method may return an object identifying the state created in the equivalent DFA
-	 * under construction. When creating the DFA on the fly, returning such an identifier is a 
-	 * efficient memory solution, as the algorithm must keep the <code>def</code> for internal
-	 * implementation reasons.</p>
-	 * 
-	 * @param def a definition of result state.
-	 * @return an identifier of the resulting state in the equivalent DFA. 
-	 */
-	public Object createTargetState(Set<IUserInfo> def) {
-		//System.out.println("Creating target state for: " + debugStateDef(def));
-		IUserInfo info = stateAggregator.create(def);
-		Object vertex = graph.createVertex(info);
-		return vertex;
+	/** Creates a result transition between two target states. */
+	public void createTargetTransitions(FAStateGroup source, FAStateGroup target, FAEdgeGroup edges) {
+		IUserInfo info = edgeAggregator.create(edges.getUserInfos());
+		dfa.getGraph().createEdge(ensure(source), ensure(target), info);
 	}
 
-	/**
-	 * Creates a result transition between two target states.
-	 * 
-	 * @param source the source of the transition 
-	 * (a result state identifier, previously returned by {@link #createTargetState(Set<Object>)} method). 
-	 * @param edges the set of NFA edges that merge.
-	 * @param target the target of the transition
-	 * (a result state identifier, previously returned by {@link #createTargetState(Set<Object>)} method). 
-	 */
-	public void createTargetTransitions(Object source, Object target, Set<IUserInfo> edges) {
-		//System.out.println("Creating transition between: " + source + " and " + target);
-		IUserInfo info = edgeAggregator.create(edges);
-		graph.createEdge(source, target, info);
-	}
-
-	/** Returns the computed DFA. */
-	public IDFA getResultingDFA() {
-		return dfa;
+	/** Adapts to some types. */
+	public <T> Object adapt(Class<T> c) {
+		if (c.isAssignableFrom(getClass())) {
+			return this;
+		}
+		
+		// natural adaptation to a DFA
+		if (IDFA.class.equals(c)) {
+			return dfa;
+		}
+		
+		return AdaptUtils.externalAdapt(this,c);
 	}
 
 }

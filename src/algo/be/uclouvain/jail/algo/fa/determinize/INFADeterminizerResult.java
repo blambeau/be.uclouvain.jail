@@ -1,10 +1,8 @@
 package be.uclouvain.jail.algo.fa.determinize;
 
-import java.util.Set;
-
-import be.uclouvain.jail.fa.IDFA;
-import be.uclouvain.jail.fa.INFA;
-import be.uclouvain.jail.uinfo.IUserInfo;
+import be.uclouvain.jail.adapt.IAdaptable;
+import be.uclouvain.jail.algo.fa.utils.FAEdgeGroup;
+import be.uclouvain.jail.algo.fa.utils.FAStateGroup;
 
 /**
  * Abstracts the notion of result of a determinization.
@@ -18,43 +16,15 @@ import be.uclouvain.jail.uinfo.IUserInfo;
  * 
  * @author LAMBEAU Bernard
  */
-public interface INFADeterminizerResult {
+public interface INFADeterminizerResult extends IAdaptable {
 
-	/**
-	 * "Algorithm started" event.
-	 * 
-	 * @param source the source NFA which is being determinized.
-	 */
-	public void started(INFA nfa);
+	/** "Algorithm started" event. */
+	public void started(INFADeterminizerInput input);
 
 	/** "Algorithm ended" event. */
 	public void ended();
 
-	/**
-	 * Creates a result state from a definition (a collection of source NFA states).
-	 * 
-	 * <p>This method may return an object identifying the state created in the equivalent DFA
-	 * under construction. When creating the DFA on the fly, returning such an identifier is a 
-	 * efficient memory solution, as the algorithm must keep the <code>def</code> for internal
-	 * implementation reasons.</p>
-	 * 
-	 * @param def a definition of result state.
-	 * @return an identifier of the resulting state in the equivalent DFA. 
-	 */
-	public Object createTargetState(Set<IUserInfo> def);
-
-	/**
-	 * Creates a result transition between two target states.
-	 * 
-	 * @param source the source of the transition 
-	 * (a result state identifier, previously returned by {@link #createTargetState(Set<Object>)} method). 
-	 * @param edges the set of NFA edge infos that merge.
-	 * @param target the target of the transition
-	 * (a result state identifier, previously returned by {@link #createTargetState(Set<Object>)} method). 
-	 */
-	public void createTargetTransitions(Object source, Object target, Set<IUserInfo> edges);
-
-	/** Returns the computed DFA. */
-	public IDFA getResultingDFA();
+	/** Creates a result transition between two target states. */
+	public void createTargetTransitions(FAStateGroup source, FAStateGroup target, FAEdgeGroup edges);
 
 }

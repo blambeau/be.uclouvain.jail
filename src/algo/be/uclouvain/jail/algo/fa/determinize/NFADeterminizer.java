@@ -28,7 +28,7 @@ public class NFADeterminizer {
 	/** Returns the resulting DFA. */
 	public IDFA getResultingDFA() {
 		if (!executed) { execute(); }
-		return result.getResultingDFA();
+		return (IDFA) result.adapt(IDFA.class);
 	}
 	
 	/** Executes the algorithm. */

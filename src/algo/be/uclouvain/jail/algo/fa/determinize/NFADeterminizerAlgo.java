@@ -1,88 +1,36 @@
 package be.uclouvain.jail.algo.fa.determinize;
 
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.Iterator;
 import java.util.Set;
-import java.util.TreeMap;
 
+import be.uclouvain.jail.algo.fa.utils.FAEdgeGroup;
+import be.uclouvain.jail.algo.fa.utils.FAStateGroup;
 import be.uclouvain.jail.fa.INFA;
-import be.uclouvain.jail.graph.IDirectedGraph;
-import be.uclouvain.jail.uinfo.IUserInfo;
 
 /**
- * <p>Standard NDA determinization algorithm.</p>
+ * Standard NDA determinization algorithm.
  * 
  * <p>This algorithm computes a DFA which is equivalent to a source NFA.</p>
- * 
- * <p>Pseudo code viewed by the result abstraction can be described as below.</p> 
- * <pre>
- *   // TargetDef below is a definition of a target state, i.e. a set of source states. 
- * 
- *   // initialization
- *   TargetDef initial = [...];
- *   toExplore.putOne(initial);
- *   <b>result.createTargetState(initial);</b>
- *   
- *   // computation ... we will create transitions, and target states on the fly
- *   while !toExplore.isEmpty()
- *     // transition source
- *     TargetDef source = toExplore.removeOne();
- *     
- *     // iterate outgoing transitions of the source states in the target definition
- *     for each outgoing letter l in delta.letters(source)
- *       // transition target 
- *       TargetDef target = delta.compute(targets,l);
- *       
- *       // empty target (not used letter), do nothing
- *       if targets is empty continue; 
- *       
- *       // create target state on the fly is not already done 
- *       // <b>the result is ensured that target states always exist when creating transitions.</b> 
- *       if !alreadyCreated(targets)
- *         <b>result.createTargetState(targets)</b>
- *       fi
- *       
- *       // create the transition !
- *       <b>result.createTargetTransition(current,l,targets);</b>
- *       
- *     end for
- *   end for
- * </pre>
- * 
- * TODO: toExplore implementation may be quite expensive, no ?  
  * 
  * @author LAMBEAU Bernard
  */
 public class NFADeterminizerAlgo {
 
 	/* ---------------------------------------------------------------------------------------------- Fields */
-	/** Target states to explore, as a lookup table (def -> identifier). */
-	private Map<Set<Object>, Object> toExplore;
+	/** Target states to explore. */
+	private Set<FAStateGroup> toExplore;
 
-	/** Explored states, as a lookup table (def -> identifier). */
-	private Map<Set<Object>, Object> explored;
+	/** Explored states. */
+	private Set<FAStateGroup> explored;
 
-	/** Result abstraction. */
-	private INFADeterminizerResult result;
-	
 	/** Non deterministic automaton to determinize. */
 	private INFA nfa;
 	
-	/* ---------------------------------------------------------------------------------------------- Construction */
-	/** <p>Creates an algorithm instance.</p> */
+	/** Creates an algorithm instance. */
 	public NFADeterminizerAlgo() {
 	}
 
-	/* ---------------------------------------------------------------------------------------------- Initialization */
-	/** Algorithm initialization. */
-	protected void init() {
-		toExplore = new HashMap<Set<Object>, Object>();
-		explored = new HashMap<Set<Object>, Object>();
-	}
-
-	/* ---------------------------------------------------------------------------------------------- Algorithm methods */
 	/** Returns true when there is target state defnitions to explore. */
 	protected boolean hasNext() {
 		return !toExplore.isEmpty();
@@ -94,104 +42,46 @@ public class NFADeterminizerAlgo {
 	 * <p>This method removes a target state definition of the toExplore list and mark it 
 	 * as explored.</p>
 	 */
-	private Set<Object> getOne() {
+	private FAStateGroup getOne() {
 		/* get one target definition */
-		Set<Object> sources = toExplore.keySet().iterator().next();
-		Object identifier = toExplore.remove(sources);
+		FAStateGroup sources = toExplore.iterator().next();
+		toExplore.remove(sources);
 
 		/* mark as explored */
-		explored.put(sources, identifier);
+		explored.add(sources);
 
 		return sources;
 	}
 
 	/** Checks if a target state definition has been explored. */
-	private boolean isAlreadyFound(Set<Object> def) {
-		return explored.containsKey(def) || toExplore.containsKey(def);
+	private boolean isAlreadyFound(FAStateGroup def) {
+		return explored.contains(def) || toExplore.contains(def);
 	}
 
 	/** 
 	 * Creates a new target state definition.
 	 * 
 	 * @param def the definition of the target states (a set of source states).
-	 * @return the identifier of the target state created by the result.
 	 */
-	private Object createOne(Set<Object> def) {
-		IDirectedGraph g = nfa.getGraph();
-		/*
-		StringBuffer sb = new StringBuffer();
-		sb.append('[');
-		int i=0;
-		for (Object d: def) {
-			if (i++ != 0) { sb.append(','); }
-			sb.append(g.getVerticesTotalOrder().indexOf(d));
-		}
-		sb.append(']');
-		System.out.println("Creating one for " + sb.toString());
-		*/
-		
-		Set<IUserInfo> infos = new HashSet<IUserInfo>();
-		for (Object state: def) {
-			infos.add(g.getVertexInfo(state));
-		}
-		
-		Object identifier = result.createTargetState(infos);
-		toExplore.put(def, identifier);
-		return identifier;
+	private void createOne(FAStateGroup def) {
+		toExplore.add(def);
 	}
 	
-	/** 
-	 * Computes the delta function from some source states. 
-	 * 
-	 * <p>Returns a map (letter,[edges,targets]).</p>
-	 */
-	@SuppressWarnings("unchecked")
-	private Map<Object,Set[]> delta(Set<Object> sources) {
-		// extract graph
-		IDirectedGraph g = nfa.getGraph();
-		
-		// create delta map
-		Comparator c = nfa.getAlphabet();
-		Map<Object,Set[]> delta = new TreeMap<Object,Set[]>(c);
-		
-		// for each source state
-		for (Object source: sources) {
-			// for each outgoing edge of this source
-			for (Object edge: g.getOutgoingEdges(source)) {
-				Object letter = nfa.getEdgeLetter(edge);
-				
-				// get known target states or create it
-				Set[] outEdgesAndTargets = delta.get(letter);
-				if (outEdgesAndTargets == null) {
-					outEdgesAndTargets = new Set[]{
-						new HashSet<IUserInfo>(),
-						new HashSet<Object>()
-					};
-					delta.put(letter, outEdgesAndTargets);
-				}
-				
-				// append new target states
-				outEdgesAndTargets[0].add(g.getEdgeInfo(edge));
-				outEdgesAndTargets[1].add(g.getEdgeTarget(edge));
-			}
-		}
-		
-		return delta;
-	}
-
 	/** Main method of the algo */
 	@SuppressWarnings("unchecked")
-	protected void main() {
+	protected void main(INFADeterminizerInput input, INFADeterminizerResult result) {
 		// initialize algorithm
-		init();
+		this.nfa = input.getNFA();
+		toExplore = new HashSet<FAStateGroup>();
+		explored = new HashSet<FAStateGroup>();
 		
 		/* algo started event */
-		result.started(nfa);
+		result.started(input);
 
 		/* create one for initial states of the NFA */
-		Set<Object> initStates = new HashSet<Object>();
+		FAStateGroup initStates = new FAStateGroup(nfa);
 		for (Object init: nfa.getInitialStates()) {
-			initStates.add(init);
+			initStates.addState(init);
 		}
 		createOne(initStates);
 
@@ -199,34 +89,24 @@ public class NFADeterminizerAlgo {
 		while (hasNext()) {
 
 			/* get the definition of the target state (a set of source states) */
-			Set<Object> sources = getOne();
+			FAStateGroup sources = getOne();
 
 			/* iterate interresting alphabet letters */
-			Map<Object,Set[]> delta = delta(sources);
-			for (Object letter : delta.keySet()) {
-				
-				// get delta function
-				Set[] outEdgesAndTargets = delta.get(letter);  
+			Iterator letters = sources.getOutgoingLetters();
+			while (letters.hasNext()) {
+				Object letter = letters.next();
 				
 				// find reachable edges and states
-				Set<IUserInfo> outEdges = outEdgesAndTargets[0];
-				Set<Object> targets = outEdgesAndTargets[1];
+				FAEdgeGroup outEdges = sources.delta(letter);
+				FAStateGroup targets = outEdges.getTargetStateGroup();
 
 				// create state
-				Object targetIdentifier = null;
 				if (!isAlreadyFound(targets)) {
-					targetIdentifier = createOne(targets);
-				} else {
-					/* explored ? */
-					targetIdentifier = explored.get(targets);
-					/* no, to be explored ! */
-					if (targetIdentifier == null) {
-						targetIdentifier = toExplore.get(targets);
-					}
+					createOne(targets);
 				}
 
-				/* create transitions */
-				result.createTargetTransitions(explored.get(sources), targetIdentifier, outEdges);
+				// create transitions
+				result.createTargetTransitions(sources, targets, outEdges);
 			}
 		}
 
@@ -235,9 +115,7 @@ public class NFADeterminizerAlgo {
 
 	/** Executes the determinization. */
 	public void execute(INFADeterminizerInput input, INFADeterminizerResult result) {
-		this.nfa = input.getNFA();
-		this.result = result;
-		main();
+		main(input,result);
 	}
 	
 }

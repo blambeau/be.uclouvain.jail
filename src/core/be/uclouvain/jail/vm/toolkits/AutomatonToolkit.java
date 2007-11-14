@@ -66,7 +66,7 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 		}
 		
 		new NFADeterminizerAlgo().execute(input,result);
-		return result.getResultingDFA();
+		return (IDFA) result.adapt(IDFA.class);
 	}
 	
 	/** Minimizes a DDA. */

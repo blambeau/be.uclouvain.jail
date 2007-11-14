@@ -5,6 +5,7 @@ import be.uclouvain.jail.Jail;
 import be.uclouvain.jail.algo.fa.equiv.DFAEquiv;
 import be.uclouvain.jail.dialect.IPrintable;
 import be.uclouvain.jail.dialect.dot.DOTDirectedGraphLoader;
+import be.uclouvain.jail.dialect.dot.DOTDirectedGraphPrintable;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.INFA;
 import be.uclouvain.jail.fa.impl.GraphDFA;
@@ -34,7 +35,7 @@ public class NFADeterminizerAlgoTest extends TestCase {
 	@SuppressWarnings("unused")
 	private void debug(IDFA dfa) throws Exception {
 		Jail.install();
-		IPrintable p = (IPrintable) dfa.getGraph().adapt(IPrintable.class);
+		IPrintable p = new DOTDirectedGraphPrintable(dfa.getGraph());
 		Jail.setProperty("DirectedGraphPrintable.dot.edge.label.uinfo","letter");
 		p.print(System.out);
 	}
@@ -42,6 +43,7 @@ public class NFADeterminizerAlgoTest extends TestCase {
 	/** Tests the determinizer algorithm. */
 	public void testDeterminizer() throws Exception {
 		IDFA result = new NFADeterminizer(nfa).getResultingDFA();
+		debug(result);
 		assertTrue(new DFAEquiv(expected,result).areEquivalent());
 	}
 	
