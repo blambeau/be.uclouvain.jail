@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import be.uclouvain.jail.algo.fa.utils.DFAEdgeGroup;
-import be.uclouvain.jail.algo.fa.utils.DFAStateGroup;
-import be.uclouvain.jail.algo.fa.utils.IDFAGroupInformer;
+import be.uclouvain.jail.algo.fa.utils.MultiDFAEdgeGroup;
+import be.uclouvain.jail.algo.fa.utils.MultiDFAStateGroup;
+import be.uclouvain.jail.algo.fa.utils.IMultiDFAGroupInformer;
 import be.uclouvain.jail.fa.IDFA;
 
 /**
@@ -14,10 +14,10 @@ import be.uclouvain.jail.fa.IDFA;
  * 
  * @author blambeau
  */
-public class DFAComposerAlgo implements IDFAGroupInformer {
+public class DFAComposerAlgo implements IMultiDFAGroupInformer {
 
 	/** Created states. */
-	private Map<DFAStateGroup,Object> explored;
+	private Map<MultiDFAStateGroup,Object> explored;
 	
 	/** Input DFAs. */
 	private IDFA[] dfas;
@@ -31,17 +31,17 @@ public class DFAComposerAlgo implements IDFAGroupInformer {
 	}
 
 	/** Checks if a state has been explored. */
-	private boolean isExplored(DFAStateGroup state) {
+	private boolean isExplored(MultiDFAStateGroup state) {
 		return explored.containsKey(state);
 	}
 	
 	/** Marks a state definition as explored. */ 
-	private void explored(DFAStateGroup state, Object target) {
+	private void explored(MultiDFAStateGroup state, Object target) {
 		explored.put(state,target);
 	}
 	
 	/** Explore some states. */
-	private void explore(DFAStateGroup state) {
+	private void explore(MultiDFAStateGroup state) {
 		if (explored.containsKey(state)) {
 			throw new AssertionError("State not already explored.");
 		}
@@ -58,7 +58,7 @@ public class DFAComposerAlgo implements IDFAGroupInformer {
 		while (letters.hasNext()) {
 			// find outgoing edges for this letter
 			Object letter = letters.next();
-			DFAEdgeGroup delta = state.delta(letter);
+			MultiDFAEdgeGroup delta = state.delta(letter);
 			
 			// synchronization blocked by one DFA ?
 			if (delta == null) { 
@@ -66,7 +66,7 @@ public class DFAComposerAlgo implements IDFAGroupInformer {
 			}
 			
 			// let's go to the new target state
-			DFAStateGroup goesto = delta.getTargetStateGroup(state);
+			MultiDFAStateGroup goesto = delta.getTargetStateGroup(state);
 			
 			//System.out.print("With letter " + letter + " goes to " + goesto);
 			
@@ -88,7 +88,7 @@ public class DFAComposerAlgo implements IDFAGroupInformer {
 	public void execute(IDFAComposerInput input, IDFAComposerResult result) {
 		this.result = result;
 		this.dfas = input.getDFAs();
-		this.explored = new HashMap<DFAStateGroup,Object>();
+		this.explored = new HashMap<MultiDFAStateGroup,Object>();
 		
 		// create init state
 		int size = this.dfas.length;
@@ -96,7 +96,7 @@ public class DFAComposerAlgo implements IDFAGroupInformer {
 		for (int i=0; i<size; i++) {
 			init[i] = dfas[i].getInitialState();
 		}
-		DFAStateGroup initState = new DFAStateGroup(init,this);
+		MultiDFAStateGroup initState = new MultiDFAStateGroup(init,this);
 		
 		// explore it
 		explore(initState);

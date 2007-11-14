@@ -1,6 +1,6 @@
 package be.uclouvain.jail.algo.fa.tmoves;
 
-import be.uclouvain.jail.fa.IDFA;
+import be.uclouvain.jail.fa.IFA;
 
 /**
  * Provides a default implementation of {@link ITauRemoverInput}.
@@ -9,21 +9,21 @@ import be.uclouvain.jail.fa.IDFA;
  */
 public class DefaultTauRemoverInput implements ITauRemoverInput {
 
-	/** DFA with tau transitions. */
-	private IDFA dfa;
+	/** FA with tau transitions. */
+	private IFA fa;
 	
 	/** Tau-transition informer. */
 	private ITauInformer informer;
 	
 	/** Creates an input instance. */
-	public DefaultTauRemoverInput(IDFA dfa, ITauInformer informer) {
-		this.dfa = dfa;
+	public DefaultTauRemoverInput(IFA fa, ITauInformer informer) {
+		this.fa = fa;
 		this.informer = informer;
 	}
 
-	/** Returns the input dfa. */
-	public IDFA getDFA() {
-		return dfa;
+	/** Returns the input fa. */
+	public IFA getFA() {
+		return fa;
 	}
 
 	/** Returns tau informer. */

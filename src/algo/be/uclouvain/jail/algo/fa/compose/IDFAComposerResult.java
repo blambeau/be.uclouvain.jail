@@ -1,7 +1,7 @@
 package be.uclouvain.jail.algo.fa.compose;
 
-import be.uclouvain.jail.algo.fa.utils.DFAEdgeGroup;
-import be.uclouvain.jail.algo.fa.utils.DFAStateGroup;
+import be.uclouvain.jail.algo.fa.utils.MultiDFAEdgeGroup;
+import be.uclouvain.jail.algo.fa.utils.MultiDFAStateGroup;
 import be.uclouvain.jail.fa.IDFA;
 
 /**
@@ -12,10 +12,10 @@ import be.uclouvain.jail.fa.IDFA;
 public interface IDFAComposerResult {
 
 	/** Creates a state. */
-	public Object createState(DFAStateGroup sources);
+	public Object createState(MultiDFAStateGroup sources);
 	
 	/** Creates an edge. */
-	public Object createEdge(Object source, Object target, DFAEdgeGroup edges);
+	public Object createEdge(Object source, Object target, MultiDFAEdgeGroup edges);
 	
 	/** Returns the resulting DFA. */
 	public IDFA getResultingDFA();

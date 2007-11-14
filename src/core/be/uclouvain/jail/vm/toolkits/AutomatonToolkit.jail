@@ -26,18 +26,18 @@ define native (determinize <N> :state? <S> :edge? <E>) returns <D>;
 define native (minimize <D> :state? <S> :edge? <E>) returns <M>;
 
 /**
- * Removes tau-transitions of the input DFA. This algorithm (aka 'epsilon moves 
- * removal') computes a NFA which is (language) equivalent to the input DFA
- * but do not contain tau transitions anymore.
+ * Removes tau-transitions of the input FA. This algorithm (aka 'epsilon moves 
+ * removal') computes a NFA which is (language) equivalent to the input FA
+ * but does not contain tau transitions anymore.
  *
- * <D>             + (IDFA) automaton with tau-transitions.
+ * <D>             + (IFA) automaton with tau-transitions.
  * <t>             + (String) alphabet letter to consider as tau transitions.
  *                 + The default value for tau letter is "".
  * <S>             + (<gm:match_do>) matching rules to use for the states.
  * <E>             + (<gm:match_do>) matching rules to use for the edges.
  *                 + (syntax of the matching rules follows the GMatch grammar, 
  *                    see javadoc).
- * <M>             + (IDFA) returns the language equivalent NFA without 
+ * <M>             + (INFA) returns the language equivalent NFA without 
  *                   tau-transitions.
  */
 define native (tmoves <D> :tau? <t> :state? <S> :edge? <E>) returns <M>;

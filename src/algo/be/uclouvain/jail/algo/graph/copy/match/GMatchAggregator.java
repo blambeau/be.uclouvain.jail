@@ -1,5 +1,6 @@
 package be.uclouvain.jail.algo.graph.copy.match;
 
+import java.util.Collection;
 import java.util.Set;
 
 import net.chefbe.autogram.ast2.IASTNode;
@@ -14,7 +15,7 @@ import be.uclouvain.jail.uinfo.functions.IAggregateFunction;
  * 
  * @author blambeau
  */
-public class GMatchAggregator implements IUserInfoPopulator<Set<IUserInfo>> {
+public class GMatchAggregator implements IUserInfoPopulator<Collection<IUserInfo>> {
 
 	/** Root node. */
 	private IASTNode node;
@@ -28,13 +29,13 @@ public class GMatchAggregator implements IUserInfoPopulator<Set<IUserInfo>> {
 	}
 
 	/** Populates a target from a source. */
-	public void populate(IUserInfo target, Set<IUserInfo> source) {
+	public void populate(IUserInfo target, Collection<IUserInfo> source) {
 		try {
-			node.accept(new GMatchPopulatorCallback<Set<IUserInfo>>(source,target){
+			node.accept(new GMatchPopulatorCallback<Collection<IUserInfo>>(source,target){
 
 				/** Uses the pick up function to extract the value. */
 				@Override
-				protected Object extractSourceAttributeValue(Set<IUserInfo> source, String key) {
+				protected Object extractSourceAttributeValue(Collection<IUserInfo> source, String key) {
 					for (IUserInfo info: source) {
 						Object value = info.getAttribute(key);
 						if (value != null) {

@@ -1,9 +1,9 @@
 package be.uclouvain.jail.fa.impl;
 
 import be.uclouvain.jail.adapt.AdaptUtils;
-import be.uclouvain.jail.adapt.IAdaptable;
 import be.uclouvain.jail.adapt.IAdapter;
 import be.uclouvain.jail.fa.IAlphabet;
+import be.uclouvain.jail.fa.IFA;
 import be.uclouvain.jail.fa.utils.AutoAlphabet;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
@@ -13,7 +13,7 @@ import be.uclouvain.jail.uinfo.IUserInfo;
  * 
  * @author blambeau
  */
-public abstract class GraphFA implements IAdaptable {
+public abstract class GraphFA implements IFA {
 
 	/** Automaton alphabet. */
 	protected IAlphabet alphabet;

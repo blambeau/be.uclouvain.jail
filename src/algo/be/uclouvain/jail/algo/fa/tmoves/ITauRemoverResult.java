@@ -1,10 +1,8 @@
 package be.uclouvain.jail.algo.fa.tmoves;
 
-import java.util.Set;
-
-import be.uclouvain.jail.fa.IDFA;
-import be.uclouvain.jail.fa.INFA;
-import be.uclouvain.jail.uinfo.IUserInfo;
+import be.uclouvain.jail.adapt.IAdaptable;
+import be.uclouvain.jail.algo.fa.utils.FAEdgeGroup;
+import be.uclouvain.jail.algo.fa.utils.FAStateGroup;
 
 /**
  * Abstract output of the tau-remover algorithm.
@@ -14,28 +12,21 @@ import be.uclouvain.jail.uinfo.IUserInfo;
  * 
  * @author LAMBEAU Bernard
  */
-public interface ITauRemoverResult {
+public interface ITauRemoverResult extends IAdaptable {
 
 	/** "Algorithm started" event. */
-	public void started(IDFA dfa);
+	public void started(ITauRemoverInput input);
 
 	/** "Algorithm ended" event. */
 	public void ended();
 
-	/**
-	 * Creates a result target state mapped to a source state.
-	 * 
-	 * @param sourceState a source NFA state.
-	 * @return an identifier for created target state (when id support is enabled). 
+	/** 
+	 * Creates transitions in the resulting NFA. 
+	 *
+	 * @param source source state of the input NFA.
+	 * @param targets target states of the input NFA.
+	 * @param edges edges that merge.
 	 */
-	public Object createTargetState(IUserInfo sourceState);
-
-	/**
-	 * Creates transitions in the result.
-	 */
-	public void createTargetTransitions(Object source, Set<Object> targets, Set<IUserInfo> edges);
-
-	/** Returns resulting NFA. */
-	public INFA getResultingNFA();
+	public void createTargetTransitions(Object source, FAStateGroup targets, FAEdgeGroup edges);
 
 }

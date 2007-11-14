@@ -14,20 +14,20 @@ import be.uclouvain.jail.graph.utils.ITotalOrder;
  * 
  * @author blambeau
  */
-public class DFAStateGroup extends AbstractGroup {
+public class MultiDFAStateGroup extends AbstractMultiGroup {
 
 	/** Group informer. */
-	private IDFAGroupInformer informer;
+	private IMultiDFAGroupInformer informer;
 	
 	/** Creates a state group instance. */
-	public DFAStateGroup(int[] components, IDFAGroupInformer informer) {
+	public MultiDFAStateGroup(int[] components, IMultiDFAGroupInformer informer) {
 		super();
 		this.informer = informer;
 		super.setComponents(components);
 	}
 
 	/** Creates a state group instance. */
-	public DFAStateGroup(Object[] components, IDFAGroupInformer informer) {
+	public MultiDFAStateGroup(Object[] components, IMultiDFAGroupInformer informer) {
 		super();
 		this.informer = informer;
 		super.setComponents(components);
@@ -76,7 +76,7 @@ public class DFAStateGroup extends AbstractGroup {
 	
 	/** Creates a group of reachable edges from this state group
 	 *  through a given letter. */
-	public DFAEdgeGroup delta(Object letter) {
+	public MultiDFAEdgeGroup delta(Object letter) {
 		// loop variables
 		IDFA dfa = null;
 		Object state = null;
@@ -104,7 +104,7 @@ public class DFAStateGroup extends AbstractGroup {
 				edges[i] = getEdgesTotalOrder(i).indexOf(edge);
 			}
 		}
-		return new DFAEdgeGroup(edges,informer);
+		return new MultiDFAEdgeGroup(edges,informer);
 	}
 
 }

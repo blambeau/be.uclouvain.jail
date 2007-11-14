@@ -1,6 +1,7 @@
 package be.uclouvain.jail.uinfo;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -15,10 +16,10 @@ import be.uclouvain.jail.uinfo.functions.PickUpFunction;
  *  
  * @author blambeau
  */
-public class UserInfoAggregator implements IUserInfoCreator<Set<IUserInfo>> {
+public class UserInfoAggregator implements IUserInfoCreator<Collection<IUserInfo>> {
 
 	/** Aggregate function as a populator. */
-	class AggregateFunctionPopulator implements IUserInfoPopulator<Set<IUserInfo>> {
+	class AggregateFunctionPopulator implements IUserInfoPopulator<Collection<IUserInfo>> {
 
 		/** Function to use. */
 		private IAggregateFunction function;
@@ -34,7 +35,7 @@ public class UserInfoAggregator implements IUserInfoCreator<Set<IUserInfo>> {
 		}
 
 		@SuppressWarnings("unchecked")
-		public void populate(IUserInfo target, Set<IUserInfo> source) {
+		public void populate(IUserInfo target, Collection<IUserInfo> source) {
 			Set<Object> values = new ListOrderedSet<Object>();
 			for (IUserInfo info: source) {
 				values.add(info.getAttribute(sourceAttr));
@@ -45,15 +46,15 @@ public class UserInfoAggregator implements IUserInfoCreator<Set<IUserInfo>> {
 	}
 	
 	/** Populators to use. */
-	private List<IUserInfoPopulator<Set<IUserInfo>>> populators;
+	private List<IUserInfoPopulator<Collection<IUserInfo>>> populators;
 
 	/** Creates an aggregator instance. */
 	public UserInfoAggregator() {
-		populators = new ArrayList<IUserInfoPopulator<Set<IUserInfo>>>();
+		populators = new ArrayList<IUserInfoPopulator<Collection<IUserInfo>>>();
 	}
 
 	/** Adds a populator. */
-	public UserInfoAggregator addPopulator(IUserInfoPopulator<Set<IUserInfo>> populator) {
+	public UserInfoAggregator addPopulator(IUserInfoPopulator<Collection<IUserInfo>> populator) {
 		if (populator == null) {
 			throw new IllegalArgumentException("populator cannot be null.");
 		}
@@ -100,9 +101,9 @@ public class UserInfoAggregator implements IUserInfoCreator<Set<IUserInfo>> {
 	
 
 	/** Creates a IUserInfo instance from another one. */
-	public IUserInfo create(Set<IUserInfo> info) {
+	public IUserInfo create(Collection<IUserInfo> info) {
 		IUserInfo copy = factor();
-		for (IUserInfoPopulator<Set<IUserInfo>> p : populators) {
+		for (IUserInfoPopulator<Collection<IUserInfo>> p : populators) {
 			p.populate(copy, info);
 		}
 		return copy;

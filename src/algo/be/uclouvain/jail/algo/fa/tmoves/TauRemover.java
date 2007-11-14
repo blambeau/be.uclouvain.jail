@@ -1,6 +1,6 @@
 package be.uclouvain.jail.algo.fa.tmoves;
 
-import be.uclouvain.jail.fa.IDFA;
+import be.uclouvain.jail.fa.IFA;
 import be.uclouvain.jail.fa.INFA;
 
 /**
@@ -20,15 +20,15 @@ public class TauRemover {
 	private boolean executed = false;
 	
 	/** Creates a determinizer instance for a NFA. */
-	public TauRemover(IDFA dfa, ITauInformer informer) {
-		input = new DefaultTauRemoverInput(dfa,informer);
+	public TauRemover(IFA fa, ITauInformer informer) {
+		input = new DefaultTauRemoverInput(fa,informer);
 		result = new DefaultTauRemoverResult();
 	}
 	
 	/** Returns the resulting NFA. */
 	public INFA getResultingNFA() {
 		if (!executed) { execute(); }
-		return result.getResultingNFA();
+		return (INFA) result.adapt(INFA.class);
 	}
 	
 	/** Executes the algorithm. */

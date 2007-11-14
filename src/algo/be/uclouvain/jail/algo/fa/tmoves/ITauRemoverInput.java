@@ -1,6 +1,6 @@
 package be.uclouvain.jail.algo.fa.tmoves;
 
-import be.uclouvain.jail.fa.IDFA;
+import be.uclouvain.jail.fa.IFA;
 
 /**
  * Abstract input of {@link ITauRemoverAlgo}.
@@ -9,8 +9,8 @@ import be.uclouvain.jail.fa.IDFA;
  */
 public interface ITauRemoverInput {
 
-	/** Returns the DFA from which tau-transitions must be removed. */
-	public IDFA getDFA();
+	/** Returns the FA from which tau-transitions must be removed. */
+	public IFA getFA();
 
 	/** Returns the tau-transition informer. */
 	public ITauInformer getTauInformer();

@@ -2,9 +2,7 @@ package be.uclouvain.jail.fa;
 
 import java.util.Collection;
 
-import be.uclouvain.jail.adapt.IAdaptable;
 import be.uclouvain.jail.fa.impl.GraphNFA;
-import be.uclouvain.jail.graph.IDirectedGraph;
 
 /** 
  * Non Deterministic Finite Automaton (NDFA) contract.
@@ -17,37 +15,13 @@ import be.uclouvain.jail.graph.IDirectedGraph;
  * 
  * @author blambeau
  */
-public interface INFA extends IAdaptable {
+public interface INFA extends IFA {
 
-	/** Returns the automaton alphabet. */
-	public <T> IAlphabet<T> getAlphabet();
-	
-	/** Retruns underlying graph. */
-	public IDirectedGraph getGraph();
-	
-	/** Checks if a state is the initial state. */
-	public boolean isInitial(Object s);
-	
-	/** Checks if a state is marked as accepting. */
-	public boolean isAccepting(Object s);
-	
-	/** Checks if a state is marked as error. */
-	public boolean isError(Object s);
-	
 	/** Returns NFA initial states. */
 	public Iterable<Object> getInitialStates();
-	
-	/** Returns an edge letter. */
-	public Object getEdgeLetter(Object s);
 	
 	/** Returns the outgoing edges of s labeled by the given letter, an
 	 * empty iterable if no such edge. */
 	public Collection<Object> getOutgoingEdges(Object s, Object letter);
-	
-	/** Returns outgoing letters of a state. */
-	public Collection<Object> getIncomingLetters(Object s);
-	
-	/** Returns outgoing letters of a state. */
-	public Collection<Object> getOutgoingLetters(Object s);
 	
 }

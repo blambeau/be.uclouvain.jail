@@ -23,6 +23,7 @@ import be.uclouvain.jail.algo.graph.copy.match.GMatchAggregator;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchPopulator;
 import be.uclouvain.jail.dialect.seqp.SEQPGraphDialect;
 import be.uclouvain.jail.fa.IDFA;
+import be.uclouvain.jail.fa.IFA;
 import be.uclouvain.jail.fa.INFA;
 import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.fa.impl.GraphDFA;
@@ -38,6 +39,7 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 
 	/** Installs the toolkit on the virtual machine. */
 	public void install(JailVM vm) {
+		vm.registerAdaptation(IDirectedGraph.class, IFA.class, this);
 		vm.registerAdaptation(IDirectedGraph.class, IDFA.class, this);
 		vm.registerAdaptation(IDirectedGraph.class, INFA.class, this);
 		vm.registerAdaptation(INFA.class, IDirectedGraph.class, this);
@@ -89,8 +91,8 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 		return result.getMinimalDFA();
 	}
 	
-	/** Removes tau-transitions of a DFA. */
-	public INFA tmoves(IDFA dfa, JailVMOptions opt) throws JailVMException {
+	/** Removes tau-transitions of a FA. */
+	public INFA tmoves(IFA fa, JailVMOptions opt) throws JailVMException {
 		// find tau letter
 		String tau = "";
 		if (opt.hasOption("tau")) {
@@ -104,7 +106,7 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 				return tauF.equals(letter);
 			}
 		}; 
-		DefaultTauRemoverInput input = new DefaultTauRemoverInput(dfa,informer);
+		DefaultTauRemoverInput input = new DefaultTauRemoverInput(fa,informer);
 		DefaultTauRemoverResult result = new DefaultTauRemoverResult();
 		
 		if (opt.hasOption("state")) {
@@ -120,7 +122,7 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 		
 		// execute and returns
 		new TauRemoverAlgo().execute(input,result);
-		return result.getResultingNFA();
+		return (INFA) result.adapt(INFA.class);
 	}
 	
 	/** Composes two DFAs. */
@@ -173,7 +175,7 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 	public Object adapt(Object who, Class type) {
 		if (type.equals(IDFA.class)) {
 			return adaptToDFA(who);
-		} else if (type.equals(INFA.class)) {
+		} else if (type.equals(INFA.class) || type.equals(IFA.class)) {
 			return adaptToNFA(who);
 		} else if (type.equals(IDirectedGraph.class)) {
 			return adaptToDirectedGraph(who);

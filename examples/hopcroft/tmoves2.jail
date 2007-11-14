@@ -19,14 +19,12 @@ DFA78 = <§seqp
     Q35  [@isAccepting=true @label='[Q3,Q5]']     = digit->Q35.
 §>;
 
-pDFA73 = (determinize (NFA73) :state {@label -> group(@label)});
-pNFA73 = (tmoves (pDFA73) :tau 'epsilon' :state {@label -> @label});
+pNFA73 = (tmoves (NFA73) :tau 'epsilon' :state {@label -> @label});
 TMOVED = (determinize (pNFA73) :state {@label -> group(@label)});
 
 (show (NFA73));
 (show (DFA78));
 
-(show (pDFA73));
 (show (pNFA73));
 (show (TMOVED));  
 

@@ -10,20 +10,20 @@ import be.uclouvain.jail.graph.utils.ITotalOrder;
  * 
  * @author blambeau
  */
-public class DFAEdgeGroup extends AbstractGroup {
+public class MultiDFAEdgeGroup extends AbstractMultiGroup {
 
 	/** Group informer. */
-	private IDFAGroupInformer informer;
+	private IMultiDFAGroupInformer informer;
 	
 	/** Creates a state group instance. */
-	public DFAEdgeGroup(int[] components, IDFAGroupInformer informer) {
+	public MultiDFAEdgeGroup(int[] components, IMultiDFAGroupInformer informer) {
 		super();
 		this.informer = informer;
 		super.setComponents(components);
 	}
 
 	/** Creates a state group instance. */
-	public DFAEdgeGroup(Object[] components, IDFAGroupInformer informer) {
+	public MultiDFAEdgeGroup(Object[] components, IMultiDFAGroupInformer informer) {
 		super();
 		this.informer = informer;
 		super.setComponents(components);
@@ -47,7 +47,7 @@ public class DFAEdgeGroup extends AbstractGroup {
 	}
 
 	/** Returns the target state group. */
-	public DFAStateGroup getTargetStateGroup(DFAStateGroup resolve) {
+	public MultiDFAStateGroup getTargetStateGroup(MultiDFAStateGroup resolve) {
 		// create target indexes
 		int size = size();
 		int[] targets = new int[size];
@@ -74,7 +74,7 @@ public class DFAEdgeGroup extends AbstractGroup {
 		}
 		
 		// create state group
-		return new DFAStateGroup(targets,informer);
+		return new MultiDFAStateGroup(targets,informer);
 	}
 
 }

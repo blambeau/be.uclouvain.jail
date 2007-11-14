@@ -12,7 +12,7 @@ import be.uclouvain.jail.uinfo.IUserInfo;
 /** 
  * Provides common implementation for group of states or edges. 
  */
-public abstract class AbstractGroup implements Iterable<Object> {
+public abstract class AbstractMultiGroup implements Iterable<Object> {
 	
 	/** Indexes. */
 	protected int[] components;
@@ -24,12 +24,12 @@ public abstract class AbstractGroup implements Iterable<Object> {
 	private Boolean complete;
 	
 	/** Creates an empty group. */
-	public AbstractGroup() {
+	public AbstractMultiGroup() {
 		this(new int[0]);
 	}
 	
 	/** Creates a group from components indexes. */
-	public AbstractGroup(int[] components) {
+	public AbstractMultiGroup(int[] components) {
 		this.setComponents(components);
 	}
 	
@@ -141,10 +141,10 @@ public abstract class AbstractGroup implements Iterable<Object> {
 	
 	/** Compares with another definition. */
 	public final boolean equals(Object o) {
-		if (o instanceof AbstractGroup == false) {
+		if (o instanceof AbstractMultiGroup == false) {
 			throw new AssertionError("o is an AbstractGroup.");
 		}
-		AbstractGroup other = (AbstractGroup) o;
+		AbstractMultiGroup other = (AbstractMultiGroup) o;
 		if (other.size() != size()) {
 			throw new AssertionError("AbstractGroup sizes are the same.");
 		}

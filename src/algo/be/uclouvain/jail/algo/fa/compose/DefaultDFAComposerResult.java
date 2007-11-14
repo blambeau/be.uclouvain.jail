@@ -1,7 +1,7 @@
 package be.uclouvain.jail.algo.fa.compose;
 
-import be.uclouvain.jail.algo.fa.utils.DFAEdgeGroup;
-import be.uclouvain.jail.algo.fa.utils.DFAStateGroup;
+import be.uclouvain.jail.algo.fa.utils.MultiDFAEdgeGroup;
+import be.uclouvain.jail.algo.fa.utils.MultiDFAStateGroup;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
@@ -54,13 +54,13 @@ public class DefaultDFAComposerResult implements IDFAComposerResult {
 	}
 	
 	/** Creates a state in the target DFA. */
-	public Object createState(DFAStateGroup sources) {
+	public Object createState(MultiDFAStateGroup sources) {
 		IUserInfo info = stateAggregator.create(sources.getUserInfos());
 		return graph.createVertex(info);
 	}
 
 	/** Creates an edge in the target DFA. */
-	public Object createEdge(Object source, Object target, DFAEdgeGroup edges) {
+	public Object createEdge(Object source, Object target, MultiDFAEdgeGroup edges) {
 		IUserInfo info = edgeAggregator.create(edges.getUserInfos());
 		return graph.createEdge(source,target,info);
 	}

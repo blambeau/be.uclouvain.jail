@@ -6,7 +6,7 @@ import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.impl.GraphDFA;
 
 /** Tests the group classes. */
-public class GroupClassesTest extends TestCase implements IDFAGroupInformer {
+public class GroupClassesTest extends TestCase implements IMultiDFAGroupInformer {
 
 	/** TRAIN dfa. */
 	private String TRAIN = "STOPPED=start->STARTED|alarm->open->OPENED," +
@@ -28,12 +28,12 @@ public class GroupClassesTest extends TestCase implements IDFAGroupInformer {
 	}
 	
 	/** Returns the initial state group. */
-	private DFAStateGroup getInitialGroup() {
+	private MultiDFAStateGroup getInitialGroup() {
 		Object[] states = new Object[]{
 			train.getInitialState(),
 			running.getInitialState()
 		};
-		return new DFAStateGroup(states,this);
+		return new MultiDFAStateGroup(states,this);
 	}
 
 	/** Simple delta function. */
@@ -51,7 +51,7 @@ public class GroupClassesTest extends TestCase implements IDFAGroupInformer {
 	}
 	
 	/** Computes delta function. */
-	private DFAStateGroup compute(DFAStateGroup group, Object letter) {
+	private MultiDFAStateGroup compute(MultiDFAStateGroup group, Object letter) {
 		Object[] targets = new Object[]{
 			delta(train,group.getComponent(0),letter),
 			delta(running,group.getComponent(1),letter),
@@ -59,17 +59,17 @@ public class GroupClassesTest extends TestCase implements IDFAGroupInformer {
 		if (targets[0] == null || targets[1] == null) { 
 			return null;
 		} else {
-			return new DFAStateGroup(targets,this);
+			return new MultiDFAStateGroup(targets,this);
 		}
 	}
 
 	/** Tests DFA state group class. */
 	public void testDFAStateGroup() {
-		DFAStateGroup group = getInitialGroup();
+		MultiDFAStateGroup group = getInitialGroup();
 		for (Object letter: train.getAlphabet()) {
-			DFAStateGroup testGroup = compute(group,letter);
-			DFAEdgeGroup classEdgesGroup = group.delta(letter);
-			DFAStateGroup classGroup = classEdgesGroup == null ? null : classEdgesGroup.getTargetStateGroup(group);
+			MultiDFAStateGroup testGroup = compute(group,letter);
+			MultiDFAEdgeGroup classEdgesGroup = group.delta(letter);
+			MultiDFAStateGroup classGroup = classEdgesGroup == null ? null : classEdgesGroup.getTargetStateGroup(group);
 			assertEquals(testGroup,classGroup);
 		}
 	}

@@ -1,8 +1,12 @@
 package be.uclouvain.jail.algo.fa.tmoves;
 
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
-import be.uclouvain.jail.fa.IDFA;
+import be.uclouvain.jail.adapt.AdaptUtils;
+import be.uclouvain.jail.algo.fa.utils.FAEdgeGroup;
+import be.uclouvain.jail.algo.fa.utils.FAStateGroup;
+import be.uclouvain.jail.fa.IFA;
 import be.uclouvain.jail.fa.INFA;
 import be.uclouvain.jail.fa.impl.GraphNFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
@@ -17,12 +21,15 @@ import be.uclouvain.jail.uinfo.UserInfoCopier;
  */
 public class DefaultTauRemoverResult implements ITauRemoverResult {
 
+	/** Source FA. */
+	private IFA source;
+	
 	/** NFA under construction. */
-	private INFA nfa;
+	private INFA result;
 
-	/** Graph under construction. */
-	private IDirectedGraph graph;
-
+	/** NFA target states by source states. */ 
+	private Map<Object,Object> nfaStates;
+	
 	/** State copier. */
 	private UserInfoCopier stateCopier;
 
@@ -32,7 +39,7 @@ public class DefaultTauRemoverResult implements ITauRemoverResult {
 	/** Creates a result that uses a existing nfa. */
 	public DefaultTauRemoverResult(INFA nfa) {
 		this();
-		this.nfa = nfa;
+		this.result = nfa;
 	}
 
 	/** Creates a result with a default NFA. */
@@ -54,10 +61,10 @@ public class DefaultTauRemoverResult implements ITauRemoverResult {
 	}
 	
 	/** "Algorithm started" event. */
-	public void started(IDFA dfa) {
-		if (nfa == null) {
-			nfa = new GraphNFA(dfa.getAlphabet());
-			graph = nfa.getGraph();
+	public void started(ITauRemoverInput input) {
+		this.source = input.getFA();
+		if (result == null) {
+			result = new GraphNFA(source.getAlphabet());
 		}
 	}
 
@@ -65,29 +72,45 @@ public class DefaultTauRemoverResult implements ITauRemoverResult {
 	public void ended() {
 	}
 
-	/**
-	 * Creates a result target state mapped to a source state.
-	 * 
-	 * @param sourceState a source NFA state.
-	 * @return an identifier for created target state (when id support is enabled). 
-	 */
-	public Object createTargetState(IUserInfo sourceState) {
-		return graph.createVertex(stateCopier.create(sourceState));
+	/** Ensures that a target state has been created. */
+	private Object ensure(Object state) {
+		if (nfaStates == null) {
+			nfaStates = new HashMap<Object,Object>();
+		}
+		if (nfaStates.containsKey(state)) {
+			return nfaStates.get(state);
+		} else {
+			IUserInfo info = source.getGraph().getVertexInfo(state);
+			info = stateCopier.create(info);
+			Object target = result.getGraph().createVertex(info);
+			nfaStates.put(state, target);
+			return target;
+		}
 	}
-
-	/**
-	 * Creates transitions in the result.
-	 */
-	public void createTargetTransitions(Object source, Set<Object> targets, Set<IUserInfo> edges) {
-		IUserInfo agg = edgeAggregator.create(edges);
+	
+	/** Creates transitions in the result. */
+	public void createTargetTransitions(Object source, FAStateGroup targets, FAEdgeGroup edges) {
+		IDirectedGraph graph = result.getGraph();
+		Object nfaSource = ensure(source);
+		IUserInfo agg = edgeAggregator.create(edges.getUserInfos());
 		for (Object target : targets) {
-			graph.createEdge(source, target, agg.copy());
+			Object nfaTarget = ensure(target);
+			graph.createEdge(nfaSource, nfaTarget, agg.copy());
 		}
 	}
 
-	/** Returns resulting NFA. */
-	public INFA getResultingNFA() {
-		return nfa;
+	/** Adapts to some types. */
+	public <T> Object adapt(Class<T> c) {
+		if (c.isAssignableFrom(getClass())) {
+			return this;
+		}
+		
+		// natural adaptation to a NFA
+		if (INFA.class.equals(c)) {
+			return result;
+		}
+		
+		return AdaptUtils.externalAdapt(this,c);
 	}
 
 }
