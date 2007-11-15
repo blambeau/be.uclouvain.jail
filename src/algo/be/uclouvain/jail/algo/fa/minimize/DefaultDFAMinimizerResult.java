@@ -1,11 +1,12 @@
 package be.uclouvain.jail.algo.fa.minimize;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import be.uclouvain.jail.adapt.AdaptUtils;
 import be.uclouvain.jail.algo.fa.merge.DefaultDFAMergingResult;
+import be.uclouvain.jail.algo.fa.utils.FAEdgeLetterPartitionner;
 import be.uclouvain.jail.algo.graph.merge.GraphMergingAlgo;
 import be.uclouvain.jail.algo.graph.merge.IGraphMergingInput;
+import be.uclouvain.jail.algo.graph.utils.IGraphPartition;
+import be.uclouvain.jail.algo.graph.utils.IGraphPartitionner;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.impl.GraphDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
@@ -21,8 +22,8 @@ public class DefaultDFAMinimizerResult implements IDFAMinimizerResult {
 	/** Input. */
 	private IDFAMinimizerInput input;
 	
-	/** The block structure. */
-	private SetBlockStructure<Object> blocks;
+	/** Resulting partition. */
+	private IGraphPartition partition;
 	
 	/** Merging result. */
 	private DefaultDFAMergingResult merging = new DefaultDFAMergingResult();
@@ -37,49 +38,20 @@ public class DefaultDFAMinimizerResult implements IDFAMinimizerResult {
 		return merging.getEdgeAggregator();
 	}
 
-	/** 
-	 * Algorithm started event.
-	 * 
-	 * <p>Initial partition is the classical one: accepting, non
-	 * accepting and error states.</p>
-	 */
-	@SuppressWarnings("unchecked")
-	public IBlockStructure<Object> started(IDFAMinimizerInput input) {
+	/** Algorithm started event. */
+	public void started(IDFAMinimizerInput input) {
 		this.input = input;
-		IDFA dfa = input.getDFA();
-		
-		Set[] blocks = new Set[]{new HashSet(), new HashSet(), new HashSet()};
-		for (Object state: dfa.getGraph().getVertices()) {
-			if (dfa.isError(state)) {
-				blocks[2].add(state);
-			} else if (dfa.isAccepting(state)) {
-				blocks[0].add(state);
-			} else {
-				blocks[1].add(state);
-			}
-		}
-		
-		this.blocks = new SetBlockStructure<Object>(blocks);
-		return this.blocks;
 	}
 
-	/** Updates the structure to reflect the change. */
-	public int refined(Set<Object> block, Set<Object> unreachable) {
-		int count = blocks.refine(unreachable);
-		//System.out.println("Blocks refined " + blocks.toString(input.getDFA().getGraph().getVerticesTotalOrder()));
-		return count;
+	/** Algorithm ended event. */
+	public void ended(IGraphPartition partition) {
+		this.partition = partition;
 	}
-	
-	/** Returns the computed partition. */
-	public SetBlockStructure<Object> getStatePartition() {
-		return blocks;
-	}
-	
+
 	/** Returns equivalent minimal DFA. */
-	public IDFA getMinimalDFA() {
+	private IDFA getMinimalDFA() {
 		IDFA dfa = new GraphDFA(input.getDFA().getAlphabet());
 		merging.setDFA(dfa);
-		final IBlockStructure<Object> partition = getStatePartition();
 		new GraphMergingAlgo().execute(new IGraphMergingInput() {
 
 			/** Returns the graph. */
@@ -87,13 +59,37 @@ public class DefaultDFAMinimizerResult implements IDFAMinimizerResult {
 				return input.getDFA().getGraph();
 			}
 
-			/** Returns the partition. */
-			public IBlockStructure<Object> getVertexPartition() {
+			/** Returns edge partitionner. */
+			public IGraphPartitionner<Object> getEdgePartitionner() {
+				return new FAEdgeLetterPartitionner(input.getDFA());
+			}
+
+			/** Returns vertex partitionner. */
+			public IGraphPartitionner<Object> getVertexPartitionner() {
 				return partition;
 			}
 			
 		}, merging);
 		return dfa;
+	}
+
+	/** Adapts to some types. */
+	public <T> Object adapt(Class<T> c) {
+		if (c.isAssignableFrom(getClass())) {
+			return this;
+		}
+		
+		// natural adaptation to a DFA
+		if (IDFA.class.equals(c)) {
+			return getMinimalDFA();
+		}
+
+		// natural adaptation to a partition
+		if (IGraphPartition.class.equals(c)) {
+			return partition;
+		}
+		
+		return AdaptUtils.externalAdapt(this,c);
 	}
 
 }

@@ -1,11 +1,11 @@
 package be.uclouvain.jail.algo.fa.merge;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import be.uclouvain.jail.algo.graph.merge.IGraphMergingResult;
+import be.uclouvain.jail.algo.graph.utils.GraphEdgeGroup;
+import be.uclouvain.jail.algo.graph.utils.GraphVertexGroup;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
@@ -30,6 +30,9 @@ public class DefaultDFAMergingResult implements IGraphMergingResult {
 	
 	/** Aggregator to use for edges. */
 	private UserInfoAggregator edgeAggregator;
+	
+	/** States. */
+	private Map<GraphVertexGroup, Object> dfaStates;
 	
 	/** Creates a result instance. */
 	public DefaultDFAMergingResult() {
@@ -64,33 +67,24 @@ public class DefaultDFAMergingResult implements IGraphMergingResult {
 		return edgeAggregator;
 	}
 
-	/** Creates a vertex. */
-	public Object createVertex(Set<IUserInfo> infos) {
-		IUserInfo info = stateAggregator.create(infos);
-		return graph.createVertex(info);
+	/** Ensures that a target state has been created. */
+	private Object ensure(GraphVertexGroup state) {
+		if (dfaStates == null) {
+			dfaStates = new HashMap<GraphVertexGroup,Object>();
+		}
+		if (!dfaStates.containsKey(state)) {
+			IDirectedGraph graph = dfa.getGraph();
+			IUserInfo info = stateAggregator.create(state.getUserInfos());
+			Object vertex = graph.createVertex(info);
+			dfaStates.put(state,vertex);
+		}
+		return dfaStates.get(state);
 	}
-
-	/** Creates some edges. */
-	public void createEdge(Object source, Object target, Set<IUserInfo> edgeInfo) {
-		// create by letter aggregates
-		Map<Object,Set<IUserInfo>> edges = new HashMap<Object,Set<IUserInfo>>();
-		for (IUserInfo info: edgeInfo) {
-			Object letter = dfa.getEdgeLetter(info);
-			
-			Set<IUserInfo> lInfo = edges.get(letter);
-			if (lInfo==null) {
-				lInfo = new HashSet<IUserInfo>();
-				edges.put(letter, lInfo);
-			}
-			
-			lInfo.add(info);
-		}
-		
-		// create edges
-		for (Object letter: edges.keySet()) {
-			Set<IUserInfo> lInfo = edges.get(letter);
-			graph.createEdge(source, target, edgeAggregator.create(lInfo));
-		}
+	
+	/** Creates an edge between source and target. */
+	public void createEdge(GraphVertexGroup sources, GraphVertexGroup targets, GraphEdgeGroup edges) {
+		IUserInfo info = edgeAggregator.create(edges.getUserInfos());
+		graph.createEdge(ensure(sources), ensure(targets), info);
 	}
 
 }

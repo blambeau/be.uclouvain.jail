@@ -1,5 +1,7 @@
 package be.uclouvain.jail.algo.fa.minimize;
 
+import be.uclouvain.jail.algo.fa.utils.FAStateKindPartitionner;
+import be.uclouvain.jail.algo.graph.utils.IGraphPartitionner;
 import be.uclouvain.jail.fa.IDFA;
 
 /**
@@ -22,4 +24,9 @@ public class DefaultDFAMinimizerInput implements IDFAMinimizerInput {
 		return dfa;
 	}
 
+	/** Returns the initial partitionner. */
+	public IGraphPartitionner<Object> getInitPartitionner() {
+		return new FAStateKindPartitionner(dfa);
+	}
+	
 }

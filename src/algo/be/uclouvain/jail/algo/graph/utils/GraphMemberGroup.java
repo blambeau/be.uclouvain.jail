@@ -1,37 +1,43 @@
-package be.uclouvain.jail.algo.fa.utils;
+package be.uclouvain.jail.algo.graph.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import be.uclouvain.jail.fa.IFA;
-import be.uclouvain.jail.graph.utils.ITotalOrder;
+import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
 
 /** 
- * Provides an implementation of components group. 
+ * Common implementation of graph vertex and edge groups. 
  * 
  * @author blambeau
  */
-public class FAAbstractGroup implements Iterable<Object> {
+public class GraphMemberGroup implements IGraphMemberGroup {
 
-	/** Automaton. */
-	protected IFA fa;
+	/** Graph. */
+	protected IDirectedGraph graph;
 	
 	/** Group as an array of components. */
 	protected Set<Object> group; 
 	
 	/** Creates an empty group instance. */
-	public FAAbstractGroup(IFA fa, ITotalOrder<Object> order) {
-		this.fa = fa;
-		this.group = new TreeSet<Object>(order);
+	public GraphMemberGroup(IDirectedGraph graph, Comparator<Object> order) {
+		this.graph = graph;
+		this.group = (order == null) ? new HashSet<Object>() : new TreeSet<Object>(order);
 	}
 	
+	/** Returns the graph. */
+	public IDirectedGraph getGraph() {
+		return graph;
+	}
+
 	/** Adds a component in the group. */
-	public void addComponent(Object component) {
+	public void addMember(Object component) {
 		if (component == null) {
 			throw new IllegalArgumentException("Component cannot be null");
 		}
@@ -39,7 +45,7 @@ public class FAAbstractGroup implements Iterable<Object> {
 	}
 	
 	/** Adds some components in the group. */
-	public void addComponents(Collection<Object> components) {
+	public void addMembers(Collection<Object> components) {
 		if (components == null) {
 			throw new IllegalArgumentException("Components cannot be null");
 		}
@@ -52,7 +58,7 @@ public class FAAbstractGroup implements Iterable<Object> {
 	}
 	
 	/** Adds some components in the group. */
-	public void addComponents(Object...components) {
+	public void addMembers(Object...components) {
 		if (components == null) {
 			throw new IllegalArgumentException("Components cannot be null");
 		}
@@ -69,6 +75,11 @@ public class FAAbstractGroup implements Iterable<Object> {
 		return group.contains(component);
 	}
 	
+	/** Returns the members of the group as a set. */
+	public Set<Object> getMembers() {
+		return group;
+	}
+	
 	/** Returns an iterator on states. */
 	public Iterator<Object> iterator() {
 		return group.iterator();
@@ -78,7 +89,7 @@ public class FAAbstractGroup implements Iterable<Object> {
 	public List<IUserInfo> getUserInfos() {
 		List<IUserInfo> infos = new ArrayList<IUserInfo>();
 		for (Object component: group) {
-			infos.add(fa.getGraph().getUserInfoOf(component));
+			infos.add(graph.getUserInfoOf(component));
 		}
 		return infos;
 	}
@@ -96,8 +107,14 @@ public class FAAbstractGroup implements Iterable<Object> {
 	/** Checks equality with another group. */
 	public boolean equals(Object o) {
 		if (o == this) { return true; }
-		if (o instanceof FAAbstractGroup == false) { return false;	}
-		return group.equals(((FAAbstractGroup)o).group);
+		if (o instanceof GraphMemberGroup) { 
+			GraphMemberGroup other = (GraphMemberGroup) o;
+			return graph.equals(other.graph) && group.equals(other.group);
+		} else if (o instanceof IGraphMemberGroup) {
+			IGraphMemberGroup other = (IGraphMemberGroup) o;
+			return graph.equals(other.getGraph()) && group.equals(other.getMembers());
+		}
+		return false;	
 	}
 	
 }

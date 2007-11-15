@@ -1,10 +1,10 @@
 package be.uclouvain.jail.algo.fa.minimize;
 
-import java.util.Set;
-
 import junit.framework.TestCase;
 import be.uclouvain.jail.Jail;
 import be.uclouvain.jail.algo.fa.equiv.DFAEquiv;
+import be.uclouvain.jail.algo.graph.utils.IGraphMemberGroup;
+import be.uclouvain.jail.algo.graph.utils.IGraphPartition;
 import be.uclouvain.jail.dialect.IPrintable;
 import be.uclouvain.jail.dialect.dot.DOTDirectedGraphLoader;
 import be.uclouvain.jail.fa.IDFA;
@@ -42,11 +42,11 @@ public class DFAMinimizerAlgoTest extends TestCase {
 	/** Tests tau remover on identity. */
 	public void testMinimizerOnExpected() throws Exception {
 		DFAMinimizer minimizer = new DFAMinimizer(expected);
-		IBlockStructure<Object> equiv = minimizer.getStatePartition();
+		IGraphPartition equiv = minimizer.getStatePartition();
 		
 		// check partition
 		assertEquals(expected.getGraph().getVerticesTotalOrder().size(),equiv.size());
-		for (Set<Object> block: equiv) {
+		for (IGraphMemberGroup block: equiv) {
 			assertEquals(1,block.size());
 		}
 		
@@ -58,7 +58,7 @@ public class DFAMinimizerAlgoTest extends TestCase {
 	/** Tests the determinizer algorithm. */
 	public void testMinimizer() throws Exception {
 		DFAMinimizer minimizer = new DFAMinimizer(dfa);
-		IBlockStructure struct = minimizer.getStatePartition();
+		IGraphPartition struct = minimizer.getStatePartition();
 		
 		// checks number of vertices and edges
 		assertEquals(expected.getGraph().getVerticesTotalOrder().size(),struct.size());

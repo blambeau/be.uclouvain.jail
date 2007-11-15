@@ -88,7 +88,7 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 		
 		new DFAMinimizerAlgo().execute(input,result);
 		//System.out.println(result.getStatePartition().toString(dfa.getGraph().getVerticesTotalOrder()));
-		return result.getMinimalDFA();
+		return (IDFA) result.adapt(IDFA.class);
 	}
 	
 	/** Removes tau-transitions of a FA. */

@@ -1,33 +1,20 @@
 package be.uclouvain.jail.algo.fa.minimize;
 
-import java.util.Set;
+import be.uclouvain.jail.adapt.IAdaptable;
+import be.uclouvain.jail.algo.graph.utils.IGraphPartition;
 
 /**
  * Abstracts the result of {@link IDFAMinimizerAlgo}.
  * 
  * @author blambeau
  */
-public interface IDFAMinimizerResult {
+public interface IDFAMinimizerResult extends IAdaptable {
 
-	/**
-	 * "Algorithm started" event.
-	 *  
-	 * @param input input of the started algorithm.
-	 * @return the initial partitioning. 
-	 */
-	public IBlockStructure<Object> started(IDFAMinimizerInput input);
+	/** "Algorithm started" event. */
+	public void started(IDFAMinimizerInput input);
 	
-	/** 
-	 * Block has been refined, unreachable states being removed
-	 * from it and added to a new block. This method must update
-	 * the block structure in order to reflect that change.
-	 * 
-	 * @return identifier of the new block.
-	 */
-	public int refined(Set<Object> block, Set<Object> unreachable);
-	
-	/** Returns the computed partition. */
-	public IBlockStructure<Object> getStatePartition();
+	/** "Algorithm ended" event. */
+	public void ended(IGraphPartition partition);
 	
 }
 

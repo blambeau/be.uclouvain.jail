@@ -1,11 +1,7 @@
 package be.uclouvain.jail.algo.fa.minimize;
 
-import be.uclouvain.jail.algo.fa.merge.DefaultDFAMergingResult;
-import be.uclouvain.jail.algo.graph.merge.GraphMergingAlgo;
-import be.uclouvain.jail.algo.graph.merge.IGraphMergingInput;
+import be.uclouvain.jail.algo.graph.utils.IGraphPartition;
 import be.uclouvain.jail.fa.IDFA;
-import be.uclouvain.jail.fa.impl.GraphDFA;
-import be.uclouvain.jail.graph.IDirectedGraph;
 
 /**
  * Provides a user-friendly API on top of the minimizer algorithm.
@@ -30,34 +26,15 @@ public class DFAMinimizer {
 	}
 	
 	/** Returns computed partition. */
-	public IBlockStructure<Object> getStatePartition() {
+	public IGraphPartition getStatePartition() {
 		if (!executed) {execute();}
-		return result.getStatePartition();
+		return (IGraphPartition) result.adapt(IGraphPartition.class);
 	}
 	
 	/** Computed the minimal DFA. */
 	public IDFA getMinimalDFA() {
-		IDFA dfa = new GraphDFA(input.getDFA().getAlphabet());
-		flushMinimalDFA(dfa);
-		return dfa;
-	}
-	
-	/** Flushes minimization inside a existing dfa. */
-	public void flushMinimalDFA(IDFA dfa) {
-		final IBlockStructure<Object> partition = getStatePartition();
-		new GraphMergingAlgo().execute(new IGraphMergingInput() {
-
-			/** Returns the graph. */
-			public IDirectedGraph getGraph() {
-				return input.getDFA().getGraph();
-			}
-
-			/** Returns the partition. */
-			public IBlockStructure<Object> getVertexPartition() {
-				return partition;
-			}
-			
-		}, new DefaultDFAMergingResult(dfa));
+		if (!executed) {execute();}
+		return (IDFA) result.adapt(IDFA.class);
 	}
 	
 	/** Executes the algorithm. */

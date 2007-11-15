@@ -25,15 +25,15 @@ public class CitiesDirectedGraph extends DirectedGraph {
 
 	/** Creates the graph. */
 	private void createGraph() {
-		Object sfo = this.createVertex(vinfo("SFO"));
-		Object ord = this.createVertex(vinfo("ORD"));
-		Object lax = this.createVertex(vinfo("LAX"));
-		Object dfw = this.createVertex(vinfo("DFW"));
-		Object bos = this.createVertex(vinfo("BOS"));
-		Object pvd = this.createVertex(vinfo("PVD"));
-		Object jfk = this.createVertex(vinfo("JFK"));
-		Object bwi = this.createVertex(vinfo("BWI"));
-		Object mia = this.createVertex(vinfo("MIA"));
+		Object sfo = this.createVertex(vinfo("SFO",0));
+		Object ord = this.createVertex(vinfo("ORD",1));
+		Object lax = this.createVertex(vinfo("LAX",2));
+		Object dfw = this.createVertex(vinfo("DFW",3));
+		Object bos = this.createVertex(vinfo("BOS",4));
+		Object pvd = this.createVertex(vinfo("PVD",5));
+		Object jfk = this.createVertex(vinfo("JFK",6));
+		Object bwi = this.createVertex(vinfo("BWI",7));
+		Object mia = this.createVertex(vinfo("MIA",8));
 		
 		this.createEdge(bwi, bwi, einfo(0));
 
@@ -65,9 +65,11 @@ public class CitiesDirectedGraph extends DirectedGraph {
 	}
 	
 	/** Creates a vertex info. */
-	private IUserInfo vinfo(String label) {
+	private IUserInfo vinfo(String label, int index) {
 		IUserInfo info = new MapUserInfo();
 		info.setAttribute("label", label);
+		info.setAttribute("index",index);
+		info.setAttribute("pair", (index % 2)==0);
 		return info;
 	}
 	

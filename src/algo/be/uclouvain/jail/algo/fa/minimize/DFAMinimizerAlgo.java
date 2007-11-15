@@ -1,11 +1,13 @@
 package be.uclouvain.jail.algo.fa.minimize;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.Iterator;
 import java.util.Set;
-import java.util.TreeSet;
 
+import be.uclouvain.jail.algo.fa.utils.FAStateGroup;
+import be.uclouvain.jail.algo.graph.utils.GraphPartition;
+import be.uclouvain.jail.algo.graph.utils.IGraphMemberGroup;
+import be.uclouvain.jail.algo.graph.utils.IGraphPartitionner;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
 
@@ -20,47 +22,19 @@ public class DFAMinimizerAlgo {
 	/** Non minimal source DFA. */
 	private IDFA dfa;
 
-	/** Underlying graph. */
-	private IDirectedGraph graph;
-	
 	/** The block structure. */
-	private IBlockStructure<Object> blocks;
+	private GraphPartition blocks;
 
 	/** The list of blocks to explore. */
-	private TreeSet<Integer> toExplore;
+	private Set<FAStateGroup> toExplore;
 
 	/** Creates an algorithm instance. */
 	public DFAMinimizerAlgo() {
 	}
 
-	/** Computes the reverse delta function on a set of states. */
-	private Map<Object,Set<Object>> reverseDelta(Set<Object> states) {
-		Map<Object,Set<Object>> delta = new HashMap<Object,Set<Object>>();
-		
-		// for each state
-		for (Object state: states) {
-			// for each incoming edge
-			for (Object edge: graph.getIncomingEdges(state)) {
-				// take letter
-				Object letter = dfa.getEdgeLetter(edge);
-				
-				// retrieve set of states, or create it
-				Set<Object> sources = delta.get(letter);
-				if (sources == null) {
-					sources = new HashSet<Object>();
-					delta.put(letter, sources);
-				}
-				
-				// add source state of the edge
-				sources.add(graph.getEdgeSource(edge));
-			}
-		}
-		return delta;
-	}
-
 	/** Checks if a block can be refined, that is if block contains somes states
 	 * of reachable but not all. */
-	private boolean canBeRefined(Set<Object> block, Set<Object> reachable) {
+	private boolean canBeRefined(FAStateGroup block, FAStateGroup reachable) {
 		// avoid trying to refine one state only blocks
 		if (block.size() <= 1) {
 			return false;
@@ -77,101 +51,83 @@ public class DFAMinimizerAlgo {
 		return count != 0 && count != block.size();
 	}
 	
-	/** Debugs a block. */
-	@SuppressWarnings("unused")
-	private String debugBlock(Set<Object> block) {
-		StringBuffer sb = new StringBuffer();
-		sb.append("{");
-		int i=0;
-		for (Object state: block) {
-			if (i++ != 0) {sb.append(",");}
-			sb.append(graph.getVerticesTotalOrder().indexOf(state));
-		}
-		sb.append("}");
-		return sb.toString();
-	}
-	
 	/** Executes algorithm. */
 	public void execute(IDFAMinimizerInput input, IDFAMinimizerResult result) {
+		// initialization
 		this.dfa = input.getDFA();
-		this.graph = dfa.getGraph();
-		this.toExplore = new TreeSet<Integer>();
-		this.blocks = result.started(input);
+		IDirectedGraph graph = dfa.getGraph();
+		this.toExplore = new HashSet<FAStateGroup>();
+		this.blocks = new GraphPartition(graph,graph.getVertices());
+		this.blocks.refine(input.getInitPartitionner());
 		
 		/* adds the initial blocks to toExplore */
-		int size = blocks.size();
-		for (int i=0; i<size; i++) {
-			toExplore.add(i);
+		for (IGraphMemberGroup group: blocks) {
+			toExplore.add(new FAStateGroup(dfa,group));
 		}
-
+		result.started(input);
+		
 		/* while there is a block to explore */
 		while (!toExplore.isEmpty()) {
 
 			// take first block and remove it
-			Integer lIndex = toExplore.first();
-			toExplore.remove(lIndex);
-			
-			// compute reverse delta
-			Set<Object> block = blocks.getBlock(lIndex);
-			Map<Object,Set<Object>> delta = reverseDelta(block);
-			
-			//System.out.println("On iBlock: "+ debugBlock(block));
+			FAStateGroup block = toExplore.iterator().next();
+			toExplore.remove(block);
 			
 			/* for each alphabet letter */
-			for (Object letter: delta.keySet()) {
+			Iterator<Object> letters = block.getIncomingLetters();
+			while (letters.hasNext()) {
+				Object letter = letters.next();
 
 				// retrieve closure for this letter
-				Set<Object> reachable = delta.get(letter);
-				
-				//System.out.println(debugBlock(block) + "<-" + letter + "<-" + debugBlock(reachable));
+				final FAStateGroup reachable = block.reverseDelta(letter).getSourceStateGroup();
 				
 				/* iterates each block */
-				for (int j=0; j<blocks.size(); j++) {
-					Set<Object> jBlock = blocks.getBlock(j);
-					
-					//System.out.print("On jBlock: "+ debugBlock(jBlock));
-					
+				int size = blocks.size();
+				for (int j=0; j<size; j++) {
+					FAStateGroup jBlock = new FAStateGroup(dfa,blocks.getGroup(j));
+
 					/* do not retain the block if it contains all states of b,
 					 * or not at all */
 					if (!canBeRefined(jBlock, reachable)) {
-						//System.out.println(" ... not refinable.");
 						continue;
-					} else {
-						//System.out.println(" ... refinable!");
 					}
 
 					/* separate jBlock into two sub blocks : states that are reachable,
 					 * other that are not. */
-					Set<Object> unreachable = new HashSet<Object>();
-					for (Object state: jBlock) {
-						if (!reachable.contains(state)) {
-							unreachable.add(state);
+					blocks.refine(j, new IGraphPartitionner<Object>() {
+						public Object getPartitionOf(Object value) {
+							if (reachable.contains(value)) {
+								return 1;
+							} else {
+								return 0;
+							}
 						}
-					}
-					jBlock.removeAll(unreachable);
+					});
+
+					// retrieve the two groups
+					FAStateGroup jRefined = new FAStateGroup(dfa,blocks.getGroup(j));
+					FAStateGroup unreachable = new FAStateGroup(dfa,blocks.getGroup(blocks.size()-1));
 
 					// just a check
-					if (jBlock.size()==0 || unreachable.size()==0) {
-						System.out.println(reachable.containsAll(jBlock));
+					if (jRefined.size()==0 || unreachable.size()==0) {
 						throw new AssertionError("Refinements leads to non empty sets.");
 					}
 
-					// let result now that the jBlock has been refined
-					int k = result.refined(jBlock,unreachable);
-					
 					/* update toExplore */
-					if (toExplore.contains(j)) {
-						toExplore.add(k);
-					} else if (jBlock.size()<unreachable.size()) {
-						toExplore.add(j);
+					if (toExplore.contains(jRefined)) {
+						toExplore.add(unreachable);
+					} else if (jRefined.size()<unreachable.size()) {
+						toExplore.add(jRefined);
 					} else {
-						toExplore.add(k);
+						toExplore.add(unreachable);
 					}
 
 				}
 
 			}
 		}
+
+		result.ended(blocks);
 	}
 
 }
