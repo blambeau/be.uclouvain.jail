@@ -1,6 +1,10 @@
 package be.uclouvain.jail.vm.toolkits;
 
 import be.uclouvain.jail.adapt.IAdapter;
+import be.uclouvain.jail.algo.fa.complement.DFAComplementorAlgo;
+import be.uclouvain.jail.algo.fa.complement.DFAComplementorHeuristic;
+import be.uclouvain.jail.algo.fa.complement.DefaultDFAComplementorInput;
+import be.uclouvain.jail.algo.fa.complement.DefaultDFAComplementorResult;
 import be.uclouvain.jail.algo.fa.compose.DFAComposerAlgo;
 import be.uclouvain.jail.algo.fa.compose.DefaultDFAComposerInput;
 import be.uclouvain.jail.algo.fa.compose.DefaultDFAComposerResult;
@@ -169,6 +173,27 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 		
 		new DFAKernelExtractorAlgo().execute(input,result);
 		return result;
+	}
+	
+	/** Complements a DFA. */
+	public IDFA complement(IDFA dfa, JailVMOptions options) throws JailVMException {
+		DefaultDFAComplementorInput input = new DefaultDFAComplementorInput(dfa);
+		DefaultDFAComplementorResult result = new DefaultDFAComplementorResult();
+		result.getStateCopier().keepAll();
+		result.getEdgeCopier().keepAll();
+		
+		String heuristic = options.getOptionValue("heuristic", String.class, "error");
+		if ("error".equals(heuristic)) {
+			input.setHeuristic(DFAComplementorHeuristic.ERROR_STATE);
+		} else if ("same".equals(heuristic)) {
+			input.setHeuristic(DFAComplementorHeuristic.SAME_STATE);
+		} else {
+			throw new JailVMException(JailVMException.ERROR_TYPE.BAD_COMMAND_USAGE,null,
+					"Unknown completion heuristic: " + heuristic);
+		}
+		
+		new DFAComplementorAlgo().execute(input,result);
+		return (IDFA) result.adapt(IDFA.class);
 	}
 	
 	/** Adapts an object. */
