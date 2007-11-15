@@ -18,6 +18,9 @@ import be.uclouvain.jail.fa.INFA;
 public class NFADeterminizerAlgo {
 
 	/* ---------------------------------------------------------------------------------------------- Fields */
+	/** Result to use. */
+	private INFADeterminizerResult result;
+	
 	/** Target states to explore. */
 	private Set<FAStateGroup> toExplore;
 
@@ -64,6 +67,10 @@ public class NFADeterminizerAlgo {
 	 * @param def the definition of the target states (a set of source states).
 	 */
 	private void createOne(FAStateGroup def) {
+		if (isAlreadyFound(def)) { 
+			throw new AssertionError("State not yet created.");
+		}
+		result.createState(def);
 		toExplore.add(def);
 	}
 	
@@ -71,6 +78,7 @@ public class NFADeterminizerAlgo {
 	@SuppressWarnings("unchecked")
 	protected void main(INFADeterminizerInput input, INFADeterminizerResult result) {
 		// initialize algorithm
+		this.result = result;
 		this.nfa = input.getNFA();
 		toExplore = new HashSet<FAStateGroup>();
 		explored = new HashSet<FAStateGroup>();

@@ -3,6 +3,7 @@ package be.uclouvain.jail.algo.graph.utils;
 import java.util.Collection;
 
 import be.uclouvain.jail.graph.IDirectedGraph;
+import be.uclouvain.jail.graph.utils.ITotalOrder;
 
 /** 
  * Provides a decorator on graph group for cases where the groups
@@ -50,6 +51,20 @@ public class GraphVertexGroup extends GraphMemberGroupDecorator {
 			edges.addMembers(graph.getIncomingEdges(vertex));
 		}
 		return new GraphEdgeGroup(edges);
+	}
+	
+	/** Returns a string representation. */
+	public String toString() {
+		ITotalOrder<Object> order = getGraph().getVerticesTotalOrder();
+		StringBuffer sb = new StringBuffer();
+		sb.append('{');
+		int i=0;
+		for (Object vertex: this) {
+			if (i++ != 0) { sb.append(','); }
+			sb.append(order.indexOf(vertex));
+		}
+		sb.append('}');
+		return sb.toString();
 	}
 	
 }

@@ -1,14 +1,15 @@
 package be.uclouvain.jail.algo.fa.minimize;
 
 import junit.framework.TestCase;
-import be.uclouvain.jail.Jail;
 import be.uclouvain.jail.algo.fa.equiv.DFAEquiv;
 import be.uclouvain.jail.algo.graph.utils.IGraphMemberGroup;
 import be.uclouvain.jail.algo.graph.utils.IGraphPartition;
-import be.uclouvain.jail.dialect.IPrintable;
 import be.uclouvain.jail.dialect.dot.DOTDirectedGraphLoader;
 import be.uclouvain.jail.fa.IDFA;
+import be.uclouvain.jail.fa.constraints.DFAGraphConstraint;
 import be.uclouvain.jail.fa.impl.GraphDFA;
+import be.uclouvain.jail.graph.IDirectedGraph;
+import be.uclouvain.jail.tests.JailTestUtils;
 
 /** Tests the NFA determinizer algorithm. */
 public class DFAMinimizerAlgoTest extends TestCase {
@@ -30,13 +31,17 @@ public class DFAMinimizerAlgoTest extends TestCase {
 		DOTDirectedGraphLoader.loadGraph(expected.getGraph(),DFAMinimizerAlgoTest.class.getResource("EXPECTED.dot"));
 	}
 	
-	/** Debugs a DFA. */
-	@SuppressWarnings("unused")
-	private void debug(IDFA dfa) throws Exception {
-		Jail.install();
-		IPrintable p = (IPrintable) dfa.getGraph().adapt(IPrintable.class);
-		Jail.setProperty("DirectedGraphPrintable.dot.edge.label.uinfo","letter");
-		p.print(System.out);
+	/** Tests that bugs 0001 does not reappear. */
+	public void testMinimizerOnBUG0001() throws Exception {
+		// load graph and check it's a DFA
+		IDirectedGraph graph = DOTDirectedGraphLoader.loadGraph(JailTestUtils.resource(this,"BUG0001.dot"));
+		assertTrue(new DFAGraphConstraint().isRespectedBy(graph));
+		
+		// create DFA
+		IDFA dfa = new GraphDFA(graph);
+		
+		// minimize it
+		new DFAMinimizer(dfa).getMinimalDFA();
 	}
 	
 	/** Tests tau remover on identity. */
@@ -68,5 +73,8 @@ public class DFAMinimizerAlgoTest extends TestCase {
 		assertTrue(new DFAEquiv(expected,equiv).areEquivalent());
 	}
 	
+	public static void main(String[] args) throws Exception {
+		new DFAMinimizerAlgoTest().testMinimizerOnBUG0001();
+	}
 	
 }

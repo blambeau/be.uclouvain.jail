@@ -25,20 +25,32 @@ public class JDotty extends JFrame {
 	/** Serial version UID. */
 	private static final long serialVersionUID = 1755521514008407690L;
 
+	/** Flag to force silent JDotty in tests. */
+	private static boolean silent = false;
+	
 	/** Tabs. */
 	private JTabbedPane tabs;
 
 	/** Creates a JDotty instance. */
 	public JDotty() {
 		super();
-		super.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		tabs = new JTabbedPane();
-		super.getContentPane().add(tabs);
-		super.setSize(800, 600);
+		if (!silent) {
+			super.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			tabs = new JTabbedPane();
+			super.getContentPane().add(tabs);
+			super.setSize(800, 600);
+		}
+	}
+	
+	/** Forces JDotty to be silent. */
+	public static void silent() {
+		silent = true;
 	}
 	
 	/** Presents a graph using dot. */
 	public void present(IDirectedGraph graph, String labelAttr) throws IOException {
+		if (silent) { return; }
+		
 		final IPrintable p = new DOTDirectedGraphPrintable(graph);
 		String dotPath = (String) Jail.getProperty("be.uclouvain.jail.dot.JDotty.dotpath","dot");
 		

@@ -68,7 +68,7 @@ public class DOTPrintableTest extends TestCase {
 		AdaptUtils.register(IDirectedGraph.class,IPrintable.class,new CreateClassAdapter(DOTDirectedGraphPrintable.class));
 		IPrintable printable = (IPrintable) graph.adapt(IPrintable.class);
 		assertNotNull("Adaptation worked.", printable);
-		printable.print(System.out);
+		//printable.print(System.out);
 	}
 	
 }

@@ -5,6 +5,7 @@ import be.uclouvain.jail.algo.fa.merge.DefaultDFAMergingResult;
 import be.uclouvain.jail.algo.fa.utils.FAEdgeLetterPartitionner;
 import be.uclouvain.jail.algo.graph.merge.GraphMergingAlgo;
 import be.uclouvain.jail.algo.graph.merge.IGraphMergingInput;
+import be.uclouvain.jail.algo.graph.utils.IGraphMemberGroup;
 import be.uclouvain.jail.algo.graph.utils.IGraphPartition;
 import be.uclouvain.jail.algo.graph.utils.IGraphPartitionner;
 import be.uclouvain.jail.fa.IDFA;
@@ -45,6 +46,11 @@ public class DefaultDFAMinimizerResult implements IDFAMinimizerResult {
 
 	/** Algorithm ended event. */
 	public void ended(IGraphPartition partition) {
+		for (IGraphMemberGroup group: partition) {
+			if (group.size()==0) {
+				throw new AssertionError("Does not generate empty groups.");
+			}
+		}
 		this.partition = partition;
 	}
 

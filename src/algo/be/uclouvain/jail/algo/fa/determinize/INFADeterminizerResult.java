@@ -24,6 +24,9 @@ public interface INFADeterminizerResult extends IAdaptable {
 	/** "Algorithm ended" event. */
 	public void ended();
 
+	/** Creates a state in the resulting DFA. */
+	public void createState(FAStateGroup source);
+	
 	/** Creates a result transition between two target states. */
 	public void createTargetTransitions(FAStateGroup source, FAStateGroup target, FAEdgeGroup edges);
 

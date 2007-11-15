@@ -4,7 +4,7 @@
 package be.uclouvain.jail.dialect.seqp;
 
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.PrintWriter;
 
 import net.chefbe.autogram.ast2.parsing.ParseException;
 import be.uclouvain.jail.dialect.IGraphDialect;
@@ -24,7 +24,7 @@ public class SEQPGraphDialect implements IGraphDialect {
 	}
 
 	/** Prints source in dot format. */
-	public void print(Object source, String format, OutputStream stream)
+	public void print(Object source, String format, PrintWriter stream)
 			throws IOException {
 		throw new UnsupportedOperationException(
 				"SEQP dialect does not implement print.");

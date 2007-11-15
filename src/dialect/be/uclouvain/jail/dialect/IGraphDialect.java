@@ -1,7 +1,7 @@
 package be.uclouvain.jail.dialect;
 
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.PrintWriter;
 
 import net.chefbe.autogram.ast2.parsing.ParseException;
 
@@ -18,6 +18,6 @@ public interface IGraphDialect {
 	public Object load(Object source, String format) throws IOException, ParseException;
 	
 	/** Prints a resource to a stream. */
-	public void print(Object source, String format, OutputStream stream) throws IOException;
+	public void print(Object source, String format, PrintWriter stream) throws IOException;
 	
 }

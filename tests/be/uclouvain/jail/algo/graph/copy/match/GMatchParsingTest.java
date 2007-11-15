@@ -8,7 +8,6 @@ import net.chefbe.autogram.ast2.parsing.active.ASTLoader;
 import net.chefbe.autogram.ast2.parsing.active.ASTLoader.EnumTypeResolver;
 import net.chefbe.autogram.ast2.parsing.peg.Input;
 import net.chefbe.autogram.ast2.parsing.peg.Pos;
-import net.chefbe.autogram.ast2.utils.DebugVisitor;
 
 /** Tests GMatch parser. */
 public class GMatchParsingTest extends TestCase {
@@ -20,7 +19,8 @@ public class GMatchParsingTest extends TestCase {
 		GMatchParser parser = new GMatchParser();
 		parser.setActiveLoader(new ASTLoader(new EnumTypeResolver<GMatchNodes>(GMatchNodes.class)));
 		IASTNode node = (IASTNode) parser.pMatchTest(pos);
-		node.accept(new DebugVisitor());
+		assertNotNull(node);
+		//node.accept(new DebugVisitor());
 	}
 	
 }

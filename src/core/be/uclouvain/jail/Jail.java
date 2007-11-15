@@ -134,6 +134,11 @@ public class Jail implements IJailVMEnvironment {
 		}
 	}
 
+	/** Returns a console writer. */
+	public PrintWriter getConsoleWriter() {
+		return out;
+	}
+
 	/** Handles an error. */
 	public void handleError(Throwable t) {
 		out.println(t.getMessage());

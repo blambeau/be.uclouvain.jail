@@ -65,6 +65,9 @@ public class GraphConXDetectorAlgo {
 		graph = input.getGraph();
 		order = graph.getVerticesTotalOrder();
 		partition = new int[order.size()];
+		if (partition.length==0) {
+			throw new IllegalArgumentException("Invalid empty graph.");
+		}
 		
 		// compute partitionning
 		current = 1;

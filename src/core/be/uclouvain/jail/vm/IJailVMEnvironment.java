@@ -1,5 +1,7 @@
 package be.uclouvain.jail.vm;
 
+import java.io.PrintWriter;
+
 /**
  * Provides external environment to the Jail Virtual Machine. 
  * 
@@ -36,6 +38,9 @@ public interface IJailVMEnvironment {
 		}
 		
 	}
+	
+	/** Returns the console writer to use. */
+	public PrintWriter getConsoleWriter();
 	
 	/** Prints a message on the console. */
 	public void printConsole(String message, LEVEL level);

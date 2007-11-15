@@ -8,7 +8,7 @@ define (adot <A>)
                                     when @isInitial=true then 'green'
                                     else 'white',
                       @label     -> @label}
-		          :edge  {@label -> @letter});
+		     :edge  {@label -> @letter});
 
 /** JDotty for automaton dot. */
 define (show <A>)

@@ -35,9 +35,21 @@ public class GraphPartition implements IGraphPartition {
 		for (Object o: members) {
 			initGroup.addMember(o);
 		}
+		if (initGroup.size()==0) {
+			throw new IllegalArgumentException("Members cannot be empty.");
+		}
 		
 		// add initial group
 		groups.add(initGroup);
+	}
+	
+	/** Asserts that this partition is correct. */
+	private void assertCorrectPartition() {
+		for (IGraphMemberGroup group: groups) {
+			if (group.size()==0) {
+				throw new AssertionError("Correct partition (no empty group).");
+			}
+		}
 	}
 	
 	/** Returns the partitionned graph. */
@@ -62,6 +74,7 @@ public class GraphPartition implements IGraphPartition {
 			refine(i,partitionner);
 		}
 		this.partitionner.addPartitionner(partitionner);
+		assertCorrectPartition();
 	}
 	
 	/** Refines a single group, according to a partitionner. */
@@ -90,6 +103,9 @@ public class GraphPartition implements IGraphPartition {
 		// add each sub group in the groups
 		int j=0;
 		for (IGraphMemberGroup subgroup: subgroups.values()) {
+			if (subgroup.size() == 0) {
+				throw new AssertionError("Does not lead to empty groups.");
+			}
 			if (j++ == 0) {
 				groups.set(i, subgroup);
 			} else {

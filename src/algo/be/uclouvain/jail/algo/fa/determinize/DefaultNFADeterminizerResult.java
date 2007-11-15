@@ -69,13 +69,21 @@ public class DefaultNFADeterminizerResult implements INFADeterminizerResult {
 	public void ended() {
 	}
 
+	/** Creates a state in the resulting DFA. */
+	public void createState(FAStateGroup state) {
+		if (rStates.containsKey(state)) {
+			throw new AssertionError("State not yet created.");
+		}
+		IDirectedGraph graph = dfa.getGraph();
+		IUserInfo info = stateAggregator.create(state.getUserInfos());
+		Object vertex = graph.createVertex(info);
+		rStates.put(state,vertex);
+	}
+	
 	/** Ensures that a target state has been created. */
 	private Object ensure(FAStateGroup state) {
 		if (!rStates.containsKey(state)) {
-			IDirectedGraph graph = dfa.getGraph();
-			IUserInfo info = stateAggregator.create(state.getUserInfos());
-			Object vertex = graph.createVertex(info);
-			rStates.put(state,vertex);
+			throw new AssertionError("State previously created.");
 		}
 		return rStates.get(state);
 	}

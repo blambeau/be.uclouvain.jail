@@ -1,8 +1,9 @@
 package be.uclouvain.jail.vm;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,6 +67,7 @@ public class JailCoreToolkit extends JailReflectionToolkit {
 	
 	/** Executes jail commands in a file. */
 	public void execute(String path, JailVM vm) throws JailVMException {
+		path = vm.resolvePath(path);
 		File f = ensureFileAccess(path,"r",false);
 		vm.execute(f);
 	}
@@ -104,11 +106,13 @@ public class JailCoreToolkit extends JailReflectionToolkit {
 	}
 	
 	/** Prints a jail resource. */
-	protected Object print(Object[] sources, String format) throws JailVMException {
+	protected Object print(Object[] sources, String format, JailVM vm) throws JailVMException {
 		IGraphDialect loader = ensureDialect(format);
 		try {
 			for (Object source: sources) {
-				loader.print(source, format, System.out);
+				PrintWriter writer = vm.getEnvironment().getConsoleWriter();
+				loader.print(source, format, writer);
+				writer.flush();
 			}
 		} catch (IOException e) {
 			throw new JailVMException(ERROR_TYPE.INTERNAL_ERROR,null,"Unable to print resource.",e);
@@ -117,14 +121,14 @@ public class JailCoreToolkit extends JailReflectionToolkit {
 	}
 	
 	/** Prints a jail resource. */
-	public Object print(Object[] sources, JailVMOptions options) throws JailVMException {
+	public Object print(Object[] sources, JailVM vm, JailVMOptions options) throws JailVMException {
 		String format = null;
 		if (options.hasOption("format")) {
 			format = options.getOptionValue("format",String.class,null);
 		} else {
 			throw new JailVMException(ERROR_TYPE.BAD_COMMAND_USAGE,null);
 		}
-		return print(sources,format);
+		return print(sources,format,vm);
 	}
 	
 	/** Saves a jail resource to a file. */
@@ -149,10 +153,10 @@ public class JailCoreToolkit extends JailReflectionToolkit {
 			File f = ensureFileAccess(path,"w",true);
 			
 			// create 
-			FileOutputStream stream = new FileOutputStream(f);
-			dialect.print(source, extension, stream);
-			stream.flush();
-			stream.close();
+			PrintWriter writer = new PrintWriter(new FileWriter(f));
+			dialect.print(source, extension, writer);
+			writer.flush();
+			writer.close();
 			
 			return source;
 		} catch (IOException ex) {

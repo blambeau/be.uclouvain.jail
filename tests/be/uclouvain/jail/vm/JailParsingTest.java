@@ -11,8 +11,8 @@ import net.chefbe.autogram.ast2.parsing.active.ASTLoader.EnumTypeResolver;
 import net.chefbe.autogram.ast2.parsing.peg.Input;
 import net.chefbe.autogram.ast2.parsing.peg.Pos;
 import net.chefbe.autogram.ast2.utils.BaseLocation;
-import net.chefbe.autogram.ast2.utils.DebugVisitor;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchNodes;
+import be.uclouvain.jail.examples.JailExamples;
 import be.uclouvain.jail.vm.autogram.JailNodes;
 import be.uclouvain.jail.vm.autogram.JailParser;
 
@@ -44,7 +44,15 @@ public class JailParsingTest extends TestCase {
 	public void testParsing(URL url) throws Exception {
 		JailParser parser = createParser();
 		IASTNode root = (IASTNode) parser.pUnit(createPos(url));
-		root.accept(new DebugVisitor());
+		assertNotNull(root);
+		//root.accept(new DebugVisitor());
+	}
+	
+	/** Parses all examples. */
+	public void testJailExamplesParsing() throws Exception {
+		for (URL url: JailExamples.getAllExamples()) {
+			testParsing(url);
+		}
 	}
 	
 	/** Tests expressions parsing. */
@@ -62,7 +70,8 @@ public class JailParsingTest extends TestCase {
 		URL url = JailCoreToolkit.class.getResource("JailCoreToolkit.jail");
 		JailParser parser = createParser();
 		IASTNode root = (IASTNode) parser.pNativedoc(createPos(url));
-		root.accept(new DebugVisitor());
+		assertNotNull(root);
+		//root.accept(new DebugVisitor());
 	}
 	
 }

@@ -25,7 +25,7 @@ public class DOTParserTest extends TestCase {
 		IDirectedGraph graph = DOTDirectedGraphLoader.loadGraph(url);
 		IPrintable printable = (IPrintable) graph.adapt(IPrintable.class);
 		assertNotNull("Adaptation worked.", printable);
-		printable.print(System.out);
+		//printable.print(System.out);
 	}
 	
 }

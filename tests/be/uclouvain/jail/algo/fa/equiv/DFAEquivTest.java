@@ -108,12 +108,6 @@ public class DFAEquivTest extends TestCase {
 		
 		assertNotNull(equiv.getCounterExampleKind());
 		assertNotNull(equiv.getCounterExample());
-		
-		System.out.println(equiv.getCounterExampleKind());
-		for (Object letter: equiv.getCounterExample()) {
-			System.out.print(letter + " -> ");
-		}
-		System.out.println();
 	}
 	
 }

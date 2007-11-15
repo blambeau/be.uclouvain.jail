@@ -1,7 +1,12 @@
 package be.uclouvain.jail.vm;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Map;
+import java.util.Stack;
 
 import net.chefbe.autogram.ast2.IASTNode;
 import net.chefbe.autogram.ast2.ILocation;
@@ -45,10 +50,14 @@ public class JailVM implements IJailVMScope {
 	/** External environnement. */
 	private IJailVMEnvironment env;
 	
+	/** Executed sources stack. */
+	private Stack<Object> sources;
+	
 	/** Creates a VM instance. */
 	public JailVM(IJailVMEnvironment env) {
 		this.env = env;
 		memory = new JailVMMapScope();
+		sources = new Stack<Object>();
 		toolkits = new ListOrderedMap<String,IJailVMToolkit>();
 		core = new JailCoreToolkit();
 		registerToolkit("jail",core);
@@ -65,10 +74,40 @@ public class JailVM implements IJailVMScope {
 	public JailCoreToolkit getCoreToolkit() {
 		return core;
 	}
+
+	/** Returns the environment. */
+	public IJailVMEnvironment getEnvironment() {
+		return env;
+	}
+
+	/** Resolves a relative path, through currently executed source. */
+	public String resolvePath(String path) throws JailVMException {
+		if (sources.isEmpty()) {
+			throw new JailVMException(JailVMException.ERROR_TYPE.INTERNAL_ERROR,
+					null,"Unexpected empty execution stack.");
+		}
+		Object current = sources.peek();
+		if (current instanceof File) {
+			File f = (File) current;
+			return new File(f.getParentFile(),path).getAbsolutePath();
+		} else if (current instanceof URL) {
+			URL url = (URL) current;
+			try {
+				return url.toURI().resolve(path).toURL().getFile();
+			} catch (URISyntaxException e) {
+				throw new JailVMException(JailVMException.ERROR_TYPE.INTERNAL_ERROR,null,e);
+			} catch (MalformedURLException e) {
+				throw new JailVMException(JailVMException.ERROR_TYPE.INTERNAL_ERROR,null,e);
+			}
+		}
+		return null;
+	}
 	
 	/** Executes some commands taken on some source. */
 	public void execute(Object source) throws JailVMException {
 		try {
+			sources.push(source);
+			
 			// create location and pos
 			ILocation loc = new BaseLocation(source);
 			Pos pos = new Pos(Input.input(loc),0);
@@ -91,6 +130,8 @@ public class JailVM implements IJailVMScope {
 			} catch (Exception e) {
 				handleError(e);
 			}
+			
+			sources.pop();
 		} catch (IOException ex) {
 			handleError(new JailVMException(ERROR_TYPE.INTERNAL_ERROR,null,"Unable to read input jail commands.",ex));
 		} catch (ParseException ex) {
@@ -264,5 +305,5 @@ public class JailVM implements IJailVMScope {
 	public void addCommand(IJailVMCommand command) {
 		addCommand(core,command);
 	}
-	
+
 }

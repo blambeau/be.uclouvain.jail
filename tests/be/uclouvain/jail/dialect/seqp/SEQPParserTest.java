@@ -10,7 +10,6 @@ import net.chefbe.autogram.ast2.parsing.active.ASTLoader;
 import net.chefbe.autogram.ast2.parsing.active.ASTLoader.EnumTypeResolver;
 import net.chefbe.autogram.ast2.parsing.peg.Input;
 import net.chefbe.autogram.ast2.parsing.peg.Pos;
-import net.chefbe.autogram.ast2.utils.DebugVisitor;
 
 /** Tests the SEQP parser on expressions. */
 public class SEQPParserTest extends TestCase {
@@ -30,7 +29,8 @@ public class SEQPParserTest extends TestCase {
 		);
 		Pos pos = new Pos(Input.input(url),0);
 		IASTNode root = (IASTNode) parser.pTestunit(pos);
-		root.accept(new DebugVisitor());
+		assertNotNull(root);
+		//root.accept(new DebugVisitor());
 	}
 	
 }

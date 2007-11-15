@@ -4,7 +4,7 @@
 package be.uclouvain.jail.dialect.dot;
 
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.PrintWriter;
 
 import net.chefbe.autogram.ast2.parsing.ParseException;
 import be.uclouvain.jail.adapt.AdaptUtils;
@@ -24,7 +24,7 @@ public class DOTGraphDialect implements IGraphDialect {
 	}
 
 	/** Prints source in dot format. */
-	public void print(Object source, String format, OutputStream stream) throws IOException {
+	public void print(Object source, String format, PrintWriter stream) throws IOException {
 		IDirectedGraph graph = (IDirectedGraph) AdaptUtils.adapt(source,IDirectedGraph.class);
 		if (graph == null) {
 			throw new IllegalStateException("Source must be IDirectedGraph adaptable");

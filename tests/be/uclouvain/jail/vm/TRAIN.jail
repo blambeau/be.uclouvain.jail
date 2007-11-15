@@ -1,6 +1,6 @@
 define (adot <A>) 
 	(copy (A)
-        :state {@shape -> when @isAccepting=true then 'doublecircle'
+        :vertex {@shape -> when @isAccepting=true then 'doublecircle'
                           else 'circle',
         				@style -> 'filled',
                 @fillcolor -> when @isError=true then 'red'

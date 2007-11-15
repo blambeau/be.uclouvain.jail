@@ -62,6 +62,9 @@ public class DFAMinimizerAlgo {
 		
 		/* adds the initial blocks to toExplore */
 		for (IGraphMemberGroup group: blocks) {
+			if (group.size()==0) {
+				throw new AssertionError("No empty group at algo start.");
+			}
 			toExplore.add(new FAStateGroup(dfa,group));
 		}
 		result.started(input);

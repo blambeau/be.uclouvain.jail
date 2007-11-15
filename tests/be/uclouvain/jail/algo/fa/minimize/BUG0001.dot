@@ -1,0 +1,36 @@
+digraph G {
+        graph [rankdir="LR"];
+        node [shape="circle"];
+        0 [isInitial="true" isAccepting="true" isError="false"];
+        1 [isInitial="false" isAccepting="true" isError="false"];
+        2 [isInitial="false" isAccepting="true" isError="false"];
+        3 [isInitial="false" isAccepting="true" isError="false"];
+        4 [isInitial="false" isAccepting="true" isError="false"];
+        5 [isInitial="false" isAccepting="true" isError="false"];
+        6 [isInitial="false" isAccepting="true" isError="false"];
+        7 [isInitial="false" isAccepting="true" isError="false"];
+        8 [isInitial="false" isAccepting="true" isError="false"];
+        9 [isInitial="false" isAccepting="true" isError="false"];
+        10 [isInitial="false" isAccepting="true" isError="false"];
+        11 [isInitial="false" isAccepting="true" isError="false"];
+        12 [isInitial="false" isAccepting="true" isError="false"];
+        13 [isInitial="false" isAccepting="true" isError="false"];
+        0 -> 1 [letter="dark"];
+        0 -> 2 [letter="on"];
+        0 -> 3 [letter="start"];
+        1 -> 4 [letter="light"];
+        4 -> 1 [letter="dark"];
+        2 -> 5 [letter="off"];
+        5 -> 2 [letter="on"];
+        3 -> 6 [letter="dark"];
+        3 -> 7 [letter="end"];
+        3 -> 7 [letter="stop"];
+        7 -> 8 [letter="start"];
+        8 -> 7 [letter="end"];
+        8 -> 7 [letter="stop"];
+        6 -> 9 [letter="on"];
+        9 -> 10 [letter="stop"];
+        10 -> 11 [letter="start"];
+        11 -> 12 [letter="end"];
+        12 -> 13 [letter="off"];
+}

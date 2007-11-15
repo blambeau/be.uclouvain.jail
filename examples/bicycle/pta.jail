@@ -13,11 +13,10 @@ HMSC = <§seqp
     RUNNING=stop->STOPPED|end->STOPPED,
 
 	SC=start->dark->on->stop->start->end->off.
-
 §>;
 
-STD = (minimize (determinize (tmoves (HMSC))));
+// STD = (minimize (determinize (tmoves (HMSC))));
 
 (show (HMSC));
-(show (STD));
+// (show (STD));
 

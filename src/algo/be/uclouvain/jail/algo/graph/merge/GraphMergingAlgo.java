@@ -19,7 +19,10 @@ public class GraphMergingAlgo {
 	/** Executes the algorithm. */
 	public void execute(IGraphMergingInput input, IGraphMergingResult result) {
 		final IDirectedGraph graph = input.getGraph();
-
+		if (graph.getVerticesTotalOrder().size()==0) {
+			throw new IllegalArgumentException("Invalid empty graph.");
+		}
+		
 		// retrieve partitionners
 		final IGraphPartitionner<Object> vPart = input.getVertexPartitionner();
 		final IGraphPartitionner<Object> ePart = input.getEdgePartitionner();
@@ -30,9 +33,13 @@ public class GraphMergingAlgo {
 		// for each vertex
 		for (IGraphMemberGroup vertexDef: vertices) {
 			GraphVertexGroup vertex = new GraphVertexGroup(vertexDef);
+			if (vertex.size()==0) {
+				throw new AssertionError("No empty vertex group.");
+			}
 			
 			// take outgoing edges
 			GraphEdgeGroup outEdges = vertex.getOutgoingEdges();
+			if (outEdges.size()==0) { continue; }
 			GraphPartition outEdgesP = new GraphPartition(graph,outEdges);
 			
 			// refine according to reached group
