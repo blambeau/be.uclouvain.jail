@@ -3,6 +3,8 @@ package be.uclouvain.jail.graph.deco;
 import java.util.HashMap;
 import java.util.Map;
 
+import be.uclouvain.jail.graph.IDirectedGraph;
+
 /**
  * Allows uniqueness of attributes on vertices and edges.
  * 
@@ -119,17 +121,17 @@ public class GraphUniqueIndex implements IGraphConstraint {
 	}
 
 	/** Extracts a vertex attribute value. */
-	private Object extractVertexValue(DirectedGraph graph, Object vertex) {
+	private Object extractVertexValue(IDirectedGraph graph, Object vertex) {
 		return graph.getVertexInfo(vertex).getAttribute(attr);
 	}
 
 	/** Extracts an edge attribute value. */
-	private Object extractEdgeValue(DirectedGraph graph, Object edge) {
+	private Object extractEdgeValue(IDirectedGraph graph, Object edge) {
 		return graph.getEdgeInfo(edge).getAttribute(attr);
 	}
 
 	/** Extracts a component attribute value. */
-	private Object extractValue(DirectedGraph graph, Object comp) {
+	private Object extractValue(IDirectedGraph graph, Object comp) {
 		int mask = listener.getMask();
 		return (mask==EDGE) ? extractEdgeValue(graph,comp) : extractVertexValue(graph,comp);
 	}
@@ -161,7 +163,7 @@ public class GraphUniqueIndex implements IGraphConstraint {
 	}
 
 	/** Checks this constraint on a graph. */
-	public boolean isRespectedBy(DirectedGraph graph) {
+	public boolean isRespectedBy(IDirectedGraph graph) {
 		Map<Object,Object> index = new HashMap<Object,Object>();
 		int mask = listener.getMask();
 		Iterable<Object> comps = (mask==EDGE) ? graph.getEdges() : graph.getVertices();

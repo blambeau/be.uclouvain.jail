@@ -1,5 +1,7 @@
 package be.uclouvain.jail.graph.deco;
 
+import be.uclouvain.jail.graph.IDirectedGraph;
+
 /**
  * Defines a constraint to be respected by a graph.
  * 
@@ -65,6 +67,6 @@ public interface IGraphConstraint {
 	
 	/** Returns true if this constraint is respected by the graph, false
 	 * otherwise. */
-	public boolean isRespectedBy(DirectedGraph graph);
+	public boolean isRespectedBy(IDirectedGraph graph);
 	
 }

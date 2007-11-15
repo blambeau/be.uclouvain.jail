@@ -38,7 +38,7 @@ public class AttributeGraphFAInformer implements IGraphFAInformer {
 	public Object edgeLetter(IUserInfo s) {
 		Object letter = s.getAttribute(edgeLetterAttr);
 		if (letter == null) {
-			throw new IllegalArgumentException("UserInfo must contain FA edge letter.");
+			throw new IllegalStateException("UserInfo must contain FA edge letter.");
 		}
 		return letter;
 	}
@@ -47,7 +47,7 @@ public class AttributeGraphFAInformer implements IGraphFAInformer {
 	public boolean isAccepting(IUserInfo s) {
 		Object attr = s.getAttribute(isAcceptingAttr);
 		if (attr == null) {
-			throw new IllegalArgumentException("UserInfo must contain FA isAccepting flag.");
+			throw new IllegalStateException("UserInfo must contain FA isAccepting flag.");
 		}
 		return Boolean.TRUE.equals(attr);
 	}
@@ -56,7 +56,7 @@ public class AttributeGraphFAInformer implements IGraphFAInformer {
 	public boolean isError(IUserInfo s) {
 		Object attr = s.getAttribute(isErrorAttr);
 		if (attr == null) {
-			throw new IllegalArgumentException("UserInfo must contain FA isError flag.");
+			throw new IllegalStateException("UserInfo must contain FA isError flag.");
 		}
 		return Boolean.TRUE.equals(attr);
 	}
@@ -65,7 +65,7 @@ public class AttributeGraphFAInformer implements IGraphFAInformer {
 	public boolean isInitial(IUserInfo s) {
 		Object attr = s.getAttribute(isInitialAttr);
 		if (attr == null) {
-			throw new IllegalArgumentException("UserInfo must contain FA isInitial flag.");
+			throw new IllegalStateException("UserInfo must contain FA isInitial flag.");
 		}
 		return Boolean.TRUE.equals(attr);
 	}

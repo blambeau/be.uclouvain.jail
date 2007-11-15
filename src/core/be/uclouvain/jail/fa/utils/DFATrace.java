@@ -71,7 +71,6 @@ public class DFATrace<T> implements IDFATrace<T> {
 		return dfa.isError(endState);
 	}
 	
-	
 	/** Adapts this trace to some type. */
 	public <S> Object adapt(Class<S> c) {
 		if (c.isAssignableFrom(this.getClass())) {
