@@ -3,12 +3,18 @@ package be.uclouvain.jail.fa;
 import java.util.Collection;
 
 import be.uclouvain.jail.adapt.IAdaptable;
+import be.uclouvain.jail.fa.impl.GraphDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
-import be.uclouvain.jail.uinfo.IUserInfo;
 
 /**
  * Provides common methods of all finite state automaton classes.
- *  
+ * 
+ * <p>Please check the package.html to get some important informations
+ * about the implementation of this contract.</p>
+ * 
+ * <p>This interface may be implemented. Implementations on top of graphs
+ * are provided by {@link GraphDFA} and {@link GraphNFA}.</p>
+ * 
  * @author blambeau
  */
 public interface IFA extends IAdaptable {
@@ -27,9 +33,6 @@ public interface IFA extends IAdaptable {
 	
 	/** Checks if a state is marked as error. */
 	public boolean isError(Object s);
-	
-	/** Extracts the letter from an edge info. */
-	public Object getEdgeLetter(IUserInfo info);
 	
 	/** Returns an edge letter. */
 	public Object getEdgeLetter(Object s);

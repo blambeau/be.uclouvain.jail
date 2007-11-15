@@ -14,7 +14,24 @@ import be.uclouvain.jail.uinfo.IUserInfo;
 
 /**
  * Forces/checks that a graph is a DFA.
- *  
+ * 
+ * <p>This constraint checks the following facts on the graph:</p>
+ * <ul>
+ *     <li>Graph is connex.</i>
+ *     <li>Graph contains an initial state (and only one).</li>
+ *     <li>accepting, non accepting, error, initial flags are installed
+ *         on each vertex (according to the informer).</li>
+ *     <li>For each state, no two outgoing edges are labeled with the same
+ *         letter.</p>  
+ * </ul>
+ * 
+ * <p>This constraint must be constructed with an {@link IGraphFAInformer}
+ * which provides necessary informations about state flags and edge letters.<p> 
+ * 
+ * <p>Please note that this constraint does not implement install() and 
+ * uninstall() for now ; it is only intended to be used as a checking 
+ * predicate.</p> 
+ * 
  * @author blambeau
  */
 public class DFAGraphConstraint implements IGraphConstraint {

@@ -7,10 +7,11 @@ import be.uclouvain.jail.graph.adjacency.IVertex;
 import be.uclouvain.jail.uinfo.IUserInfo;
 
 /** 
- * Graph component factory for NFA. 
+ * Provides a Graph component factory that creates efficient implementations
+ * of vertices and edges to be used for NFAs.
  * 
- * <p>This factory creates {@link NFAVertex} and {@link DefaultEdge} instances for
- * vertices and edges, respectively.</p>
+ * <p>This factory is intended to be used when an {@link AdjacencyDirectedGraph} 
+ * will be used to implement a NFA.</p> 
  */
 public class NFAComponentFactory implements IGraphComponentFactory {
 

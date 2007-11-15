@@ -3,6 +3,13 @@ package be.uclouvain.jail.adapt;
 /**
  * Provides a way to get all external adaptations under specific control. 
  * 
+ * <p>This class encapsulates the implementation under {@link AdaptUtils} and
+ * an instance can be set statically on that class. It is not intended to be
+ * used directly.</p> 
+ * 
+ * <p>This interface can be implemented. Useful implementations are provided
+ * by {@link SimpleAdaptationTool} and {@link NetworkAdaptationTool}.</p>
+ * 
  * @author blambeau
  */
 public interface IAdaptationTool {

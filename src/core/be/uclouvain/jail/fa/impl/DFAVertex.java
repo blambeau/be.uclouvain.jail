@@ -17,7 +17,7 @@ import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.uinfo.UserInfoCapable;
 
 /**
- * <p>Efficient vertex implementation for DFAs.</p>
+ * Efficient vertex implementation for DFAs.
  * 
  * @author LAMBEAU Bernard
  */

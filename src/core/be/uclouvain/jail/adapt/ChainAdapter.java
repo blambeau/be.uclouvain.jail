@@ -3,7 +3,10 @@ package be.uclouvain.jail.adapt;
 import java.util.List;
 
 /**
- * Encapsulates an adapter by chaining sub-adapters.
+ * Encapsulates an adapter by chaining sub adapters.
+ * 
+ * <p>This class is mainly provided in order to implement the NetworkAdaptationTool 
+ * and is not intended to be used directly by the user.</p>
  * 
  * @author blambeau
  */

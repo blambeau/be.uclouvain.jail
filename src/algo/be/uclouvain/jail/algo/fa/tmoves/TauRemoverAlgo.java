@@ -73,12 +73,7 @@ public final class TauRemoverAlgo {
 	}
 	
 	/* ---------------------------------------------------------------------------------------------- Main */
-	/**
-	 * Executes the e-moves algorithm on a given source and result.
-	 * 
-	 * @param source a NFA with epsilon moves transitions.
-	 * @param algorithmResult a result to construct.
-	 */
+	/** Executes the e-moves algorithm on a given source and result. */
 	@SuppressWarnings("unchecked")
 	private void main(ITauRemoverInput input, ITauRemoverResult result) {
 		this.fa = input.getFA();

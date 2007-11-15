@@ -18,74 +18,52 @@ import be.uclouvain.jail.graph.deco.GraphConstraintViolationException;
  * <p>This INFA implementation act as a decorator of graph. This decoration
  * works with any correct graph implementation, but can be tuned according to 
  * the main specific constructor parameters.</p> 
+ * 
+ * <p>This class works with the following contributors. Please note that when
+ * not provided by the user, the different constructors use the default classes 
+ * indicated below for these contributors.</p>
+ * <ul>
+ *     <li>{@link IDirectedGraph} : graph implementation which provides the actual 
+ *         DFA data-structure. Default class used: {@link AdjacencyDirectedGraph} 
+ *         with a {@link NFAComponentFactory}.</li>
+ *     <li>{@link IAlphabet} : actual collection of letters used by the automaton.
+ *         Default class used: {@link AutoAlphabet}.</li>
+ *     <li>{@link IGraphFAInformer} : informer used to retrieve state flags and edge
+ *         letter inside IUserInfoS. Default class used: {@link AttributeGraphFAInformer}
+ *         with default attribute keys.</li>
+ * </ul>
+ * 
  */
 public class GraphNFA extends GraphFA implements INFA {
 
-	/** 
-	 * Creates a NFA instance.
-	 * 
-	 * <p>AdjacencyDirectedGraph(NFAComponentFactory) will be used as efficient data 
-	 * structure for automaton implementation. Moreover, the AttributeGraphFAInformer
-	 * with default attributes will be used.</p>
-	 */
+	/** Creates a NFA instance with all default contributors. */
 	public GraphNFA() {
 		this(new AttributeGraphFAInformer());
 	}
 	
-	/** 
-	 * Creates a NFA instance.
-	 * 
-	 * <p>AdjacencyDirectedGraph(NFAComponentFactory) will be used as efficient data 
-	 * structure for automaton implementation.</p>
-	 * 
-	 * @param informer NFA informer to get edge letter and state flags.
-	 */
+	/** Creates a NFA instance with a user-defined alphabet. */
 	public GraphNFA(IAlphabet alphabet) {
 		this(new AdjacencyDirectedGraph(new NFAComponentFactory()),
 				new AttributeGraphFAInformer(),alphabet);
 	}
 	
-	/** 
-	 * Creates a NFA instance.
-	 * 
-	 * <p>AdjacencyDirectedGraph(NFAComponentFactory) will be used as efficient data 
-	 * structure for automaton implementation.</p>
-	 * 
-	 * @param informer NFA informer to get edge letter and state flags.
-	 */
+	/** Creates a NFA instance with a specific informer. */
 	public GraphNFA(IGraphFAInformer informer) {
 		this(new AdjacencyDirectedGraph(new NFAComponentFactory()),informer);
 	}
 	
-	/** 
-	 * Creates a NFA instance. 
-	 * 
-	 * <p>This constructor can be used to decorate any graph as an automaton using
-	 * a default informer. Efficiency of the NFA cannot be garantied as actual
-	 * data structure used by the underlying graph is unknown.</p>
-	 */
+	/** Creates a NFA instance on top of an existing graph. */
 	public GraphNFA(IDirectedGraph graph) {
 		this(graph,new AttributeGraphFAInformer());
 	}
 	
-	/** 
-	 * Creates a NFA instance. 
-	 * 
-	 * <p>This constructor can be used to decorate any graph as an automaton using
-	 * the informer provided. Efficiency of the NFA cannot be garantied as actual
-	 * data structure used by the underlying graph is unknown.</p>
-	 */
+	/** Creates a NFA instance on top of an existing graph, with a specific
+	 * informer. */
 	public GraphNFA(IDirectedGraph graph, IGraphFAInformer informer) {
 		super(graph,informer);
 	}
 	
-	/** 
-	 * Creates a NFA instance. 
-	 * 
-	 * <p>This constructor can be used to decorate any graph as an automaton using
-	 * the informer provided. Efficiency of the NFA cannot be garantied as actual
-	 * data structure used by the underlying graph is unknown.</p>
-	 */
+	/** Creates a NFA instance with all specific constributors. */
 	public GraphNFA(IDirectedGraph graph, IGraphFAInformer informer, IAlphabet alphabet) {
 		super(graph,informer,alphabet);
 	}

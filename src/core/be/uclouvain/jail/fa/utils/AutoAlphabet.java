@@ -15,8 +15,14 @@ import be.uclouvain.jail.graph.utils.ITotalOrder;
 /**
  * Provides a useful automatic alphabet.
  * 
+ * <p>This alphabet is the default alphabet installed on automata constructed 
+ * with shortcut constructors.</p>
+ * 
+ * <p>This alphabet automatically identify all different letters used on 
+ * automaton edges. Please note however that you MUST provide a comparator at 
+ * construction when your letters are not Comparable.</p>
+ * 
  * @author blambeau
- *
  * @param <T> letter type.
  */
 public class AutoAlphabet<T> implements IAlphabet<T> {

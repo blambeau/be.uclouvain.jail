@@ -4,7 +4,7 @@ import be.uclouvain.jail.adapt.IAdaptable;
 import be.uclouvain.jail.algo.graph.utils.IGraphPartition;
 
 /**
- * Abstracts the result of {@link IDFAMinimizerAlgo}.
+ * Abstracts the result of {@link DFAMinimizerAlgo}.
  * 
  * @author blambeau
  */

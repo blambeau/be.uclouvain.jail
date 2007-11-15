@@ -7,8 +7,8 @@ import java.util.Map;
  * Acts as a collection of adaptations, through adapters.
  * 
  * <p>This class is mainly provided to help implementing the {@link IOpenAdaptable}
- * interface. It can also be used to implement an adapter by aggregation as it 
- * declares itself as an IAdapter.</p>
+ * interface. As it declares itself as an IAdapter, it can also be used to implement 
+ * an adapter by aggregation of sub adapters.</p>
  * 
  * @author blambeau
  */

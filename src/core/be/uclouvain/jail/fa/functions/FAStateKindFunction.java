@@ -2,7 +2,12 @@ package be.uclouvain.jail.fa.functions;
 
 import be.uclouvain.jail.uinfo.functions.AbstractAggregateFunction;
 
-/** Function to handle automaton state kind. */
+/** 
+ * Function to handle automaton state kind. 
+ * 
+ * <p>This function can be used when merging automaton states to compute
+ * the resulting state kind.</p>
+ */
 public class FAStateKindFunction extends AbstractAggregateFunction<FAStateKind> {
 
 	/** Computes the suppremum. */

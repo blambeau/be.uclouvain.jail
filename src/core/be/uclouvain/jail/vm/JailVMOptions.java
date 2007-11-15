@@ -24,7 +24,7 @@ public class JailVMOptions {
 	/** 
 	 * Returns an option value by name. 
 	 *
-	 * @thows a JailVMException if the option is not present.
+	 * @throws a JailVMException if the option is not present.
 	 */
 	public Object getOptionValue(String name) throws JailVMException {
 		if (!hasOption(name)) {

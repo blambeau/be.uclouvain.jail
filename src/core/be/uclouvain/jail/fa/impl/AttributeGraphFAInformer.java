@@ -4,7 +4,15 @@ import be.uclouvain.jail.uinfo.IUserInfo;
 
 /**
  * Provides an implementation that get FA informations in IUserInfo.
- *  
+ * 
+ * <p>This class internally uses four attribute keys to retrieve (in order)
+ * edge letter as well as initial, accepting and error state flags. The 
+ * default values for these keys are "letter", "isInitial", "isAccepting"
+ * and "isError", respectively.</p>
+ * 
+ * <p>Please note that this informer throws IllegalStateExceptionS when the
+ * attribute values cannot be found inside state and edge IUserInfoS.</p>
+ * 
  * @author blambeau
  */
 public class AttributeGraphFAInformer implements IGraphFAInformer {

@@ -11,6 +11,10 @@ import be.uclouvain.jail.graph.utils.ListTotalOrder;
 /**
  * Provides a finite alphabet over integers.
  * 
+ * <p>This alphabet contains Integer letters. Basically it contains letters
+ * from 0 to size-1, but can also be used in a more general scheme by providing
+ * start, offset et size fields at construction.</p>
+ * 
  * TODO: IntegerAlphabet.contains() is really inefficient, but so simple like this ;-)
  * @author blambeau
  */

@@ -3,7 +3,7 @@ package be.uclouvain.jail.algo.fa.tmoves;
 import be.uclouvain.jail.fa.IFA;
 
 /**
- * Abstract input of {@link ITauRemoverAlgo}.
+ * Abstract input of {@link TauRemoverAlgo}.
  * 
  * @author LAMBEAU Bernard
  */

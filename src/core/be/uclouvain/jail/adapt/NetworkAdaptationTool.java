@@ -17,8 +17,13 @@ import be.uclouvain.jail.uinfo.MapUserInfo;
 import be.uclouvain.jail.uinfo.functions.NonCommutativeFunction;
 
 /** 
- * Provides a magic adapter that is able to convert many objects by 
+ * Provides a "magic adapter" that is able to convert many objects by 
  * chaining other adapters.
+ * 
+ * <p>This adaptation tool is used by the Jail virtual machine by default.
+ * When used, please be careful that some unexpected adaptations may occur.
+ * The Jail VM command (adaptations ...) can be used to check adaptation
+ * tree of specific types.</p>
  * 
  * @author blambeau
  */

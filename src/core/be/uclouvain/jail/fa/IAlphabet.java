@@ -5,7 +5,16 @@ import java.util.Comparator;
 import be.uclouvain.jail.graph.utils.ITotalOrder;
 
 /**
- * Provides an finite automaton alphabet abstraction.
+ * Provides a finite automaton alphabet abstraction.
+ * 
+ * <p>An alphabet is basically a finite set of letters. However, Jail
+ * makes the assumption that alphabet letters are totally ordered. This is
+ * the reason why an alphabet extends the Comparator interface and provides
+ * a way to get a TotalOrder.</p>   
+ * 
+ * <p>This interface may be implemented by users. However, in many cases, 
+ * alphabets already provided by Jail makes the job. Take a look on AutoAlphabet
+ * specifically before implementing it.</p> 
  * 
  * @author blambeau
  */

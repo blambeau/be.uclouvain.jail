@@ -11,80 +11,57 @@ import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.graph.deco.GraphConstraintViolationException;
 
 /**
- * Default implementation of a deterministic automaton. 
+ * Implementation of a DFA on top of a IDirectedGraph. 
  * 
- * <p>This INFA implementation act as a decorator of graph. This decoration
+ * <p>This DFA implementation act as a decorator of graph. This decoration
  * works with any correct graph implementation, but can be tuned according to 
  * the main specific constructor parameters.</p> 
+ * 
+ * <p>This class works with the following contributors. Please note that when
+ * not provided by the user, the different constructors use the default classes 
+ * indicated below for these contributors.</p>
+ * <ul>
+ *     <li>{@link IDirectedGraph} : graph implementation which provides the actual 
+ *         DFA data-structure. Default class used: {@link AdjacencyDirectedGraph} 
+ *         with a {@link DFAComponentFactory}.</li>
+ *     <li>{@link IAlphabet} : actual collection of letters used by the automaton.
+ *         Default class used: {@link AutoAlphabet}.</li>
+ *     <li>{@link IGraphFAInformer} : informer used to retrieve state flags and edge
+ *         letter inside IUserInfoS. Default class used: {@link AttributeGraphFAInformer}
+ *         with default attribute keys.</li>
+ * </ul>
+ * 
  */
 public class GraphDFA extends GraphFA implements IDFA {
 
-	/** 
-	 * Creates a DFA instance.
-	 * 
-	 * <p>AdjacencyDirectedGraph(NFAComponentFactory) will be used as efficient data 
-	 * structure for automaton implementation. Moreover, the AttributeGraphFAInformer
-	 * with default attributes will be used.</p>
-	 */
+	/** Creates a DFA instance with all default contributors. */
 	public GraphDFA() {
 		this(new AttributeGraphFAInformer());
 	}
 	
-	/** 
-	 * Creates a DFA instance.
-	 * 
-	 * <p>AdjacencyDirectedGraph(DFAComponentFactory) will be used as efficient data 
-	 * structure for automaton implementation.</p>
-	 * 
-	 * @param informer DFA informer to get edge letter and state flags.
-	 */
+	/** Creates a DFA instance with a specific user informer. */
 	public GraphDFA(IGraphFAInformer informer) {
 		this(new AdjacencyDirectedGraph(new DFAComponentFactory()),informer);
 	}
 	
-	/** 
-	 * Creates a DFA instance.
-	 * 
-	 * <p>AdjacencyDirectedGraph(DFAComponentFactory) will be used as efficient data 
-	 * structure for automaton implementation.</p>
-	 * 
-	 * @param informer DFA informer to get edge letter and state flags.
-	 */
+	/** Creates a DFA instance with a specific alphabet. */
 	public GraphDFA(IAlphabet alphabet) {
 		this(new AdjacencyDirectedGraph(new DFAComponentFactory()),
 			 new AttributeGraphFAInformer(),
 			 alphabet);
 	}
 	
-	/** 
-	 * Creates a DFA instance. 
-	 * 
-	 * <p>This constructor can be used to decorate any graph as an automaton using
-	 * the informer provided. Efficiency of the DFA cannot be garantied as actual
-	 * data structure used by the underlying graph is unknown.</p>
-	 */
+	/** Creates a DFA instance on top of an existing graph, with a specific informer. */
 	public GraphDFA(IDirectedGraph graph, IGraphFAInformer informer) {
 		super(graph,informer);
 	}
 	
-	/** 
-	 * Creates a DFA instance. 
-	 * 
-	 * <p>This constructor can be used to decorate any graph as an automaton using
-	 * a default informer. Efficiency of the DFA cannot be garantied as actual
-	 * data structure used by the underlying graph is unknown.</p>
-	 */
+	/** Creates a DFA instance on top of an existing graph. */
 	public GraphDFA(IDirectedGraph graph) {
 		super(graph,new AttributeGraphFAInformer());
 	}
 	
-	/** 
-	 * Creates a DFA instance. 
-	 * 
-	 * <p>This constructor can be used to decorate any graph as an automaton using
-	 * the informer provided. Efficiency of the DFA cannot be garantied as actual
-	 * data structure used by the underlying graph is unknown.</p>
-	 */
+	/** Creates a DFA instance with specific graph informer and alphabet. */
 	public GraphDFA(IDirectedGraph graph, IGraphFAInformer informer, IAlphabet alphabet) {
 		super(graph,informer,alphabet);
 	}

@@ -10,8 +10,10 @@ import be.uclouvain.jail.graph.utils.DirectedGraphPath;
 /**
  * Provides a decorator of DFA traces with a query API.
  * 
+ * <p>This decorator provides many useful query method to know if the trace
+ * ends in an error state, an accepting state, etc.</p> 
+ * 
  * @author blambeau
- *
  * @param <T> type of trace letters.
  */
 public class DFATrace<T> implements IDFATrace<T> {

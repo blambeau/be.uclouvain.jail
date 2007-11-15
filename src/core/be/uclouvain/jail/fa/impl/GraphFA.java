@@ -9,7 +9,10 @@ import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
 
 /**
- * Common implementations of GraphDFA and GraphFA.
+ * Super class of GraphDFA and GraphNFA.
+ * 
+ * <p>Please read documentation of these two classes in order to get important
+ * information about contributors of this class.</p> 
  * 
  * @author blambeau
  */
