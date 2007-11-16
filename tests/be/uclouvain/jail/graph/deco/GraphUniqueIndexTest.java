@@ -1,7 +1,10 @@
 package be.uclouvain.jail.graph.deco;
 
 import junit.framework.TestCase;
+import be.uclouvain.jail.graph.GraphConstraintViolationException;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
+import be.uclouvain.jail.graph.constraints.AbstractGraphConstraint;
+import be.uclouvain.jail.graph.constraints.GraphUniqueIndex;
 import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.uinfo.MapUserInfo;
 
@@ -32,7 +35,7 @@ public class GraphUniqueIndexTest extends TestCase {
 	
 	/** Tests that the graph constraint works. */
 	public void testGraphMandatoryUniqueConstraintOK() {
-		new GraphUniqueIndex(GraphUniqueIndex.VERTEX,"id",true).installOn(graph);
+		new GraphUniqueIndex(AbstractGraphConstraint.VERTEX,"id",true).installOn(graph);
 		graph.createVertex(info(1));
 		graph.createVertex(info(2));
 		graph.createVertex(info(3));
@@ -43,7 +46,7 @@ public class GraphUniqueIndexTest extends TestCase {
 	
 	/** Tests that the graph constraint works. */
 	public void testGraphOptionalUniqueConstraintOK() {
-		new GraphUniqueIndex(GraphUniqueIndex.VERTEX,"id",false).installOn(graph);
+		new GraphUniqueIndex(AbstractGraphConstraint.VERTEX,"id",false).installOn(graph);
 		graph.createVertex(info(1));
 		graph.createVertex(info(null));
 		graph.createVertex(info(3));
@@ -56,7 +59,7 @@ public class GraphUniqueIndexTest extends TestCase {
 	public void testGraphMandatoryUniqueConstraintKO() throws Exception {
 		// Create unique/mandatory constraint on id
 		setUp();
-		new GraphUniqueIndex(GraphUniqueIndex.VERTEX,"id",true).installOn(graph);
+		new GraphUniqueIndex(AbstractGraphConstraint.VERTEX,"id",true).installOn(graph);
 		
 		// Check mandatory catched
 		try {
@@ -67,7 +70,7 @@ public class GraphUniqueIndexTest extends TestCase {
 		
 		// Create unique/mandatory constraint on id
 		setUp();
-		new GraphUniqueIndex(GraphUniqueIndex.VERTEX,"id",true).installOn(graph);
+		new GraphUniqueIndex(AbstractGraphConstraint.VERTEX,"id",true).installOn(graph);
 		
 		// Check uniqueness catched
 		boolean atLeastOne = false;
@@ -83,7 +86,7 @@ public class GraphUniqueIndexTest extends TestCase {
 	
 	/** Tests that index gives correct results. */
 	public void testIndexOK() throws Exception {
-		GraphUniqueIndex index = new GraphUniqueIndex(GraphUniqueIndex.VERTEX,"id",true);
+		GraphUniqueIndex index = new GraphUniqueIndex(AbstractGraphConstraint.VERTEX,"id",true);
 		index.installOn(graph);
 		
 		Object[] v = new Object[10];

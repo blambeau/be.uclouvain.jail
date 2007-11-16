@@ -8,9 +8,9 @@ import java.util.Set;
 
 import be.uclouvain.jail.fa.IAlphabet;
 import be.uclouvain.jail.fa.INFA;
+import be.uclouvain.jail.graph.GraphConstraintViolationException;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
-import be.uclouvain.jail.graph.deco.GraphConstraintViolationException;
 
 /**
  * Default implementation of a non deterministic automaton.

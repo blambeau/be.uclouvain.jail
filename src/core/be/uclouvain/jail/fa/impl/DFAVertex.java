@@ -9,10 +9,10 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import net.chefbe.javautils.robust.exceptions.IllegalUsageException;
+import be.uclouvain.jail.graph.GraphConstraintViolationException;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.IEdge;
 import be.uclouvain.jail.graph.adjacency.IVertex;
-import be.uclouvain.jail.graph.deco.GraphConstraintViolationException;
 import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.uinfo.UserInfoCapable;
 

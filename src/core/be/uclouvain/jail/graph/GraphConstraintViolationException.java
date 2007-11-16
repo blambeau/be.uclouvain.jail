@@ -1,4 +1,5 @@
-package be.uclouvain.jail.graph.deco;
+package be.uclouvain.jail.graph;
+
 
 /**
  * Exception thrown by graph constraints when a violation occurs.

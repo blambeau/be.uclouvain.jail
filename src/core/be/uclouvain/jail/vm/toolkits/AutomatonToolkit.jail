@@ -54,3 +54,26 @@ define native (tmoves <D> :tau? <t> :state? <S> :edge? <E>) returns <M>;
  * <C>             + (IDFA) returns the synchronized product of input DFAs.
  */
 define native (compose <D...> :state? <S> :edge? <E>) returns <C>;
+
+/**
+ * Completion algorithm for DFAs. This algorithm takes a DFA as input and 
+ * generates a complement DFA, that is a DFA in which each state has an 
+ * outgoing edge labeled with each letter of the alphabet.
+ *
+ * The way missing edges are created in the result is controlled by the 
+ * heuristic <H>. Recognized heuristics are:
+ *
+ *    ^error : this heuristic adds missing edges leading to a new error 
+ *             state. 
+ *    ^same  : this heuristic adds missing edges looping on the source 
+ *             state.
+ * 
+ * <D>             + (IDFA) a DFA to complement.
+ * <H>             + (String) Heuristic to use to complement the DFA (error,same).
+ * <S>             + (<gm:match_do>) matching rules to use for the states.
+ * <E>             + (<gm:match_do>) matching rules to use for the edges.
+ *                 + (syntax of the matching rules follows the GMatch grammar, 
+ *                    see javadoc).
+ * <C>             + (IDFA) returns the complemented DFA.
+ */
+define native (complement <D> :heuristic <H> :state? <S> :edge? <E>) returns <C>;

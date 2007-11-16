@@ -6,9 +6,9 @@ import java.util.Set;
 
 import be.uclouvain.jail.fa.IAlphabet;
 import be.uclouvain.jail.fa.IDFA;
+import be.uclouvain.jail.graph.GraphConstraintViolationException;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
-import be.uclouvain.jail.graph.deco.GraphConstraintViolationException;
 
 /**
  * Implementation of a DFA on top of a IDirectedGraph. 

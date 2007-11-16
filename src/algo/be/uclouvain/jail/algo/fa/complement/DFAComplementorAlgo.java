@@ -41,7 +41,9 @@ public class DFAComplementorAlgo {
 					missing.add(letter);
 				}
 			}
-			result.onMissing(state,missing);
+			if (!missing.isEmpty()) {
+				result.onMissing(state,missing);
+			}
 		}
 		
 		result.ended();

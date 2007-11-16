@@ -9,8 +9,9 @@ import be.uclouvain.jail.algo.graph.shortest.dsp.DSP;
 import be.uclouvain.jail.dialect.dot.DOTDirectedGraphPrintable;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
+import be.uclouvain.jail.graph.constraints.AbstractGraphConstraint;
+import be.uclouvain.jail.graph.constraints.GraphUniqueIndex;
 import be.uclouvain.jail.graph.deco.DirectedGraph;
-import be.uclouvain.jail.graph.deco.GraphUniqueIndex;
 import be.uclouvain.jail.graph.utils.DirectedGraphWriter;
 import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.uinfo.MapUserInfo;
@@ -53,7 +54,7 @@ public class NetworkAdaptationTool implements IAdaptationTool {
 	/** Creates a network adapter. */
 	public NetworkAdaptationTool() {
 		graph = new DirectedGraph(new AdjacencyDirectedGraph());
-		byClassIndex = new GraphUniqueIndex(GraphUniqueIndex.VERTEX,"class",true).installOn(graph);
+		byClassIndex = new GraphUniqueIndex(AbstractGraphConstraint.VERTEX,"class",true).installOn(graph);
 	}
 
 	/** Returns the adaptation graph. */

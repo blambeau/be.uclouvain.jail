@@ -1,9 +1,5 @@
 package be.uclouvain.jail.fa.constraints;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import be.uclouvain.jail.algo.graph.connex.ConnexGraphConstraint;
 import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.fa.impl.IGraphFAInformer;
 import be.uclouvain.jail.graph.IDirectedGraph;
@@ -11,7 +7,7 @@ import be.uclouvain.jail.graph.constraints.AbstractGraphConstraint;
 import be.uclouvain.jail.uinfo.IUserInfo;
 
 /**
- * Forces/checks that a graph is a DFA.
+ * Forces/checks that a graph is a PTA.
  * 
  * <p>This constraint checks the following facts on the graph:</p>
  * <ul>
@@ -20,7 +16,9 @@ import be.uclouvain.jail.uinfo.IUserInfo;
  *     <li>accepting, non accepting, error, initial flags are installed
  *         on each vertex (according to the informer).</li>
  *     <li>For each state, no two outgoing edges are labeled with the same
- *         letter.</p>  
+ *         letter.</p>
+ *     <li>Each state contains one and only one incoming edge, excepted the
+ *         initial state which has no incoming edge.</li>  
  * </ul>
  * 
  * <p>This constraint must be constructed with an {@link IGraphFAInformer}
@@ -32,57 +30,37 @@ import be.uclouvain.jail.uinfo.IUserInfo;
  * 
  * @author blambeau
  */
-public class DFAGraphConstraint extends AbstractGraphConstraint {
+public class PTAGraphConstraint extends AbstractGraphConstraint {
 
 	/** Informer to use. */
 	private IGraphFAInformer informer;
 	
 	/** Creates a constraint with a user-defined informer. */
-	public DFAGraphConstraint(IGraphFAInformer informer) {
+	public PTAGraphConstraint(IGraphFAInformer informer) {
 		this.informer = informer;
 	}
 
 	/** Creates a constraint with a default informer. */
-	public DFAGraphConstraint() {
+	public PTAGraphConstraint() {
 		this(new AttributeGraphFAInformer());
 	}
 	
 	/** Checks that the constraint is respected by a graph. */
 	public boolean isRespectedBy(IDirectedGraph graph) {
-		// check that DFA is connex
-		boolean connex = new ConnexGraphConstraint().isRespectedBy(graph);
-		if (!connex) { return false; }
+		// check that its at least a DFA
+		boolean dfa = new DFAGraphConstraint().isRespectedBy(graph);
+		if (!dfa) { return false; }
 
 		// check states
-		int initCount = 0;
-		Set<Object> seen = new HashSet<Object>();
 		for (Object vertex: graph.getVertices()) {
+			int inCount = graph.getIncomingEdges(vertex).size();
 			IUserInfo info = graph.getVertexInfo(vertex);
-			
-			// only one init state
-			try {
-				if (informer.isInitial(info)) {
-					initCount++;
-					if (initCount > 1) {
-						return false;
-					}
+			if (informer.isInitial(info)) {
+				if (inCount != 0) { 
+					return false; 
 				}
-			
-				// let informer check that it find what it needs
-				informer.isError(info);
-				informer.isAccepting(info);
-			} catch (IllegalStateException s) {
+			} else if (inCount != 1) {
 				return false;
-			}
-			
-			// check outgoing edges
-			seen.clear();
-			for (Object edge: graph.getOutgoingEdges(vertex)) {
-				Object letter = informer.edgeLetter(graph.getEdgeInfo(edge));
-				if (seen.contains(letter)) {
-					return false;
-				}
-				seen.add(letter);
 			}
 		}
 		

@@ -9,8 +9,9 @@ import be.uclouvain.jail.dialect.seqp.SEQPGraphLoader;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.impl.GraphDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
+import be.uclouvain.jail.graph.constraints.AbstractGraphConstraint;
+import be.uclouvain.jail.graph.constraints.GraphUniqueIndex;
 import be.uclouvain.jail.graph.deco.DirectedGraph;
-import be.uclouvain.jail.graph.deco.GraphUniqueIndex;
 
 /**
  * Minimization tests, inspired from Hopcroft 2005 book.
@@ -42,7 +43,7 @@ public class Hopcroft2005Test extends TestCase {
 		
 		IDirectedGraph dfag = dfa155.getGraph();
 		DirectedGraph g = (DirectedGraph) dfag.adapt(DirectedGraph.class);
-		GraphUniqueIndex index = new GraphUniqueIndex(GraphUniqueIndex.VERTEX,"label",true).installOn(g);
+		GraphUniqueIndex index = new GraphUniqueIndex(AbstractGraphConstraint.VERTEX,"label",true).installOn(g);
 		
 		// partition it
 		IGraphPartition p = new DFAMinimizer(dfa155).getStatePartition();

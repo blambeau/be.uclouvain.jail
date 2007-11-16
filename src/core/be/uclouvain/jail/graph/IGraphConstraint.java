@@ -1,18 +1,21 @@
-package be.uclouvain.jail.graph.deco;
+package be.uclouvain.jail.graph;
 
-import be.uclouvain.jail.graph.IDirectedGraph;
+import be.uclouvain.jail.graph.deco.DirectedGraph;
+import be.uclouvain.jail.graph.deco.IGraphListener;
 
 /**
  * Defines a constraint to be respected by a graph.
  * 
- * <p>Contraints are the way to ensure some properties on graphs. They typically
- * implement or use a {@link IGraphListener} to listen to graph changes and throw 
- * {@link GraphConstraintViolationException} when changes tend to violate the 
- * graph constraint.</p>
+ * <p>Contraints are the way to ensure/check some properties on graphs. A constraint
+ * is said to be active when it ensure that the property will never be violated. These
+ * constraints typically implement or use a {@link IGraphListener} to listen to graph 
+ * changes and throw {@link GraphConstraintViolationException} when changes tend to 
+ * violate the graph constraint. All constraints also provide a check to verify if the
+ * property is currently respected by the graph ({@link #isRespectedBy(IDirectedGraph)}.
+ * The {@link IGraphPredicate} implementation has exactly the same semantics.</p>
  * 
- * <p>Constraints may be used in two different ways: by installation on graph, or 
- * by external test. The first way uses the following syntax (for some GraphUniqueIndex 
- * constraint, for example):</p>
+ * <p>The way to use active constraints is as follows (for some GraphUniqueIndex constraint, 
+ * for example):</p>
  * <pre>
  *     // consider some graph instance
  *     DirectedGraph graph = [...]
@@ -29,7 +32,7 @@ import be.uclouvain.jail.graph.IDirectedGraph;
  * create and install the constraint at once (because, as for GraphUniqueIndex, some 
  * constraints provide useful effects to be used after installation.</p>
  * 
- * <p>The second way is quite simple and has no effect on the graph:</p>
+ * <p>The check/predicate semantics of the constraint is used simply as follows:</p>
  * <pre>
  *     // consider some graph instance
  *     DirectedGraph graph = [...]
@@ -37,12 +40,19 @@ import be.uclouvain.jail.graph.IDirectedGraph;
  *     // just check some graph constraint from the outside
  *     // are vertex ids unique on my graph?
  *     boolean unique = new GraphUniqueIndex(GraphUniqueIndex.VERTEX,"id",true)
- *                         .isRespectedBy(graph):
+ *                         .isRespectedBy(graph);
+ *                         
+ *     // which is equivalent to the predicate evaluation method
+ *     boolean uniq2 = new GraphUniqueIndex(GraphUniqueIndex.VERTEX,"id",true)
+ *                         .evaluate(graph);
+ *                         
+ *     // ... ensures that ...
+ *     assertTrue(unique,uniq2);
  * </pre> 
  * 
  * @author blambeau
  */
-public interface IGraphConstraint {
+public interface IGraphConstraint extends IGraphPredicate {
 
 	/** 
 	 * Installs the constraint on the graph. 
@@ -54,14 +64,19 @@ public interface IGraphConstraint {
 	 * @param graph the graph on which the constraint must be installed.
 	 * @throws GraphConstraintViolatioException if the constraint is not 
 	 * already respected by the graph.
+	 * @throws UnsupportedOperationException when the constraint is not (yet) 
+	 * active.
 	 */
-	public <T extends IGraphConstraint> T installOn(DirectedGraph graph) throws GraphConstraintViolationException;
+	public <T extends IGraphConstraint> T installOn(DirectedGraph graph) 
+		throws GraphConstraintViolationException;
 
 	/** 
 	 * Uninstalls constraint on graph. 
 	 * 
-	 * <p>This method throws an IllegalStateException when the constraint has
-	 * not been previously installed on a graph.</p>
+	 * @throws IllegalStateException when the constraint has not been previously 
+	 * installed on a graph.</p>
+	 * @throws UnsupportedOperationException when the constraint is not (yet) 
+	 * active.
 	 */
 	public void uninstall();
 	

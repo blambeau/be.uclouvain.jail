@@ -192,10 +192,25 @@ public final class JailTestUtils {
 		return new GraphNFA(SEQPGraphLoader.load(from));		
 	}
 	
+	/** Returns an array containing the NFAs as underlying graphs. */
+	public static IDirectedGraph[] getAllNFAGraphs() throws Exception {
+		return new IDirectedGraph[] {
+				SINGLE_NFA().getGraph(), HOP_Graph56(), HOP_Graph73()
+		};
+	}
+	
 	/** Returns an array containing all known NFAs. */
 	public static INFA[] getAllNFAs() throws Exception {
 		return new INFA[] {
 				SINGLE_NFA(), HOP_NFA56(), HOP_NFA73()
+		};
+	}
+	
+	/** Returns an array containing the DFAs as underlying graphs. */
+	public static IDirectedGraph[] getAllDFAGraphs() throws Exception {
+		return new IDirectedGraph[] {
+				EMPTY_DFA().getGraph(), SINGLE_DFA().getGraph(), 
+				HOP_Graph63(), HOP_Graph78(), HOP_Graph155(), HOP_Graph162()
 		};
 	}
 	

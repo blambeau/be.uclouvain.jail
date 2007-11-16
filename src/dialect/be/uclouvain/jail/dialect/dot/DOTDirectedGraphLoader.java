@@ -11,8 +11,9 @@ import net.chefbe.autogram.ast2.parsing.peg.Pos;
 import net.chefbe.autogram.ast2.utils.BaseLocation;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
+import be.uclouvain.jail.graph.constraints.AbstractGraphConstraint;
+import be.uclouvain.jail.graph.constraints.GraphUniqueIndex;
 import be.uclouvain.jail.graph.deco.DirectedGraph;
-import be.uclouvain.jail.graph.deco.GraphUniqueIndex;
 import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.uinfo.MapUserInfo;
 
@@ -82,7 +83,7 @@ public class DOTDirectedGraphLoader {
 		
 		/** Callback method for GRAPHDEF nodes. */
 		public Object GRAPHDEF(IASTNode node) throws Exception {
-			index = new GraphUniqueIndex(GraphUniqueIndex.VERTEX,"id",true).installOn(graph);
+			index = new GraphUniqueIndex(AbstractGraphConstraint.VERTEX,"id",true).installOn(graph);
 			super.recurseOnChildren(node);
 			index.uninstall();
 			return null;

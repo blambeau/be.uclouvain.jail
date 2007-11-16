@@ -1,25 +1,24 @@
-package be.uclouvain.jail.graph.deco;
+package be.uclouvain.jail.graph.constraints;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import be.uclouvain.jail.graph.GraphConstraintViolationException;
 import be.uclouvain.jail.graph.IDirectedGraph;
+import be.uclouvain.jail.graph.IGraphConstraint;
+import be.uclouvain.jail.graph.deco.DirectedGraph;
+import be.uclouvain.jail.graph.deco.GraphChangeEvent;
+import be.uclouvain.jail.graph.deco.IGraphDelta;
+import be.uclouvain.jail.graph.deco.IGraphDeltaVisitor;
+import be.uclouvain.jail.graph.deco.IGraphListener;
 
 /**
  * Allows uniqueness of attributes on vertices and edges.
  * 
  * @author blambeau
  */
-public class GraphUniqueIndex implements IGraphConstraint {
+public class GraphUniqueIndex extends AbstractGraphConstraint {
 
-	/** Index on edge. */
-	public static final int EDGE = GraphChangeEvent.EDGE_CREATED | GraphChangeEvent.EDGE_REMOVED 
-	                             | GraphChangeEvent.EDGE_CHANGED;
-	
-	/** Index on vertex. */
-	public static final int VERTEX = GraphChangeEvent.VERTEX_CREATED | GraphChangeEvent.VERTEX_REMOVED 
-                                   | GraphChangeEvent.VERTEX_CHANGED;
-	
 	/** Graph on which the constraint is installed. */
 	private DirectedGraph graph;
 	
@@ -35,28 +34,24 @@ public class GraphUniqueIndex implements IGraphConstraint {
 	/** Attribute is mandatory? */
 	private boolean mandatory;
 	
+	/** Mask. */
+	private int mask;
+	
 	/** Listener used to check constraint. */
 	class IndexListener implements IGraphListener, IGraphDeltaVisitor {
 		
-		/** Mask. */
-		private int mask;
-		
 		/** Creates a listener instance. */
-		public IndexListener(int mask) {
-			if (mask != EDGE && mask != VERTEX) {
-				throw new IllegalArgumentException("Incorrect index type.");
-			}
-			this.mask = mask;
+		public IndexListener() {
 		}
 
-		/** Returns the mask. */
-		public int getMask() {
-			return mask;
-		}
-		
 		/** Fired when the graph changed. */
 		public void graphChanged(DirectedGraph graph, IGraphDelta delta) {
-			delta.accept(this, mask);
+			int what = (mask == AbstractGraphConstraint.EDGE) ?
+			           (GraphChangeEvent.EDGE_CREATED | GraphChangeEvent.EDGE_REMOVED 
+			        		   | GraphChangeEvent.EDGE_CHANGED) :
+			           (GraphChangeEvent.VERTEX_CREATED | GraphChangeEvent.VERTEX_REMOVED 
+	                           | GraphChangeEvent.VERTEX_CHANGED);
+			delta.accept(this, what);
 		}
 
 		/** Check constraint. */
@@ -113,35 +108,29 @@ public class GraphUniqueIndex implements IGraphConstraint {
 	}
 	
 	/** Creates a uniqueness constraint. */
-	public GraphUniqueIndex(int type, String attr, boolean mandatory) {
-		this.listener = new IndexListener(type);
-		this.index = new HashMap<Object,Object>();
+	public GraphUniqueIndex(int mask, String attr, boolean mandatory) {
+		if (mask != AbstractGraphConstraint.EDGE && mask != AbstractGraphConstraint.VERTEX) {
+			throw new IllegalArgumentException("Incorrect index type.");
+		}
+		this.mask = mask;
 		this.attr = attr;
 		this.mandatory = mandatory;
 	}
 
-	/** Extracts a vertex attribute value. */
-	private Object extractVertexValue(IDirectedGraph graph, Object vertex) {
-		return graph.getVertexInfo(vertex).getAttribute(attr);
-	}
-
-	/** Extracts an edge attribute value. */
-	private Object extractEdgeValue(IDirectedGraph graph, Object edge) {
-		return graph.getEdgeInfo(edge).getAttribute(attr);
-	}
-
 	/** Extracts a component attribute value. */
 	private Object extractValue(IDirectedGraph graph, Object comp) {
-		int mask = listener.getMask();
-		return (mask==EDGE) ? extractEdgeValue(graph,comp) : extractVertexValue(graph,comp);
+		return graph.getUserInfoOf(comp).getAttribute(attr);
 	}
 	
 	/** Install the constraint on a graph. */
 	@SuppressWarnings("unchecked")
 	public <T extends IGraphConstraint> T installOn(DirectedGraph graph) throws GraphConstraintViolationException {
 		this.graph = graph;
-		int mask = listener.getMask();
-		Iterable<Object> comps = (mask==EDGE) ? graph.getEdges() : graph.getVertices();
+		this.listener = new IndexListener();
+		this.index = new HashMap<Object,Object>();
+
+		// fill index initially
+		Iterable<Object> comps = (mask==AbstractGraphConstraint.EDGE) ? graph.getEdges() : graph.getVertices();
 		for (Object comp: comps) {
 			Object key = extractValue(graph,comp);
 			if (index.containsKey(key)) {
@@ -150,8 +139,10 @@ public class GraphUniqueIndex implements IGraphConstraint {
 				index.put(key, comp);
 			}
 		}
+		
+		// add listener to the graph
 		graph.addGraphListener(listener);
-		return (T) GraphUniqueIndex.this;
+		return (T) this;
 	}
 
 	/** Uninstalls on a graph. */
@@ -165,8 +156,7 @@ public class GraphUniqueIndex implements IGraphConstraint {
 	/** Checks this constraint on a graph. */
 	public boolean isRespectedBy(IDirectedGraph graph) {
 		Map<Object,Object> index = new HashMap<Object,Object>();
-		int mask = listener.getMask();
-		Iterable<Object> comps = (mask==EDGE) ? graph.getEdges() : graph.getVertices();
+		Iterable<Object> comps = (mask==AbstractGraphConstraint.EDGE) ? graph.getEdges() : graph.getVertices();
 		for (Object comp: comps) {
 			Object key = extractValue(graph,comp);
 			if (index.containsKey(key)) {
@@ -191,11 +181,11 @@ public class GraphUniqueIndex implements IGraphConstraint {
 	/** Get a user-friendly message for constraint violation. */ 
 	private String getMessage(Object key) {
 		if (key == null) {
-			return ((listener.getMask() == VERTEX) ? "Vertex " : "Edge ") +
+			return ((mask == AbstractGraphConstraint.VERTEX) ? "Vertex " : "Edge ") +
 			       "attribute [" + attr + "] is mandatory.";
 		}
 		return "Duplicate " + 
-		       ((listener.getMask() == VERTEX) ? "vertex " : "edge ") +
+		       ((mask == AbstractGraphConstraint.VERTEX) ? "vertex " : "edge ") +
 		       "attribute [" + attr + "] value : " + key.toString();
 	}
 	

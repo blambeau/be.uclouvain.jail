@@ -2,27 +2,17 @@ package be.uclouvain.jail.algo.graph.connex;
 
 import be.uclouvain.jail.algo.graph.utils.IGraphPartition;
 import be.uclouvain.jail.graph.IDirectedGraph;
-import be.uclouvain.jail.graph.deco.DirectedGraph;
-import be.uclouvain.jail.graph.deco.GraphConstraintViolationException;
-import be.uclouvain.jail.graph.deco.IGraphConstraint;
+import be.uclouvain.jail.graph.constraints.AbstractGraphConstraint;
 
 /**
  * Force a graph to be connex.
  * 
+ * <p>This constraint checks that the directed graph contains only
+ * one connex component.</p>
+ * 
  * @author blambeau
  */
-public class ConnexGraphConstraint implements IGraphConstraint {
-
-	/** Installs the constraint on a graph. */
-	public <T extends IGraphConstraint> T installOn(DirectedGraph graph)
-			throws GraphConstraintViolationException {
-		throw new UnsupportedOperationException();
-	}
-
-	/** Uninstalls this constraint from the graph. */
-	public void uninstall() {
-		throw new UnsupportedOperationException();
-	}
+public class ConnexGraphConstraint extends AbstractGraphConstraint {
 
 	/** Checks if a graph is connex. */
 	public boolean isRespectedBy(IDirectedGraph graph) {

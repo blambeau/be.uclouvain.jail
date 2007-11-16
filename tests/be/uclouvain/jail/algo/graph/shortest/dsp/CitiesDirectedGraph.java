@@ -1,8 +1,9 @@
 package be.uclouvain.jail.algo.graph.shortest.dsp;
 
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
+import be.uclouvain.jail.graph.constraints.AbstractGraphConstraint;
+import be.uclouvain.jail.graph.constraints.GraphUniqueIndex;
 import be.uclouvain.jail.graph.deco.DirectedGraph;
-import be.uclouvain.jail.graph.deco.GraphUniqueIndex;
 import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.uinfo.MapUserInfo;
 
@@ -19,7 +20,7 @@ public class CitiesDirectedGraph extends DirectedGraph {
 	/** Creates a graph instance. */
 	public CitiesDirectedGraph() {
 		super(new AdjacencyDirectedGraph());
-		index = new GraphUniqueIndex(GraphUniqueIndex.VERTEX,"label",true).installOn(this);
+		index = new GraphUniqueIndex(AbstractGraphConstraint.VERTEX,"label",true).installOn(this);
 		createGraph();
 	}
 
