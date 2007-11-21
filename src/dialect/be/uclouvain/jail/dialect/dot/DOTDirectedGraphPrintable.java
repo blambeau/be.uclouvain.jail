@@ -93,10 +93,15 @@ public class DOTDirectedGraphPrintable extends AbstractPrintable implements IAda
 
 	/** Returns a string containing the main dot graph attributes. */
 	protected String graphAttributes() {
-		return Jail
-				.getStringProperty(
-						"DirectedGraphPrintable.dot.graph.attributes",
-						"rankdir=\"LR\"");
+		Object rankdir = graph.getUserInfo().getAttribute("dot.rankdir");
+		if (rankdir != null) {
+			return "rankdir=\"" + rankdir.toString() + "\""; 
+		} else {
+			return Jail
+					.getStringProperty(
+							"DirectedGraphPrintable.dot.graph.attributes",
+							"rankdir=\"LR\"");
+		}
 	}
 
 	/** Returns a String containing the main dot node attributes. */
