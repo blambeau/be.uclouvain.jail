@@ -1,12 +1,3 @@
-/*
-	with isT12 equiv !isT34,
-	     isN1 equiv !isN0,
-	     isM1 equiv !isM0,
-	BDD1 = (isM0 and isN0 and isT12),
-	BDD2 = (isM0 and (isN1 or (isN0 and isT34)))
-	BDD3 = isM1;
-*/
-
 /** Automaton dot command. */
 define (adot <A>) 
 	     (copy (A)
@@ -23,16 +14,13 @@ define (show <A>)
 	     (jdotty (adot (A)));
 
 
-
-BDD1 = (cast <§bdd (isM0 and isN0 and isT12) §> 'be.uclouvain.jail.fa.IDFA');
-BDD2 = (cast <§bdd (isM0 and (not isN0 or (isN0 and not isT12))) §> 'be.uclouvain.jail.fa.IDFA');
-BDD3 = (cast <§bdd not isM0 §> 'be.uclouvain.jail.fa.IDFA');
+BDD1 = (cast <§bdd (isM0 and (not isN0 or (isN0 and not isT12))) §> 'be.uclouvain.jail.fa.IDFA');
+BDD2 = (cast <§bdd not(isM0 and (not isN0 or (isN0 and not isT12))) §> 'be.uclouvain.jail.fa.IDFA');
 
 (show (BDD1));
 (show (BDD2));
-(show (BDD3));
 
-C = (compose (BDD1) (BDD2) (BDD3) 
+C = (compose (BDD1) (BDD2)
              :state {@label -> list(@variable)});
 (show (C));
 
