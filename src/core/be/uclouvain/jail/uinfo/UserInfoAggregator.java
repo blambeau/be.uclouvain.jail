@@ -3,9 +3,7 @@ package be.uclouvain.jail.uinfo;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
-import net.chefbe.javautils.collections.set.ListOrderedSet;
 import be.uclouvain.jail.uinfo.functions.BoolAndFunction;
 import be.uclouvain.jail.uinfo.functions.BoolOrFunction;
 import be.uclouvain.jail.uinfo.functions.IAggregateFunction;
@@ -36,7 +34,7 @@ public class UserInfoAggregator implements IUserInfoCreator<Collection<IUserInfo
 
 		@SuppressWarnings("unchecked")
 		public void populate(IUserInfo target, Collection<IUserInfo> source) {
-			Set<Object> values = new ListOrderedSet<Object>();
+			List<Object> values = new ArrayList<Object>();
 			for (IUserInfo info: source) {
 				values.add(info.getAttribute(sourceAttr));
 			}

@@ -1,10 +1,10 @@
 package be.uclouvain.jail.algo.graph.copy.match;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 
 import net.chefbe.autogram.ast2.IASTNode;
-import net.chefbe.javautils.collections.set.ListOrderedSet;
 import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.uinfo.IUserInfoPopulator;
 import be.uclouvain.jail.uinfo.functions.AggregateFunctionFactory;
@@ -67,7 +67,7 @@ public class GMatchAggregator implements IUserInfoPopulator<Collection<IUserInfo
 					String attr = argNode.getAttrString("name");
 					
 					// extracts IUserInfo
-					Set<Object> values = new ListOrderedSet<Object>();
+					List<Object> values = new ArrayList<Object>();
 					for (IUserInfo info: source) {
 						values.add(info.getAttribute(attr));
 					}

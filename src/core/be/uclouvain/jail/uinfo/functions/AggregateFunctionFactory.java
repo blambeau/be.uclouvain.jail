@@ -45,6 +45,11 @@ public final class AggregateFunctionFactory {
 	public static IAggregateFunction<?> group() {
 		return new GroupFunction();
 	}
+	
+	/** Factors a list function. */
+	public static IAggregateFunction<?> list() {
+		return new ListFunction();
+	}
 
 	/** Returns a function by name. */
 	public static IAggregateFunction getAggregateFunction(String name) throws JailVMException {

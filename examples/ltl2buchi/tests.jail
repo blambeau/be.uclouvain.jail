@@ -1,0 +1,11 @@
+(execute 'commons.jail');
+
+/** moving & doorsClosed. */
+MOVING_AND_DOORSCLOSED = <§seqp
+		RES = S0,
+		 S1 = true-> S1,
+		 S0 = movingAndDoorsClosed-> S1.
+§>;
+
+
+(show (MOVING_AND_DOORSCLOSED));

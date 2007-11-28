@@ -1,0 +1,104 @@
+define (bdd2dfa <G>)
+       (copy (G)
+             :vertex {@label -> @label,
+                      @isAccepting -> true,
+                      @isError -> false,
+                      @isInitial -> when @isInitial=true then true
+                                    else false}
+             :edge   {@letter -> @label,
+                      @label -> @label}
+       );
+
+/** Automaton dot command. */
+define (adot <A>) 
+	     (copy (A)
+             :vertex {@shape -> when @isAccepting=true then 'doublecircle'
+                                else 'circle',
+        				      @style -> 'filled',
+                      @fillcolor -> when @isError=true then 'red'
+                                    when @isInitial=true then 'green'
+                                    else 'white'}
+		          :edge  {@label -> @letter});
+
+/** JDotty for automaton dot. */
+define (show <A>)
+	     (jdotty (adot (A)));
+
+
+
+/** BDD for (isM0 and isN0 and isT12) */
+BDD1 = (bdd2dfa <§dot 
+	digraph G {
+		graph [rankdir="LR"];
+		node [shape="circle"];
+		0 [isInitial=true label="isM0"];
+		1 [label="false"];
+		2 [label="isN0"];
+		3 [label="isT12"];
+		4 [label="true"];
+		3 -> 1 [label="!isT12"];
+		3 -> 4 [label="isT12"];
+		2 -> 1 [label="!isN0"];
+		2 -> 3 [label="isN0"];
+		0 -> 1 [label="!isM0"];
+		0 -> 2 [label="isM0"];
+	}
+§>);
+
+/* BDD for isM0 and ((isN0 and isT34) or (not isN0)) */
+BDD2 = (bdd2dfa <§dot 
+	digraph G {
+		graph [rankdir="LR"];
+		node [shape="circle"];
+		0 [isInitial=true label="isM0"];
+		1 [label="false"];
+		2 [label="isN0"];
+		3 [label="true"];
+		4 [label="isT34"];
+		4 -> 1 [label="!isT34"];
+		4 -> 3 [label="isT34"];
+		2 -> 3 [label="!isN0"];
+		2 -> 4 [label="isN0"];
+		0 -> 1 [label="!isM0"];
+		0 -> 2 [label="isM0"];
+	}
+§>);
+
+/** BDD for (not isM0) */
+BDD3 = (bdd2dfa <§dot 
+	digraph G {
+		graph [rankdir="LR"];
+		node [shape="circle"];
+		0 [isInitial=true label="isM0"];
+		1 [label="true"];
+		2 [label="false"];
+		0 -> 1 [label="!isM0"];
+		0 -> 2 [label="isM0"];
+	}
+§>);
+
+TXX = (tmoves <§dot
+	digraph G {
+	        graph [rankdir="LR"];
+	        node [shape="circle"];
+	        0 [isInitial=true label="INIT" isAccepting=true isError=false];
+	        1 [isInitial=false label="T12" isAccepting=true isError=false];
+	        2 [isInitial=false label="T34" isAccepting=true isError=false];
+	        0 -> 1 [letter="tau"];
+	        0 -> 2 [letter="tau"];
+	        1 -> 1 [letter="isT12"];
+	        1 -> 1 [letter="!isT34"];
+	        2 -> 2 [letter="isT34"];
+	        2 -> 2 [letter="!isT12"];
+	}
+§> :tau 'tau');
+
+(show (BDD1));
+(show (BDD2));
+(show (BDD3));
+(show (TXX));
+
+C = (compose (BDD1) (BDD2) (BDD3)
+             :state {@label -> list(@label)}
+    );
+(show (C));

@@ -1,9 +1,9 @@
 package be.uclouvain.jail.algo.fa.utils;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 
-import net.chefbe.javautils.collections.set.ListOrderedSet;
 import net.chefbe.javautils.comparisons.HashCodeUtils;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.utils.ITotalOrder;
@@ -86,8 +86,8 @@ public abstract class AbstractMultiGroup implements Iterable<Object> {
 	}
 	
 	/** Returns the equivalent user infos. */
-	public final Set<IUserInfo> getUserInfos() {
-		Set<IUserInfo> infos = new ListOrderedSet<IUserInfo>();
+	public final List<IUserInfo> getUserInfos() {
+		List<IUserInfo> infos = new ArrayList<IUserInfo>();
 		int size = size();
 		for (int i=0; i<size; i++) {
 			IUserInfo info = getUserInfo(i);
