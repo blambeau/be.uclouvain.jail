@@ -19,6 +19,7 @@ import net.chefbe.autogram.ast2.parsing.peg.Pos;
 import net.chefbe.autogram.ast2.utils.BaseLocation;
 import net.chefbe.javautils.collections.map.ListOrderedMap;
 import net.chefbe.javautils.robust.exceptions.CoreException;
+import be.uclouvain.isis.jail.IsisToolkit;
 import be.uclouvain.jail.adapt.AdaptUtils;
 import be.uclouvain.jail.adapt.IAdapter;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchNodes;
@@ -63,6 +64,7 @@ public class JailVM implements IJailVMScope {
 		registerToolkit("jail",core);
 		registerToolkit("fa",new AutomatonToolkit());
 		registerToolkit("graph",new GraphToolkit());
+		registerToolkit("isis",new IsisToolkit());
 	}
 	
 	/** Creates a virtual machine with default environment. */

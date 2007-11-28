@@ -9,6 +9,7 @@ import java.util.Map;
 
 import net.chefbe.autogram.ast2.parsing.ParseException;
 import be.uclouvain.jail.adapt.AdaptUtils;
+import be.uclouvain.jail.adapt.IAdapter;
 import be.uclouvain.jail.adapt.NetworkAdaptationTool;
 import be.uclouvain.jail.dialect.IGraphDialect;
 import be.uclouvain.jail.graph.IDirectedGraph;
@@ -26,6 +27,18 @@ public class JailCoreToolkit extends JailReflectionToolkit {
 	
 	/** Installs the tollkit on a virtual machine. */
 	public void install(JailVM vm) {
+		vm.registerAdaptation(String.class, Class.class, new IAdapter() {
+			public Object adapt(Object who, Class type) {
+				if (type.equals(Class.class) && who != null) {
+					try {
+						return Class.forName(who.toString());
+					} catch (ClassNotFoundException e) {
+						return null;
+					}
+				}
+				return null;
+			}
+		});
 	}
 
 	/** Registers an external loader. */
@@ -161,6 +174,17 @@ public class JailCoreToolkit extends JailReflectionToolkit {
 			return source;
 		} catch (IOException ex) {
 			throw new JailVMException(ERROR_TYPE.FILE_ACCESS_ERROR,null,"Unable to write file: " + path,ex);
+		}
+	}
+
+	/** Adapts a source to some specific type. */
+	@SuppressWarnings("unchecked")
+	public Object cast(Object source, Class to) throws JailVMException {
+		Object result = AdaptUtils.adapt(source, to);
+		if (result == null) {
+			throw new JailVMException(ERROR_TYPE.ADAPTABILITY_ERROR,null,"Unable to adapt to " + to.getSimpleName());
+		} else {
+			return result;
 		}
 	}
 	

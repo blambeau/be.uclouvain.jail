@@ -151,6 +151,9 @@ public class Jail implements IJailVMEnvironment {
 				ex.printStackTrace(out);
 				out.flush();
 			}
+		} else {
+			t.printStackTrace(out);
+			out.flush();
 		}
 	}
 
