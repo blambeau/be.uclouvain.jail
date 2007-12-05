@@ -13,6 +13,7 @@ public class JailExampleTest {
 			ClassLoader.getSystemResource("train/kernel.jail"),
 			ClassLoader.getSystemResource("train/ptaconstr.jail"),
 			ClassLoader.getSystemResource("train/standard3.jail"),
+			ClassLoader.getSystemResource("bdd/expressions.jail"),
 		};
 	}
 	

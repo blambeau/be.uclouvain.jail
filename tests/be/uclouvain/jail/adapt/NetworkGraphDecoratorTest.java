@@ -3,10 +3,10 @@ package be.uclouvain.jail.adapt;
 import junit.framework.TestCase;
 import net.chefbe.javautils.adapt.AdaptUtils;
 import net.chefbe.javautils.adapt.IAdapter;
+import be.uclouvain.isis.logic.bool.autogram.IBLFormula;
 import be.uclouvain.jail.dialect.dot.JDotty;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
-import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.vm.JailVM;
 
 /**
@@ -24,7 +24,7 @@ public class NetworkGraphDecoratorTest extends TestCase {
 		IDirectedGraph g = vm.getCoreToolkit().adaptations("hello");
 		jdotty.present(g, null);
 		
-		IAdapter adapter = AdaptUtils.findAdapter(AdjacencyDirectedGraph.class, IUserInfo.class);
+		IAdapter adapter = AdaptUtils.findAdapter(IBLFormula.class, IDirectedGraph.class);
 		System.out.println(adapter);
 	}
 	

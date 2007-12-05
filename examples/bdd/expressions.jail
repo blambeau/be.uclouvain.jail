@@ -24,10 +24,11 @@ define (show <A>)
 
 
 
-BDD1 = (cast <§bdd (isM0 and isN0 and isT12) §> 'be.uclouvain.jail.fa.IDFA');
-BDD2 = (cast <§bdd (isM0 and (not isN0 or (isN0 and not isT12))) §> 'be.uclouvain.jail.fa.IDFA');
-BDD3 = (cast <§bdd not isM0 §> 'be.uclouvain.jail.fa.IDFA');
+BDD1 = <§bdd (isM0 and isN0 and isT12) §>;
+BDD2 = <§bdd (isM0 and (not isN0 or (isN0 and not isT12))) §>;
+BDD3 = <§bdd not isM0 §>;
 
+/*
 (show (BDD1));
 (show (BDD2));
 (show (BDD3));
@@ -35,4 +36,5 @@ BDD3 = (cast <§bdd not isM0 §> 'be.uclouvain.jail.fa.IDFA');
 C = (compose (BDD1) (BDD2) (BDD3) 
              :state {@label -> list(@variable)});
 (show (C));
+*/
 

@@ -21,6 +21,7 @@ import net.chefbe.javautils.adapt.AdaptUtils;
 import net.chefbe.javautils.adapt.IAdapter;
 import net.chefbe.javautils.collections.map.ListOrderedMap;
 import net.chefbe.javautils.robust.exceptions.CoreException;
+import be.uclouvain.isis.jail.IsisToolkit;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchNodes;
 import be.uclouvain.jail.dialect.IGraphDialect;
 import be.uclouvain.jail.uinfo.IUserInfo;
@@ -63,7 +64,7 @@ public class JailVM implements IJailVMScope {
 		registerToolkit("jail",core);
 		registerToolkit("fa",new AutomatonToolkit());
 		registerToolkit("graph",new GraphToolkit());
-		//registerToolkit("isis",new IsisToolkit());
+		registerToolkit("isis",new IsisToolkit());
 	}
 	
 	/** Creates a virtual machine with default environment. */
