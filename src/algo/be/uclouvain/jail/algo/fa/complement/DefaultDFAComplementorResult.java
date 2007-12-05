@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import be.uclouvain.jail.adapt.AdaptUtils;
+import net.chefbe.javautils.adapt.AdaptUtils;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.impl.GraphDFA;
 import be.uclouvain.jail.graph.utils.DirectedGraphWriter;

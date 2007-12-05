@@ -1,6 +1,7 @@
 package be.uclouvain.jail.fa;
 
-import be.uclouvain.jail.adapt.IAdaptable;
+import net.chefbe.javautils.adapt.IAdaptable;
+import be.uclouvain.jail.fa.utils.DFATrace;
 import be.uclouvain.jail.fa.utils.DefaultDFATrace;
 import be.uclouvain.jail.graph.IDirectedGraphPath;
 

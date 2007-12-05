@@ -2,7 +2,7 @@ package be.uclouvain.jail.algo.fa.complement;
 
 import java.util.Set;
 
-import be.uclouvain.jail.adapt.IAdaptable;
+import net.chefbe.javautils.adapt.IAdaptable;
 
 /**
  * Abstracts result of DFAComplementorAlgo.

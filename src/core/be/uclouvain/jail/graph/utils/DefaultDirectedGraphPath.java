@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import be.uclouvain.jail.adapt.AdaptUtils;
+import net.chefbe.javautils.adapt.AdaptUtils;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.IDirectedGraphPath;
 import be.uclouvain.jail.graph.IDirectedGraphWriter;

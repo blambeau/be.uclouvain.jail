@@ -7,9 +7,9 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import be.uclouvain.jail.adapt.AdaptUtils;
-import be.uclouvain.jail.adapt.Adaptations;
-import be.uclouvain.jail.adapt.IAdapter;
+import net.chefbe.javautils.adapt.AdaptUtils;
+import net.chefbe.javautils.adapt.Adaptations;
+import net.chefbe.javautils.adapt.IAdapter;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.deco.DirectedGraph;
 import be.uclouvain.jail.graph.utils.ITotalOrder;

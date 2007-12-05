@@ -1,7 +1,7 @@
 package be.uclouvain.jail.fa.impl;
 
-import be.uclouvain.jail.adapt.AdaptUtils;
-import be.uclouvain.jail.adapt.IAdapter;
+import net.chefbe.javautils.adapt.AdaptUtils;
+import net.chefbe.javautils.adapt.IAdapter;
 import be.uclouvain.jail.fa.IAlphabet;
 import be.uclouvain.jail.fa.IFA;
 import be.uclouvain.jail.fa.utils.AutoAlphabet;

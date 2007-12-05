@@ -1,7 +1,6 @@
 package be.uclouvain.jail.fa.utils;
 
 import junit.framework.TestCase;
-import be.uclouvain.jail.fa.utils.IntegerAlphabet;
 import be.uclouvain.jail.graph.utils.ITotalOrder;
 
 /**

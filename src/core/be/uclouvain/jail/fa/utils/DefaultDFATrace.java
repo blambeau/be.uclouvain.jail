@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import be.uclouvain.jail.adapt.AdaptUtils;
+import net.chefbe.javautils.adapt.AdaptUtils;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.IDFATrace;
 import be.uclouvain.jail.graph.IDirectedGraphPath;

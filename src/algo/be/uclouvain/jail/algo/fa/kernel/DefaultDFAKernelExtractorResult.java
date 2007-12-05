@@ -1,7 +1,7 @@
 package be.uclouvain.jail.algo.fa.kernel;
 
-import be.uclouvain.jail.adapt.AdaptUtils;
-import be.uclouvain.jail.adapt.IAdaptable;
+import net.chefbe.javautils.adapt.AdaptUtils;
+import net.chefbe.javautils.adapt.IAdaptable;
 import be.uclouvain.jail.algo.fa.determinize.NFADeterminizer;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.INFA;

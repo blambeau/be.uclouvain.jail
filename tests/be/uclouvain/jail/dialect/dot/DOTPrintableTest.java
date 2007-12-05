@@ -3,8 +3,8 @@ package be.uclouvain.jail.dialect.dot;
 import java.io.IOException;
 
 import junit.framework.TestCase;
-import be.uclouvain.jail.adapt.AdaptUtils;
-import be.uclouvain.jail.adapt.CreateClassAdapter;
+import net.chefbe.javautils.adapt.AdaptUtils;
+import net.chefbe.javautils.adapt.CreateClassAdapter;
 import be.uclouvain.jail.dialect.IPrintable;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;

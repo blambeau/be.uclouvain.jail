@@ -2,8 +2,9 @@ package be.uclouvain.jail.fa;
 
 import java.util.Collection;
 
-import be.uclouvain.jail.adapt.IAdaptable;
+import net.chefbe.javautils.adapt.IAdaptable;
 import be.uclouvain.jail.fa.impl.GraphDFA;
+import be.uclouvain.jail.fa.impl.GraphNFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
 
 /**

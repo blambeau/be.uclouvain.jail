@@ -1,7 +1,6 @@
 package be.uclouvain.jail.algo.graph.shortest.dsp;
 
 import junit.framework.TestCase;
-import be.uclouvain.jail.algo.graph.shortest.dsp.DSP;
 import be.uclouvain.jail.uinfo.functions.SumFunction;
 
 /** Tests DSP class. */

@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import net.chefbe.javautils.adapt.AdaptUtils;
 import net.chefbe.javautils.robust.exceptions.CoreException;
-import be.uclouvain.jail.adapt.AdaptUtils;
 import be.uclouvain.jail.vm.JailVMException.ERROR_TYPE;
 
 /**

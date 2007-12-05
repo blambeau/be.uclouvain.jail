@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.chefbe.autogram.ast2.IASTNode;
-import be.uclouvain.jail.adapt.IAdaptable;
+import net.chefbe.javautils.adapt.IAdaptable;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchAggregator;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchPopulator;
 import be.uclouvain.jail.vm.autogram.JailCallback;

@@ -3,7 +3,7 @@ package be.uclouvain.jail.algo.fa.tmoves;
 import java.util.HashMap;
 import java.util.Map;
 
-import be.uclouvain.jail.adapt.AdaptUtils;
+import net.chefbe.javautils.adapt.AdaptUtils;
 import be.uclouvain.jail.algo.fa.utils.FAEdgeGroup;
 import be.uclouvain.jail.algo.fa.utils.FAStateGroup;
 import be.uclouvain.jail.fa.IFA;

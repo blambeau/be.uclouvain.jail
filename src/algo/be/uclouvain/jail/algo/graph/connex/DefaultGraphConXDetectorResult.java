@@ -1,6 +1,6 @@
 package be.uclouvain.jail.algo.graph.connex;
 
-import be.uclouvain.jail.adapt.AdaptUtils;
+import net.chefbe.javautils.adapt.AdaptUtils;
 import be.uclouvain.jail.algo.graph.utils.IGraphPartition;
 
 /** Default implementation of IGraphConXDetectorResult. */

@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import be.uclouvain.jail.adapt.AdaptUtils;
-import be.uclouvain.jail.adapt.IAdapter;
+import net.chefbe.javautils.adapt.AdaptUtils;
+import net.chefbe.javautils.adapt.IAdapter;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.utils.GraphQueryUtils;
 import be.uclouvain.jail.graph.utils.ITotalOrder;

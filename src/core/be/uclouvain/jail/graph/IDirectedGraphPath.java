@@ -2,7 +2,7 @@ package be.uclouvain.jail.graph;
 
 import java.util.List;
 
-import be.uclouvain.jail.adapt.IAdaptable;
+import net.chefbe.javautils.adapt.IAdaptable;
 import be.uclouvain.jail.graph.utils.DefaultDirectedGraphPath;
 import be.uclouvain.jail.graph.utils.DirectedGraphPath;
 

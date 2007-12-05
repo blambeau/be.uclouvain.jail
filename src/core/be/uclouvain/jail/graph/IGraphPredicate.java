@@ -2,6 +2,8 @@ package be.uclouvain.jail.graph;
 
 import org.apache.commons.collections.Predicate;
 
+import be.uclouvain.jail.graph.constraints.AbstractGraphPredicate;
+
 /** 
  * Acts as a predicate for graph.
  * 

@@ -1,6 +1,6 @@
 package be.uclouvain.jail.algo.fa.minimize;
 
-import be.uclouvain.jail.adapt.AdaptUtils;
+import net.chefbe.javautils.adapt.AdaptUtils;
 import be.uclouvain.jail.algo.fa.merge.DefaultDFAMergingResult;
 import be.uclouvain.jail.algo.fa.utils.FAEdgeLetterPartitionner;
 import be.uclouvain.jail.algo.graph.merge.GraphMergingAlgo;

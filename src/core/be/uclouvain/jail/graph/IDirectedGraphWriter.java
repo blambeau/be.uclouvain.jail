@@ -1,6 +1,6 @@
 package be.uclouvain.jail.graph;
 
-import be.uclouvain.jail.adapt.IAdaptable;
+import net.chefbe.javautils.adapt.IAdaptable;
 import be.uclouvain.jail.algo.graph.copy.DirectedGraphCopier;
 import be.uclouvain.jail.algo.graph.shortest.dsp.DSPAlgo;
 import be.uclouvain.jail.uinfo.IUserInfo;

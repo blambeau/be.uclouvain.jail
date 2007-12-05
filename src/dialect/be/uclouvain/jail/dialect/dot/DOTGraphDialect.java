@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import net.chefbe.autogram.ast2.parsing.ParseException;
-import be.uclouvain.jail.adapt.AdaptUtils;
+import net.chefbe.javautils.adapt.AdaptUtils;
 import be.uclouvain.jail.dialect.IGraphDialect;
 import be.uclouvain.jail.graph.IDirectedGraph;
 

@@ -4,8 +4,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 
-import be.uclouvain.jail.adapt.IAdaptable;
-import be.uclouvain.jail.adapt.IAdapter;
+import net.chefbe.javautils.adapt.IAdaptable;
+import net.chefbe.javautils.adapt.IAdapter;
 import be.uclouvain.jail.algo.graph.copy.DirectedGraphCopier;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchPopulator;
 import be.uclouvain.jail.dialect.IPrintable;
@@ -108,7 +108,13 @@ public class GraphToolkit extends JailReflectionToolkit implements IAdapter {
 		if (who instanceof DOTDirectedGraphPrintable) {
 			return (IDirectedGraph) ((IAdaptable)who).adapt(IDirectedGraph.class);
 		} else {
-			throw new IllegalStateException("Unable to convert " + who + " to a IDirectedGraph.");
+			Class c = who == null ? null : who.getClass();
+			String msg = "Unable to convert "  + who;
+			if (c != null) {
+				msg += " [" + c.getSimpleName() + "]";
+			}
+			msg += " to a IDirectedGraph.";
+			throw new IllegalStateException(msg);
 		}
 	}
 	

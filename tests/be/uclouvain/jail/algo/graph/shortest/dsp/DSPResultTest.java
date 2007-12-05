@@ -1,12 +1,6 @@
 package be.uclouvain.jail.algo.graph.shortest.dsp;
 
 import junit.framework.TestCase;
-import be.uclouvain.jail.algo.graph.shortest.dsp.DSPResult;
-import be.uclouvain.jail.algo.graph.shortest.dsp.DefaultDSPInput;
-import be.uclouvain.jail.algo.graph.shortest.dsp.DSPAlgo;
-import be.uclouvain.jail.algo.graph.shortest.dsp.IDSPInput;
-import be.uclouvain.jail.algo.graph.shortest.dsp.IDSPOutput;
-import be.uclouvain.jail.algo.graph.shortest.dsp.InGraphDSPOutput;
 import be.uclouvain.jail.graph.IDirectedGraphPath;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.graph.utils.GraphQueryUtils;

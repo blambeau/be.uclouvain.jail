@@ -1,5 +1,6 @@
 package be.uclouvain.jail.fa.impl;
 
+import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.DefaultEdge;
 import be.uclouvain.jail.graph.adjacency.IEdge;
 import be.uclouvain.jail.graph.adjacency.IGraphComponentFactory;

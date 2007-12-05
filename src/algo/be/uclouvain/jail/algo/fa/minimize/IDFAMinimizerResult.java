@@ -1,6 +1,6 @@
 package be.uclouvain.jail.algo.fa.minimize;
 
-import be.uclouvain.jail.adapt.IAdaptable;
+import net.chefbe.javautils.adapt.IAdaptable;
 import be.uclouvain.jail.algo.graph.utils.IGraphPartition;
 
 /**

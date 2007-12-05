@@ -3,7 +3,7 @@ package be.uclouvain.jail.uinfo;
 import java.util.HashMap;
 import java.util.Map;
 
-import be.uclouvain.jail.adapt.AdaptUtils;
+import net.chefbe.javautils.adapt.AdaptUtils;
 
 /** User info based on a HashMap. */
 public class MapUserInfo implements IUserInfo {

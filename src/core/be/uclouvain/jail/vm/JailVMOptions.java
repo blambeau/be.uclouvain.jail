@@ -3,7 +3,7 @@ package be.uclouvain.jail.vm;
 import java.util.HashMap;
 import java.util.Map;
 
-import be.uclouvain.jail.adapt.AdaptUtils;
+import net.chefbe.javautils.adapt.AdaptUtils;
 import be.uclouvain.jail.vm.JailVMException.ERROR_TYPE;
 
 /**

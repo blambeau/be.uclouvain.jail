@@ -8,6 +8,7 @@ import java.util.Set;
 
 import be.uclouvain.jail.fa.IAlphabet;
 import be.uclouvain.jail.fa.INFA;
+import be.uclouvain.jail.fa.utils.AutoAlphabet;
 import be.uclouvain.jail.graph.GraphConstraintViolationException;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;

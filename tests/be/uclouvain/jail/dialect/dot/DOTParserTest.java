@@ -5,8 +5,8 @@ import java.net.URL;
 
 import junit.framework.TestCase;
 import net.chefbe.autogram.ast2.parsing.ParseException;
-import be.uclouvain.jail.adapt.AdaptUtils;
-import be.uclouvain.jail.adapt.CreateClassAdapter;
+import net.chefbe.javautils.adapt.AdaptUtils;
+import net.chefbe.javautils.adapt.CreateClassAdapter;
 import be.uclouvain.jail.dialect.IPrintable;
 import be.uclouvain.jail.graph.IDirectedGraph;
 

@@ -2,7 +2,7 @@ package be.uclouvain.jail.uinfo;
 
 import java.util.Map;
 
-import be.uclouvain.jail.adapt.IAdaptable;
+import net.chefbe.javautils.adapt.IAdaptable;
 
 /** 
  * Encapsulates user information inside all graph and automata 

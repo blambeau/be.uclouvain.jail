@@ -1,12 +1,6 @@
 package be.uclouvain.jail.algo.graph.shortest.dsp;
 
 import junit.framework.TestCase;
-import be.uclouvain.jail.algo.graph.shortest.dsp.DefaultDSPInput;
-import be.uclouvain.jail.algo.graph.shortest.dsp.DefaultDSPOutput;
-import be.uclouvain.jail.algo.graph.shortest.dsp.DSPAlgo;
-import be.uclouvain.jail.algo.graph.shortest.dsp.IDSPInput;
-import be.uclouvain.jail.algo.graph.shortest.dsp.IDSPOutput;
-import be.uclouvain.jail.algo.graph.shortest.dsp.InGraphDSPOutput;
 
 /** Test DijkstraShortestPath algorithm. */
 public class DijkstraShortestPathTest extends TestCase {

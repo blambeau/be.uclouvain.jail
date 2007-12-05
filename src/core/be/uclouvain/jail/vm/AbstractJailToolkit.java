@@ -15,7 +15,7 @@ import net.chefbe.autogram.ast2.parsing.active.ASTLoader.EnumTypeResolver;
 import net.chefbe.autogram.ast2.parsing.peg.Input;
 import net.chefbe.autogram.ast2.parsing.peg.Pos;
 import net.chefbe.autogram.ast2.utils.BaseLocation;
-import be.uclouvain.jail.adapt.IAdapter;
+import net.chefbe.javautils.adapt.IAdapter;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchNodes;
 import be.uclouvain.jail.vm.autogram.JailNodes;
 import be.uclouvain.jail.vm.autogram.JailParser;

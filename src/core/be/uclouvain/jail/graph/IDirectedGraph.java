@@ -2,7 +2,7 @@ package be.uclouvain.jail.graph;
 
 import java.util.Collection;
 
-import be.uclouvain.jail.adapt.IOpenAdaptable;
+import net.chefbe.javautils.adapt.IOpenAdaptable;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.graph.utils.ITotalOrder;
 import be.uclouvain.jail.uinfo.IUserInfo;

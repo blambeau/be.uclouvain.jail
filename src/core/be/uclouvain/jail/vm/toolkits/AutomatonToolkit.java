@@ -1,6 +1,6 @@
 package be.uclouvain.jail.vm.toolkits;
 
-import be.uclouvain.jail.adapt.IAdapter;
+import net.chefbe.javautils.adapt.IAdapter;
 import be.uclouvain.jail.algo.fa.complement.DFAComplementorAlgo;
 import be.uclouvain.jail.algo.fa.complement.DFAComplementorHeuristic;
 import be.uclouvain.jail.algo.fa.complement.DefaultDFAComplementorInput;

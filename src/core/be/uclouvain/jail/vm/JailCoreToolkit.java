@@ -8,9 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.chefbe.autogram.ast2.parsing.ParseException;
-import be.uclouvain.jail.adapt.AdaptUtils;
-import be.uclouvain.jail.adapt.IAdapter;
-import be.uclouvain.jail.adapt.NetworkAdaptationTool;
+import net.chefbe.javautils.adapt.AdaptUtils;
+import net.chefbe.javautils.adapt.IAdapter;
+import net.chefbe.javautils.adapt.NetworkAdaptationTool;
+import be.uclouvain.jail.adapt.NetworkGraphDecorator;
 import be.uclouvain.jail.dialect.IGraphDialect;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.vm.JailVMException.ERROR_TYPE;
@@ -191,7 +192,7 @@ public class JailCoreToolkit extends JailReflectionToolkit {
 	/** Returns adaptations of a source class. */
 	public IDirectedGraph adaptations(Object source) {
 		NetworkAdaptationTool tool = (NetworkAdaptationTool) AdaptUtils.getAdaptationTool();
-		return tool.getAdaptationsOf(source.getClass());
+		return new NetworkGraphDecorator(tool.getGraph());
 	}
 
 }
