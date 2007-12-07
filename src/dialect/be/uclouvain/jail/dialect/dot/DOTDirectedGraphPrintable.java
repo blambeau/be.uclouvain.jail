@@ -80,6 +80,8 @@ public class DOTDirectedGraphPrintable extends AbstractPrintable implements IAda
 			/* footer */
 			bw.write("}\n");
 		}
+		
+		bw.flush();
 	}
 
 	/** Normalize a string (an object) for dot. */

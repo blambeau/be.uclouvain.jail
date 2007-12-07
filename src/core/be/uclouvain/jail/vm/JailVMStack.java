@@ -74,6 +74,9 @@ public class JailVMStack {
 			// adapt it
 			Object adapted = AdaptUtils.adapt(arg,type);
 			if (adapted == null) {
+				if (i==1) {
+					throw new JailVMException(ERROR_TYPE.ADAPTABILITY_ERROR,null,"Unable to adapt argument " + offset + " [" + arg.getClass().getSimpleName() + "] to " + type.getSimpleName());
+				}
 				ok = false;
 			} else {
 				values.add(adapted);

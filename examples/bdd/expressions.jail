@@ -12,15 +12,17 @@ define (adot <A>)
 	     (copy (A)
              :vertex {@shape -> when @isAccepting=true then 'doublecircle'
                                 else 'circle',
-        				      @style -> 'filled',
+        			  @style -> 'filled',
                       @fillcolor -> when @isError=true then 'red'
                                     when @isInitial=true then 'green'
-                                    else 'white'}
-		          :edge  {@label -> @letter});
+                                    else 'white',
+                      @label -> @variable,
+                      @variable -> @variable}
+		      :edge  {@label -> @letter});
 
 /** JDotty for automaton dot. */
 define (show <A>)
-	     (jdotty (adot (A)));
+	     (jdotty (adot (cast (A) 'be.uclouvain.jail.fa.IDFA')));
 
 
 
@@ -28,13 +30,14 @@ BDD1 = <§bdd (isM0 and isN0 and isT12) §>;
 BDD2 = <§bdd (isM0 and (not isN0 or (isN0 and not isT12))) §>;
 BDD3 = <§bdd not isM0 §>;
 
-/*
-(show (BDD1));
-(show (BDD2));
-(show (BDD3));
+C = (show (BDD1));
+D = (show (BDD2));
+E = (show (BDD3));
 
-C = (compose (BDD1) (BDD2) (BDD3) 
-             :state {@label -> list(@variable)});
-(show (C));
-*/
+G = (compose (C) (D) (E) :state {@variable -> list(@variable)});
+(show (G));
 
+F = (copy (C) (D) (E));
+(show (F));
+H = (determinize (F) :state {@variable -> list(@variable)});
+(show (H));

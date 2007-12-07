@@ -15,16 +15,16 @@ import be.uclouvain.jail.uinfo.UserInfoAggregator;
 public class DefaultDFAComposerResult implements IDFAComposerResult {
 
 	/** DFA under construction. */
-	private IDFA dfa;
+	protected IDFA dfa;
 
 	/** Underlying graph. */
-	private IDirectedGraph graph;
+	protected IDirectedGraph graph;
 
 	/** Aggregator to use for states. */
-	private UserInfoAggregator stateAggregator;
+	protected UserInfoAggregator stateAggregator;
 	
 	/** Aggregator to use for edges. */
-	private UserInfoAggregator edgeAggregator;
+	protected UserInfoAggregator edgeAggregator;
 	
 	/** Creates a result instance. */
 	private DefaultDFAComposerResult() {
@@ -41,6 +41,12 @@ public class DefaultDFAComposerResult implements IDFAComposerResult {
 		this();
 		this.dfa = dfa;
 		this.graph = dfa.getGraph();
+	}
+
+	/** Creates a result instance. */
+	public DefaultDFAComposerResult(IDirectedGraph graph) {
+		this();
+		this.graph = graph;
 	}
 
 	/** Returns state aggregator. */

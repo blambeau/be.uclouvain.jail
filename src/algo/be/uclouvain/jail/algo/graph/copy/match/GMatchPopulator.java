@@ -1,6 +1,10 @@
 package be.uclouvain.jail.algo.graph.copy.match;
 
 import net.chefbe.autogram.ast2.IASTNode;
+import net.chefbe.autogram.ast2.parsing.ParseException;
+import net.chefbe.autogram.ast2.parsing.active.ASTLoader;
+import net.chefbe.autogram.ast2.parsing.active.ASTLoader.EnumTypeResolver;
+import net.chefbe.autogram.ast2.utils.BaseLocation;
 import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.uinfo.IUserInfoPopulator;
 
@@ -37,6 +41,14 @@ public class GMatchPopulator implements IUserInfoPopulator<IUserInfo> {
 		} catch (Exception e) {
 			throw new IllegalStateException("Error while GMatch populating ...",e);
 		}
+	}
+	
+	/** Parses a GMatch expression and returns a populator. */
+	public static GMatchPopulator parse(String expr) throws ParseException {
+		GMatchParser parser = new GMatchParser();
+		parser.setActiveLoader(new ASTLoader(new EnumTypeResolver<GMatchNodes>(GMatchNodes.class)));
+		IASTNode root = parser.parse(GMatchNodes.MATCH_DO, new BaseLocation(expr));
+		return new GMatchPopulator(root); 
 	}
 	
 }

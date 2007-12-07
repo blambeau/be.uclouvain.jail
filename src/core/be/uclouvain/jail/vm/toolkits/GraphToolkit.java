@@ -42,6 +42,9 @@ public class GraphToolkit extends JailReflectionToolkit implements IAdapter {
 
 	/** Visualizes graphs using jdotty. */
 	public IDirectedGraph jdotty(IDirectedGraph[] graphs) throws JailVMException {
+		if (graphs == null || graphs.length==0) {
+			throw new IllegalArgumentException("At least one graph must be provided.");
+		}
 		if (jdotty == null) {
 			jdotty = new JDotty();
 			jdotty.addWindowListener(new WindowAdapter() {
@@ -62,7 +65,7 @@ public class GraphToolkit extends JailReflectionToolkit implements IAdapter {
 	}
 	
 	/** Copies a graph. */
-	public IDirectedGraph copy(IDirectedGraph graph, JailVMOptions options) throws JailVMException {
+	public IDirectedGraph copy(IDirectedGraph[] graphs, JailVMOptions options) throws JailVMException {
 		AdjacencyDirectedGraph copy = new AdjacencyDirectedGraph();
 		DirectedGraphWriter writer = new DirectedGraphWriter(copy);
 		writer.getVertexCopier().keepAll();
@@ -87,7 +90,9 @@ public class GraphToolkit extends JailReflectionToolkit implements IAdapter {
 			writer.getEdgeCopier().addPopulator(populator);
 		}
 		
-		DirectedGraphCopier.copy(graph,writer);
+		for (IDirectedGraph graph: graphs) {
+			DirectedGraphCopier.copy(graph,writer);
+		}
 		return copy;
 	}
 	
