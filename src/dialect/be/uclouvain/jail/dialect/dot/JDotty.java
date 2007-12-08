@@ -11,7 +11,6 @@ import javax.swing.JTabbedPane;
 import att.grappa.Graph;
 import att.grappa.GrappaPanel;
 import att.grappa.Parser;
-import be.uclouvain.jail.Jail;
 import be.uclouvain.jail.dialect.IPrintable;
 import be.uclouvain.jail.graph.IDirectedGraph;
 
@@ -27,7 +26,7 @@ public class JDotty extends JFrame {
 
 	/** Flag to force silent JDotty in tests. */
 	private static boolean silent = false;
-	
+
 	/** Tabs. */
 	private JTabbedPane tabs;
 
@@ -41,27 +40,29 @@ public class JDotty extends JFrame {
 			super.setSize(800, 600);
 		}
 	}
-	
+
 	/** Forces JDotty to be silent. */
 	public static void silent() {
 		silent = true;
 	}
-	
+
 	/** Presents a graph using dot. */
-	public void present(IDirectedGraph graph, String labelAttr) throws IOException {
-		if (silent) { return; }
-		
+	public void present(IDirectedGraph graph, String labelAttr)
+			throws IOException {
+		if (silent) {
+			return;
+		}
+
 		final IPrintable p = new DOTDirectedGraphPrintable(graph);
-		String dotPath = (String) Jail.getProperty("be.uclouvain.jail.dot.JDotty.dotpath","dot");
-		
+
 		// execute dot
-		Process dotp = Runtime.getRuntime().exec(dotPath);
+		Process dotp = DOTUtils.getDOTProcess();
 		InputStream dotIs = dotp.getInputStream();
 		final OutputStream dotOs = dotp.getOutputStream();
-		
+
 		// start writing on the pipe
 		final Exception[] ex = new Exception[1];
-		new Thread(new Runnable(){
+		new Thread(new Runnable() {
 			public void run() {
 				try {
 					p.print(dotOs);
@@ -72,7 +73,7 @@ public class JDotty extends JFrame {
 				}
 			}
 		}).start();
-		
+
 		// start reading on the pipe
 		try {
 			Parser dotParser = new Parser(dotIs, System.out);
@@ -81,15 +82,16 @@ public class JDotty extends JFrame {
 			grappaGraph.setEditable(false);
 			grappaGraph.repaint();
 			dotIs.close();
-			
+
 			// create a frame for presentation
 			Object name = graph.getUserInfo().getAttribute(labelAttr);
 			GrappaPanel panel = new GrappaPanel(grappaGraph);
-			tabs.addTab(name == null ? "Noname" : name.toString(), new JScrollPane(panel));
+			tabs.addTab(name == null ? "Noname" : name.toString(),
+					new JScrollPane(panel));
 			super.setVisible(true);
 		} catch (Exception ex2) {
 			throw new IOException("Unable to start jdotty: " + ex2.getMessage());
 		}
 	}
-	
+
 }

@@ -14,15 +14,22 @@ import be.uclouvain.jail.uinfo.IUserInfo;
 /**
  * Printable adapted on DirectedGraph
  */
-public class DOTDirectedGraphPrintable extends AbstractPrintable implements IAdaptable {
+public class DOTDirectedGraphPrintable extends AbstractPrintable implements
+		IAdaptable {
 
 	/** Installs default properties. */
 	static {
-		Jail.setProperty("DirectedGraphPrintable.dot.graph.attributes","rankdir=\"LR\"");
+		Jail.setProperty("DirectedGraphPrintable.dot.graph.attributes",
+				"rankdir=\"LR\"");
 		Jail.setProperty("DirectedGraphPrintable.dot.graph.name.uinfo", "name");
-		Jail.setProperty("DirectedGraphPrintable.dot.nodes.attributes","shape=\"circle\"");
-		Jail.setProperty("DirectedGraphPrintable.dot.node.label.uinfo","label");
-		Jail.setProperty("DirectedGraphPrintable.dot.edge.label.uinfo","label");
+		Jail.setProperty("DirectedGraphPrintable.dot.nodes.attributes",
+				"shape=\"circle\"");
+		Jail
+				.setProperty("DirectedGraphPrintable.dot.node.label.uinfo",
+						"label");
+		Jail
+				.setProperty("DirectedGraphPrintable.dot.edge.label.uinfo",
+						"label");
 	}
 
 	/** Graph to print. */
@@ -80,7 +87,7 @@ public class DOTDirectedGraphPrintable extends AbstractPrintable implements IAda
 			/* footer */
 			bw.write("}\n");
 		}
-		
+
 		bw.flush();
 	}
 
@@ -97,12 +104,11 @@ public class DOTDirectedGraphPrintable extends AbstractPrintable implements IAda
 	protected String graphAttributes() {
 		Object rankdir = graph.getUserInfo().getAttribute("dot.rankdir");
 		if (rankdir != null) {
-			return "rankdir=\"" + rankdir.toString() + "\""; 
+			return "rankdir=\"" + rankdir.toString() + "\"";
 		} else {
-			return Jail
-					.getStringProperty(
-							"DirectedGraphPrintable.dot.graph.attributes",
-							"rankdir=\"LR\"");
+			return Jail.getStringProperty(
+					"DirectedGraphPrintable.dot.graph.attributes",
+					"rankdir=\"LR\"");
 		}
 	}
 
@@ -116,10 +122,12 @@ public class DOTDirectedGraphPrintable extends AbstractPrintable implements IAda
 	/** Returns a string containing the dot attributes to set to a vertex. */
 	protected String stateAttributes(Object vertex) {
 		String s = "";
-		int i=0;
+		int i = 0;
 		IUserInfo info = graph.getVertexInfo(vertex);
-		for (String key: info.getKeys()) {
-			if (i++ != 0) { s += " "; }
+		for (String key : info.getKeys()) {
+			if (i++ != 0) {
+				s += " ";
+			}
 			Object value = info.getAttribute(key);
 			s += key + "=\"" + normalize(value) + "\"";
 		}
@@ -129,10 +137,12 @@ public class DOTDirectedGraphPrintable extends AbstractPrintable implements IAda
 	/** Returns a String containing the dot attributes to set to an edge. */
 	protected String edgeAttributes(Object edge) {
 		String s = "";
-		int i=0;
+		int i = 0;
 		IUserInfo info = graph.getEdgeInfo(edge);
-		for (String key: info.getKeys()) {
-			if (i++ != 0) { s += " "; }
+		for (String key : info.getKeys()) {
+			if (i++ != 0) {
+				s += " ";
+			}
 			Object value = info.getAttribute(key);
 			s += key + "=\"" + normalize(value) + "\"";
 		}
@@ -144,11 +154,11 @@ public class DOTDirectedGraphPrintable extends AbstractPrintable implements IAda
 		if (c.isAssignableFrom(getClass())) {
 			return this;
 		}
-		
+
 		if (IDirectedGraph.class.equals(c)) {
 			return graph;
 		}
-		
+
 		return AdaptUtils.externalAdapt(this, c);
 	}
 

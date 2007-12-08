@@ -281,17 +281,38 @@ public class DOTParser extends ActiveParser {
 	/** &lt;dot:attributes&gt; */
 	public final Object pAttributes(Pos pos) throws ParseException {
 		char _alt_c = pos.charAt();
+		_alt_c = pos.charAt();
 		if ((_alt_c == '[')) {
-			dot.pSy$91USymbol(pos);
-			Object _attr = null;
-			_attr = dot.pDotAttributeUList(pos);
-			dot.pSy$93USymbol(pos);
-			return load(pos, "dot:attributes", new String[] { "attr" },
-					new Object[] { _attr });
-		} else {
-			throw new ParseException("<dot:attributes> expected, "
-					+ pos.charAt() + " found.", pos.location());
+			try {
+				pos.save();
+				dot.pSy$91USymbol(pos);
+				Object _attr = null;
+				_attr = dot.pDotAttributeUList(pos);
+				dot.pSy$93USymbol(pos);
+				pos.commit();
+				return load(pos, "dot:attributes", new String[] { "attr" },
+						new Object[] { _attr });
+			} catch (ParseException ex) {
+				pos.rollback(ex);
+			}
 		}
+		_alt_c = pos.charAt();
+		if ((_alt_c == '[')) {
+			try {
+				pos.save();
+				dot.pSy$91USymbol(pos);
+				Object _attr = null;
+				_attr = dot.pDotAttributeUCommalist(pos);
+				dot.pSy$93USymbol(pos);
+				pos.commit();
+				return load(pos, "dot:attributes", new String[] { "attr" },
+						new Object[] { _attr });
+			} catch (ParseException ex) {
+				pos.rollback(ex);
+			}
+		}
+		return (Object) pos.error("<dot:attributes> expected, " + pos.charAt()
+				+ " found.");
 	}
 
 	/** &lt;dot:attribute&gt; */
@@ -366,8 +387,61 @@ public class DOTParser extends ActiveParser {
 				pos.rollback(ex);
 			}
 		}
+		_alt_c = pos.charAt();
+		if (((_alt_c >= '0' && _alt_c <= '9')
+				|| (_alt_c >= 'A' && _alt_c <= 'Z') || (_alt_c == '_') || (_alt_c >= 'a' && _alt_c <= 'z'))) {
+			try {
+				pos.save();
+				Object _tor = null;
+				_tor = dot.pNospace(pos);
+				pos.commit();
+				return _tor;
+			} catch (ParseException ex) {
+				pos.rollback(ex);
+			}
+		}
 		return (Object) pos.error("<dot:value> expected, " + pos.charAt()
 				+ " found.");
+	}
+
+	/** &lt;dot:nospace&gt; */
+	public final String pNospace(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if (((_alt_c >= '0' && _alt_c <= '9')
+				|| (_alt_c >= 'A' && _alt_c <= 'Z') || (_alt_c == '_') || (_alt_c >= 'a' && _alt_c <= 'z'))) {
+			int start = pos.offset();
+			{
+				int _zz_start = pos.offset();
+				while (!pos.isEof()) {
+					char zz = pos.charAt();
+					if ((zz >= 'A' && zz <= 'Z') || (zz >= 'a' && zz <= 'z')
+							|| (zz >= '0' && zz <= '9') || (zz == '_')) {
+						pos.more();
+					} else {
+						break;
+					}
+				}
+				if (_zz_start == pos.offset()) {
+					throw new ParseException("<cpattern> expected.", pos
+							.location());
+				}
+			}
+			_alt_c = pos.charAt();
+			if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
+					|| (_alt_c == ' ') || (_alt_c == '/'))) {
+				try {
+					pos.save();
+					u.pSpacing(pos);
+					pos.commit();
+				} catch (ParseException ex) {
+					pos.rollback();
+				}
+			}
+			return pos.trim(start);
+		} else {
+			throw new ParseException("<dot:nospace> expected, " + pos.charAt()
+					+ " found.", pos.location());
+		}
 	}
 
 	/** &lt;dot:identifier&gt; */
@@ -458,6 +532,37 @@ public class DOTParser extends ActiveParser {
 		}
 	}
 
+	/** &lt;dot:dot_attribute_u_commalist&gt; */
+	public final List<?> pDotAttributeUCommalist(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
+				|| (_alt_c == ' ') || (_alt_c == '#') || (_alt_c == '$')
+				|| (_alt_c == '/') || (_alt_c >= '0' && _alt_c <= '9')
+				|| (_alt_c == '=') || (_alt_c >= 'A' && _alt_c <= 'Z')
+				|| (_alt_c == '_') || (_alt_c >= 'a' && _alt_c <= 'z'))) {
+			Object _f = null;
+			_f = dot.pAttribute(pos);
+			List<Object> _n = new ArrayList<Object>();
+			_alt_c = pos.charAt();
+			while ((_alt_c == ',')) {
+				try {
+					pos.save();
+					_n.add(dot.pDotAttributeUCommalist11(pos));
+					pos.commit();
+				} catch (ParseException ex) {
+					pos.rollback();
+					break;
+				}
+				_alt_c = pos.charAt();
+			}
+			return toList(_f, _n);
+		} else {
+			throw new ParseException(
+					"<dot:dot_attribute_u_commalist> expected, " + pos.charAt()
+							+ " found.", pos.location());
+		}
+	}
+
 	/** &lt;dot:dot_attribute_u_list&gt; */
 	public final List<?> pDotAttributeUList(Pos pos) throws ParseException {
 		char _alt_c = pos.charAt();
@@ -526,6 +631,30 @@ public class DOTParser extends ActiveParser {
 			return toList(_f, _n);
 		} else {
 			throw new ParseException("<dot:dot_component_u_list> expected, "
+					+ pos.charAt() + " found.", pos.location());
+		}
+	}
+
+	/** &lt;dot:sy$44_u_symbol&gt; */
+	public final Object pSy$44USymbol(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if ((_alt_c == ',')) {
+			Object _tor = null;
+			_tor = p$Char(pos, ',');
+			_alt_c = pos.charAt();
+			if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
+					|| (_alt_c == ' ') || (_alt_c == '/'))) {
+				try {
+					pos.save();
+					u.pSpacing(pos);
+					pos.commit();
+				} catch (ParseException ex) {
+					pos.rollback();
+				}
+			}
+			return _tor;
+		} else {
+			throw new ParseException("<dot:sy$44_u_symbol> expected, "
 					+ pos.charAt() + " found.", pos.location());
 		}
 	}
@@ -671,6 +800,22 @@ public class DOTParser extends ActiveParser {
 		} else {
 			throw new ParseException("<dot:sy$125_u_symbol> expected, "
 					+ pos.charAt() + " found.", pos.location());
+		}
+	}
+
+	/** &lt;dot:dot_attribute_u_commalist_1_1&gt; */
+	public final Object pDotAttributeUCommalist11(Pos pos)
+			throws ParseException {
+		char _alt_c = pos.charAt();
+		if ((_alt_c == ',')) {
+			dot.pSy$44USymbol(pos);
+			Object _tor = null;
+			_tor = dot.pAttribute(pos);
+			return _tor;
+		} else {
+			throw new ParseException(
+					"<dot:dot_attribute_u_commalist_1_1> expected, "
+							+ pos.charAt() + " found.", pos.location());
 		}
 	}
 

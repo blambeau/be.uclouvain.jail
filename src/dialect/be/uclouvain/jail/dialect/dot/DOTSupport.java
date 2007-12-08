@@ -16,7 +16,8 @@ public class DOTSupport {
 		// install XPath package
 
 		// install parsers
-		ParserFactory.instance().addRatsParser(XPathNodes.XPATH_UNIT,XPathParser.class);
-			}
-	
+		ParserFactory.instance().addRatsParser(XPathNodes.XPATH_UNIT,
+				XPathParser.class);
+	}
+
 }

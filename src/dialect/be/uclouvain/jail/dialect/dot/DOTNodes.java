@@ -6,40 +6,38 @@ import net.chefbe.autogram.utils.NamingUtils;
 /** AST node types for DOT grammar. */
 public enum DOTNodes implements IASTType {
 
-		
-		
 	/** GRAPHDEF node marker. */
-	GRAPHDEF	,	
-		
+	GRAPHDEF,
+
 	/** GRAPH_COMMONS node marker. */
-	GRAPH_COMMONS	,	
-		
+	GRAPH_COMMONS,
+
 	/** NODE_COMMONS node marker. */
-	NODE_COMMONS	,	
-		
+	NODE_COMMONS,
+
 	/** EDGE_COMMONS node marker. */
-	EDGE_COMMONS	,	
-		
+	EDGE_COMMONS,
+
 	/** NODEDEF node marker. */
-	NODEDEF	,	
-		
+	NODEDEF,
+
 	/** EDGEDEF node marker. */
-	EDGEDEF	,	
-		
+	EDGEDEF,
+
 	/** ATTRIBUTES node marker. */
-	ATTRIBUTES	,	
-		
+	ATTRIBUTES,
+
 	/** ATTRIBUTE node marker. */
-	ATTRIBUTE	;
+	ATTRIBUTE;
 
 	/** ID of AGPEG Grammar. */
 	public static final String GRAMMAR_ID = "dot";
-	
+
 	/** Returns the qualified name. */
 	public String qName() {
 		return namespace() + ":" + toString();
 	}
-	
+
 	/** Returns the namespace. */
 	public String namespace() {
 		return GRAMMAR_ID;
@@ -49,6 +47,5 @@ public enum DOTNodes implements IASTType {
 	public IASTType typeFor(String s) {
 		return valueOf(NamingUtils.upperName(s));
 	}
-	
-}
 
+}

@@ -13,25 +13,30 @@ import be.uclouvain.jail.graph.IDirectedGraph;
 
 /** Installs the DOT graph dialect. */
 public class DOTGraphDialect implements IGraphDialect {
-	
+
 	/** Loads source in dot format. */
-	public Object load(Object source, String format) throws IOException, ParseException {
+	public Object load(Object source, String format) throws IOException,
+			ParseException {
 		if ("dot".equals(format)) {
 			return DOTDirectedGraphLoader.loadGraph(source);
 		} else {
-			throw new IllegalStateException("Unknown format (not graphviz .dot): " + format);
+			throw new IllegalStateException(
+					"Unknown format (not graphviz .dot): " + format);
 		}
 	}
 
 	/** Prints source in dot format. */
-	public void print(Object source, String format, PrintWriter stream) throws IOException {
-		IDirectedGraph graph = (IDirectedGraph) AdaptUtils.adapt(source,IDirectedGraph.class);
+	public void print(Object source, String format, PrintWriter stream)
+			throws IOException {
+		IDirectedGraph graph = (IDirectedGraph) AdaptUtils.adapt(source,
+				IDirectedGraph.class);
 		if (graph == null) {
-			throw new IllegalStateException("Source must be IDirectedGraph adaptable");
+			throw new IllegalStateException(
+					"Source must be IDirectedGraph adaptable");
 		}
-		
+
 		// print the graph
 		new DOTDirectedGraphPrintable(graph).print(stream);
 	}
-	
+
 }

@@ -33,13 +33,20 @@ grammar DOT as dot extends ActiveParser {
 	<dot:attributes>           ::= <'[' u:symbol>
 	                                   attr:<dot:attribute u:list>
 	                               <']' u:symbol>
+	                             | <'[' u:symbol>
+	                                   attr:<dot:attribute u:commalist>
+	                               <']' u:symbol>
 	                             ; [u:node]
 	<dot:attribute>            ::= key:<dot:identifier> <'=' u:symbol> value:<dot:value>
 	                             ; [u:node]
 	<dot:value>                ::= tor:<u:string>
 	                             | tor:<u:integer>
 	                             | tor:<u:boolean>
+	                             | tor:<dot:nospace>
 	                             ; [u:return]
+
+	<dot:nospace>              ::= [A-Za-z0-9_]+ <u:spacing>?
+	                             ; [u:trim]
 
 	<dot:identifier>           ::= tor:<dot:identifier_chars> <u:spacing>?
 	                             ; [u:return]

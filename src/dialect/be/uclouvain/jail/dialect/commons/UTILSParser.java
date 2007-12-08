@@ -199,7 +199,6 @@ public class UTILSParser extends PEGParser {
 			{
 				StringBuffer _sb_tor = new StringBuffer();
 				char _zz_first = '"';
-				int _zz_start = pos.offset();
 				while (!pos.isEof()) {
 					char f = pos.charAt();
 					if (f == _zz_first && !pos.previousIs('\\')) {
@@ -208,10 +207,6 @@ public class UTILSParser extends PEGParser {
 						pos.more();
 						_sb_tor.append(f);
 					}
-				}
-				if (_zz_start == pos.offset()) {
-					throw new ParseException("!<symbol> expected, "
-							+ pos.charAt() + " found.", pos.location());
 				}
 				_tor = _sb_tor.toString();
 			}
@@ -232,7 +227,6 @@ public class UTILSParser extends PEGParser {
 			{
 				StringBuffer _sb_tor = new StringBuffer();
 				char _zz_first = '\'';
-				int _zz_start = pos.offset();
 				while (!pos.isEof()) {
 					char f = pos.charAt();
 					if (f == _zz_first && !pos.previousIs('\\')) {
@@ -241,10 +235,6 @@ public class UTILSParser extends PEGParser {
 						pos.more();
 						_sb_tor.append(f);
 					}
-				}
-				if (_zz_start == pos.offset()) {
-					throw new ParseException("!<symbol> expected, "
-							+ pos.charAt() + " found.", pos.location());
 				}
 				_tor = _sb_tor.toString();
 			}

@@ -18,9 +18,9 @@ grammar UTILS as u {
 	                         ; [u:return]
 
 	// ~~~ LITERAL VALUES ~~~
-	<u:d_string>           ::= ["] tor:!{\}["] ["]
+	<u:d_string>           ::= ["] tor:!{\}["]* ["]
 	                         ; [u:return]
-	<u:s_string>           ::= ['] tor:!{\}['] [']
+	<u:s_string>           ::= ['] tor:!{\}[']* [']
 	                         ; [u:return]
 	<u:string>             ::= tor:<u:d_string>
 	                         | tor:<u:s_string>

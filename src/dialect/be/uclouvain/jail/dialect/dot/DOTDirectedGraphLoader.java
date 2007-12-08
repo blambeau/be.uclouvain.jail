@@ -25,85 +25,89 @@ public class DOTDirectedGraphLoader {
 	}
 
 	/** Loads a graph. */
-	public static void loadGraph(IDirectedGraph graph, Object source) throws ParseException, IOException {
+	public static void loadGraph(IDirectedGraph graph, Object source)
+			throws ParseException, IOException {
 		// create parser instance and set loader
 		DOTParser parser = new DOTParser();
-		parser.setActiveLoader(new ASTLoader(new EnumTypeResolver<DOTNodes>(DOTNodes.class)));
-		
+		parser.setActiveLoader(new ASTLoader(new EnumTypeResolver<DOTNodes>(
+				DOTNodes.class)));
+
 		// create parsing position
-		Pos pos = new Pos(Input.input(new BaseLocation(source)),0);
-		
+		Pos pos = new Pos(Input.input(new BaseLocation(source)), 0);
+
 		// parse graph
 		IASTNode node = (IASTNode) parser.pGraphdef(pos);
-		
+
 		// load graph using this callback
 		try {
 			node.accept(new LoaderCallback(graph));
 		} catch (Exception e) {
-			throw new RuntimeException("Unexpected exception.",e);
+			throw new RuntimeException("Unexpected exception.", e);
 		}
 	}
-	
+
 	/** Loads a graph from some source. */
-	public static IDirectedGraph loadGraph(Object source) throws ParseException, IOException {
+	public static IDirectedGraph loadGraph(Object source)
+			throws ParseException, IOException {
 		IDirectedGraph graph = new AdjacencyDirectedGraph();
-		loadGraph(graph,source);
+		loadGraph(graph, source);
 		return graph;
 	}
-	
+
 	/** Callback class to load graph from AST. */
-	static class LoaderCallback extends DOTCallback<Object> { 
-	
+	static class LoaderCallback extends DOTCallback<Object> {
+
 		/** Loaded graph. */
 		private DirectedGraph graph;
-		
+
 		/** Graph unique index. */
 		private GraphUniqueIndex index;
-		
+
 		/** Last info created. */
 		private IUserInfo info;
-		
+
 		/** Creates a loader to fill the specified graph. */
 		public LoaderCallback(IDirectedGraph graph) {
 			this.graph = (DirectedGraph) graph.adapt(DirectedGraph.class);
 		}
-		
+
 		/** Creates a user info instance. */
 		private IUserInfo vInfo(String id) {
 			info = new MapUserInfo();
-			info.setAttribute("id",id);
+			info.setAttribute("id", id);
 			return info;
 		}
-		
+
 		/** Creates a user info instance. */
 		private IUserInfo eInfo() {
 			info = new MapUserInfo();
 			return info;
 		}
-		
+
 		/** Callback method for GRAPHDEF nodes. */
 		public Object GRAPHDEF(IASTNode node) throws Exception {
-			index = new GraphUniqueIndex(AbstractGraphConstraint.VERTEX,"id",true).installOn(graph);
+			index = new GraphUniqueIndex(AbstractGraphConstraint.VERTEX, "id",
+					true).installOn(graph);
 			super.recurseOnChildren(node);
 			index.uninstall();
 			return null;
 		}
-	
+
 		/** Callback method for GRAPH_COMMONS nodes. */
 		public Object GRAPH_COMMONS(IASTNode node) throws Exception {
 			return null;
 		}
-	
+
 		/** Callback method for NODE_COMMONS nodes. */
 		public Object NODE_COMMONS(IASTNode node) throws Exception {
 			return null;
 		}
-	
+
 		/** Callback method for EDGE_COMMONS nodes. */
 		public Object EDGE_COMMONS(IASTNode node) throws Exception {
 			return null;
 		}
-	
+
 		/** Callback method for NODEDEF nodes. */
 		public Object NODEDEF(IASTNode node) throws Exception {
 			String id = node.getAttrString("id");
@@ -111,7 +115,7 @@ public class DOTDirectedGraphLoader {
 			super.recurseOnChildren(node);
 			return null;
 		}
-	
+
 		/** Callback method for EDGEDEF nodes. */
 		public Object EDGEDEF(IASTNode node) throws Exception {
 			String src = node.getAttrString("src");
@@ -123,13 +127,13 @@ public class DOTDirectedGraphLoader {
 			graph.createEdge(srcV, trgV, info);
 			return null;
 		}
-	
+
 		/** Callback method for ATTRIBUTES nodes. */
 		public Object ATTRIBUTES(IASTNode node) throws Exception {
 			super.recurseOnChildren(node);
 			return null;
 		}
-	
+
 		/** Callback method for ATTRIBUTE nodes. */
 		public Object ATTRIBUTE(IASTNode node) throws Exception {
 			String key = node.getAttrString("key");
@@ -139,5 +143,5 @@ public class DOTDirectedGraphLoader {
 		}
 
 	}
-	
+
 }
