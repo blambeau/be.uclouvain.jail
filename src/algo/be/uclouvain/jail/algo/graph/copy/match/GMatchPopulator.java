@@ -30,13 +30,11 @@ public class GMatchPopulator implements IUserInfoPopulator<IUserInfo> {
 	public void populate(IUserInfo target, final IUserInfo source) {
 		try {
 			node.accept(new GMatchPopulatorCallback<IUserInfo>(source,target){
-
 				/** Extracts from source. */
 				@Override
 				protected Object extractSourceAttributeValue(IUserInfo source, String key) {
 					return source.getAttribute(key);
 				}
-				
 			});
 		} catch (Exception e) {
 			throw new IllegalStateException("Error while GMatch populating ...",e);
