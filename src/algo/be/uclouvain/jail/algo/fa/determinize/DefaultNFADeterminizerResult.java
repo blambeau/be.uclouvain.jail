@@ -7,6 +7,7 @@ import net.chefbe.javautils.adapt.AdaptUtils;
 import be.uclouvain.jail.algo.fa.utils.FAEdgeGroup;
 import be.uclouvain.jail.algo.fa.utils.FAStateGroup;
 import be.uclouvain.jail.fa.IDFA;
+import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.fa.impl.GraphDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
@@ -35,10 +36,10 @@ public class DefaultNFADeterminizerResult implements INFADeterminizerResult {
 	public DefaultNFADeterminizerResult() {
 		this.stateAggregator = new UserInfoAggregator();
 		this.edgeAggregator = new UserInfoAggregator();
-		stateAggregator.boolAnd("isInitial");
-		stateAggregator.boolOr("isAccepting");
-		stateAggregator.boolOr("isError");
-		edgeAggregator.first("letter");
+		stateAggregator.boolAnd(AttributeGraphFAInformer.STATE_INITIAL_KEY);
+		stateAggregator.boolOr(AttributeGraphFAInformer.STATE_ACCEPTING_KEY);
+		stateAggregator.boolOr(AttributeGraphFAInformer.STATE_ERROR_KEY);
+		edgeAggregator.first(AttributeGraphFAInformer.EDGE_LETTER_KEY);
 	}
 
 	/** Creates a result instance. */

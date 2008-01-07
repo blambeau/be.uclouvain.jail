@@ -6,6 +6,7 @@ import java.util.Set;
 
 import net.chefbe.javautils.adapt.AdaptUtils;
 import be.uclouvain.jail.fa.IDFA;
+import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.fa.impl.GraphDFA;
 import be.uclouvain.jail.graph.utils.DirectedGraphWriter;
 import be.uclouvain.jail.uinfo.IUserInfo;
@@ -113,15 +114,15 @@ public class DefaultDFAComplementorResult implements IDFAComplementorResult {
 
 	/** Creates a user info for a missing edge. */
 	protected IUserInfo createMissingEdgeInfo(Object letter) {
-		return MapUserInfo.factor("letter",letter);
+		return MapUserInfo.factor(AttributeGraphFAInformer.EDGE_LETTER_KEY,letter);
 	}
 
 	/** Creates a user info for the error state. */
 	protected IUserInfo createErrorStateInfo() {
 		IUserInfo info = new MapUserInfo();
-		info.setAttribute("isInitial", false);
-		info.setAttribute("isAccepting", false);
-		info.setAttribute("isError", true);
+		info.setAttribute(AttributeGraphFAInformer.STATE_INITIAL_KEY, false);
+		info.setAttribute(AttributeGraphFAInformer.STATE_ACCEPTING_KEY, false);
+		info.setAttribute(AttributeGraphFAInformer.STATE_ERROR_KEY, true);
 		return info;
 	}
 

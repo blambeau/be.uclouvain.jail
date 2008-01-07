@@ -1,0 +1,17 @@
+/* Imports common definitions. */
+(execute 'commons.jail');
+
+define (allaccept <A>)
+	     (copy (A) :vertex {@isAccepting -> when @isError=true then false
+				                                  else true});
+
+TRAIN_SAMPLE = <§jis
++ start stop start
++ start alarm stop open close start
++ open close start alarm stop
+- start open
+- start alarm open
+§>;
+
+(show (TRAIN_SAMPLE));
+(show (allaccept (determinize (TRAIN_SAMPLE))));

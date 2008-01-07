@@ -31,6 +31,7 @@ import be.uclouvain.jail.vm.autogram.JailNodes;
 import be.uclouvain.jail.vm.autogram.JailParser;
 import be.uclouvain.jail.vm.toolkits.AutomatonToolkit;
 import be.uclouvain.jail.vm.toolkits.GraphToolkit;
+import be.uclouvain.jail.vm.toolkits.InductionToolkit;
 
 /**
  * Provides JAIL virtual machine, which interprets .jail files.
@@ -64,6 +65,7 @@ public class JailVM implements IJailVMScope {
 		registerToolkit("jail",core);
 		registerToolkit("fa",new AutomatonToolkit());
 		registerToolkit("graph",new GraphToolkit());
+		registerToolkit("jind",new InductionToolkit());
 		registerToolkit("isis",new IsisToolkit());
 	}
 	

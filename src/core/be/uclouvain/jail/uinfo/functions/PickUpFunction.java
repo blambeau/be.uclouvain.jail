@@ -1,6 +1,6 @@
 package be.uclouvain.jail.uinfo.functions;
 
-/** Computes the minimum of all values. */
+/** Takes the first non null value in the iterated operands. */
 public class PickUpFunction<T> extends NonCommutativeFunction<T> {
 
 	/** Computes the first element. */

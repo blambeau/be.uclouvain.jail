@@ -41,6 +41,11 @@ public final class AggregateFunctionFactory {
 		return new PickUpFunction();
 	}
 	
+	/** Factors an all-same function. */
+	public static IAggregateFunction<?> allSame() {
+		return new AllSameFunction();
+	}
+	
 	/** Factors a group function. */
 	public static IAggregateFunction<?> group() {
 		return new GroupFunction();

@@ -17,6 +17,18 @@ import be.uclouvain.jail.uinfo.IUserInfo;
  */
 public class AttributeGraphFAInformer implements IGraphFAInformer {
 
+	/** Edge letter key. */
+	public static final String EDGE_LETTER_KEY = "letter";
+	
+	/** Edge letter key. */
+	public static final String STATE_INITIAL_KEY = "isInitial";
+	
+	/** Edge letter key. */
+	public static final String STATE_ACCEPTING_KEY = "isAccepting";
+	
+	/** Edge letter key. */
+	public static final String STATE_ERROR_KEY = "isError";
+	
 	/** Mapping attribute for edge letter. */
 	private String edgeLetterAttr;
 	
@@ -31,7 +43,7 @@ public class AttributeGraphFAInformer implements IGraphFAInformer {
 
 	/** Creates an informer with default attributes. */
 	public AttributeGraphFAInformer() {
-		this("letter","isInitial","isAccepting","isError");
+		this(EDGE_LETTER_KEY,STATE_INITIAL_KEY,STATE_ACCEPTING_KEY,STATE_ERROR_KEY);
 	}
 	
 	/** Creates an informer for specific attributes. */

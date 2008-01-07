@@ -97,7 +97,15 @@ public class UserInfoAggregator implements IUserInfoCreator<Collection<IUserInfo
 		return new MapUserInfo();
 	}
 	
-
+	/** Creates a IUserInfo instance from another one. */
+	public IUserInfo create(IUserInfo...info) {
+		List<IUserInfo> list = new ArrayList<IUserInfo>();
+		for (IUserInfo i: info) {
+			list.add(i);
+		}
+		return create(list);
+	}
+	
 	/** Creates a IUserInfo instance from another one. */
 	public IUserInfo create(Collection<IUserInfo> info) {
 		IUserInfo copy = factor();
