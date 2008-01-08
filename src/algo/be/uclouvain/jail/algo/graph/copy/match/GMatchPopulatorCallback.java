@@ -7,6 +7,7 @@ import net.chefbe.autogram.ast2.IASTNode;
 import be.uclouvain.jail.algo.graph.copy.match.functions.GMatchFunctionFactory;
 import be.uclouvain.jail.algo.graph.copy.match.functions.IGMatchFunction;
 import be.uclouvain.jail.uinfo.IUserInfo;
+import be.uclouvain.jail.uinfo.IUserInfoHelper;
 
 /** A match callback. */
 public abstract class GMatchPopulatorCallback<T> extends GMatchCallback<Object> {
@@ -17,19 +18,29 @@ public abstract class GMatchPopulatorCallback<T> extends GMatchCallback<Object> 
 	/** Source user info. */
 	protected T source;
 	
+	/** Information to fill. */
+	protected IUserInfo info;
+	
 	/** Target user info. */
-	protected IUserInfo target;
+	protected IUserInfoHelper helper;
 	
 	/** Creates a callback instance. */
-	public GMatchPopulatorCallback(T source, IUserInfo target) {
+	public GMatchPopulatorCallback(T source, IUserInfo info, IUserInfoHelper helper) {
 		this.source = source;
-		this.target = target;
+		this.info = info;
+		this.helper = helper;
 	}
 	
 	/** Callback method for MATCH_DO nodes. */
 	public Object MATCH_DO(IASTNode node) throws Exception {
 		// apply each attribute rule
-		return super.recurseOnChildren(node);
+		super.recurseOnChildren(node);
+		
+		// commit helper if any
+		if (helper != null) {
+			helper.install(info);
+		}
+		return null;
 	}
 
 	/** Callback method for MATCH_DOATTR nodes. */
@@ -44,7 +55,11 @@ public abstract class GMatchPopulatorCallback<T> extends GMatchCallback<Object> 
 		
 		// set pair
 		if (value != null) {
-			target.setAttribute(keyAttr, value);
+			if (helper != null) {
+				helper.addKeyValue(keyAttr, value);
+			} else {
+				info.setAttribute(keyAttr, value);
+			}
 		} else {
 			System.err.println("Warning: ignoring null value on attribute set @" + key);
 		}
@@ -150,7 +165,9 @@ public abstract class GMatchPopulatorCallback<T> extends GMatchCallback<Object> 
 		String op = node.getAttrString("op");
 		
 		if ("=".equals(op)) {
-			return (left==null && right == null) || (left != null && left.equals(right));
+			return (left==null && right == null) || 
+			       (left != null && right != null && 
+			    	left.toString().equals(right.toString()));
 		} else if ("<=".equals(op)) {
 			Comparable lComp = toComparable(right);
 			return lComp.compareTo(right) <= 0;

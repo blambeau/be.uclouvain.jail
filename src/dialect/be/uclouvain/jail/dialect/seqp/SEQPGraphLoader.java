@@ -11,12 +11,13 @@ import net.chefbe.autogram.ast2.parsing.active.ASTLoader.EnumTypeResolver;
 import net.chefbe.autogram.ast2.parsing.peg.Input;
 import net.chefbe.autogram.ast2.parsing.peg.Pos;
 import net.chefbe.autogram.ast2.utils.BaseLocation;
+import be.uclouvain.jail.fa.FAStateKind;
 import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.IDirectedGraphWriter;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
-import be.uclouvain.jail.uinfo.MapUserInfo;
+import be.uclouvain.jail.uinfo.IUserInfoHelper;
 
 /**
  * Converts a SEQP Abstract Syntax Tree to a IDirectedGraph.
@@ -43,56 +44,63 @@ public class SEQPGraphLoader extends SEQPCallback<Object> {
 	/** Current user info. */
 	private IUserInfo info;
 
+	/** Helper to use. */
+	private IUserInfoHelper helper;
+	
 	/** Creates a graph loader. */
-	public SEQPGraphLoader(IDirectedGraphWriter writer) {
+	public SEQPGraphLoader(IDirectedGraphWriter writer, IUserInfoHelper helper) {
 		this.writer = writer;
+		this.helper = helper;
 		vertices = new HashMap<String, Object>();
 		this.infos = new HashMap<Object,IUserInfo>();
 	}
 
 	/** Loads a source inside a graph writer. */
-	public static void load(Object source, IDirectedGraphWriter writer) throws IOException, ParseException {
+	public static void load(Object source, 
+			IDirectedGraphWriter writer, 
+			IUserInfoHelper helper) throws IOException, ParseException {
 		// parse source
 		SEQPParser parser = new SEQPParser();
-		parser.setActiveLoader(new ASTLoader(new EnumTypeResolver<SEQPNodes>(
-				SEQPNodes.class)));
+		parser.setActiveLoader(new ASTLoader(new EnumTypeResolver<SEQPNodes>(SEQPNodes.class)));
 		Pos pos = new Pos(Input.input(new BaseLocation(source)), 0);
 
 		// use callback
 		IASTNode root = (IASTNode) parser.pSeqpDef(pos);
 		try {
-			root.accept(new SEQPGraphLoader(writer));
+			root.accept(new SEQPGraphLoader(writer, helper));
 		} catch (Exception e) {
 			throw new IllegalStateException("Unexpected error", e);
 		}
 	}
 
 	/** Loads a directed grah. */
-	public static IDirectedGraph load(Object source) throws IOException, ParseException {
+	public static IDirectedGraph load(Object source, IUserInfoHelper helper) throws IOException, ParseException {
 		IDirectedGraph graph = new AdjacencyDirectedGraph();
-		load(source, graph);
+		load(source, graph, helper);
 		return graph;
 	}
 
 	/** Creates a vertex user info. */
 	private IUserInfo vInfo(String label) {
-		info = MapUserInfo.factor(STATELABEL, label == null ? "" : label);
-		info.setAttribute(AttributeGraphFAInformer.STATE_ACCEPTING_KEY, true);
-		info.setAttribute(AttributeGraphFAInformer.STATE_ERROR_KEY, false);
-		info.setAttribute(AttributeGraphFAInformer.STATE_INITIAL_KEY, vertices.size()==0);
+		helper.addKeyValue(STATELABEL, label == null ? "" : label);
+		helper.addKeyValue(AttributeGraphFAInformer.STATE_KIND_KEY, 
+				           FAStateKind.fromBools(true,false));
+		helper.addKeyValue(AttributeGraphFAInformer.STATE_INITIAL_KEY, vertices.size()==0);
+		info = helper.install();
 		return info;
 	}
 
 	/** Creates an edge user info. */
 	private IUserInfo eInfo(String letter) {
-		return MapUserInfo.factor(AttributeGraphFAInformer.EDGE_LETTER_KEY, letter);
+		info = helper.keyValue(AttributeGraphFAInformer.EDGE_LETTER_KEY, letter);
+		return info;
 	}
 
 	/** Ensures a vertex in the graph. */
 	private Object ensureVertex(String label, boolean create) {
 		Object vertex = label == null ? null : vertices.get(label);
 		if (vertex == null && create) {
-			IUserInfo info = vInfo(label);
+			info = vInfo(label);
 			vertex = writer.createVertex(info);
 			if (label != null) {
 				vertices.put(label, vertex);
@@ -135,7 +143,8 @@ public class SEQPGraphLoader extends SEQPCallback<Object> {
 	public Object ATTRDEF(IASTNode node) throws Exception {
 		String key = node.getAttrString("name");
 		Object value = node.getAttr("value");
-		info.setAttribute(key, value);
+		helper.keys(key);
+		helper.install(info, value);
 		return null;
 	}
 

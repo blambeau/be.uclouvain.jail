@@ -7,6 +7,7 @@ import be.uclouvain.jail.algo.graph.merge.IGraphMergingResult;
 import be.uclouvain.jail.algo.graph.utils.GraphEdgeGroup;
 import be.uclouvain.jail.algo.graph.utils.GraphVertexGroup;
 import be.uclouvain.jail.fa.IDFA;
+import be.uclouvain.jail.fa.functions.FAStateKindFunction;
 import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
@@ -40,8 +41,9 @@ public class DefaultDFAMergingResult implements IGraphMergingResult {
 		this.stateAggregator = new UserInfoAggregator();
 		this.edgeAggregator = new UserInfoAggregator();
 		stateAggregator.boolOr(AttributeGraphFAInformer.STATE_INITIAL_KEY);
-		stateAggregator.boolOr(AttributeGraphFAInformer.STATE_ACCEPTING_KEY);
-		stateAggregator.boolOr(AttributeGraphFAInformer.STATE_ERROR_KEY);
+		stateAggregator.stateKind(AttributeGraphFAInformer.STATE_KIND_KEY,
+                FAStateKindFunction.OR,
+                FAStateKindFunction.OR,true);
 		edgeAggregator.first(AttributeGraphFAInformer.EDGE_LETTER_KEY);
 	}
 

@@ -11,7 +11,8 @@ import be.uclouvain.jail.graph.IDirectedGraphPath;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.graph.deco.DirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
-import be.uclouvain.jail.uinfo.MapUserInfo;
+import be.uclouvain.jail.uinfo.IUserInfoHelper;
+import be.uclouvain.jail.uinfo.UserInfoHelper;
 
 /** Tests the DirectedGraphPath class. */
 public class DefaultDirectedGraphPathTest extends TestCase {
@@ -19,11 +20,13 @@ public class DefaultDirectedGraphPathTest extends TestCase {
 	/** Graph to use. */
 	private DirectedGraph graph;
 
+	/** Default helper instance. */
+	private IUserInfoHelper helper = UserInfoHelper.instance();
+	
 	/** Creates a IUserInfo instance. */
 	private IUserInfo info(Object i) {
-		IUserInfo info = new MapUserInfo();
-		info.setAttribute("id",i);
-		return info;
+		helper.addKeyValue("id",i);
+		return helper.install();
 	}
 	
 	/** Creates the graph. */

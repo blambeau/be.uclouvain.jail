@@ -47,8 +47,7 @@ public class FAGraphConstraint extends AbstractGraphConstraint {
 			try {
 				// let informer check that it find what it needs
 				informer.isInitial(info);
-				informer.isError(info);
-				informer.isAccepting(info);
+				informer.getStateKind(info);
 			} catch (IllegalStateException s) {
 				return false;
 			}

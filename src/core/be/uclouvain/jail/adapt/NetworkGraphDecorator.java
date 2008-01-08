@@ -14,7 +14,8 @@ import be.uclouvain.jail.graph.utils.CopyTotalOrder;
 import be.uclouvain.jail.graph.utils.ITotalOrder;
 import be.uclouvain.jail.graph.utils.ListTotalOrder;
 import be.uclouvain.jail.uinfo.IUserInfo;
-import be.uclouvain.jail.uinfo.MapUserInfo;
+import be.uclouvain.jail.uinfo.IUserInfoHelper;
+import be.uclouvain.jail.uinfo.UserInfoHelper;
 
 /**
  * Decorates the NetworkGraph to a graph.
@@ -23,8 +24,11 @@ import be.uclouvain.jail.uinfo.MapUserInfo;
  */
 public class NetworkGraphDecorator implements IDirectedGraph {
 
+	/** Helper to use. */
+	private IUserInfoHelper helper = UserInfoHelper.instance();
+	
 	/** Info. */
-	private IUserInfo info = new MapUserInfo();
+	private IUserInfo info = helper.install();
 	
 	/** Decorated graph. */
 	private NetworkGraph graph;
@@ -61,7 +65,7 @@ public class NetworkGraphDecorator implements IDirectedGraph {
 	/** Returns informations attached to a vertex. */
 	public IUserInfo getVertexInfo(Object vertex) {
 		NetworkNode node = (NetworkNode) vertex;
-		return MapUserInfo.factor("label", node.getDomain().getSimpleName());
+		return helper.keyValue("label", node.getDomain().getSimpleName());
 	}
 	
 	/** Sets informations attached to a vertex. */
@@ -108,7 +112,7 @@ public class NetworkGraphDecorator implements IDirectedGraph {
 	/** Returns informations attached to an edge. */
 	public IUserInfo getEdgeInfo(Object edge) {
 		NetworkEdge e = (NetworkEdge) edge;
-		return MapUserInfo.factor("label", e.getAdapter().toString());
+		return helper.keyValue("label", e.getAdapter().toString());
 	}
 	
 	/** Sets informations attached to an edge. */

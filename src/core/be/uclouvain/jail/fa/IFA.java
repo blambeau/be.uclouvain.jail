@@ -28,12 +28,9 @@ public interface IFA extends IAdaptable {
 	
 	/** Checks if a state is the initial state. */
 	public boolean isInitial(Object s);
-	
-	/** Checks if a state is marked as accepting. */
-	public boolean isAccepting(Object s);
-	
-	/** Checks if a state is marked as error. */
-	public boolean isError(Object s);
+
+	/** Returns state kind (accepting/error). */
+	public FAStateKind getStateKind(Object s);
 	
 	/** Returns an edge letter. */
 	public Object getEdgeLetter(Object s);

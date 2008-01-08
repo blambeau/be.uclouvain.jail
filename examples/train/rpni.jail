@@ -2,8 +2,9 @@
 (execute 'commons.jail');
 
 define (allaccept <A>)
-	     (copy (A) :vertex {@isAccepting -> when @isError=true then false
-				                                  else true});
+       (copy (A) :vertex {@kind -> when @kind='PASSAGE' then 'ACCEPTING'
+				                           else @kind
+												 });
 
 TRAIN_SAMPLE = <§jis
 + start stop start
@@ -14,4 +15,4 @@ TRAIN_SAMPLE = <§jis
 §>;
 
 (show (TRAIN_SAMPLE));
-(show (allaccept (determinize (TRAIN_SAMPLE))));
+(show (determinize (allaccept (TRAIN_SAMPLE))));

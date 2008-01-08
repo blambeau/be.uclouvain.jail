@@ -12,6 +12,8 @@ import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.constraints.AbstractGraphConstraint;
 import be.uclouvain.jail.graph.constraints.GraphUniqueIndex;
 import be.uclouvain.jail.graph.deco.DirectedGraph;
+import be.uclouvain.jail.uinfo.IUserInfoHelper;
+import be.uclouvain.jail.uinfo.UserInfoHelper;
 
 /**
  * Minimization tests, inspired from Hopcroft 2005 book.
@@ -21,25 +23,28 @@ import be.uclouvain.jail.graph.deco.DirectedGraph;
 public class Hopcroft2005Test extends TestCase {
 
 	/** DFA of page 155. */
-	private final String DFA155 = "A [@isAccepting=false] = l0->B|l1->F,"
-                                + "B [@isAccepting=false] = l0->G|l1->C,"
-                                + "C [@isAccepting=true]  = l0->A|l1->C,"
-                                + "D [@isAccepting=false] = l0->C|l1->G,"
-                                + "E [@isAccepting=false] = l0->H|l1->F,"
-                                + "F [@isAccepting=false] = l0->C|l1->G,"
-                                + "G [@isAccepting=false] = l0->G|l1->E,"
-                                + "H [@isAccepting=false] = l0->G|l1->C."; 
+	private final String DFA155 = "A [@kind='PASSAGE']    = l0->B|l1->F,"
+                                + "B [@kind='PASSAGE']    = l0->G|l1->C,"
+                                + "C [@kind='ACCEPTING']  = l0->A|l1->C,"
+                                + "D [@kind='PASSAGE']    = l0->C|l1->G,"
+                                + "E [@kind='PASSAGE']    = l0->H|l1->F,"
+                                + "F [@kind='PASSAGE']    = l0->C|l1->G,"
+                                + "G [@kind='PASSAGE']    = l0->G|l1->E,"
+                                + "H [@kind='PASSAGE']    = l0->G|l1->C."; 
 	
 	/** Equivalent DFA of page 162. */
-	private final String DFA162 = "AE [@isAccepting=false] = l0->BH|l1->DF,"
-                                + "G  [@isAccepting=false] = l0->G|l1->AE,"
-                                + "DF [@isAccepting=false] = l0->C|l1->G,"
-                                + "BH [@isAccepting=false] = l0->G|l1->C,"
-                                + "C  [@isAccepting=true]  = l0->AE|l1->C.";
+	private final String DFA162 = "AE [@kind='PASSAGE']    = l0->BH|l1->DF,"
+                                + "G  [@kind='PASSAGE']    = l0->G|l1->AE,"
+                                + "DF [@kind='PASSAGE']    = l0->C|l1->G,"
+                                + "BH [@kind='PASSAGE']    = l0->G|l1->C,"
+                                + "C  [@kind='ACCEPTING']  = l0->AE|l1->C.";
+	
+	/** Helper to use. */
+	private IUserInfoHelper helper = UserInfoHelper.instance();
 	
 	/** Tests returned partition. */
 	public void testPartition() throws Exception {
-		IDFA dfa155 = new GraphDFA(SEQPGraphLoader.load(DFA155));
+		IDFA dfa155 = new GraphDFA(SEQPGraphLoader.load(DFA155, helper));
 		
 		IDirectedGraph dfag = dfa155.getGraph();
 		DirectedGraph g = (DirectedGraph) dfag.adapt(DirectedGraph.class);
@@ -84,8 +89,8 @@ public class Hopcroft2005Test extends TestCase {
 	
 	/** Tests the minimizer. */
 	public void testMinimizer() throws Exception {
-		IDFA dfa155 = new GraphDFA(SEQPGraphLoader.load(DFA155));
-		IDFA expected = new GraphDFA(SEQPGraphLoader.load(DFA162));
+		IDFA dfa155 = new GraphDFA(SEQPGraphLoader.load(DFA155, helper));
+		IDFA expected = new GraphDFA(SEQPGraphLoader.load(DFA162, helper));
 		IDFA min = new DFAMinimizer(dfa155).getMinimalDFA();
 		assertTrue(new DFAEquiv(expected,min).areEquivalent());
 	}

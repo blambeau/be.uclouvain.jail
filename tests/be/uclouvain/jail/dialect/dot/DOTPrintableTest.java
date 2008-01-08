@@ -11,11 +11,15 @@ import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.IEdge;
 import be.uclouvain.jail.graph.adjacency.IVertex;
 import be.uclouvain.jail.uinfo.IUserInfo;
-import be.uclouvain.jail.uinfo.MapUserInfo;
+import be.uclouvain.jail.uinfo.IUserInfoHelper;
+import be.uclouvain.jail.uinfo.UserInfoHelper;
 
 /** Tests DOTPrintable class. */
 public class DOTPrintableTest extends TestCase {
 
+	/** Default helper instance. */
+	private IUserInfoHelper helper = UserInfoHelper.instance();
+	
 	/** Size of the created graph. */
 	private int size = 10;
 	
@@ -27,9 +31,8 @@ public class DOTPrintableTest extends TestCase {
 	
 	/** Creates a user info structure. */
 	private IUserInfo info(String name) {
-		IUserInfo info = new MapUserInfo();
-		info.setAttribute("label", name);
-		return info;
+		helper.addKeyValue("label", name);
+		return helper.install();
 	}
 	
 	/** Returns the label of a vertices or an edge. */

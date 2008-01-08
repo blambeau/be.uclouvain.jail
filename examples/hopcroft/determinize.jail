@@ -2,14 +2,14 @@
 
 /** NFA of page 56 */
 NFA56 = <§seqp
-    Q0[@isAccepting=false] = a->Q0|b->Q0|a->Q1,
-	Q1[@isAccepting=false] = b->Q2.
+    Q0[@kind='PASSAGE'] = a->Q0|b->Q0|a->Q1,
+	Q1[@kind='PASSAGE'] = b->Q2.
 §>;
 
 /** Equivalent DFA according to page 63. */
 DFA63 = <§seqp
-    Q0[@isAccepting=false @label='[Q0]']  = a->Q01|b->Q0,
-	Q01[@isAccepting=false @label='[Q0, Q1]'] = a->Q01|b->Q02,
+    Q0[@kind='PASSAGE' @label='[Q0]']  = a->Q01|b->Q0,
+	Q01[@kind='PASSAGE' @label='[Q0, Q1]'] = a->Q01|b->Q02,
     Q02[@label='[Q0, Q2]'] = a->Q01|b->Q0.
 §>;
 

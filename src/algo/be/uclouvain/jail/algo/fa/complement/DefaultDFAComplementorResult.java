@@ -5,12 +5,13 @@ import java.util.Map;
 import java.util.Set;
 
 import net.chefbe.javautils.adapt.AdaptUtils;
+import be.uclouvain.jail.fa.FAStateKind;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.fa.impl.GraphDFA;
 import be.uclouvain.jail.graph.utils.DirectedGraphWriter;
 import be.uclouvain.jail.uinfo.IUserInfo;
-import be.uclouvain.jail.uinfo.MapUserInfo;
+import be.uclouvain.jail.uinfo.IUserInfoHelper;
 import be.uclouvain.jail.uinfo.UserInfoCopier;
 
 /**
@@ -32,6 +33,9 @@ public class DefaultDFAComplementorResult implements IDFAComplementorResult {
 	/** Graph writer. */
 	private DirectedGraphWriter writer;
 	
+	/** Helper to use. */
+	private IUserInfoHelper helper;
+	
 	/** Copied states. */
 	private Map<Object,Object> states;
 	
@@ -39,9 +43,10 @@ public class DefaultDFAComplementorResult implements IDFAComplementorResult {
 	private Object errorState;
 
 	/** Creates a result instance. */
-	public DefaultDFAComplementorResult() {
-		result = new GraphDFA();
-		writer = new DirectedGraphWriter(result.getGraph());
+	public DefaultDFAComplementorResult(IUserInfoHelper helper) {
+		this.result = new GraphDFA();
+		this.writer = new DirectedGraphWriter(result.getGraph());
+		this.helper = helper;
 	}
 	
 	/** Returns the state copier. */
@@ -114,16 +119,14 @@ public class DefaultDFAComplementorResult implements IDFAComplementorResult {
 
 	/** Creates a user info for a missing edge. */
 	protected IUserInfo createMissingEdgeInfo(Object letter) {
-		return MapUserInfo.factor(AttributeGraphFAInformer.EDGE_LETTER_KEY,letter);
+		return helper.keyValue(AttributeGraphFAInformer.EDGE_LETTER_KEY,letter);
 	}
 
 	/** Creates a user info for the error state. */
 	protected IUserInfo createErrorStateInfo() {
-		IUserInfo info = new MapUserInfo();
-		info.setAttribute(AttributeGraphFAInformer.STATE_INITIAL_KEY, false);
-		info.setAttribute(AttributeGraphFAInformer.STATE_ACCEPTING_KEY, false);
-		info.setAttribute(AttributeGraphFAInformer.STATE_ERROR_KEY, true);
-		return info;
+		helper.addKeyValue(AttributeGraphFAInformer.STATE_INITIAL_KEY, false);
+		helper.addKeyValue(AttributeGraphFAInformer.STATE_KIND_KEY, FAStateKind.ERROR);
+		return helper.install();
 	}
 
 	/** Adapts to some types. */

@@ -21,10 +21,11 @@ import net.chefbe.javautils.adapt.AdaptUtils;
 import net.chefbe.javautils.adapt.IAdapter;
 import net.chefbe.javautils.collections.map.ListOrderedMap;
 import net.chefbe.javautils.robust.exceptions.CoreException;
-import be.uclouvain.isis.jail.IsisToolkit;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchNodes;
 import be.uclouvain.jail.dialect.IGraphDialect;
 import be.uclouvain.jail.uinfo.IUserInfo;
+import be.uclouvain.jail.uinfo.IUserInfoHelper;
+import be.uclouvain.jail.uinfo.UserInfoHelper;
 import be.uclouvain.jail.vm.IJailVMEnvironment.LEVEL;
 import be.uclouvain.jail.vm.JailVMException.ERROR_TYPE;
 import be.uclouvain.jail.vm.autogram.JailNodes;
@@ -55,6 +56,9 @@ public class JailVM implements IJailVMScope {
 	/** Executed sources stack. */
 	private Stack<Object> sources;
 	
+	/** User info helper to use. */
+	private IUserInfoHelper uInfoHelper;
+	
 	/** Creates a VM instance. */
 	public JailVM(IJailVMEnvironment env) {
 		this.env = env;
@@ -62,11 +66,12 @@ public class JailVM implements IJailVMScope {
 		sources = new Stack<Object>();
 		toolkits = new ListOrderedMap<String,IJailVMToolkit>();
 		core = new JailCoreToolkit();
+		uInfoHelper = UserInfoHelper.instance();
 		registerToolkit("jail",core);
 		registerToolkit("fa",new AutomatonToolkit());
 		registerToolkit("graph",new GraphToolkit());
 		registerToolkit("jind",new InductionToolkit());
-		registerToolkit("isis",new IsisToolkit());
+		//registerToolkit("isis",new IsisToolkit());
 	}
 	
 	/** Creates a virtual machine with default environment. */
@@ -84,6 +89,11 @@ public class JailVM implements IJailVMScope {
 		return env;
 	}
 
+	/** Returns the user info helper to use. */
+	public IUserInfoHelper getUserInfoHelper() {
+		return uInfoHelper;
+	}
+	
 	/** Resolves a relative path, through currently executed source. */
 	public String resolvePath(String path) throws JailVMException {
 		if (sources.isEmpty()) {
@@ -162,6 +172,7 @@ public class JailVM implements IJailVMScope {
 	
 	/** Registers a loader. */
 	public void registerDialectLoader(String extension, IGraphDialect loader) {
+		loader.setUserInfoHelper(getUserInfoHelper());
 		core.registerDialectLoader(extension, loader);
 	}
 	

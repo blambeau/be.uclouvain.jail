@@ -1,13 +1,17 @@
 define (adot <A>) 
-	(copy (A)
-        :vertex {@shape -> when @isAccepting=true then 'doublecircle'
-                          else 'circle',
-        				@style -> 'filled',
-                @fillcolor -> when @isError=true then 'red'
-                              when @isInitial=true then 'green'
-                              else 'white'}
-		    :edge  {@label -> @letter}
-	);
+	     (copy (A)
+             :vertex {@shape -> when @kind='ACCEPTING' then 'doublecircle'
+                                when @kind='AVOID' then 'doublecircle'
+                                else 'circle',
+                      @style -> 'filled',
+                      @fillcolor -> when @isInitial=true and 
+                                        (@kind='ERROR' or @kind='AVOID') then 'brown'
+                                    when @isInitial=true then 'green'
+                                    when @kind='ERROR' then 'red'
+                                    when @kind='AVOID' then 'red'
+                                    else 'white',
+                      @label     -> @label}
+		     :edge  {@label -> @letter});
 define (show <A>)
 	     (jdotty (adot (A)));
 

@@ -101,6 +101,10 @@ public class DFAEquivAlgo {
 	
 	/** Returns a reference equivalent trace extended with one rejected edge. */
 	private IDFATrace getReferenceTrace(Object rejEdge) {
+		if (!input.isCounterExampleEnabled()) {
+			return null;
+		}
+		
 		// transform tested trace to reference trace
 		List<Object> edges = new ArrayList<Object>(stack.size()+1);
 		Object current = reference.getInitialState();
@@ -184,8 +188,8 @@ public class DFAEquivAlgo {
 		}
 
 		// check accepting OK
-		boolean s1Accepting = tested.isAccepting(s1);
-		boolean s2Accepting = reference.isAccepting(s2);
+		boolean s1Accepting = tested.getStateKind(s1).isFlagAccepting();
+		boolean s2Accepting = reference.getStateKind(s2).isFlagAccepting();
 		if (s1Accepting != s2Accepting) {
 			if (s1Accepting) {
 				throw acceptedNonEquivException();
@@ -195,8 +199,8 @@ public class DFAEquivAlgo {
 		}
 
 		// check error OK
-		boolean s1Error = tested.isError(s1);
-		boolean s2Error = reference.isError(s2);
+		boolean s1Error = tested.getStateKind(s1).isFlagError();
+		boolean s2Error = reference.getStateKind(s2).isFlagError();
 		if (s1Error != s2Error) {
 			if (s1Error) {
 				throw new NonEquivException(CounterExampleKind.REJECTED,getReferenceTrace(null));

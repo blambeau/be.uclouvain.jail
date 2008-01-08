@@ -3,6 +3,7 @@ package be.uclouvain.jail.algo.fa.compose;
 import be.uclouvain.jail.algo.fa.utils.MultiDFAEdgeGroup;
 import be.uclouvain.jail.algo.fa.utils.MultiDFAStateGroup;
 import be.uclouvain.jail.fa.IDFA;
+import be.uclouvain.jail.fa.functions.FAStateKindFunction;
 import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
@@ -32,8 +33,9 @@ public class DefaultDFAComposerResult implements IDFAComposerResult {
 		this.stateAggregator = new UserInfoAggregator();
 		this.edgeAggregator = new UserInfoAggregator();
 		stateAggregator.boolAnd(AttributeGraphFAInformer.STATE_INITIAL_KEY);
-		stateAggregator.boolAnd(AttributeGraphFAInformer.STATE_ACCEPTING_KEY);
-		stateAggregator.boolOr(AttributeGraphFAInformer.STATE_ERROR_KEY);
+		stateAggregator.stateKind(AttributeGraphFAInformer.STATE_KIND_KEY,
+				                  FAStateKindFunction.AND,
+				                  FAStateKindFunction.OR,true);
 		edgeAggregator.first(AttributeGraphFAInformer.EDGE_LETTER_KEY);
 	}
 

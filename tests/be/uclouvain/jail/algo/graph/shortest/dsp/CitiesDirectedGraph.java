@@ -5,7 +5,8 @@ import be.uclouvain.jail.graph.constraints.AbstractGraphConstraint;
 import be.uclouvain.jail.graph.constraints.GraphUniqueIndex;
 import be.uclouvain.jail.graph.deco.DirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
-import be.uclouvain.jail.uinfo.MapUserInfo;
+import be.uclouvain.jail.uinfo.IUserInfoHelper;
+import be.uclouvain.jail.uinfo.UserInfoHelper;
 
 /**
  * Provides a directed graph with cities.
@@ -17,6 +18,9 @@ public class CitiesDirectedGraph extends DirectedGraph {
 	/** Vertices index. */
 	private GraphUniqueIndex index;
 
+	/** Default helper instance. */
+	private IUserInfoHelper helper = UserInfoHelper.instance();
+	
 	/** Creates a graph instance. */
 	public CitiesDirectedGraph() {
 		super(new AdjacencyDirectedGraph());
@@ -67,18 +71,15 @@ public class CitiesDirectedGraph extends DirectedGraph {
 	
 	/** Creates a vertex info. */
 	private IUserInfo vinfo(String label, int index) {
-		IUserInfo info = new MapUserInfo();
-		info.setAttribute("label", label);
-		info.setAttribute("index",index);
-		info.setAttribute("pair", (index % 2)==0);
-		return info;
+		helper.addKeyValue("label", label);
+		helper.addKeyValue("index",index);
+		helper.addKeyValue("pair", (index % 2)==0);
+		return helper.install();
 	}
 	
 	/** Creates an edge info. */
 	private IUserInfo einfo(Integer dist) {
-		IUserInfo info = new MapUserInfo();
-		info.setAttribute("distance", dist);
-		return info;
+		return helper.keyValue("distance", dist);
 	}
 	
 	/** Returns a vertex mapped to a specific label. */

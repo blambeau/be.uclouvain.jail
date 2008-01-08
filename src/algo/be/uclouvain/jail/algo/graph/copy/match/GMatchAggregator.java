@@ -6,6 +6,7 @@ import java.util.List;
 
 import net.chefbe.autogram.ast2.IASTNode;
 import be.uclouvain.jail.uinfo.IUserInfo;
+import be.uclouvain.jail.uinfo.IUserInfoHelper;
 import be.uclouvain.jail.uinfo.IUserInfoPopulator;
 import be.uclouvain.jail.uinfo.functions.AggregateFunctionFactory;
 import be.uclouvain.jail.uinfo.functions.IAggregateFunction;
@@ -20,18 +21,22 @@ public class GMatchAggregator implements IUserInfoPopulator<Collection<IUserInfo
 	/** Root node. */
 	private IASTNode node;
 	
+	/** Helper to use. */
+	private IUserInfoHelper helper;
+	
 	/** Creates a match populator. */
-	public GMatchAggregator(IASTNode node) {
+	public GMatchAggregator(IASTNode node, IUserInfoHelper helper) {
 		if (!GMatchNodes.MATCH_DO.equals(node.type())) {
 			throw new IllegalArgumentException("MATCH_DO node expected, " + node.type() + " received.");
 		}
 		this.node = node;
+		this.helper = helper;
 	}
 
 	/** Populates a target from a source. */
 	public void populate(IUserInfo target, Collection<IUserInfo> source) {
 		try {
-			node.accept(new GMatchPopulatorCallback<Collection<IUserInfo>>(source,target){
+			node.accept(new GMatchPopulatorCallback<Collection<IUserInfo>>(source,target,helper){
 
 				/** Uses the pick up function to extract the value. */
 				@Override

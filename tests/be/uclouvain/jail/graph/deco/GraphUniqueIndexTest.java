@@ -6,7 +6,8 @@ import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.graph.constraints.AbstractGraphConstraint;
 import be.uclouvain.jail.graph.constraints.GraphUniqueIndex;
 import be.uclouvain.jail.uinfo.IUserInfo;
-import be.uclouvain.jail.uinfo.MapUserInfo;
+import be.uclouvain.jail.uinfo.IUserInfoHelper;
+import be.uclouvain.jail.uinfo.UserInfoHelper;
 
 /**
  * Tests GraphUniqueIndex class. 
@@ -18,6 +19,9 @@ public class GraphUniqueIndexTest extends TestCase {
 	/** Graph to use. */
 	private DirectedGraph graph;
 	
+	/** Default helper instance. */
+	private IUserInfoHelper helper = UserInfoHelper.instance();
+	
 	/** Sets the test up. */
 	@Override
 	protected void setUp() throws Exception {
@@ -28,9 +32,8 @@ public class GraphUniqueIndexTest extends TestCase {
 
 	/** Creates a user info. */
 	private IUserInfo info(Integer id) {
-		MapUserInfo info = new MapUserInfo();
-		info.setAttribute("id",id);
-		return info;
+		helper.addKeyValue("id",id);
+		return helper.install();
 	}
 	
 	/** Tests that the graph constraint works. */

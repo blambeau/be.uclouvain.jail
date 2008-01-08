@@ -1,6 +1,7 @@
 package be.uclouvain.jail.vm.toolkits;
 
 import net.chefbe.javautils.adapt.IAdapter;
+import net.chefbe.javautils.adapt.StringAdaptationTool;
 import be.uclouvain.jail.algo.fa.complement.DFAComplementorAlgo;
 import be.uclouvain.jail.algo.fa.complement.DFAComplementorHeuristic;
 import be.uclouvain.jail.algo.fa.complement.DefaultDFAComplementorInput;
@@ -26,6 +27,7 @@ import be.uclouvain.jail.algo.fa.tmoves.TauRemoverAlgo;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchAggregator;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchPopulator;
 import be.uclouvain.jail.dialect.seqp.SEQPGraphDialect;
+import be.uclouvain.jail.fa.FAStateKind;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.IFA;
 import be.uclouvain.jail.fa.INFA;
@@ -50,6 +52,10 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 		vm.registerAdaptation(IDFA.class, IDirectedGraph.class, this);
 		
 		vm.registerDialectLoader("seqp", new SEQPGraphDialect());
+		
+		vm.getUserInfoHelper().register(AttributeGraphFAInformer.STATE_INITIAL_KEY, Boolean.class);
+		vm.getUserInfoHelper().addAdapter(FAStateKind.class, StringAdaptationTool.TO_ENUM);
+		vm.getUserInfoHelper().register(AttributeGraphFAInformer.STATE_KIND_KEY, FAStateKind.class);
 	}
 
 	/** Determinizes a NDA. */
@@ -176,9 +182,9 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 	}
 	
 	/** Complements a DFA. */
-	public IDFA complement(IDFA dfa, JailVMOptions options) throws JailVMException {
+	public IDFA complement(IDFA dfa, JailVMOptions options, JailVM vm) throws JailVMException {
 		DefaultDFAComplementorInput input = new DefaultDFAComplementorInput(dfa);
-		DefaultDFAComplementorResult result = new DefaultDFAComplementorResult();
+		DefaultDFAComplementorResult result = new DefaultDFAComplementorResult(vm.getUserInfoHelper());
 		result.getStateCopier().keepAll();
 		result.getEdgeCopier().keepAll();
 		

@@ -12,10 +12,10 @@ import net.chefbe.autogram.ast2.parsing.ParseException;
 import net.chefbe.autogram.ast2.utils.BaseLocation;
 import be.uclouvain.jail.algo.induct.sample.DefaultSample;
 import be.uclouvain.jail.algo.induct.sample.DefaultSampleString;
-import be.uclouvain.jail.dialect.IGraphDialect;
+import be.uclouvain.jail.dialect.commons.AbstractGraphDialect;
 
 /** Installs the DOT graph dialect. */
-public class JISGraphDialect implements IGraphDialect {
+public class JISGraphDialect extends AbstractGraphDialect {
 
 	/** Loads source in dot format. */
 	public Object load(Object source, String format) throws IOException, ParseException {

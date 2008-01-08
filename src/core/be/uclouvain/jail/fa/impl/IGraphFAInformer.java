@@ -1,5 +1,6 @@
 package be.uclouvain.jail.fa.impl;
 
+import be.uclouvain.jail.fa.FAStateKind;
 import be.uclouvain.jail.uinfo.IUserInfo;
 
 /** 
@@ -20,11 +21,8 @@ public interface IGraphFAInformer {
 	/** Checks if a state is the initial state. */
 	public boolean isInitial(IUserInfo s);
 	
-	/** Checks if a state is marked as accepting. */
-	public boolean isAccepting(IUserInfo s);
-	
-	/** Checks if a state is marked as error. */
-	public boolean isError(IUserInfo s);
+	/** Returns the kind of a state. */
+	public FAStateKind getStateKind(IUserInfo s);
 	
 	/** Returns an edge letter. */
 	public Object edgeLetter(IUserInfo s);

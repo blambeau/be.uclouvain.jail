@@ -5,13 +5,15 @@ import java.net.URL;
 import junit.framework.TestCase;
 import be.uclouvain.jail.algo.fa.equiv.DFAEquiv;
 import be.uclouvain.jail.dialect.dot.DOTDirectedGraphLoader;
+import be.uclouvain.jail.fa.FAStateKind;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.DefaultGraphComponentFactory;
 import be.uclouvain.jail.graph.adjacency.IGraphComponentFactory;
 import be.uclouvain.jail.uinfo.IUserInfo;
-import be.uclouvain.jail.uinfo.MapUserInfo;
+import be.uclouvain.jail.uinfo.IUserInfoHelper;
+import be.uclouvain.jail.uinfo.UserInfoHelper;
 
 /** Tests some implementations of DFA. */
 public class DFATest extends TestCase {
@@ -21,11 +23,11 @@ public class DFATest extends TestCase {
 		digraph DFA {
 			graph [rankdir="LR"];
 			node [shape="circle"];
-			0 [label="v0" isInitial=true isAccepting=false isError=false];
-			1 [label="v1" isInitial=false isAccepting=true isError=false shape="doublecircle"];
-			2 [label="v2" isInitial=false isAccepting=true isError=false shape="doublecircle"];
-			3 [label="v3" isInitial=false isAccepting=false isError=false];
-			4 [label="v4" isInitial=false isAccepting=false isError=true color="red"];
+			0 [label="v0" isInitial=true  kind='PASSAGE'];
+			1 [label="v1" isInitial=false kind='ACCEPTING' shape="doublecircle"];
+			2 [label="v2" isInitial=false kind='ACCEPTING' shape="doublecircle"];
+			3 [label="v3" isInitial=false kind='PASSAGE'];
+			4 [label="v4" isInitial=false kind='ERROR' color="red"];
 			0 -> 1 [letter="a"];
 			0 -> 2 [letter="b"];
 			1 -> 3 [letter="b"];
@@ -38,20 +40,21 @@ public class DFATest extends TestCase {
 	 */
 	private IDFA reference;
 
+	/** Default helper instance. */
+	private IUserInfoHelper helper = UserInfoHelper.instance();
+	
 	/** Creates a vertex info. */
 	private IUserInfo vInfo(boolean initial, boolean accepting, boolean error) {
-		IUserInfo info = new MapUserInfo();
-		info.setAttribute("isInitial", initial);
-		info.setAttribute("isAccepting", accepting);
-		info.setAttribute("isError", error);
-		return info;
+		helper.addKeyValue("isInitial", initial);
+		helper.addKeyValue(AttributeGraphFAInformer.STATE_KIND_KEY,
+		                   FAStateKind.fromBools(accepting,error));
+		return helper.install();
 	}
 
 	/** Creates an edge info. */
 	private IUserInfo eInfo(String letter) {
-		IUserInfo info = new MapUserInfo();
-		info.setAttribute("letter", letter);
-		return info;
+		helper.addKeyValue("letter", letter);
+		return helper.install();
 	}
 	
 	/** Sets the test up, creating the reference DFA. */
@@ -87,7 +90,7 @@ public class DFATest extends TestCase {
 	
 	/** Loads a dfa from DFA.dot file. */
 	public IDFA loadDFA(IDFA dfa) throws Exception {
-		DOTDirectedGraphLoader.loadGraph(dfa.getGraph(),getDFAURL());
+		DOTDirectedGraphLoader.loadGraph(dfa.getGraph(),getDFAURL(),helper);
 		return dfa;
 	}
 

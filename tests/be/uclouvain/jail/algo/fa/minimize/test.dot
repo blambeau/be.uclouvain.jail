@@ -1,9 +1,9 @@
 digraph G {
 	graph [rankdir="LR"];
 	node [shape="circle"];
-	0 [label="0" isInitial="false" isAccepting="true" isError="false" shape="doublecircle"];
-	1 [label="1" isInitial="false" isAccepting="false" isError="false"];
-	2 [label="2" isInitial="true" isAccepting="false" isError="false"];
+	0 [label="0" isInitial="false" kind='ACCEPTING' shape="doublecircle"];
+	1 [label="1" isInitial="false" kind='PASSAGE'];
+	2 [label="2" isInitial="true"  kind='PASSAGE'];
 	0 -> 0 [label="d" letter="d"];
 	1 -> 0 [label="c" letter="c"];
 	2 -> 1 [label="a" letter="a"];

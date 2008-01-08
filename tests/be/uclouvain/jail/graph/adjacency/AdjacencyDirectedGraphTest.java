@@ -7,7 +7,8 @@ import junit.framework.TestCase;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.utils.ITotalOrder;
 import be.uclouvain.jail.uinfo.IUserInfo;
-import be.uclouvain.jail.uinfo.MapUserInfo;
+import be.uclouvain.jail.uinfo.IUserInfoHelper;
+import be.uclouvain.jail.uinfo.UserInfoHelper;
 
 /**
  * Tests for AdjacencyDirectedGraph class.
@@ -28,11 +29,12 @@ public class AdjacencyDirectedGraphTest extends TestCase {
 	/** Graph to test. */
 	private IDirectedGraph graph;
 
+	/** Default helper instance. */
+	private IUserInfoHelper helper = UserInfoHelper.instance();
+	
 	/** Creates a user info structure. */
 	private IUserInfo info(String name) {
-		IUserInfo info = new MapUserInfo();
-		info.setAttribute("label", name);
-		return info;
+		return helper.keyValue("label", name);
 	}
 	
 	/** Returns the label of a vertices or an edge. */

@@ -1,6 +1,7 @@
 package be.uclouvain.jail.algo.induct.utils;
 
 import be.uclouvain.jail.algo.induct.open.IPartitionner;
+import be.uclouvain.jail.fa.FAStateKind;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.utils.ITotalOrder;
@@ -19,7 +20,8 @@ public class ErrorPartitionner implements IPartitionner {
 		int partition[] = new int[states.size()];
 		int i = 0;
 		for (Object state : g.getVertices()) {
-			if (pta.isError(state)) {
+			FAStateKind kind = pta.getStateKind(state);
+			if (FAStateKind.AVOID.equals(kind)) {
 				partition[i] = -1;
 			} else {
 				partition[i] = 0;

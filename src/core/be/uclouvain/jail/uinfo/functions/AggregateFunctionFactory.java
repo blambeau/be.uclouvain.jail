@@ -3,6 +3,7 @@ package be.uclouvain.jail.uinfo.functions;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import be.uclouvain.jail.fa.functions.FAStateKindFunction;
 import be.uclouvain.jail.vm.JailVMException;
 
 /** Factory for aggregate functions. */
@@ -54,6 +55,11 @@ public final class AggregateFunctionFactory {
 	/** Factors a list function. */
 	public static IAggregateFunction<?> list() {
 		return new ListFunction();
+	}
+	
+	/** Factors a list function. */
+	public static IAggregateFunction<?> stateKind(int acceptingOp, int errorOp, boolean throwOnAvoid) {
+		return new FAStateKindFunction(acceptingOp,errorOp,throwOnAvoid);
 	}
 
 	/** Returns a function by name. */

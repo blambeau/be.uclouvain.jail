@@ -37,15 +37,16 @@ public final class JailExamples {
 			getExample("hopcroft/tmoves.jail"),
 			getExample("hopcroft/tmoves2.jail"),
 
+			/*
 			getExample("medical/commons.jail"),
 			getExample("medical/medical1.jail"),
 			getExample("medical/medical2.jail"),
+			*/
 
 			getExample("train/commons.jail"),
 			getExample("train/decorate.jail"),
-			getExample("train/kernel.jail"),
-			getExample("train/ptaconstr.jail"),
 			getExample("train/standard3.jail"),
+			getExample("train/rpni.jail"),
 		};
 	}
 	

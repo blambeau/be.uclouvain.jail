@@ -22,13 +22,19 @@ public class FAUtils {
 	public static IUserInfoPopulator<IUserInfo> getGraph2DotVertexPopulator() {
 		try {
 			return GMatchPopulator.parse("{                                                       " +
-					                     "    @shape -> when @isAccepting=true then 'doublecircle'" +
+					                     "    @shape -> when @kind='ACCEPTING' then 'doublecircle'" +
+                                         "              when @kind='AVOID' then 'doublecircle'    " +
                                          "              else 'circle',                            " +
                                          "    @style -> 'filled',                                 " +
-                                         "    @fillcolor -> when @isError=true then 'red'         " +
+                                         "    @fillcolor -> when @isInitial=true and              " +  
+                                         "                       (@kind='ERROR' or                " +
+                                         "                        @kind='AVOID') then 'brown'     " +
                                          "                  when @isInitial=true then 'green'     " +
-                                         "                  else 'white'                          " +
-                                         "}                                                       ");
+                                         "                  when @kind='ERROR' then 'red'         " +
+                                         "                  when @kind='AVOID' then 'red'         " +
+                                         "                  else 'white',                         " +
+                                         "    @label     -> @label                                " +
+                                         "}                                                       ",null);
 		} catch (ParseException ex) {
 			throw new CoreException("Unexpected exception ",ex);
 		}
@@ -39,7 +45,7 @@ public class FAUtils {
 		try {
 			return GMatchPopulator.parse("{                    " +
 					                     "    @label -> @letter" +
-                                         "}                    ");
+                                         "}                    ",null);
 		} catch (ParseException ex) {
 			throw new CoreException("Unexpected exception ",ex);
 		}

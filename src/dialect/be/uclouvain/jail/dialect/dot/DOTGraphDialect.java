@@ -8,16 +8,16 @@ import java.io.PrintWriter;
 
 import net.chefbe.autogram.ast2.parsing.ParseException;
 import net.chefbe.javautils.adapt.AdaptUtils;
-import be.uclouvain.jail.dialect.IGraphDialect;
+import be.uclouvain.jail.dialect.commons.AbstractGraphDialect;
 import be.uclouvain.jail.graph.IDirectedGraph;
 
 /** Installs the DOT graph dialect. */
-public class DOTGraphDialect implements IGraphDialect {
+public class DOTGraphDialect extends AbstractGraphDialect {
 
 	/** Loads source in dot format. */
 	public Object load(Object source, String format) throws IOException, ParseException {
 		if ("dot".equals(format)) {
-			return DOTDirectedGraphLoader.loadGraph(source);
+			return DOTDirectedGraphLoader.loadGraph(source, uInfoHelper);
 		} else {
 			throw new IllegalStateException("Unknown format (not graphviz .dot): " + format);
 		}

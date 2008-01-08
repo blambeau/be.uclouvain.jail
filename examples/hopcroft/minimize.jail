@@ -1,22 +1,22 @@
 (execute 'commons.jail');
 
 DFA155 = <§seqp
-    A[@isAccepting=false] = l0->B|l1->F,
-    B[@isAccepting=false] = l0->G|l1->C,
-    C[@isAccepting=true] = l0->A|l1->C,
-    D[@isAccepting=false] = l0->C|l1->G,
-    E[@isAccepting=false] = l0->H|l1->F,
-    F[@isAccepting=false] = l0->C|l1->G,
-    G[@isAccepting=false] = l0->G|l1->E,
-    H[@isAccepting=false] = l0->G|l1->C.
+    A[@kind='PASSAGE'] = l0->B|l1->F,
+    B[@kind='PASSAGE'] = l0->G|l1->C,
+    C[@kind='ACCEPTING'] = l0->A|l1->C,
+    D[@kind='PASSAGE'] = l0->C|l1->G,
+    E[@kind='PASSAGE'] = l0->H|l1->F,
+    F[@kind='PASSAGE'] = l0->C|l1->G,
+    G[@kind='PASSAGE'] = l0->G|l1->E,
+    H[@kind='PASSAGE'] = l0->G|l1->C.
 §>;
 
 DFA162 = <§seqp
-    AE [@isAccepting=false] = l0->BH|l1->DF,
-    G  [@isAccepting=false] = l0->G|l1->AE,
-    DF [@isAccepting=false] = l0->C|l1->G,
-    BH [@isAccepting=false] = l0->G|l1->C,
-    C  [@isAccepting=true]  = l0->AE|l1->C.
+    AE [@kind='PASSAGE'] = l0->BH|l1->DF,
+    G  [@kind='PASSAGE'] = l0->G|l1->AE,
+    DF [@kind='PASSAGE'] = l0->C|l1->G,
+    BH [@kind='PASSAGE'] = l0->G|l1->C,
+    C  [@kind='ACCEPTING']  = l0->AE|l1->C.
 §>;
 
 MIN = (minimize (DFA155) :state {@label -> group(@label)});

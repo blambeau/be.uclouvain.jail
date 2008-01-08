@@ -151,9 +151,9 @@ public class JailVMCallback extends JailCallback<Object> {
 			/** Adapts to populator or aggregator. */
 			public <T> Object adapt(Class<T> c) {
 				if (GMatchPopulator.class.equals(c)) {
-					return new GMatchPopulator(node.childFor("match"));
+					return new GMatchPopulator(node.childFor("match"),vm.getUserInfoHelper());
 				} else if (GMatchAggregator.class.equals(c)) {
-					return new GMatchAggregator(node.childFor("match"));
+					return new GMatchAggregator(node.childFor("match"),vm.getUserInfoHelper());
 				} else return null;
 			}
 		};

@@ -12,7 +12,7 @@ public class MapUserInfo implements IUserInfo {
 	private Map<String, Object> info;
 
 	/** Creates an empty info. */
-	public MapUserInfo() {
+	protected MapUserInfo() {
 		this.info = new HashMap<String,Object>();
 	}
 	
@@ -20,13 +20,6 @@ public class MapUserInfo implements IUserInfo {
 	private MapUserInfo(MapUserInfo copy) {
 		this.info = new HashMap<String,Object>();
 		this.info.putAll(copy.info);
-	}
-	
-	/** Creates single (key,value) user info. */ 
-	public static IUserInfo factor(String key, Object value) {
-		MapUserInfo info = new MapUserInfo();
-		info.setAttribute(key, value);
-		return info;
 	}
 	
 	/* (non-Javadoc)

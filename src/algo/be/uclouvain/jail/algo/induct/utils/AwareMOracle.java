@@ -28,6 +28,7 @@ public class AwareMOracle extends MQueryOracle {
 
 	/** Answers the query by a walk of the target. */
 	protected boolean query(MembershipQuery query) throws Avoid, Restart {
+		@SuppressWarnings("unused")
 		Object letters[] = ArrayUtils.merge(query.prefix, query.letter, query.suffix);
 		if (query.negative) {
 			//return WalkUtils.isRejected(target, initState, letters);

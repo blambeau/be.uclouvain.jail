@@ -69,8 +69,7 @@ public class DFAGraphConstraint extends AbstractGraphConstraint {
 				}
 			
 				// let informer check that it find what it needs
-				informer.isError(info);
-				informer.isAccepting(info);
+				informer.getStateKind(info);
 			} catch (IllegalStateException s) {
 				return false;
 			}

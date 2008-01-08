@@ -10,6 +10,8 @@ import be.uclouvain.jail.fa.constraints.DFAGraphConstraint;
 import be.uclouvain.jail.fa.impl.GraphDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.tests.JailTestUtils;
+import be.uclouvain.jail.uinfo.IUserInfoHelper;
+import be.uclouvain.jail.uinfo.UserInfoHelper;
 
 /** Tests the NFA determinizer algorithm. */
 public class DFAMinimizerAlgoTest extends TestCase {
@@ -20,21 +22,30 @@ public class DFAMinimizerAlgoTest extends TestCase {
 	/** Non minimal DFA. */
 	private IDFA dfa;
 	
+	/** Default helper instance. */
+	private IUserInfoHelper helper = UserInfoHelper.instance();
+	
 	/** Loads NFA.dot and DFA.dot */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
 		dfa = new GraphDFA();
-		DOTDirectedGraphLoader.loadGraph(dfa.getGraph(),DFAMinimizerAlgoTest.class.getResource("DFA.dot"));
+		DOTDirectedGraphLoader.loadGraph(dfa.getGraph(),
+				DFAMinimizerAlgoTest.class.getResource("DFA.dot"),
+				helper);
 		expected = new GraphDFA();
-		DOTDirectedGraphLoader.loadGraph(expected.getGraph(),DFAMinimizerAlgoTest.class.getResource("EXPECTED.dot"));
+		DOTDirectedGraphLoader.loadGraph(expected.getGraph(),
+				DFAMinimizerAlgoTest.class.getResource("EXPECTED.dot"),
+				helper);
 	}
 	
 	/** Tests that bugs 0001 does not reappear. */
 	public void testMinimizerOnBUG0001() throws Exception {
 		// load graph and check it's a DFA
-		IDirectedGraph graph = DOTDirectedGraphLoader.loadGraph(JailTestUtils.resource(this,"BUG0001.dot"));
+		IDirectedGraph graph = DOTDirectedGraphLoader.loadGraph(
+			JailTestUtils.resource(this,"BUG0001.dot"),
+			helper);
 		assertTrue(new DFAGraphConstraint().isRespectedBy(graph));
 		
 		// create DFA

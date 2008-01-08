@@ -7,6 +7,8 @@ import be.uclouvain.jail.dialect.dot.DOTDirectedGraphLoader;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.INFA;
 import be.uclouvain.jail.fa.impl.GraphDFA;
+import be.uclouvain.jail.uinfo.IUserInfoHelper;
+import be.uclouvain.jail.uinfo.UserInfoHelper;
 
 /** Tests the NFA determinizer algorithm. */
 public class TauRemoverAlgoTest extends TestCase {
@@ -17,15 +19,22 @@ public class TauRemoverAlgoTest extends TestCase {
 	/** DFA with tau-transitions. */
 	private IDFA dfa;
 	
+	/** Default helper instance. */
+	private IUserInfoHelper helper = UserInfoHelper.instance();
+	
 	/** Loads NFA.dot and DFA.dot */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
 		identity = new GraphDFA();
-		DOTDirectedGraphLoader.loadGraph(identity.getGraph(),TauRemoverAlgoTest.class.getResource("IDENTITY.dot"));
+		DOTDirectedGraphLoader.loadGraph(identity.getGraph(),
+				TauRemoverAlgoTest.class.getResource("IDENTITY.dot"),
+				helper);
 		dfa = new GraphDFA();
-		DOTDirectedGraphLoader.loadGraph(dfa.getGraph(),TauRemoverAlgoTest.class.getResource("TMOVES.dot"));
+		DOTDirectedGraphLoader.loadGraph(dfa.getGraph(),
+				TauRemoverAlgoTest.class.getResource("TMOVES.dot"),
+				helper);
 	}
 	
 	/** Tests tau remover on identity. */

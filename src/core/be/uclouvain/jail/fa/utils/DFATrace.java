@@ -2,6 +2,7 @@ package be.uclouvain.jail.fa.utils;
 
 import java.util.Iterator;
 
+import be.uclouvain.jail.fa.FAStateKind;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.IDFATrace;
 import be.uclouvain.jail.graph.IDirectedGraphPath;
@@ -54,7 +55,7 @@ public class DFATrace<T> implements IDFATrace<T> {
 	public boolean isAccepted() {
 		IDFA dfa = trace.getDFA();
 		Object endState = getEndState();
-		return dfa.isAccepting(endState) && !dfa.isError(endState);
+		return FAStateKind.ACCEPTING.equals(dfa.getStateKind(endState));
 	}
 
 	/** Returns true if this trace is rejected by the DFA. Rejection is
@@ -70,7 +71,15 @@ public class DFATrace<T> implements IDFATrace<T> {
 	public boolean isError() {
 		IDFA dfa = trace.getDFA();
 		Object endState = getEndState();
-		return dfa.isError(endState);
+		return FAStateKind.ERROR.equals(dfa.getStateKind(endState));
+	}
+	
+	/** Returns true if this trace reachs a state that is marked as an error
+	 * one. */
+	public boolean isAvoid() {
+		IDFA dfa = trace.getDFA();
+		Object endState = getEndState();
+		return FAStateKind.AVOID.equals(dfa.getStateKind(endState));
 	}
 	
 	/** Adapts this trace to some type. */

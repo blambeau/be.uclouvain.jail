@@ -5,13 +5,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.chefbe.javautils.adapt.AdaptUtils;
+import be.uclouvain.jail.fa.FAStateKind;
 import be.uclouvain.jail.fa.INFA;
 import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.fa.impl.GraphNFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
-import be.uclouvain.jail.uinfo.MapUserInfo;
+import be.uclouvain.jail.uinfo.IUserInfoHelper;
+import be.uclouvain.jail.uinfo.UserInfoHelper;
 
 /**
  * Provides a base implementation for sample strings.
@@ -73,16 +75,16 @@ public class DefaultSampleString<L> implements IFAAwareString<L> {
 
 	/** Factors a state info. */
 	private IUserInfo sInfo(boolean initial, boolean accepting, boolean error) {
-		IUserInfo info = new MapUserInfo();
-		info.setAttribute(AttributeGraphFAInformer.STATE_INITIAL_KEY, initial);
-		info.setAttribute(AttributeGraphFAInformer.STATE_ACCEPTING_KEY, accepting);
-		info.setAttribute(AttributeGraphFAInformer.STATE_ERROR_KEY, error);
-		return info;
+		IUserInfoHelper helper = UserInfoHelper.instance();
+		helper.addKeyValue(AttributeGraphFAInformer.STATE_INITIAL_KEY, initial);
+		helper.addKeyValue(AttributeGraphFAInformer.STATE_KIND_KEY, FAStateKind.fromBools(accepting,error));
+		return helper.install();
 	}
 	
 	/** Creates an edge info. */
 	private IUserInfo eInfo(L letter) {
-		return MapUserInfo.factor(AttributeGraphFAInformer.EDGE_LETTER_KEY, letter);
+		IUserInfoHelper helper = UserInfoHelper.instance();
+		return helper.keyValue(AttributeGraphFAInformer.EDGE_LETTER_KEY, letter);
 	}
 	
 	/** Fills a NFA. */

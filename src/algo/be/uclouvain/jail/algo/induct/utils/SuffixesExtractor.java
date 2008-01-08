@@ -46,7 +46,7 @@ public class SuffixesExtractor implements IWalker {
 		// flush suffix, if any.
 		if (state.letters().isEmpty()) {
 			Object rep = state.representor();
-			flushSuffix(pta.isError(rep));
+			flushSuffix(pta.getStateKind(rep).isFlagError());
 		}
 		if (edge == null) {
 			return true;
@@ -70,7 +70,7 @@ public class SuffixesExtractor implements IWalker {
 	/** When leaving a state. */
 	public void leaving(IDFA pta, Object state) {
 		if (pta.getGraph().getOutgoingEdges(state).isEmpty()) {
-			flushSuffix(pta.isError(state));
+			flushSuffix(pta.getStateKind(state).isFlagError());
 		}
 	}
 

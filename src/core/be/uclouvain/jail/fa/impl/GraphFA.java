@@ -2,6 +2,7 @@ package be.uclouvain.jail.fa.impl;
 
 import net.chefbe.javautils.adapt.AdaptUtils;
 import net.chefbe.javautils.adapt.IAdapter;
+import be.uclouvain.jail.fa.FAStateKind;
 import be.uclouvain.jail.fa.IAlphabet;
 import be.uclouvain.jail.fa.IFA;
 import be.uclouvain.jail.fa.utils.AutoAlphabet;
@@ -69,16 +70,6 @@ public abstract class GraphFA implements IFA {
 		return graph;
 	}
 	
-	/** Extracts the accepting flag from a UserInfo */
-	public boolean isAccepting(IUserInfo s) {
-		return informer.isAccepting(s);
-	}
-
-	/** Extracts the error flag from a UserInfo */
-	public boolean isError(IUserInfo s) {
-		return informer.isError(s);
-	}
-
 	/** Extracts the initial flag from a UserInfo */
 	public boolean isInitial(IUserInfo s) {
 		return informer.isInitial(s);
@@ -89,14 +80,14 @@ public abstract class GraphFA implements IFA {
 		return isInitial(graph.getVertexInfo(s));
 	}
 	
-	/** Checks if a state is marked as accepting. */
-	public boolean isAccepting(Object s) {
-		return isAccepting(graph.getVertexInfo(s));
+	/** Returns state kind (accepting/error). */
+	public FAStateKind getStateKind(IUserInfo s) {
+		return informer.getStateKind(s);
 	}
 	
-	/** Checks if a state is marked as error. */
-	public boolean isError(Object s) {
-		return isError(graph.getVertexInfo(s));
+	/** Returns state kind (accepting/error). */
+	public FAStateKind getStateKind(Object s) {
+		return getStateKind(graph.getVertexInfo(s));
 	}
 	
 	/** Extracts the edge letter from a UserInfo */

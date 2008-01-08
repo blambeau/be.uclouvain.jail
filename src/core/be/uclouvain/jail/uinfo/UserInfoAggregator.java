@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import be.uclouvain.jail.fa.functions.FAStateKindFunction;
 import be.uclouvain.jail.uinfo.functions.BoolAndFunction;
 import be.uclouvain.jail.uinfo.functions.BoolOrFunction;
 import be.uclouvain.jail.uinfo.functions.IAggregateFunction;
@@ -85,6 +86,11 @@ public class UserInfoAggregator implements IUserInfoCreator<Collection<IUserInfo
 		register(attr,new PickUpFunction());
 	}
 	
+	/** Factors a list function. */
+	public void stateKind(String attr, int acceptingOp, int errorOp, boolean throwOnAvoid) {
+		register(attr,new FAStateKindFunction(acceptingOp,errorOp,throwOnAvoid));
+	}
+
 	/** 
 	 * Factors a IUserInfo instance.
 	 * 
