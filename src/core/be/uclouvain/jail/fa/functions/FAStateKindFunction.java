@@ -25,16 +25,6 @@ public class FAStateKindFunction extends AbstractAggregateFunction<FAStateKind> 
 	/** Throw Avoid exception when reaching avoid? */
 	private boolean throwOnAvoid = false;
 	
-	/** Suppremum array. */
-	/*
-	private FAStateKind[][] suppremum = new FAStateKind[][]{
-		{ FAStateKind.ACCEPTING, FAStateKind.ACCEPTING, FAStateKind.AVOID, FAStateKind.AVOID },
-		{ FAStateKind.ACCEPTING, FAStateKind.PASSAGE, FAStateKind.ERROR, FAStateKind.AVOID},
-		{ FAStateKind.AVOID, FAStateKind.ERROR, FAStateKind.ERROR, FAStateKind.AVOID },
-		{ FAStateKind.AVOID, FAStateKind.AVOID, FAStateKind.AVOID, FAStateKind.AVOID }
-	};
-	*/
-	
 	/** Creates a function with a specific suppremum lattice and
 	 *  falg indicating if an avoid exception must be thrown. */
 	public FAStateKindFunction(int acceptingOp, int errorOp, boolean throwOnAvoid) {
@@ -58,11 +48,11 @@ public class FAStateKindFunction extends AbstractAggregateFunction<FAStateKind> 
 	@Override
 	public FAStateKind compute(FAStateKind op1, FAStateKind op2) {
 		FAStateKind kind = supremum(op1, op2);
-		if (FAStateKind.AVOID.equals(kind) && throwOnAvoid) {
-			throw new Avoid();
-		} else {
-			return kind;
+		if (throwOnAvoid && FAStateKind.AVOID.equals(kind)
+			&& (!FAStateKind.AVOID.equals(op1) || !FAStateKind.AVOID.equals(op2))) {
+			throw new Avoid();	
 		}
+		return kind;
 	}
 
 	/** Returns FAStateKind.PASSAGE. */
