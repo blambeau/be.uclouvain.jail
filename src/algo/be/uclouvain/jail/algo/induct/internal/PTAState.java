@@ -1,11 +1,9 @@
 package be.uclouvain.jail.algo.induct.internal;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import net.chefbe.javautils.collections.set.SetUtils;
 import be.uclouvain.jail.algo.commons.Avoid;
 import be.uclouvain.jail.algo.induct.open.IWalker;
 import be.uclouvain.jail.fa.IDFA;
@@ -98,6 +96,7 @@ public class PTAState {
 
 	/** Prepare merge with the target kernel state. */
 	protected void prepare(InductionAlgo algo, Simulation simu, Object tkState) throws Avoid {
+		assert (tkState != null) : "Not null tkState.";
 		assert (tkState instanceof PTAState == false) : "Real tkState.";
 		
 		IDFA dfa = algo.getDFA();
@@ -137,6 +136,7 @@ public class PTAState {
 		}
 
 		// Compute victim state gains.
+		/*
 		IDFA pta = algo.getPTA();
 		Object ptaTkState = MappingUtils.sRepresentor(algo, tkState);
 		Collection<Object> ptaTkLetters = pta.getOutgoingLetters(ptaTkState);
@@ -144,6 +144,7 @@ public class PTAState {
 		for (Object letter : diff) {
 			simu.addVStateGain(this,pta.getOutgoingEdge(ptaTkState, letter));
 		}
+		*/
 	}
 
 	/** Prepate merge with another (white) state. */

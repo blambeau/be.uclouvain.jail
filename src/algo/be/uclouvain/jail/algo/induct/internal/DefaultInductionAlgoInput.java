@@ -5,12 +5,14 @@ import be.uclouvain.jail.algo.induct.open.IEvaluator;
 import be.uclouvain.jail.algo.induct.open.IOracle;
 import be.uclouvain.jail.algo.induct.utils.ClassicEvaluator;
 import be.uclouvain.jail.fa.IDFA;
+import be.uclouvain.jail.fa.functions.FAStateKindFunction;
+import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.uinfo.UserInfoAggregator;
 
 /** 
  * Input information for induction algorithms. 
  */
-public class InductionAlgoInput implements IInductionAlgoInput {
+public class DefaultInductionAlgoInput implements IInductionAlgoInput {
 
 	/** Input sample. */
 	private IDFA pta;
@@ -34,13 +36,19 @@ public class InductionAlgoInput implements IInductionAlgoInput {
 	private ICompatibility compatibility;
 
 	/** Creates a induction info. */
-	public InductionAlgoInput(IDFA pta) {
+	public DefaultInductionAlgoInput(IDFA pta) {
 		this.pta = pta;
 		oracle = null;
 		evaluator = new ClassicEvaluator();
 		cThreshold = -1;
 		stateAggregator = new UserInfoAggregator();
 		edgeAggregator = new UserInfoAggregator();
+
+		stateAggregator.boolOr(AttributeGraphFAInformer.STATE_INITIAL_KEY);
+		stateAggregator.stateKind(AttributeGraphFAInformer.STATE_KIND_KEY,
+                FAStateKindFunction.OR,
+                FAStateKindFunction.OR,true);
+		edgeAggregator.first(AttributeGraphFAInformer.EDGE_LETTER_KEY);
 	}
 
 	/* (non-Javadoc)

@@ -44,6 +44,7 @@ final class CValuesHandler extends AbstractValuesHandler {
 
 	/** Returns values of a kernel state. */
 	public IUserInfo kStateUserInfo(Object kState) {
+		assert correctKState(kState) : "Correct kState";
 		IUserInfo v = (IUserInfo) kStateIUserInfo.get(kState);
 		if (v == null) {
 			v = parent.kStateUserInfo(kState);
@@ -54,6 +55,7 @@ final class CValuesHandler extends AbstractValuesHandler {
 
 	/** Returns values of a kernel edge. */
 	public IUserInfo kEdgeUserInfo(Object kEdge) {
+		assert correctKEdge(kEdge) : "Correct kEdge";
 		IUserInfo v = (IUserInfo) kEdgeIUserInfo.get(kEdge);
 		if (v == null) {
 			v = parent.kEdgeUserInfo(kEdge);
@@ -84,11 +86,13 @@ final class CValuesHandler extends AbstractValuesHandler {
 
 	/** Updates values of a kernel state. */
 	public void updateKState(Object kState, IUserInfo values) {
+		assert correctKState(kState) : "Correct kState";
 		kStateIUserInfo.put(kState, values);
 	}
 
 	/** Updates values of a kernel edge. */
 	public void updateKEdge(Object kEdge, IUserInfo values) {
+		assert correctKEdge(kEdge) : "Correct kEdge";
 		kEdgeIUserInfo.put(kEdge, values);
 	}
 
@@ -102,6 +106,13 @@ final class CValuesHandler extends AbstractValuesHandler {
 		oEdgeIUserInfo.put(oEdge, values);
 	}
 
+	/** Removes and return the edge info of the rollbacked 
+	 * kEdge. */
+	public IUserInfo remKEdgeInfo(Object kEdge) {
+		assert correctKEdge(kEdge) : "Correct kEdge";
+		return kEdgeIUserInfo.remove(kEdge);
+	}
+	
 	/** Commits the computed values. */
 	public void commit(boolean clean) {
 		// commit kState values
@@ -136,4 +147,5 @@ final class CValuesHandler extends AbstractValuesHandler {
 			oEdgeIUserInfo.clear();
 		}
 	}
+
 }

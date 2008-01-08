@@ -61,7 +61,7 @@ public abstract class GMatchPopulatorCallback<T> extends GMatchCallback<Object> 
 				info.setAttribute(keyAttr, value);
 			}
 		} else {
-			System.err.println("Warning: ignoring null value on attribute set @" + key);
+			//System.err.println("Warning: ignoring null value on attribute set @" + key);
 		}
 		return null;
 	}

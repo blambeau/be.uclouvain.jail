@@ -401,7 +401,8 @@ public class JailParser extends ActiveParser {
 	public final Object pGoperands(Pos pos) throws ParseException {
 		char _alt_c = pos.charAt();
 		if (((_alt_c == '"') || (_alt_c == '\'') || (_alt_c == '(')
-				|| (_alt_c == '<') || (_alt_c == 'f') || (_alt_c == 't'))) {
+				|| (_alt_c >= '0' && _alt_c <= '9') || (_alt_c == '<')
+				|| (_alt_c == 'f') || (_alt_c == 't'))) {
 			Object _operand = null;
 			_operand = jail.pJailGoperandUList(pos);
 			return load(pos, "jail:goperands", new String[] { "operand" },
@@ -429,7 +430,8 @@ public class JailParser extends ActiveParser {
 			}
 		}
 		_alt_c = pos.charAt();
-		if (((_alt_c == '"') || (_alt_c == '\'') || (_alt_c == 'f') || (_alt_c == 't'))) {
+		if (((_alt_c == '"') || (_alt_c == '\'')
+				|| (_alt_c >= '0' && _alt_c <= '9') || (_alt_c == 'f') || (_alt_c == 't'))) {
 			try {
 				pos.save();
 				Object _expr = null;
@@ -492,7 +494,8 @@ public class JailParser extends ActiveParser {
 			}
 		}
 		_alt_c = pos.charAt();
-		if (((_alt_c == '"') || (_alt_c == '\'') || (_alt_c == 'f') || (_alt_c == 't'))) {
+		if (((_alt_c == '"') || (_alt_c == '\'')
+				|| (_alt_c >= '0' && _alt_c <= '9') || (_alt_c == 'f') || (_alt_c == 't'))) {
 			try {
 				pos.save();
 				Object _tor = null;
@@ -550,6 +553,19 @@ public class JailParser extends ActiveParser {
 				pos.rollback(ex);
 			}
 		}
+		_alt_c = pos.charAt();
+		if ((_alt_c >= '0' && _alt_c <= '9')) {
+			try {
+				pos.save();
+				Object _value = null;
+				_value = u.pInteger(pos);
+				pos.commit();
+				return load(pos, "jail:optliteral", new String[] { "value" },
+						new Object[] { _value });
+			} catch (ParseException ex) {
+				pos.rollback(ex);
+			}
+		}
 		return (Object) pos.error("<jail:optliteral> expected, " + pos.charAt()
 				+ " found.");
 	}
@@ -576,6 +592,19 @@ public class JailParser extends ActiveParser {
 				pos.save();
 				Object _value = null;
 				_value = u.pBoolean(pos);
+				pos.commit();
+				return load(pos, "jail:literal", new String[] { "value" },
+						new Object[] { _value });
+			} catch (ParseException ex) {
+				pos.rollback(ex);
+			}
+		}
+		_alt_c = pos.charAt();
+		if ((_alt_c >= '0' && _alt_c <= '9')) {
+			try {
+				pos.save();
+				Object _value = null;
+				_value = u.pInteger(pos);
 				pos.commit();
 				return load(pos, "jail:literal", new String[] { "value" },
 						new Object[] { _value });
@@ -1015,14 +1044,16 @@ public class JailParser extends ActiveParser {
 	public final List<?> pJailGoperandUList(Pos pos) throws ParseException {
 		char _alt_c = pos.charAt();
 		if (((_alt_c == '"') || (_alt_c == '\'') || (_alt_c == '(')
-				|| (_alt_c == '<') || (_alt_c == 'f') || (_alt_c == 't'))) {
+				|| (_alt_c >= '0' && _alt_c <= '9') || (_alt_c == '<')
+				|| (_alt_c == 'f') || (_alt_c == 't'))) {
 			Object _f = null;
 			_f = jail.pGoperand(pos);
 			List<Object> _n = new ArrayList<Object>();
 			_alt_c = pos.charAt();
 			while (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
 					|| (_alt_c == ' ') || (_alt_c == '"') || (_alt_c == '\'')
-					|| (_alt_c == '(') || (_alt_c == '/') || (_alt_c == '<')
+					|| (_alt_c == '(') || (_alt_c == '/')
+					|| (_alt_c >= '0' && _alt_c <= '9') || (_alt_c == '<')
 					|| (_alt_c == 'f') || (_alt_c == 't'))) {
 				try {
 					pos.save();
@@ -1554,7 +1585,8 @@ public class JailParser extends ActiveParser {
 		char _alt_c = pos.charAt();
 		if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
 				|| (_alt_c == ' ') || (_alt_c == '"') || (_alt_c == '\'')
-				|| (_alt_c == '(') || (_alt_c == '/') || (_alt_c == '<')
+				|| (_alt_c == '(') || (_alt_c == '/')
+				|| (_alt_c >= '0' && _alt_c <= '9') || (_alt_c == '<')
 				|| (_alt_c == 'f') || (_alt_c == 't'))) {
 			_alt_c = pos.charAt();
 			if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')

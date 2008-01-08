@@ -89,7 +89,7 @@ public class GraphConXDetectorAlgo {
 		p.refine(new IGraphPartitionner<Object>() {
 			public Object getPartitionOf(Object value) {
 				int index = order.indexOf(value);
-				assert (index > 0) : "all vertices reached.";
+				assert (index >= 0) : "all vertices reached.";
 				return partition[index];
 			}
 		});

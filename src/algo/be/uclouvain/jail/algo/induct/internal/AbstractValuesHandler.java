@@ -54,7 +54,17 @@ abstract class AbstractValuesHandler implements IValuesHandler {
 				: kEdgeUserInfo(s);
 		IUserInfo w = (t instanceof PTAEdge) ? oEdgeUserInfo((PTAEdge) t)
 				: kEdgeUserInfo(t);
-		return stateAggregator.create(v,w);
+		return edgeAggregator.create(v,w);
+	}
+	
+	/** Checks that a kState is a correct kState. */
+	protected boolean correctKState(Object kState) {
+		return dfag.getVertexInfo(kState) != null;
+	}
+	
+	/** Checks that a kEdge is a correct kEdge. */
+	protected boolean correctKEdge(Object kEdge) {
+		return dfag.getEdgeInfo(kEdge) != null;
 	}
 	
 }

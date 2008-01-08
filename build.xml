@@ -18,7 +18,7 @@
     <!-- compilation target -->
     <target name="compile" depends="init" description="compiles the source ">
         <!-- Compile the java code from ${src} into ${build} -->
-        <javac srcdir="${src}" destdir="${build}" encoding="UTF-8">
+        <javac debug="true" srcdir="${src}" destdir="${build}" encoding="UTF-8">
             <classpath>
                 <fileset dir="${lib}">
                     <include name="**/*.jar"/>

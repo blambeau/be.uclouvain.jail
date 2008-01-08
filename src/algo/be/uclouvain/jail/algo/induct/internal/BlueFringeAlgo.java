@@ -56,8 +56,8 @@ public final class BlueFringeAlgo extends InductionAlgo {
 		
 		// continue until no state on the fringe
 		IDirectedGraph dfag = dfa.getGraph();
-		IEvaluator evaluator = info.getEvaluator();
-		int cThreshold = info.getConsolidationThreshold();
+		IEvaluator evaluator = input.getEvaluator();
+		int cThreshold = input.getConsolidationThreshold();
 		while (!fringe.isEmpty()) {
 			
 			// no evaluation at all

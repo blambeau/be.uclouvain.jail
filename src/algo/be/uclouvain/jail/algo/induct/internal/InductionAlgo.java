@@ -13,7 +13,7 @@ import be.uclouvain.jail.uinfo.UserInfoAggregator;
 public abstract class InductionAlgo {
 
 	/** Algorithm informations. */
-	protected IInductionAlgoInput info;
+	protected IInductionAlgoInput input;
 
 	/** Source PTA. */
 	protected IDFA pta;
@@ -35,37 +35,35 @@ public abstract class InductionAlgo {
 	}
 
 	/** Executes the algorithm. */
-	public void execute(IInductionAlgoInput info) throws Exception {
-		this.info = info;
+	public IDFA execute(IInductionAlgoInput info) throws Avoid {
+		this.input = info;
 		do {
 			try {
 				initialize();
 				mainLoop();
 			} catch (Restart restart) {
 				continue;
-			} catch (Avoid ex) {
-				throw new Exception("Unable to create PTA.", ex);
 			}
-			return;
+			return dfa;
 		} while (true);
 	}
 
 	/** Returns the input info. */
 	public IInductionAlgoInput getInfo() {
-		return info;
+		return input;
 	}
 	
 	/** Initializes the algorithm. */
 	private void initialize() throws Avoid {
 		// create PTA
-		this.pta = info.getInputPTA();
+		this.pta = input.getInputPTA();
 		assert new PTAGraphConstraint().isRespectedBy(this.pta.getGraph()) : "Valid input PTA.";
 		
 		// create target DFA
 		this.dfa = new GraphDFA(pta.getAlphabet());
 		
 		// compute and initialize compatibility information
-		compatibility = info.getCompatibility();
+		compatibility = input.getCompatibility();
 		if (compatibility != null) {
 			compatibility.initialize(this);
 		}
@@ -112,12 +110,12 @@ public abstract class InductionAlgo {
 
 	/** Returns used state functions. */
 	protected UserInfoAggregator getStateAggregator() {
-		return info.getStateAggregator();
+		return input.getStateAggregator();
 	}
 
 	/** Returns used edge functions. */
 	protected UserInfoAggregator getEdgeAggregator() {
-		return info.getEdgeAggregator();
+		return input.getEdgeAggregator();
 	}
 
 	/** Checks if two DFA states are compatible. */
@@ -149,7 +147,7 @@ public abstract class InductionAlgo {
 
 	/** Checks a simulation with the installed oracle. */
 	public void checkWithOracle(Simulation simu) throws Avoid, Restart {
-		IOracle oracle = info.getOracle();
+		IOracle oracle = input.getOracle();
 		if (oracle != null && !oracle.accept(simu)) {
 			throw new Avoid();
 		} else {

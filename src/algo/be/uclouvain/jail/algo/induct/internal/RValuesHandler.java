@@ -12,11 +12,13 @@ class RValuesHandler extends AbstractValuesHandler {
 
 	/** Extracts kernel state values. */
 	public IUserInfo kStateUserInfo(Object kState) {
+		assert correctKState(kState) : "Correct kState";
 		return dfag.getVertexInfo(kState);
 	}
 
 	/** Extracts kernel edge values. */
 	public IUserInfo kEdgeUserInfo(Object kEdge) {
+		assert correctKEdge(kEdge) : "Correct kEdge";
 		return dfag.getEdgeInfo(kEdge);
 	}
 
@@ -32,11 +34,13 @@ class RValuesHandler extends AbstractValuesHandler {
 
 	/** Updates kernel state values. */
 	public void updateKState(Object kState, IUserInfo values) {
+		assert correctKState(kState) : "Correct kState";
 		dfag.setVertexInfo(kState, values);
 	}
 
 	/** Updates kernel edge values. */
 	public void updateKEdge(Object kEdge, IUserInfo values) {
+		assert correctKEdge(kEdge) : "Correct kEdge";
 		dfag.setEdgeInfo(kEdge, values);
 	}
 

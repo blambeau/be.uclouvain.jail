@@ -37,6 +37,9 @@ public class Simulation {
 	 * (initial added edge). */
 	private Object kEdge;
 
+	/** Saved user info for rollbacked kEdge. */
+	private IUserInfo kEdgeInfo;
+	
 	/** List of works in the simulation. */
 	private List<AbstractSubWork> subWorks;
 
@@ -338,11 +341,17 @@ public class Simulation {
 		// some checks
 		assert (skState != null) : "Edge has been hooked (fringe edge!).";
 		assert (algo.getFringe().fringeEdge(skState, letter) == fringeEdge) : "Works on a fringe edge.";
+		assert (dfa.getOutgoingEdge(skState, letter) == null) : "No such edge on the source kernel state.";
+		
+		if (kEdgeInfo == null) {
+			// kEdgeInfo is not null when work has been committed after a rollback
+			// otherwise, we take the real edge info on decorated PTA
+			kEdgeInfo = fringeEdge.getUserInfo(); 
+		}
 
 		// connect source kernel state with target one
-		IUserInfo info = fringeEdge.getUserInfo();
-		Object kEdge = dfag.createEdge(skState, targetKState, info);
-		handler.updateKEdge(kEdge, info);
+		kEdge = dfag.createEdge(skState, targetKState, kEdgeInfo);
+		handler.updateKEdge(kEdge, kEdgeInfo);
 	}
 
 	/** Commits the simulation. */
@@ -351,6 +360,8 @@ public class Simulation {
 			throw new IllegalStateException("Already commited.");
 		}
 		if (kEdge == null) {
+			// happens when work has been rollbacked
+			// and commited later (efficient blue-fringe case) 
 			initialize();
 		}
 		
@@ -382,7 +393,10 @@ public class Simulation {
 		}
 		
 		// remove initial created edge
+		// save last version of its info in kEdgeInfo
+		// for late commit which happens in blue-fringe efficient case
 		if (kEdge != null) {
+			kEdgeInfo = handler.remKEdgeInfo(kEdge);
 			dfag.removeEdge(kEdge);
 			kEdge = null;
 		}

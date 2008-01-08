@@ -66,9 +66,11 @@ grammar Jail as jail extends ActiveParser {
 	                                         ; [u:node]
 	<jail:optliteral>                      ::= value:<u:string>
 	                                         | value:<u:boolean>
+	                                         | value:<u:integer>
 	                                         ; [u:node]
 	<jail:literal>                         ::= value:<u:string>
 	                                         | value:<u:boolean>
+	                                         | value:<u:integer>
 	                                         ; [u:node]
 
 	/* -------------------------------------------------------------------------------------------- JAIL define */

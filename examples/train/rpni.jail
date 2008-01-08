@@ -6,13 +6,17 @@ define (allaccept <A>)
 				                           else @kind
 												 });
 
-TRAIN_SAMPLE = <§jis
+TRAIN_SAMPLE = (allaccept <§jis
 + start stop start
 + start alarm stop open close start
 + open close start alarm stop
 - start open
 - start alarm open
-§>;
-
+§>);
 (show (TRAIN_SAMPLE));
-(show (determinize (allaccept (TRAIN_SAMPLE))));
+
+PTA = (determinize (TRAIN_SAMPLE));
+(show (PTA));
+
+RPNIED = (rpni (PTA));
+(show (RPNIED));
