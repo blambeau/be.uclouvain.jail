@@ -17,7 +17,7 @@ import be.uclouvain.jail.graph.IDirectedGraph;
  * to provide an simulation evaluator {@link IEvaluator} in the algorithm
  * input.</p>
  */
-public final class BlueFringe extends InductionAlgo {
+public final class BlueFringeAlgo extends InductionAlgo {
 	
 	/** Evaluation of a merge simulation. */ 
 	class Evaluation implements Comparable<Evaluation> {
@@ -43,7 +43,7 @@ public final class BlueFringe extends InductionAlgo {
 	}
 
 	/** Creates a BlueFringe instance. */
-	public BlueFringe() {
+	public BlueFringeAlgo() {
 	}
 
 	/** BlueFringe main loop. */

@@ -5,10 +5,10 @@ import be.uclouvain.jail.algo.commons.Restart;
 import be.uclouvain.jail.graph.IDirectedGraph;
 
 /** RPNI induction algorithm. */
-public class RPNI extends InductionAlgo {
+public class RPNIAlgo extends InductionAlgo {
 
 	/** Creates an algorithm instance. */
-	public RPNI() {
+	public RPNIAlgo() {
 	}
 
 	/** Main RPNI loop. */
