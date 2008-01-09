@@ -1,0 +1,32 @@
+(execute 'commons.jail');
+
+// empty sample, containing no string at all
+EMPTY_SAMPLE = <§jis 
+§>;
+
+// one empty positive string
+EMPTY_STRING_POS_SAMPLE = <§jis
+    +
+§>;
+
+// one empty negative string
+EMPTY_STRING_NEG_SAMPLE = <§jis
+    -
+§>;
+
+// one positive string of size 1
+ONE_STRING_POS_SAMPLE = <§jis
+    + a
+§>;
+
+// one negative string of size 1
+ONE_STRING_NEG_SAMPLE = <§jis
+    - a
+§>;
+
+// show all
+(show (EMPTY_SAMPLE));
+(show (EMPTY_STRING_POS_SAMPLE));
+(show (EMPTY_STRING_NEG_SAMPLE));
+(show (ONE_STRING_POS_SAMPLE));
+(show (ONE_STRING_NEG_SAMPLE));

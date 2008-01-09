@@ -11,14 +11,21 @@ class SLPair {
 	/** Letter. */
 	private Object letter;
 
+	/** Cached hash code. */
+	private int hash = -1;
+	
 	/** Creates a pair instance. */
 	public SLPair(Object state, Object letter) {
 		if (state == null || letter == null) {
 			throw new IllegalArgumentException("Parameters are all mandatory.");
-		} else {
-			this.state = state;
-			this.letter = letter;
 		}
+		this.state = state;
+		this.letter = letter;
+		
+		// compute hash code once
+		hash = HashCodeUtils.SEED;
+		hash = HashCodeUtils.hash(hash, state);
+		hash = HashCodeUtils.hash(hash, letter);
 	}
 
 	/** Returns the state. */
@@ -33,7 +40,7 @@ class SLPair {
 
 	/** Checks equality with another pair. */
 	public boolean equals(Object arg0) {
-		if (!(arg0 instanceof SLPair)) {
+		if (arg0 instanceof SLPair == false) {
 			return false;
 		}
 		SLPair other = (SLPair) arg0;
@@ -42,9 +49,6 @@ class SLPair {
 
 	/** Computes an hash code. */
 	public int hashCode() {
-		int hash = HashCodeUtils.SEED;
-		hash = HashCodeUtils.hash(hash, state);
-		hash = HashCodeUtils.hash(hash, letter);
 		return hash;
 	}
 	

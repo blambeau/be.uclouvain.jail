@@ -14,6 +14,7 @@ grammar SEQP as seqp extends ActiveParser {
 
 	<seqp:statedef>                         ::= label:<seqp:statename> attr:<seqp:attributes>? <'=' u:symbol>
 	                                            def:<seqp:path u:barlist>
+	                                          | label:<seqp:statename> attr:<seqp:attributes>?
 	                                          ; [u:node]
 
 	<seqp:attributes>                       ::= <'[' u:symbol> 

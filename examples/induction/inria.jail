@@ -1,0 +1,36 @@
+(execute 'commons.jail');
+
+/* DFA 3.1 of INRIA, page 48. */
+DFA_3_1 = <§seqp
+    Q0[@kind='ACCEPTING'] = a->Q0|b->Q1,
+	Q1[@kind='PASSAGE']   = a->Q1|b->Q0.
+§>;
+
+/* Sample 3.2 extracted from INRIA, page 50. */
+SAMPLE_3_2 = <§jis
+    + 
+	+ a
+	+ b b
+	+ b b a
+    + b a a b
+	+ b a a a b a
+	- b
+	- a b
+	- a b a
+§>;
+
+/* PTA version of Sample 3.2, page 50 */
+PTA_3_2 = (determinize (SAMPLE_3_2));
+
+/* Result of RPNI. */
+DFA_3_5_rpni = (rpni (PTA_3_2));
+
+/* Result of BlueFringe. */
+DFA_3_5_bluefringe = (bluefringe (PTA_3_2));
+
+/* Show all. */
+(show (DFA_3_1));
+(show (SAMPLE_3_2));
+(show (PTA_3_2));
+(show (DFA_3_5_rpni));
+(show (DFA_3_5_bluefringe));

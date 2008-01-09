@@ -30,7 +30,7 @@ public class FAUtils {
                                          "                       (@kind='ERROR' or                " +
                                          "                        @kind='AVOID') then 'brown'     " +
                                          "                  when @isInitial=true then 'green'     " +
-                                         "                  when @kind='ERROR' then 'red'         " +
+                                         "                  when @kind='ERROR' then 'orange'      " +
                                          "                  when @kind='AVOID' then 'red'         " +
                                          "                  else 'white',                         " +
                                          "    @label     -> @label                                " +

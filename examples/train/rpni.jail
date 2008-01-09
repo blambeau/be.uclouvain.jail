@@ -3,8 +3,9 @@
 
 define (allaccept <A>)
        (copy (A) :vertex {@kind -> when @kind='PASSAGE' then 'ACCEPTING'
-				                           else @kind
-												 });
+				                           when @kind='ERROR' then 'AVOID'
+				                           else @kind}
+		   );
 
 TRAIN_SAMPLE = (allaccept <§jis
 + start stop start
@@ -20,3 +21,6 @@ PTA = (determinize (TRAIN_SAMPLE));
 
 RPNIED = (rpni (PTA));
 (show (RPNIED));
+
+BLUEFRINGED = (bluefringe (PTA) :treshold 1);
+(show (BLUEFRINGED));

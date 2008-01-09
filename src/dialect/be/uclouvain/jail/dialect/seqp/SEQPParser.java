@@ -86,29 +86,59 @@ public class SEQPParser extends ActiveParser {
 	/** &lt;seqp:statedef&gt; */
 	public final Object pStatedef(Pos pos) throws ParseException {
 		char _alt_c = pos.charAt();
+		_alt_c = pos.charAt();
 		if ((_alt_c >= 'A' && _alt_c <= 'Z')) {
-			Object _label = null;
-			_label = seqp.pStatename(pos);
-			Object _attr = null;
-			_alt_c = pos.charAt();
-			if ((_alt_c == '[')) {
-				try {
-					pos.save();
-					_attr = seqp.pAttributes(pos);
-					pos.commit();
-				} catch (ParseException ex) {
-					pos.rollback();
+			try {
+				pos.save();
+				Object _label = null;
+				_label = seqp.pStatename(pos);
+				Object _attr = null;
+				_alt_c = pos.charAt();
+				if ((_alt_c == '[')) {
+					try {
+						pos.save();
+						_attr = seqp.pAttributes(pos);
+						pos.commit();
+					} catch (ParseException ex) {
+						pos.rollback();
+					}
 				}
+				seqp.pSy$61USymbol(pos);
+				Object _def = null;
+				_def = seqp.pSeqpPathUBarlist(pos);
+				pos.commit();
+				return load(pos, "seqp:statedef", new String[] { "label",
+						"attr", "def" }, new Object[] { _label, _attr, _def });
+			} catch (ParseException ex) {
+				pos.rollback(ex);
 			}
-			seqp.pSy$61USymbol(pos);
-			Object _def = null;
-			_def = seqp.pSeqpPathUBarlist(pos);
-			return load(pos, "seqp:statedef", new String[] { "label", "attr",
-					"def" }, new Object[] { _label, _attr, _def });
-		} else {
-			throw new ParseException("<seqp:statedef> expected, "
-					+ pos.charAt() + " found.", pos.location());
 		}
+		_alt_c = pos.charAt();
+		if ((_alt_c >= 'A' && _alt_c <= 'Z')) {
+			try {
+				pos.save();
+				Object _label = null;
+				_label = seqp.pStatename(pos);
+				Object _attr = null;
+				_alt_c = pos.charAt();
+				if ((_alt_c == '[')) {
+					try {
+						pos.save();
+						_attr = seqp.pAttributes(pos);
+						pos.commit();
+					} catch (ParseException ex) {
+						pos.rollback();
+					}
+				}
+				pos.commit();
+				return load(pos, "seqp:statedef", new String[] { "label",
+						"attr" }, new Object[] { _label, _attr });
+			} catch (ParseException ex) {
+				pos.rollback(ex);
+			}
+		}
+		return (Object) pos.error("<seqp:statedef> expected, " + pos.charAt()
+				+ " found.");
 	}
 
 	/** &lt;seqp:attributes&gt; */

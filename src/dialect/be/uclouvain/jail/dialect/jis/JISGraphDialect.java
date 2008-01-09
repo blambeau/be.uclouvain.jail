@@ -12,6 +12,7 @@ import net.chefbe.autogram.ast2.parsing.ParseException;
 import net.chefbe.autogram.ast2.utils.BaseLocation;
 import be.uclouvain.jail.algo.induct.sample.DefaultSample;
 import be.uclouvain.jail.algo.induct.sample.DefaultSampleString;
+import be.uclouvain.jail.algo.induct.sample.ISample;
 import be.uclouvain.jail.dialect.commons.AbstractGraphDialect;
 
 /** Installs the DOT graph dialect. */
@@ -32,7 +33,7 @@ public class JISGraphDialect extends AbstractGraphDialect {
 	}
 
 	/** Parses a JIS source. */
-	private Object parse(Object source) throws IOException, ParseException {
+	protected ISample<String> parse(Object source) throws IOException, ParseException {
 		// get a reader 
 		ILocation loc = new BaseLocation(source);
 		BufferedReader br = new BufferedReader(loc.reader());
@@ -50,7 +51,16 @@ public class JISGraphDialect extends AbstractGraphDialect {
 			if ("".equals(line)) { continue; }
 			if (start == '#') { continue; }
 			
-			String[] letters = line.substring(1).trim().split("\\s");
+			// convert to letters, robust to empty string
+			line = line.substring(1).trim();
+			String[] letters = null;
+			if ("".equals(line)) { 
+				letters = new String[0];
+			} else {
+				letters = line.split("\\s");
+			}
+			
+			// convert it to a sample string
 			if (start == '+') {
 				sample.addSampleString(new DefaultSampleString<String>(true,letters));
 			} else if (start == '-') {

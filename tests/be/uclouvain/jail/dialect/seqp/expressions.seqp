@@ -1,3 +1,7 @@
+Q0.
+Q0[@kind='ACCEPTING'].
+Q0[@kind='PASSAGE'] = a->Q1, Q1[@kind='ACCEPTING'].
+
 /** Looping INIT */
 INIT=INIT.
 

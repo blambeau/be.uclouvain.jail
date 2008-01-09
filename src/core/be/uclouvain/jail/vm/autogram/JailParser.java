@@ -342,7 +342,6 @@ public class JailParser extends ActiveParser {
 			{
 				StringBuffer _sb_literal = new StringBuffer();
 				char _zz_first = "§>".charAt(0);
-				int _zz_start = pos.offset();
 				while (!pos.isEof()) {
 					char f = pos.charAt();
 					if (f == _zz_first && try$Exact(pos, "§>")) {
@@ -351,10 +350,6 @@ public class JailParser extends ActiveParser {
 						pos.more();
 						_sb_literal.append(f);
 					}
-				}
-				if (_zz_start == pos.offset()) {
-					throw new ParseException("!§> expected, " + pos.charAt()
-							+ " found.", pos.location());
 				}
 				_literal = _sb_literal.toString();
 			}

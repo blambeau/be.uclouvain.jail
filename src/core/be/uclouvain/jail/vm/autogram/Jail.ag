@@ -40,7 +40,7 @@ grammar Jail as jail extends ActiveParser {
 	                                         
 	// graph literals
 	<jail:gliteral>                        ::= "<§" format:<jail:identifier>
-	                                               literal:!"§>"
+	                                               literal:!"§>"?
 	                                           <"§>" u:symbol>
 	                                         ; [u:node]
 		                                         

@@ -6,9 +6,12 @@ import net.chefbe.autogram.ast2.parsing.active.ASTLoader;
 import net.chefbe.autogram.ast2.parsing.active.ASTLoader.EnumTypeResolver;
 import net.chefbe.autogram.ast2.parsing.peg.Input;
 import net.chefbe.autogram.ast2.parsing.peg.Pos;
+import be.uclouvain.jail.algo.fa.equiv.DFAEquiv;
+import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.graph.deco.DirectedGraph;
 import be.uclouvain.jail.graph.utils.ITotalOrder;
+import be.uclouvain.jail.tests.JailTestUtils;
 import be.uclouvain.jail.uinfo.IUserInfoHelper;
 import be.uclouvain.jail.uinfo.UserInfoHelper;
 
@@ -17,8 +20,8 @@ public class SEQPGraphLoaderTest extends TestCase {
 
 	/** Some interesting situations. */
 	private String[] situations = new String[]{
-		"INIT=a.",       // INIT->a->Y
-		"INIT=a->b."     // INIT->a->Y->b->Z 
+		"INIT=a.",        
+		"INIT=a->b."
 	};
 	
 	/** Helper to use. */
@@ -62,6 +65,13 @@ public class SEQPGraphLoaderTest extends TestCase {
 		DirectedGraph g = testSituation(1);
 		assertEquals(3,g.getVerticesCount());
 		assertEquals(2,g.getEdgesCount());
+	}
+	
+	/** Tests empty accepting DFA. */
+	public void testEmptyDFA() throws Exception {
+		IDFA tested = JailTestUtils.loadSeqPDFA("QO[@kind='ACCEPTING'].");
+		IDFA reference = JailTestUtils.EMPTY_DFA();
+		assertTrue(DFAEquiv.isEquivalentTo(tested, reference));
 	}
 	
 }

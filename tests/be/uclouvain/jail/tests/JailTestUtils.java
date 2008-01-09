@@ -53,6 +53,23 @@ public final class JailTestUtils {
 		return new GraphDFA(EMPTY_GRAPH());
 	}
 	
+	/** Returns an empty negative DFA containing one 
+	 * negative non accepting state only. */
+	public static final IDFA EMPTY_NEG_DFA() {
+		IDirectedGraph graph = new AdjacencyDirectedGraph();
+		helper.keys(
+				"label",
+				AttributeGraphFAInformer.STATE_INITIAL_KEY,
+				AttributeGraphFAInformer.STATE_KIND_KEY);
+		IUserInfo info = helper.install(
+				"Q0",
+				true,
+				FAStateKind.fromBools(false,true)
+		);
+		graph.createVertex(info);
+		return new GraphDFA(graph);
+	}
+	
 	/** One state, one edge DFA. */
 	public static final String SINGLE_DFA = "Q0[@kind='ACCEPTING'] = a->Q0.";
 	

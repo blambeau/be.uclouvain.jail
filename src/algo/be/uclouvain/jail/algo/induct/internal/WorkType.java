@@ -1,6 +1,6 @@
 package be.uclouvain.jail.algo.induct.internal;
 
-/** Enumeration with work types. */
+/** Enumeration of work types. */
 public enum WorkType {
 
 	/** Kernel state merge. */
