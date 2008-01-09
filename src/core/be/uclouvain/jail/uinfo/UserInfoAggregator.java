@@ -8,6 +8,7 @@ import be.uclouvain.jail.fa.functions.FAStateKindFunction;
 import be.uclouvain.jail.uinfo.functions.BoolAndFunction;
 import be.uclouvain.jail.uinfo.functions.BoolOrFunction;
 import be.uclouvain.jail.uinfo.functions.IAggregateFunction;
+import be.uclouvain.jail.uinfo.functions.OnFirstPopulator;
 import be.uclouvain.jail.uinfo.functions.PickUpFunction;
 
 /**
@@ -69,6 +70,11 @@ public class UserInfoAggregator implements IUserInfoCreator<Collection<IUserInfo
 	/** Registers a function for a given attribute. */
 	public void register(String source, String target, IAggregateFunction function) {
 		addPopulator(new AggregateFunctionPopulator(function,source,target));
+	}
+	
+	/** Registers an onFirst function. */
+	public void onFirst(String attr, Object firstValue, Object otherValue) {
+		addPopulator(new OnFirstPopulator<Collection<IUserInfo>>(attr, firstValue, otherValue));
 	}
 	
 	/** Registers a Boolean-OR function for a given attribute. */ 

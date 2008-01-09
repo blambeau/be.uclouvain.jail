@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import jline.ConsoleReader;
 import jline.History;
@@ -26,8 +27,19 @@ public class Jail implements IJailVMEnvironment {
 	/** JAIL properties. */
 	private static Map<String,Object> properties = new HashMap<String,Object>();
 	
+	/** Randomizer. */
+	private static Random randomizer;
+	
 	/** Installs jail. */
 	public static void install() {}
+	
+	/** Returns the Jail randomizer. */
+	public static synchronized Random randomizer() {
+		if (randomizer == null) {
+			randomizer = new Random(System.currentTimeMillis());
+		}
+		return randomizer;
+	}
 	
 	/** Sets a JAIL property. */
 	public static void setProperty(String key, Object value) {

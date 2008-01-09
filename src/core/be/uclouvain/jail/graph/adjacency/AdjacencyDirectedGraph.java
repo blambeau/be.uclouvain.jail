@@ -64,6 +64,10 @@ public class AdjacencyDirectedGraph extends UserInfoCapable implements IDirected
 		}
 		if (verticesAreInOrder) {
 			int id = ((IVertex)vertex).getId();
+			if (id >= vertices.size()) {
+				throw new IllegalStateException("Bad vertex ids while verticesAreInOrder, real good vertex? " +
+						                        vertices.contains(vertex));
+			}
 			IVertex v = vertices.get(id);
 			if (!vertex.equals(v)) {
 				throw new IllegalArgumentException("Not a correct vertex " + vertex);
@@ -131,7 +135,7 @@ public class AdjacencyDirectedGraph extends UserInfoCapable implements IDirected
 	 * 
 	 * <p>This method does not keep vertices in order in the most general case. However,
 	 * removing the last added vertex keep vertices in order. The verticesAreInOrder 
-	 * flag is update accordingly. As this method reuse the removeEdge(Edge) one, edges
+	 * flag is updated accordingly. As this method reuse the removeEdge(Edge) one, edges
 	 * does not stay in order in the most general case.</p>
 	 * 
 	 * <p>This method works in O(m*deg(v) + n), being no such efficient !</p> 
@@ -150,10 +154,14 @@ public class AdjacencyDirectedGraph extends UserInfoCapable implements IDirected
 		}
 
 		/* remove the vertex */
-		vertices.remove(vertex);
+		if (verticesAreInOrder) {
+			vertices.remove(vertex.getId());
+		} else {
+			vertices.remove(vertex);
+		}
 
 		/* stay in order only if vertex was the last vertex */
-		verticesAreInOrder = (vertex.getId() == getVerticesCount());
+		verticesAreInOrder = verticesAreInOrder && (vertex.getId() == getVerticesCount());
 	}
 
 	/** Removes a vertex from the graph. */
@@ -173,6 +181,9 @@ public class AdjacencyDirectedGraph extends UserInfoCapable implements IDirected
 		}
 		if (edgesAreInOrder) {
 			int id = ((IEdge)edge).getId();
+			if (id >= edges.size()) {
+				throw new IllegalArgumentException("Not a correct edge " + edge);
+			}
 			IEdge e = edges.get(id);
 			if (!edge.equals(e)) {
 				throw new IllegalArgumentException("Not a correct edge " + edge);
@@ -258,10 +269,14 @@ public class AdjacencyDirectedGraph extends UserInfoCapable implements IDirected
 		target.removeIncomingEdge(this,edge);
 
 		/* remove edge */
-		edges.remove(edge);
+		if (edgesAreInOrder) {
+			edges.remove(edge.getId());
+		} else {
+			edges.remove(edge);
+		}
 
 		/* stay in order only if edge was the last edge */
-		edgesAreInOrder = (edge.getId() == getEdgesCount());
+		edgesAreInOrder = edgesAreInOrder && (edge.getId() == getEdgesCount());
 	}
 
 	/** Removes an edge from the graph. */
@@ -469,9 +484,9 @@ public class AdjacencyDirectedGraph extends UserInfoCapable implements IDirected
 	}
 
 	/**
-	 * <p>The total order informer used for vertices. This class has efficient spacial and temporal
-	 * complexities : no adding space is used and all methods execute in O(1). However the graph should 
-	 * never change in any way when using the informer.</p> 
+	 * <p>The total order informer used for vertices. This class has efficient spacial 
+	 * and temporal complexities : no adding space is used and all methods execute in O(1). 
+	 * However the graph should never change in any way when using the informer.</p> 
 	 * 
 	 * @author LAMBEAU Bernard
 	 */
@@ -521,9 +536,9 @@ public class AdjacencyDirectedGraph extends UserInfoCapable implements IDirected
 	}
 
 	/**
-	 * <p>The total order informer used for edges. This class has efficient spacial and temporal
-	 * complexities : no adding space is used and all methods execute in O(1). However the graph 
-	 * should never change in any way when using the informer.</p> 
+	 * <p>The total order informer used for edges. This class has efficient spacial 
+	 * and temporal complexities : no adding space is used and all methods execute in 
+	 * O(1). However the graph should never change in any way when using the informer.</p> 
 	 * 
 	 * @author LAMBEAU Bernard
 	 */

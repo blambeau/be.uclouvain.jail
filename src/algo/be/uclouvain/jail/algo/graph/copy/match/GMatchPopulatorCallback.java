@@ -1,7 +1,9 @@
 package be.uclouvain.jail.algo.graph.copy.match;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.chefbe.autogram.ast2.IASTNode;
 import be.uclouvain.jail.algo.graph.copy.match.functions.GMatchFunctionFactory;
@@ -24,11 +26,20 @@ public abstract class GMatchPopulatorCallback<T> extends GMatchCallback<Object> 
 	/** Target user info. */
 	protected IUserInfoHelper helper;
 	
+	/** Functions to use. */
+	private Map<String, IGMatchFunction> functions;
+	
 	/** Creates a callback instance. */
-	public GMatchPopulatorCallback(T source, IUserInfo info, IUserInfoHelper helper) {
+	public GMatchPopulatorCallback(IUserInfoHelper helper) {
+		this.helper = helper;
+		this.functions = new HashMap<String, IGMatchFunction>();
+	}
+	
+	/** Launches callback on a given info. */
+	public void launchOn(IASTNode node, T source, IUserInfo info) throws Exception {
 		this.source = source;
 		this.info = info;
-		this.helper = helper;
+		node.accept(this);
 	}
 	
 	/** Callback method for MATCH_DO nodes. */
@@ -80,7 +91,15 @@ public abstract class GMatchPopulatorCallback<T> extends GMatchCallback<Object> 
 	/** Callback method for FUNCTION_CALL nodes. */
 	public Object FUNCTION_CALL(IASTNode node) throws Exception {
 		String name = node.getAttrString("name");
-		IGMatchFunction func = GMatchFunctionFactory.getGMatchFunction(name);
+		IGMatchFunction func = functions.get(name);
+		if (func == null) {
+			func = GMatchFunctionFactory.getGMatchFunction(name);
+			if (func == null) {
+				throw new Exception("Unknown GMatch function " + name);
+			}
+			functions.put(name, func);
+		}
+		
 		List<Object> args = new ArrayList<Object>();
 		for (IASTNode child: node.children()) {
 			if ("name".equals(child.key())) {

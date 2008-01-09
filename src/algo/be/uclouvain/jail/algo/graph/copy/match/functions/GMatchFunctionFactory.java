@@ -16,6 +16,21 @@ public class GMatchFunctionFactory {
 		return new ConcatFunction();
 	}
 	
+	/** Factors a concat function. */
+	public static IGMatchFunction<?> choose() {
+		return new ChooseFunction();
+	}
+	
+	/** Factors a concat function. */
+	public static IGMatchFunction<?> increment() {
+		return new IncrementFunction();
+	}
+	
+	/** Factors a concat function. */
+	public static IGMatchFunction<?> onFirst() {
+		return new OnFirstFunction();
+	}
+	
 	/** Returns a function by name. */
 	public static IGMatchFunction<?> getGMatchFunction(String name) throws JailVMException {
 		try {

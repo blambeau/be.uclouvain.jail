@@ -5,10 +5,10 @@ package be.uclouvain.jail.algo.graph.copy.match.functions;
  * 
  * @author blambeau
  */
-public class ConcatFunction implements IGMatchFunction {
+public class ConcatFunction implements IGMatchFunction<String> {
 
 	/** Concatenates arguments. */
-	public Object execute(Object... args) {
+	public String execute(Object...args) {
 		StringBuffer sb = new StringBuffer();
 		if (args != null) {
 			for (Object arg: args) {

@@ -14,13 +14,13 @@ import be.uclouvain.jail.uinfo.IUserInfoPopulator;
  * 
  * @author blambeau
  */
-public class GMatchPopulator implements IUserInfoPopulator<IUserInfo> {
+public class GMatchPopulator<T> implements IUserInfoPopulator<T> {
 
 	/** Root node. */
 	private IASTNode node;
 	
-	/** Helper to use. */
-	private IUserInfoHelper helper;
+	/** Callback to use. */
+	private GMatchPopulatorCallback<T> callback;
 	
 	/** Creates a match populator. */
 	public GMatchPopulator(IASTNode node, IUserInfoHelper helper) {
@@ -28,30 +28,32 @@ public class GMatchPopulator implements IUserInfoPopulator<IUserInfo> {
 			throw new IllegalArgumentException("MATCH_DO node expected, " + node.type() + " received.");
 		}
 		this.node = node;
-		this.helper = helper;
+		this.callback = new GMatchPopulatorCallback<T>(helper) {
+			protected Object extractSourceAttributeValue(T source, String key) {
+				if (source instanceof IUserInfo) {
+					return ((IUserInfo)source).getAttribute(key);
+				} else {
+					throw new IllegalArgumentException("IUserInfo expected.");
+				}
+			}
+		};
 	}
 
 	/** Populates a target from a source. */
-	public void populate(IUserInfo target, final IUserInfo source) {
+	public void populate(IUserInfo target, final T source) {
 		try {
-			node.accept(new GMatchPopulatorCallback<IUserInfo>(source,target,helper){
-				/** Extracts from source. */
-				@Override
-				protected Object extractSourceAttributeValue(IUserInfo source, String key) {
-					return source.getAttribute(key);
-				}
-			});
+			callback.launchOn(node, source, target);
 		} catch (Exception e) {
 			throw new IllegalStateException("Error while GMatch populating ...",e);
 		}
 	}
 	
 	/** Parses a GMatch expression and returns a populator. */
-	public static GMatchPopulator parse(String expr, IUserInfoHelper helper) throws ParseException {
+	public static <T> GMatchPopulator<T> parse(String expr, IUserInfoHelper helper) throws ParseException {
 		GMatchParser parser = new GMatchParser();
 		parser.setActiveLoader(new ASTLoader(new EnumTypeResolver<GMatchNodes>(GMatchNodes.class)));
 		IASTNode root = parser.parse(GMatchNodes.MATCH_DO, new BaseLocation(expr));
-		return new GMatchPopulator(root,helper); 
+		return new GMatchPopulator<T>(root,helper); 
 	}
 	
 }

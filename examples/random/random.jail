@@ -1,0 +1,13 @@
+(execute 'commons.jail');
+
+A = <§seqp Q0. §>;
+
+G = (randgraph (A) :stateCount 15 :edgeCount 25 :connex true
+		           :vertex {@kind      -> choose('ACCEPTING','PASSAGE'),
+							          @test      -> increment(),
+							          @isInitial -> onFirst(true,false)}
+							 :edge   {@letter -> choose('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')}
+    );
+
+(show (G));
+

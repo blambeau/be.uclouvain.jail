@@ -35,6 +35,7 @@ import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.fa.impl.GraphDFA;
 import be.uclouvain.jail.fa.impl.GraphNFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
+import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.vm.JailReflectionToolkit;
 import be.uclouvain.jail.vm.JailVM;
 import be.uclouvain.jail.vm.JailVMException;
@@ -120,7 +121,7 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 		DefaultTauRemoverResult result = new DefaultTauRemoverResult();
 		
 		if (opt.hasOption("state")) {
-			GMatchPopulator populator = opt.getOptionValue("state",GMatchPopulator.class,null);
+			GMatchPopulator<IUserInfo> populator = opt.getOptionValue("state",GMatchPopulator.class,null);
 			result.getStateCopier().addPopulator(populator);
 		}
 		
@@ -167,13 +168,13 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 		// add state populator
 		if (options.hasOption("state")) {
 			System.err.println("Warning, using depreacated :state on graph copy.");
-			GMatchPopulator populator = options.getOptionValue("state",GMatchPopulator.class,null);
+			GMatchPopulator<IUserInfo> populator = options.getOptionValue("state",GMatchPopulator.class,null);
 			result.getStateCopier().addPopulator(populator);
 		}
 		
 		// add edge populator
 		if (options.hasOption("edge")) {
-			GMatchPopulator populator = options.getOptionValue("edge",GMatchPopulator.class,null);
+			GMatchPopulator<IUserInfo> populator = options.getOptionValue("edge",GMatchPopulator.class,null);
 			result.getEdgeCopier().addPopulator(populator);
 		}
 		

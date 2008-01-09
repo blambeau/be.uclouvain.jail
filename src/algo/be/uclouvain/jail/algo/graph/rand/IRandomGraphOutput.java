@@ -2,6 +2,7 @@ package be.uclouvain.jail.algo.graph.rand;
 
 import java.util.Random;
 
+import net.chefbe.javautils.adapt.IAdaptable;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
 
@@ -10,7 +11,7 @@ import be.uclouvain.jail.uinfo.IUserInfo;
  * 
  * @author blambeau
  */
-public interface IRandomGraphOutput {
+public interface IRandomGraphOutput extends IAdaptable {
 
 	/** Creates an empty graph result. */
 	public IDirectedGraph factorGraph();

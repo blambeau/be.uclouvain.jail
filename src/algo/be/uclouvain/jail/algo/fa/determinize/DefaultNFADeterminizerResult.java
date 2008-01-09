@@ -37,7 +37,7 @@ public class DefaultNFADeterminizerResult implements INFADeterminizerResult {
 	public DefaultNFADeterminizerResult() {
 		this.stateAggregator = new UserInfoAggregator();
 		this.edgeAggregator = new UserInfoAggregator();
-		stateAggregator.boolAnd(AttributeGraphFAInformer.STATE_INITIAL_KEY);
+		stateAggregator.onFirst(AttributeGraphFAInformer.STATE_INITIAL_KEY,true,false);
 		stateAggregator.stateKind(AttributeGraphFAInformer.STATE_KIND_KEY,
                 FAStateKindFunction.OR,
                 FAStateKindFunction.OR,true);
@@ -74,11 +74,13 @@ public class DefaultNFADeterminizerResult implements INFADeterminizerResult {
 
 	/** Creates a state in the resulting DFA. */
 	public void createState(FAStateGroup state) {
-		if (rStates.containsKey(state)) {
-			throw new AssertionError("State not yet created.");
-		}
+		if (rStates.containsKey(state)) { throw new AssertionError("State not yet created."); }
 		IDirectedGraph graph = dfa.getGraph();
+		
+		// create user info
 		IUserInfo info = stateAggregator.create(state.getUserInfos());
+		
+		// create state and save it
 		Object vertex = graph.createVertex(info);
 		rStates.put(state,vertex);
 	}
