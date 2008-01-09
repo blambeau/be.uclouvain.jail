@@ -12,11 +12,9 @@ import be.uclouvain.jail.graph.constraints.AbstractGraphPredicate;
 public class DefaultRandomGraphInput implements IRandomGraphInput {
 
 	/** Number of states generated/to generate. */
-	private int nbStates=0;
 	private int stateCount=10;
 	
 	/** Number of edges generated/to generate. */
-	private int nbEdges=0;
 	private int edgeCount=25;
 	
 	/** Number of tries allowed. */
@@ -46,7 +44,7 @@ public class DefaultRandomGraphInput implements IRandomGraphInput {
 	public IGraphPredicate getVertexStopPredicate() {
 		return new AbstractGraphPredicate() {
 			public boolean evaluate(IDirectedGraph graph) {
-				return (nbStates++ == stateCount);
+				return graph.getVerticesTotalOrder().size() == stateCount;
 			}
 		};
 	}
@@ -55,7 +53,7 @@ public class DefaultRandomGraphInput implements IRandomGraphInput {
 	public IGraphPredicate getEdgeStopPredicate() {
 		return new AbstractGraphPredicate() {
 			public boolean evaluate(IDirectedGraph graph) {
-				return (nbEdges++ == edgeCount);
+				return graph.getEdgesTotalOrder().size() == edgeCount;
 			}
 		};
 	}

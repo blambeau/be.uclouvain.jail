@@ -22,6 +22,9 @@ public interface IRandomGraphOutput extends IAdaptable {
 	/** Creates an edge information. */
 	public IUserInfo createEdgeInfo(Object source, Object target, Random r);
 	
+	/** Cleans a directed graph before acceptation. */
+	public boolean clean(IDirectedGraph g);
+	
 	/** Let the output know that the algorithm succeed. */
 	public void success(IDirectedGraph g);
 

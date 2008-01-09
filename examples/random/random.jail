@@ -2,12 +2,12 @@
 
 A = <§seqp Q0. §>;
 
-G = (randgraph (A) :stateCount 15 :edgeCount 25 :connex true
+G = (randgraph (A) :stateCount 200 :edgeCount 135 :connex true
 		           :vertex {@kind      -> choose('ACCEPTING','PASSAGE'),
-							          @test      -> increment(),
 							          @isInitial -> onFirst(true,false)}
-							 :edge   {@letter -> choose('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')}
+							 :edge   {@letter -> choose('a', 'b')}
     );
 
-(show (G));
+(print (G) :format 'dot');
+//H = (print (minimize (determinize (G))) :format 'dot');
 

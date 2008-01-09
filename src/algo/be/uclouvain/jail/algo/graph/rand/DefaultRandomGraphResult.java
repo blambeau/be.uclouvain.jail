@@ -71,10 +71,8 @@ public class DefaultRandomGraphResult implements IRandomGraphOutput {
 		throw new UnsupportedOperationException("Failed to generate random graph");
 	}
 
-	/** Marks the output graph as g. */ 
-	public void success(IDirectedGraph g) {
-		this.g = g;
-		
+	/** Cleans a directed graph before acceptation. */
+	public boolean clean(IDirectedGraph g) {
 		if (connex) {
 			// compute connex composants
 			IGraphPartition p = new GraphConXDetector(g).getGraphPartition();
@@ -97,6 +95,13 @@ public class DefaultRandomGraphResult implements IRandomGraphOutput {
 				}
 			}
 		}
+		
+		return true;
+	}
+	
+	/** Marks the output graph as g. */ 
+	public void success(IDirectedGraph g) {
+		this.g = g;
 	}
 
 	/** Adapts to a type. */

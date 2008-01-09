@@ -70,7 +70,7 @@ public class RandomGraphAlgo {
 			graph = output.factorGraph();
 			createVertices();
 			createEdges();
-			if (accept.evaluate(graph)) {
+			if (output.clean(graph) && accept.evaluate(graph)) {
 				output.success(graph);
 				return;
 			} else if (stop.evaluate(graph)) {
