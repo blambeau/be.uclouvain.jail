@@ -12,8 +12,6 @@ import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.graph.deco.DirectedGraph;
 import be.uclouvain.jail.graph.utils.ITotalOrder;
 import be.uclouvain.jail.tests.JailTestUtils;
-import be.uclouvain.jail.uinfo.IUserInfoHelper;
-import be.uclouvain.jail.uinfo.UserInfoHelper;
 
 /** Tests SEQPGraphLoader class. */
 public class SEQPGraphLoaderTest extends TestCase {
@@ -23,9 +21,6 @@ public class SEQPGraphLoaderTest extends TestCase {
 		"INIT=a.",        
 		"INIT=a->b."
 	};
-	
-	/** Helper to use. */
-	private IUserInfoHelper helper = UserInfoHelper.instance();
 	
 	/** Parses a situation. */
 	private IASTNode parse(String situation) throws Exception {
@@ -41,7 +36,7 @@ public class SEQPGraphLoaderTest extends TestCase {
 	public DirectedGraph testSituation(int index) throws Exception {
 		DirectedGraph graph = new DirectedGraph(new AdjacencyDirectedGraph());
 		IASTNode root = parse(situations[index]);
-		root.accept(new SEQPGraphLoader(graph, helper));
+		root.accept(new SEQPGraphLoader(graph,null,null));
 		return graph;
 	}
 	

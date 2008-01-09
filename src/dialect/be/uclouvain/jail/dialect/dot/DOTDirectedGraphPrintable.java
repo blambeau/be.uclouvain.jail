@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 import net.chefbe.javautils.adapt.AdaptUtils;
 import net.chefbe.javautils.adapt.IAdaptable;
 import be.uclouvain.jail.Jail;
-import be.uclouvain.jail.dialect.AbstractPrintable;
+import be.uclouvain.jail.dialect.utils.AbstractPrintable;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.utils.ITotalOrder;
 import be.uclouvain.jail.uinfo.IUserInfo;

@@ -13,22 +13,19 @@ import net.chefbe.autogram.ast2.utils.BaseLocation;
 import be.uclouvain.jail.algo.induct.sample.DefaultSample;
 import be.uclouvain.jail.algo.induct.sample.DefaultSampleString;
 import be.uclouvain.jail.algo.induct.sample.ISample;
-import be.uclouvain.jail.dialect.commons.AbstractGraphDialect;
+import be.uclouvain.jail.dialect.utils.AbstractGraphDialect;
+import be.uclouvain.jail.vm.JailVMOptions;
 
 /** Installs the DOT graph dialect. */
 public class JISGraphDialect extends AbstractGraphDialect {
 
 	/** Loads source in dot format. */
-	public Object load(Object source, String format) throws IOException, ParseException {
-		if ("jis".equals(format)) {
-			return parse(source);
-		} else {
-			throw new IllegalStateException("Unknown format (not jail .jis): " + format);
-		}
+	public Object load(Object source, JailVMOptions options) throws IOException, ParseException {
+		return parse(source);
 	}
 
 	/** Prints source in dot format. */
-	public void print(Object source, String format, PrintWriter stream) throws IOException {
+	public void print(Object source, PrintWriter stream, JailVMOptions options) throws IOException {
 		throw new UnsupportedOperationException("JIS dialect does not implement print.");
 	}
 

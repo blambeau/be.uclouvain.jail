@@ -12,8 +12,6 @@ import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.constraints.AbstractGraphConstraint;
 import be.uclouvain.jail.graph.constraints.GraphUniqueIndex;
 import be.uclouvain.jail.graph.deco.DirectedGraph;
-import be.uclouvain.jail.uinfo.IUserInfoHelper;
-import be.uclouvain.jail.uinfo.UserInfoHelper;
 
 /**
  * Minimization tests, inspired from Hopcroft 2005 book.
@@ -39,12 +37,9 @@ public class Hopcroft2005Test extends TestCase {
                                 + "BH [@kind='PASSAGE']    = l0->G|l1->C,"
                                 + "C  [@kind='ACCEPTING']  = l0->AE|l1->C.";
 	
-	/** Helper to use. */
-	private IUserInfoHelper helper = UserInfoHelper.instance();
-	
 	/** Tests returned partition. */
 	public void testPartition() throws Exception {
-		IDFA dfa155 = new GraphDFA(SEQPGraphLoader.load(DFA155, helper));
+		IDFA dfa155 = new GraphDFA(SEQPGraphLoader.load(DFA155));
 		
 		IDirectedGraph dfag = dfa155.getGraph();
 		DirectedGraph g = (DirectedGraph) dfag.adapt(DirectedGraph.class);
@@ -89,8 +84,8 @@ public class Hopcroft2005Test extends TestCase {
 	
 	/** Tests the minimizer. */
 	public void testMinimizer() throws Exception {
-		IDFA dfa155 = new GraphDFA(SEQPGraphLoader.load(DFA155, helper));
-		IDFA expected = new GraphDFA(SEQPGraphLoader.load(DFA162, helper));
+		IDFA dfa155 = new GraphDFA(SEQPGraphLoader.load(DFA155));
+		IDFA expected = new GraphDFA(SEQPGraphLoader.load(DFA162));
 		IDFA min = new DFAMinimizer(dfa155).getMinimalDFA();
 		assertTrue(new DFAEquiv(expected,min).areEquivalent());
 	}

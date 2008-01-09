@@ -1,9 +1,11 @@
-package be.uclouvain.jail.dialect;
+package be.uclouvain.jail.dialect.utils;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+
+import be.uclouvain.jail.dialect.IPrintable;
 
 /** 
  * Utility to create printers.

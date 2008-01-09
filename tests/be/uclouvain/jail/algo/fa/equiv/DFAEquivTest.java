@@ -88,7 +88,7 @@ public class DFAEquivTest extends TestCase {
 	/** Loads a dfa from DFA.dot file. */
 	public IDFA loadDFA(URL url) throws Exception {
 		IDFA dfa = new GraphDFA();
-		DOTDirectedGraphLoader.loadGraph(dfa.getGraph(),url, helper);
+		DOTDirectedGraphLoader.loadGraph(dfa.getGraph(),url);
 		return dfa;
 	}
 

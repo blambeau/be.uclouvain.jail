@@ -9,15 +9,10 @@ import net.chefbe.javautils.adapt.AdaptUtils;
 import net.chefbe.javautils.adapt.CreateClassAdapter;
 import be.uclouvain.jail.dialect.IPrintable;
 import be.uclouvain.jail.graph.IDirectedGraph;
-import be.uclouvain.jail.uinfo.IUserInfoHelper;
-import be.uclouvain.jail.uinfo.UserInfoHelper;
 
 /** Tests the DOT parser. */
 public class DOTParserTest extends TestCase {
 
-	/** Default helper instance. */
-	private IUserInfoHelper helper = UserInfoHelper.instance();
-	
 	/** Returns a graph URL. */
 	public URL[] getGraphURLs() {
 		return new URL[]{
@@ -31,7 +26,7 @@ public class DOTParserTest extends TestCase {
 		AdaptUtils.register(IDirectedGraph.class,IPrintable.class,
 				new CreateClassAdapter(DOTDirectedGraphPrintable.class));
 		for (URL url: getGraphURLs()) {
-			IDirectedGraph graph = DOTDirectedGraphLoader.loadGraph(url,helper);
+			IDirectedGraph graph = DOTDirectedGraphLoader.loadGraph(url);
 			IPrintable printable = (IPrintable) graph.adapt(IPrintable.class);
 			assertNotNull("Adaptation worked.", printable);
 		}

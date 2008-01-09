@@ -1,0 +1,127 @@
+package be.uclouvain.jail.dialect.upv2;
+
+import net.chefbe.autogram.ast2.parsing.active.ActiveParser;
+
+/** Defines UPV2 autogram grammar. */
+grammar UPV2 as upv2 extends ActiveParser {
+
+	// ~~~ MAIN RULES ~~~
+	<upv2:graphdef>        ::= <upv2:freespace>?
+	                               name:<upv2:graphname>
+	                               nbstates:<upv2:nbstates>
+	                               nbedges:<upv2:nbedges>
+	                               line:<upv2:line>*
+	                         ; [u:node]
+
+	<upv2:graphname>       ::= <"Name" upv2:spaced> tor:<upv2:identifier upv2:toeol>
+	                         ; [upv2:return]
+	<upv2:nbstates>        ::= <"NumStates" upv2:spaced> tor:<upv2:integer upv2:toeol>
+	                         ; [upv2:return]
+	<upv2:nbedges>         ::= <"NumEdges" upv2:spaced> tor:<upv2:integer upv2:toeol>
+	                         ; [upv2:return]
+	<upv2:line>            ::= tor:<upv2:state_line>
+	                         | tor:<upv2:edge_line>
+	                         ; [upv2:return]
+	<upv2:state_line>      ::= <"State" upv2:spaced> id:<upv2:integer upv2:spaced>
+	                           attr:<upv2:attributes upv2:toeol>?
+	                         ; [u:node]
+	<upv2:edge_line>       ::= from:<upv2:integer upv2:spaced>
+	                           to:<upv2:integer upv2:spaced>
+	                           letter:<upv2:literal upv2:spaced>
+	                           attr:<upv2:attributes upv2:toeol>?
+	                         ; [u:node]
+	<upv2:attributes>      ::= <upv2:attribute upv2:list>
+                             ; [u:node]	                         
+	<upv2:attribute>       ::= key:<upv2:identifier> <'=' upv2:spaced>
+	                           value:<upv2:literal upv2:spaced>
+	                         ; [u:node] 
+
+	// ~~~ MACROS ~~~
+	{upv2:spaced}          ::= <upv2:spaces>? tor:{T} <upv2:spaces>?
+	                         ; [upv2:return]
+	{upv2:toeol}           ::= tor:{T} <upv2:spaces>? <upv2:eol>
+	                           <upv2:freespace>?
+	                         ; [upv2:return]
+	{upv2:list}            ::= f:{T} n:(<upv2:spaces>? tor:{T})*
+                             ; [upv2:list]	
+
+	// ~~ LITERALS ~~
+	<upv2:string>          ::= ["] tor:!{\}["]? ["]
+	                         ; [upv2:return]
+	<upv2:integer>         ::= [0]
+	                         | [1-9] [0-9]*
+	                         ; [upv2:integer]
+	<upv2:double>          ::= <upv2:integer> '.' [0-9]+
+	                         | <upv2:integer>
+	                         ; [upv2:double]
+	<upv2:boolean>         ::= b:"true"
+	                         | b:"false"
+	                         ; [upv2:boolean]
+	<upv2:literal>         ::= tor:<upv2:string>
+	                         | tor:<upv2:integer>
+	                         | tor:<upv2:double>
+	                         | tor:<upv2:boolean>
+	                         ; [upv2:return]
+	
+	// ~~ SPACING ~~
+	<upv2:space>           ::= [ \t]
+	                         ; [upv2:void]
+	<upv2:spaces>          ::= [ \t]+
+	                         ; [upv2:void]
+	<upv2:eol>             ::= '\r'? '\n'
+	                         ; [upv2:void]
+	<upv2:eof>             ::= '\0'
+	                         ; [upv2:void]
+	<upv2:emptyline>       ::= <upv2:spaces>? <upv2:eol>
+	                         ; [upv2:void]
+	<upv2:comment>         ::= <upv2:spaces>? '%' !<upv2:eol> <upv2:eol>
+	                         ; [upv2:void]
+	<upv2:freeline>        ::= <upv2:emptyline>
+	                         | <upv2:comment>
+	                         ; [upv2:void]
+	<upv2:freespace>       ::= <upv2:freeline>+
+	                         ; [upv2:void]
+	
+	// ~~ IDENTIFIERS ~~
+	<upv2:idchars>         ::= [a-zA-Z][a-zA-Z0-9_$#]*
+	                         ; [upv2:diff]
+	<upv2:identifier>      ::= id:<upv2:idchars>
+	                         ; [upv2:identifier]
+	
+	// ~~~ JAVA PRODUCTIONS ~~~
+	[upv2:void]            ::= {Object}{}{null}
+	                         ;
+	[upv2:return]          ::= {Object}{}{_tor}
+	                         ;
+	[u:return]             ::= {Object}{}{_tor}
+	                         ;
+	[upv2:diff]            ::= {String}
+	                           {int start = pos.offset();}
+	                           {pos.diff(start)}
+	                         ;
+	[upv2:boolean]         ::= {Boolean}{}
+	                           {Boolean.valueOf((String)_b)}
+	                         ;
+	[upv2:integer]         ::= {Integer}
+	                           {int start = pos.offset();}
+	                           {Integer.valueOf(pos.diff(start))}
+	                         ;
+	[upv2:double]          ::= {Double}
+	                           {int start = pos.offset();}
+	                           {Double.valueOf(pos.diff(start))}
+	                         ;
+	[upv2:identifier]      ::= {String}{}{(String)_id}
+	                         ;
+	[upv2:list]            ::= {List<?>}
+	                           {}
+	                           {toList(_f,_n)}
+	                         ;
+	[u:node]               ::= {Object}{}
+	                           {load(
+	                           		pos,
+	                           		"${../@qName}",
+	                           		new String[]{*{ag:*/@prefix}{"${.}"}{,}{}},
+	                           		new Object[]{*{ag:*/@prefix}{_${.}}{,}{}}
+	                           	)}
+	                         ;
+}

@@ -18,6 +18,8 @@ import be.uclouvain.jail.graph.IDirectedGraphWriter;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.uinfo.IUserInfoHelper;
+import be.uclouvain.jail.uinfo.UserInfoHelper;
+import be.uclouvain.jail.vm.JailVMOptions;
 
 /**
  * Converts a SEQP Abstract Syntax Tree to a IDirectedGraph.
@@ -44,21 +46,28 @@ public class SEQPGraphLoader extends SEQPCallback<Object> {
 	/** Current user info. */
 	private IUserInfo info;
 
+	/** Requesting dialect. */
+	private SEQPGraphDialect dialect;
+	
 	/** Helper to use. */
 	private IUserInfoHelper helper;
 	
 	/** Creates a graph loader. */
-	public SEQPGraphLoader(IDirectedGraphWriter writer, IUserInfoHelper helper) {
+	public SEQPGraphLoader(IDirectedGraphWriter writer, 
+			               SEQPGraphDialect dialect,
+			               JailVMOptions options) {
 		this.writer = writer;
-		this.helper = helper;
+		this.dialect = dialect;
+		this.helper = UserInfoHelper.instance();
 		vertices = new HashMap<String, Object>();
 		this.infos = new HashMap<Object,IUserInfo>();
 	}
-
+	
 	/** Loads a source inside a graph writer. */
 	public static void load(Object source, 
-			IDirectedGraphWriter writer, 
-			IUserInfoHelper helper) throws IOException, ParseException {
+			                IDirectedGraphWriter writer,
+			                SEQPGraphDialect dialect,
+	                        JailVMOptions options) throws IOException, ParseException {
 		// parse source
 		SEQPParser parser = new SEQPParser();
 		parser.setActiveLoader(new ASTLoader(new EnumTypeResolver<SEQPNodes>(SEQPNodes.class)));
@@ -67,19 +76,32 @@ public class SEQPGraphLoader extends SEQPCallback<Object> {
 		// use callback
 		IASTNode root = (IASTNode) parser.pSeqpDef(pos);
 		try {
-			root.accept(new SEQPGraphLoader(writer, helper));
+			root.accept(new SEQPGraphLoader(writer, dialect, options));
 		} catch (Exception e) {
 			throw new IllegalStateException("Unexpected error", e);
 		}
 	}
 
 	/** Loads a directed grah. */
-	public static IDirectedGraph load(Object source, IUserInfoHelper helper) throws IOException, ParseException {
+	public static IDirectedGraph load(Object source, 
+			                          SEQPGraphDialect dialect,
+			                          JailVMOptions options) throws IOException, ParseException {
 		IDirectedGraph graph = new AdjacencyDirectedGraph();
-		load(source, graph, helper);
+		load(source, graph, dialect, options);
 		return graph;
 	}
 
+	/** Loads a directed grah. */
+	public static IDirectedGraph load(Object source) throws IOException, ParseException {
+		return load(source,null,null);
+	}
+	
+	/** Loads a directed grah. */
+	public static void load(Object source, IDirectedGraphWriter writer)
+		throws IOException, ParseException {
+		load(source,writer, null, null);
+	}
+	
 	/** Creates a vertex user info. */
 	private IUserInfo vInfo(String label) {
 		helper.addKeyValue(STATELABEL, label == null ? "" : label);

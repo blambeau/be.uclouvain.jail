@@ -4,8 +4,6 @@ import junit.framework.TestCase;
 import be.uclouvain.jail.dialect.seqp.SEQPGraphLoader;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.impl.GraphDFA;
-import be.uclouvain.jail.uinfo.IUserInfoHelper;
-import be.uclouvain.jail.uinfo.UserInfoHelper;
 
 /** Tests the group classes. */
 public class GroupClassesTest extends TestCase implements IMultiDFAGroupInformer {
@@ -21,15 +19,12 @@ public class GroupClassesTest extends TestCase implements IMultiDFAGroupInformer
 	                         "YES=stop->NO|start->YES.";
 	private IDFA running;
 	
-	/** Helper to use. */
-	private IUserInfoHelper helper = UserInfoHelper.instance();
-	
 	/** Creates a test instance. */
 	public GroupClassesTest() throws Exception {
 		train = new GraphDFA();
 		running = new GraphDFA();
-		SEQPGraphLoader.load(TRAIN,train.getGraph(), helper);
-		SEQPGraphLoader.load(RUNNING,running.getGraph(), helper);
+		SEQPGraphLoader.load(TRAIN,train.getGraph());
+		SEQPGraphLoader.load(RUNNING,running.getGraph());
 	}
 	
 	/** Returns the initial state group. */

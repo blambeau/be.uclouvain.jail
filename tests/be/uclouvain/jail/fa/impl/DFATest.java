@@ -90,7 +90,7 @@ public class DFATest extends TestCase {
 	
 	/** Loads a dfa from DFA.dot file. */
 	public IDFA loadDFA(IDFA dfa) throws Exception {
-		DOTDirectedGraphLoader.loadGraph(dfa.getGraph(),getDFAURL(),helper);
+		DOTDirectedGraphLoader.loadGraph(dfa.getGraph(),getDFAURL());
 		return dfa;
 	}
 

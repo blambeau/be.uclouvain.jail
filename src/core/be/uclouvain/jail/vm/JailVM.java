@@ -172,7 +172,6 @@ public class JailVM implements IJailVMScope {
 	
 	/** Registers a loader. */
 	public void registerDialectLoader(String extension, IGraphDialect loader) {
-		loader.setUserInfoHelper(getUserInfoHelper());
 		core.registerDialectLoader(extension, loader);
 	}
 	

@@ -90,7 +90,7 @@ public class JailCoreToolkit extends JailReflectionToolkit {
 	protected Object load(Object source, String format) throws JailVMException {
 		IGraphDialect loader = ensureDialect(format);
 		try {
-			return loader.load(source, format);
+			return loader.load(source, null);
 		} catch (IOException e) {
 			throw new JailVMException(ERROR_TYPE.FILE_ACCESS_ERROR,null,"Unable to read resource: " + source,e);
 		} catch (ParseException e) {
@@ -125,7 +125,7 @@ public class JailCoreToolkit extends JailReflectionToolkit {
 		try {
 			for (Object source: sources) {
 				PrintWriter writer = vm.getEnvironment().getConsoleWriter();
-				loader.print(source, format, writer);
+				loader.print(source, writer, null);
 				writer.flush();
 			}
 		} catch (IOException e) {
@@ -168,7 +168,7 @@ public class JailCoreToolkit extends JailReflectionToolkit {
 			
 			// create 
 			PrintWriter writer = new PrintWriter(new FileWriter(f));
-			dialect.print(source, extension, writer);
+			dialect.print(source, writer, null);
 			writer.flush();
 			writer.close();
 			

@@ -1,4 +1,4 @@
-package be.uclouvain.jail.dialect.commons;
+package be.uclouvain.jail.dialect.utils;
 
 import net.chefbe.autogram.ast2.parsing.ParseException;
 import net.chefbe.autogram.ast2.parsing.peg.PEGParser;

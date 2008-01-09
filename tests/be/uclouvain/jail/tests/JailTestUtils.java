@@ -207,17 +207,17 @@ public final class JailTestUtils {
 	
 	/** Loads a SEQP Graph. */
 	public static IDirectedGraph loadSeqPGraph(Object from) throws IOException, ParseException {
-		return SEQPGraphLoader.load(from, helper);		
+		return SEQPGraphLoader.load(from);		
 	}
 	
 	/** Loads a SEQP DFA. */
 	public static IDFA loadSeqPDFA(Object from) throws IOException, ParseException {
-		return new GraphDFA(SEQPGraphLoader.load(from, helper));		
+		return new GraphDFA(SEQPGraphLoader.load(from));		
 	}
 	
 	/** Loads a SEQP NFA. */
 	public static INFA loadSeqPNFA(Object from) throws IOException, ParseException {
-		return new GraphNFA(SEQPGraphLoader.load(from, helper));		
+		return new GraphNFA(SEQPGraphLoader.load(from));		
 	}
 	
 	/** Returns an array containing the NFAs as underlying graphs. */
