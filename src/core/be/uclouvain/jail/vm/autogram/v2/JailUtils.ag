@@ -1,0 +1,144 @@
+package be.uclouvain.jail.vm.autogram.v2;
+
+/** Defines reusable utilities on JAIL grammars. */
+grammar JailUtils as u {
+
+	// ~~~ MACROS ~~~
+	{u:list}                 ::= f:{T} n:(<u:spacing> tor:{T})*
+                               ; [u:list]
+	{u:commalist}            ::= f:{T} <u:spacing> n:(',' <u:spacing> tor:{T} <u:spacing>)*
+	                           ; [u:list]
+	{u:array}                ::= <'[' u:spaced> tor:<{T} u:commalist>? ']'
+	                           ; [u:array]
+	{u:set}                  ::= <'{' u:spaced> tor:<{T} u:commalist>? '}'
+	                           ; [u:return]
+	{u:spaced}               ::= tor:{T} <u:spacing>?
+	                           ; [u:return]
+	{u:list}                 ::= f:{T} n:(<u:spacing>? tor:{T})*
+                               ; [u:list]
+	{u:commalist}            ::= f:{T} n:(<',' u:spaced> tor:{T})*
+	                           ; [u:list]
+
+	// ~~~ LITERALS ~~~
+	<u:boolean>              ::= b:"true"
+	                           | b:"false"
+	                           ; [u:boolean]
+	<u:char>                 ::= ['] c:<u:$_char> [']
+	                           ; [u:char]
+	<u:string>               ::= ["] tor:!{\}["]? ["]
+	                           ; [u:return]
+	<u:integer>              ::= '0' 
+	                           | [1-9] [0-9]*
+	                           ; [u:integer]
+	<u:float>                ::= <u:integer> '.' [0-9]+
+	                           | <u:integer>
+	                           ; [u:float]
+	                           
+	// ~~~ SPACES ~~~
+	<u:space>                ::= ' '
+	                           ; [u:void]
+	<u:tab>                  ::= '\t'
+	                           ; [u:void]
+	<u:eol>                  ::= '\r'? '\n'
+	                           ; [u:void]
+	<u:eof>                  ::= '\0'
+	                           ; [u:void]
+	<u:aspace>               ::= [ \t\r\n]
+	                           ; [u:void]
+	<u:spaces>               ::= [ \t\r\n]+
+	                           ; [u:void]
+	<u:inlinespace>          ::= [ \t]
+	                           ; [u:void]
+	<u:eolspaces>            ::= [ \t]* <u:eol>
+	                           ; [u:void]
+	<u:comment>              ::= '#' !<u:eol>? <u:eol>
+	                           ; [u:void]
+	<u:aspacing>             ::= <u:spaces>
+	                           | <u:comment>
+	                           ; [u:void]
+	<u:spacing>              ::= <u:aspacing>*
+	                           ; [u:void]
+
+	// ~~~ DOCUMENTATION ~~~
+	<u:ajaildoc>             ::= "/**" !"*/" "*/"
+	                           ; [u:diff]
+	<u:jaildoc>              ::= tor:<u:ajaildoc> <u:spacing>?
+	                           ; [u:return]
+	
+	// ~~~ IDENTIFIERS ~~~
+	<u:idchars>              ::= [a-zA-Z][a-zA-Z0-9_$#]*
+	                           ; [u:diff]
+	<u:identifier>           ::= tor:<u:idchars> <u:spacing>?
+	                           ; [u:return]
+	<u:qidchars>             ::= <u:idchars> ':' <u:idchars>
+	                           ; [u:diff]
+	<u:qidentifier>          ::= tor:<u:qidchars> <u:spacing>?
+	                           ; [u:return]
+	<u:dotidchars>           ::= <u:idchars> ('.' tor:<u:idchars>)*
+	                           ; [u:diff]
+	<u:dotidentifier>        ::= tor:<u:dotidchars> <u:spacing>?
+	                           ; [u:return]
+
+	// ~~~ JAVA PRODUCTIONS ~~~
+	[u:void]                 ::= return: {Object},
+	                             before: {},
+	                             after:  {null},
+	                             memoize: false
+                               ;
+	[u:return]               ::= return:  {Object},
+	                             before:  {},
+	                             after:   {_tor},
+	                             memoize: true
+	                           ;
+	[u:diff]                 ::= return:  {String},
+	                             before:  {int start = pos.offset();},
+	                             after:   {pos.diff(start)},
+	                             memoize: true
+	                           ;
+	[u:trim]                 ::= return:  {String},
+	                             before:  {int start = pos.offset();},
+	                             after:   {pos.trim(start)},
+	                             memoize: true
+	                           ;
+
+	[u:boolean]              ::= return: {Boolean},
+	                             before: {},
+	                             after:  {Boolean.parseBoolean((String)_b)},
+	                             memoize: false
+	                           ;
+	[u:char]                 ::= return: {Character},
+	                             before: {},
+	                             after:  {Character.valueOf((Character)_c)},
+	                             memoize: false
+	                           ;
+	[u:integer]              ::= return: {Integer},
+	                             before: {int start = pos.offset();},
+	                             after:  {Integer.valueOf(pos.diff(start))},
+	                             memoize: false
+	                           ;
+	[u:float]                ::= return: {Float},
+	                             before: {int start = pos.offset();},
+	                             after:  {Float.valueOf(pos.diff(start))},
+	                             memoize: false
+	                           ;
+	
+	[u:list]                 ::= return:  {List<?>},
+	                             before:  {},
+	                             after:   {toList(_f,_n)},
+	                             memoize: true
+	                           ;
+	[u:array]                ::= return:  {Object[]},
+	                             before:  {},
+	                             after:   {((List)_tor).toArray()},
+	                             memoize: true
+	                           ;
+
+	[u:node]                 ::= return:  {Object},
+	                             before:  {},
+	                             after:   {load(pos,"${../@qName}",
+	                           		            new String[]{*{ag:*/@prefix}{"${.}"}{,}{}},
+	                           		            new Object[]{*{ag:*/@prefix}{_${.}}{,}{}})},
+	                             memoize: true
+	                         ;
+
+}

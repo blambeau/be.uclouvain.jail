@@ -1,0 +1,128 @@
+package be.uclouvain.jail.vm.autogram.v2;
+
+import net.chefbe.autogram.ast2.parsing.active.ActiveParser;
+
+/**
+ * Defines Jail Virtual Machine grammar.
+ */
+grammar Jail as jail extends ActiveParser {
+
+	// use JailUtils as reusable grammar rules
+	using be.uclouvain.jail.vm.autogram.v2.JailUtils as u;
+	
+	// ~~~ MAIN RULES ~~~
+	<jail:unit>                       ::= <u:spacing>? command:<jail:command u:list> <u:eof>
+	                                    ; [u:node]
+	<jail:command>                    ::= tor:<jail:use>     <';' u:spaced>
+	                                    | tor:<jail:native>  <';' u:spaced>
+	                                    | tor:<jail:define>  <';' u:spaced>
+	                                    | tor:<jail:affect>  <';' u:spaced>
+	                                    | tor:<jail:eval>    <';' u:spaced>
+	                                    ; [u:return]
+	                                    
+	// ~~~ 5 kind of commands ~~~
+	<jail:use>                        ::= USE class:<u:dotidentifier> AS namespace:<u:identifier>
+	                                    ; [u:node]
+	<jail:native>                     ::= doc:<u:jaildoc>?
+	                                      NATIVE signature:<jail:signature>
+	                                    ; [u:node]
+	<jail:define>                     ::= doc:<u:jaildoc>?
+	                                      DEFINE signature:<jail:signature>
+	                                             body:<jail:expression>
+	                                    ; [u:node]
+	<jail:affect>                     ::= var:<u:identifier> <'=' u:spaced>
+	                                      value:<jail:expression>
+	                                    ; [u:node]
+	<jail:eval>                       ::= value:<jail:expression>
+	                                    ; [u:node]
+
+	// ~~~ signature specific rules ~~~
+	<jail:signature>                  ::= '(' name:<u:qidentifier>
+	                                         param:<jail:parameters>?
+	                                      optparam:<jail:optparams>?
+	                                      <')' u:spaced> RETURNS returns:<jail:parameter>
+	                                    ; [u:node] 
+	<jail:parameters>                 ::= param:<jail:parameter u:list>
+	                                    ; [u:node]
+	<jail:parameter>                  ::= tor:<jail:singparam>
+	                                    | tor:<jail:argsparam>
+	                                    | tor:<jail:pickparam>
+	                                    ; [u:return]
+	<jail:optparams>                  ::= param:<jail:optparam u:list>
+	                                    ; [u:node]
+	<jail:optparam>                   ::= ':' name:<u:idchars> optional:'?'? <u:spacing>
+	                                      param:<jail:singparam>
+	                                    ; [u:node]
+	<jail:singparam>                  ::= '<' name:<u:idchars> <'>' u:spaced>
+	                                    ; [u:node]
+	<jail:argsparam>                  ::= '<' name:<u:idchars> <"...>" u:spaced>
+	                                    ; [u:node]
+	<jail:pickparam>                  ::= '<' name:<u:idchars> '[' index:<u:integer> ']' <'>' u:spaced>
+	                                    ; [u:node]
+
+	// ~~~ expressions ~~~
+	<jail:expression>                 ::= tor:<jail:funccall>
+	                                    | tor:<jail:literal>
+	                                    | tor:<jail:varref>
+	                                    ; [u:return]
+	
+	// ~~~ function call ~~~
+	<jail:funccall>                   ::= '(' name:<u:qidentifier>
+	                                           arg:<jail:args>?
+	                                        optarg:<jail:optargs>?
+	                                      <')' u:spaced>
+	                                    ; [u:node]
+	<jail:args>                       ::= arg:<jail:arg u:list>
+	                                    ; [u:node]
+	<jail:arg>                        ::= expr:<jail:expression>
+	                                    ; [u:node]
+	<jail:optargs>                    ::= arg:<jail:optarg u:list>
+	                                    ; [u:node]
+	<jail:optarg>                     ::= ':' name:<u:identifier> value:<jail:expression>
+	                                    ; [u:node]
+
+	// ~~~ literals ~~~
+	<jail:literal>                    ::= tor:<jail:dialectlit>
+	                                    | tor:<jail:arraylit>
+	                                    | tor:<jail:setlit>
+	                                    | tor:<jail:atomiclit>
+	                                    ; [u:return]
+	<jail:dialectlit>                 ::= "<§" dialect:<u:idchars> <u:aspace>
+	                                           literal:!"§>"?
+	                                      <"§>" u:spaced>
+	                                    ; [u:node]
+	<jail:arraylit>                   ::= value:<jail:expression u:array>
+	                                    ; [u:node]
+	<jail:setlit>                     ::= value:<jail:expression u:set>
+	                                    ; [u:node]
+	<jail:atomiclit>                  ::= value:<u:boolean u:spaced>
+	                                    | value:<u:char    u:spaced>
+	                                    | value:<u:string  u:spaced>
+	                                    | value:<u:float   u:spaced>
+	                                    | value:<u:integer u:spaced>
+	                                    ; [u:node]
+	                                    
+	// ~~~ variable references ~~~
+	<jail:varref>                     ::= tor:<jail:directref>		                                         
+                                        | tor:<jail:indexedref>
+                                        | tor:<jail:extensionref>
+                                        | tor:<jail:qualifiedref>
+                                        ; [u:return]
+	<jail:directref>                  ::= name:<u:identifier>
+	                                    ; [u:node]
+	<jail:qualifiedref>               ::= <u:idchars> ('.' tor:<u:idchars>)*
+	                                    ; [u:node]
+	<jail:indexedref>                 ::= name:<u:idchars> '[' index:<u:integer> <']' u:spaced>
+	                                    ; [u:node]
+	<jail:extensionref>               ::= '^' name:<u:identifier>
+	                                    ; [u:node]
+	
+
+	// ~~~ identifiers ~~~
+	<jail:identifier>                 ::= tor:<u:identifier>
+	                                    ; [u:return]
+	<jail:qidentifier>                ::= tor:<u:qidentifier>
+	                                    | tor:<u:identifier>
+	                                    ; [u:return]
+
+}
