@@ -43,7 +43,7 @@ public final class AggregateFunctionFactory {
 	}
 	
 	/** Factors an all-same function. */
-	public static IAggregateFunction<?> allSame() {
+	public static IAggregateFunction<?> allsame() {
 		return new AllSameFunction();
 	}
 	

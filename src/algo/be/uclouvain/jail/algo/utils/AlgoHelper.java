@@ -44,6 +44,11 @@ public class AlgoHelper {
 			this.defValue = defValue;
 		}
 		
+		/** Returns a string rep. */
+		public String toString() {
+			return "OptionInfo(" + optName + "," + property + "," + mandatory + "," + type.getSimpleName() + ")";
+		}
+		
 	}
 	
 	/** Helped instance. */
@@ -62,8 +67,8 @@ public class AlgoHelper {
 		throw new JailVMException(
 				JailVMException.ERROR_TYPE.INTERNAL_ERROR,
 				null,
-				"Error when setting option value automatically " + info
-				+ " :: " + value,
+				"Error when setting option value automatically on " + helped.getClass().getSimpleName() + 
+				", \n" + info + " :: " + value + " " + value.getClass().getSimpleName(),
 				e);
 	}
 	

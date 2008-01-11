@@ -1,9 +1,11 @@
 package be.uclouvain.jail.algo.induct.internal;
 
+import be.uclouvain.jail.algo.graph.copy.match.GMatchAggregator;
 import be.uclouvain.jail.algo.induct.open.ICompatibility;
 import be.uclouvain.jail.algo.induct.open.IEvaluator;
 import be.uclouvain.jail.algo.induct.open.IOracle;
 import be.uclouvain.jail.algo.induct.utils.ClassicEvaluator;
+import be.uclouvain.jail.algo.utils.AbstractAlgoInput;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.functions.FAStateKindFunction;
 import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
@@ -12,7 +14,7 @@ import be.uclouvain.jail.uinfo.UserInfoAggregator;
 /** 
  * Input information for induction algorithms. 
  */
-public class DefaultInductionAlgoInput implements IInductionAlgoInput {
+public class DefaultInductionAlgoInput extends AbstractAlgoInput implements IInductionAlgoInput {
 
 	/** Input sample. */
 	private IDFA pta;
@@ -51,16 +53,21 @@ public class DefaultInductionAlgoInput implements IInductionAlgoInput {
 		edgeAggregator.first(AttributeGraphFAInformer.EDGE_LETTER_KEY);
 	}
 
-	/* (non-Javadoc)
-	 * @see be.uclouvain.jail.algo.induct.internal.IInductionAlgoInput#getInputPTA()
-	 */
+	/** Sets options. */
+	@Override
+	protected void installOptions() {
+		super.installOptions();
+		super.addOption("threshold", "consolidationThreshold", false, Integer.class, null);
+		super.addOption("state", "statePopulator", false, GMatchAggregator.class, null);
+		super.addOption("edge", "edgePopulator", false, GMatchAggregator.class, null);
+	}
+
+	/** Returns input PTA. */
 	public IDFA getInputPTA() {
 		return pta;
 	}
 
-	/* (non-Javadoc)
-	 * @see be.uclouvain.jail.algo.induct.internal.IInductionAlgoInput#getCompatibility()
-	 */
+	/** Returns compatibility informer. */
 	public ICompatibility getCompatibility() {
 		return compatibility;
 	}
@@ -70,9 +77,7 @@ public class DefaultInductionAlgoInput implements IInductionAlgoInput {
 		this.compatibility = compatibility;
 	}
 
-	/* (non-Javadoc)
-	 * @see be.uclouvain.jail.algo.induct.internal.IInductionAlgoInput#getOracle()
-	 */
+	/** Returns oracle. */
 	public IOracle getOracle() {
 		return oracle;
 	}
@@ -82,9 +87,7 @@ public class DefaultInductionAlgoInput implements IInductionAlgoInput {
 		this.oracle = oracle;
 	}
 	
-	/* (non-Javadoc)
-	 * @see be.uclouvain.jail.algo.induct.internal.IInductionAlgoInput#getEvaluator()
-	 */
+	/** Returns evaluator. */
 	public IEvaluator getEvaluator() {
 		return evaluator;
 	}
@@ -94,9 +97,7 @@ public class DefaultInductionAlgoInput implements IInductionAlgoInput {
 		this.evaluator = evaluator;
 	}
 
-	/* (non-Javadoc)
-	 * @see be.uclouvain.jail.algo.induct.internal.IInductionAlgoInput#getConsolidationThreshold()
-	 */
+	/** Sets consolidation threshold. */
 	public int getConsolidationThreshold() {
 		return cThreshold;
 	}
@@ -106,18 +107,24 @@ public class DefaultInductionAlgoInput implements IInductionAlgoInput {
 		this.cThreshold = cThreshold;
 	}
 	
-	/* (non-Javadoc)
-	 * @see be.uclouvain.jail.algo.induct.internal.IInductionAlgoInput#getStateAggregator()
-	 */
+	/** Returns state aggregator. */
 	public UserInfoAggregator getStateAggregator() {
 		return stateAggregator;
 	}
 	
-	/* (non-Javadoc)
-	 * @see be.uclouvain.jail.algo.induct.internal.IInductionAlgoInput#getEdgeAggregator()
-	 */
+	/** Adds a gmatch state populator. */
+	public void setStatePopulator(GMatchAggregator populator) {
+		stateAggregator.addPopulator(populator);
+	}
+	
+	/** Returns edge aggregator. */
 	public UserInfoAggregator getEdgeAggregator() {
 		return edgeAggregator;
+	}
+	
+	/** Adds a gmatch edge populator. */
+	public void setEdgePopulator(GMatchAggregator populator) {
+		edgeAggregator.addPopulator(populator);
 	}
 	
 }

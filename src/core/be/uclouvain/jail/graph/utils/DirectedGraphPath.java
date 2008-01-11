@@ -28,6 +28,11 @@ public class DirectedGraphPath implements IDirectedGraphPath {
 		return path.getGraph();
 	}
 	
+	/** Returns root vertex. */
+	public Object getRootVertex() {
+		return path.getRootVertex();
+	}
+
 	/** Returns the size of the path, defined as the number of used edges in 
 	 * the path. The number of visited vertices is equal to getPathSize()+1
 	 * by definition. */
@@ -44,7 +49,6 @@ public class DirectedGraphPath implements IDirectedGraphPath {
 	public List<Object> edges() {
 		return path.edges();
 	}
-
 	/** Returns an iterator on path vertices. */
 	public List<Object> vertices() {
 		return path.vertices();
@@ -56,7 +60,7 @@ public class DirectedGraphPath implements IDirectedGraphPath {
 	}
 	
 	/** Flushes this path in a graph writer. */
-	public Object flush(IDirectedGraphWriter writer) {
+	public Object[] flush(IDirectedGraphWriter writer) {
 		return path.flush(writer);
 	}
 
@@ -74,7 +78,7 @@ public class DirectedGraphPath implements IDirectedGraphPath {
 	}
 	
 	/** Returns the end vertex of the path. */
-	public Object getEndVertex() {
+	public Object getLastVertex() {
 		if (size()==0) { return null; }
 		List<Object> vertices = vertices();
 		if (vertices instanceof LinkedList) {

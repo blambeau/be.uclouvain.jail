@@ -2,7 +2,7 @@
 
 // identifies all states by incrementation
 define (identify <G>)
-	     (copy G :vertex {@id    -> increment()});
+	     (copy G :vertex {@id -> increment()});
 
 // generate a random DFA with aai tuning
 A = <§seqp Q0. §>;
@@ -12,8 +12,6 @@ G = (randdfa A :stateCount stateCount :alphabetSize 2 :accepting 0.5 :tolerance 
 G = (identify G);
 
 // print it when done
-(print G :format dialect);
-
-H = (randwalk (G) :pathCount 10 :pathStopProba 0.075 :chooseRoot false);
-(print H :format dialect);
+//(print G :format dialect);
+(show G);
 

@@ -77,6 +77,11 @@ public class AdjacencyDirectedGraph extends UserInfoCapable implements IDirected
 		}
 	}
 	
+	/** Returns graph info. */
+	public IUserInfo getGraphInfo() {
+		return getUserInfo();
+	}
+	
 	/** Returns UserInfo attached to a vertex or an edge. */
 	public IUserInfo getUserInfoOf(Object vertexOrEdge) {
 		if (vertexOrEdge instanceof IVertex) {

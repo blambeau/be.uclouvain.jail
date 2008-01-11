@@ -65,6 +65,11 @@ public class DefaultRandomWalkInput extends AbstractAlgoInput implements IRandom
 		this.pathCount = pathCount;
 	}
 
+	/** Returns path length. */
+	public int getPathLength() {
+		return pathLength;
+	}
+
 	/** Sets the length of the path to use. */
 	public void setPathLength(int pathLength) {
 		this.pathLength = pathLength;
@@ -78,6 +83,11 @@ public class DefaultRandomWalkInput extends AbstractAlgoInput implements IRandom
 	/** Sets the probability to stop the walk. */
 	public void setWalkStopProba(double walkStopProba) {
 		this.walkStopProba = walkStopProba;
+	}
+	
+	/** Returns true if end of path is on length. */
+	public boolean isStopOnPathLength() {
+		return pathStopProba == -1;
 	}
 
 	/** Returns input graph. */

@@ -26,18 +26,14 @@ public class InductionToolkit extends JailReflectionToolkit {
 	/** Executes RPNI. */
 	public IDFA rpni(IDFA dfa, JailVMOptions opt) throws JailVMException {
 		IInductionAlgoInput input = new DefaultInductionAlgoInput(dfa);
+		input.setOptions(opt);
 		return new RPNIAlgo().execute(input);
 	}
 	
 	/** Executes RPNI. */
 	public IDFA bluefringe(IDFA dfa, JailVMOptions opt) throws JailVMException {
 		DefaultInductionAlgoInput input = new DefaultInductionAlgoInput(dfa);
-		
-		if (opt.hasOption("treshold")) {
-			int t = opt.getOptionValue("treshold", Integer.class, 0);
-			input.setConsolidationThreshold(t);
-		}
-		
+		input.setOptions(opt);
 		return new BlueFringeAlgo().execute(input);
 	}
 	

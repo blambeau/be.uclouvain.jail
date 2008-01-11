@@ -48,11 +48,20 @@ import be.uclouvain.jail.uinfo.IUserInfo;
  */
 public interface IDirectedGraphWriter extends IAdaptable {
 	
+	/** Returns graph info. */
+	public IUserInfo getGraphInfo();
+	
 	/** Creates the graph info. */
 	public void setUserInfo(IUserInfo info);
 	
+	/** Returns a vertex info. */
+	public IUserInfo getVertexInfo(Object vertex);
+	
 	/** Creates a vertex. */
 	public Object createVertex(IUserInfo info);
+	
+	/** Returns an edge info. */
+	public IUserInfo getEdgeInfo(Object edge);
 	
 	/** Creates an edge. */
 	public Object createEdge(Object source, Object target, IUserInfo info);

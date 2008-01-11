@@ -1,5 +1,6 @@
 package be.uclouvain.jail.algo.induct.internal;
 
+import be.uclouvain.jail.algo.commons.IAlgoInput;
 import be.uclouvain.jail.algo.induct.open.ICompatibility;
 import be.uclouvain.jail.algo.induct.open.IEvaluator;
 import be.uclouvain.jail.algo.induct.open.IOracle;
@@ -11,7 +12,7 @@ import be.uclouvain.jail.uinfo.UserInfoAggregator;
  * 
  * @author blambeau
  */
-public interface IInductionAlgoInput {
+public interface IInductionAlgoInput extends IAlgoInput {
 
 	/** Returns the input PTA. */
 	public IDFA getInputPTA();

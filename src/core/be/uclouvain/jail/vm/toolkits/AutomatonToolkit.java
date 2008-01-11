@@ -26,9 +26,14 @@ import be.uclouvain.jail.algo.fa.tmoves.DefaultTauRemoverInput;
 import be.uclouvain.jail.algo.fa.tmoves.DefaultTauRemoverResult;
 import be.uclouvain.jail.algo.fa.tmoves.ITauInformer;
 import be.uclouvain.jail.algo.fa.tmoves.TauRemoverAlgo;
+import be.uclouvain.jail.algo.fa.uncomplement.FAUncomplementorAlgo;
+import be.uclouvain.jail.algo.fa.walk.DFARandomWalkInput;
+import be.uclouvain.jail.algo.fa.walk.DFARandomWalkResult;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchAggregator;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchPopulator;
 import be.uclouvain.jail.algo.graph.rand.RandomGraphAlgo;
+import be.uclouvain.jail.algo.graph.walk.IRandomWalkResult;
+import be.uclouvain.jail.algo.graph.walk.RandomWalkAlgo;
 import be.uclouvain.jail.dialect.seqp.SEQPGraphDialect;
 import be.uclouvain.jail.fa.FAStateKind;
 import be.uclouvain.jail.fa.IDFA;
@@ -38,6 +43,7 @@ import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.fa.impl.GraphDFA;
 import be.uclouvain.jail.fa.impl.GraphNFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
+import be.uclouvain.jail.graph.utils.DirectedGraphWriter;
 import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.vm.JailReflectionToolkit;
 import be.uclouvain.jail.vm.JailVM;
@@ -206,6 +212,15 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 		return (IDFA) result.adapt(IDFA.class);
 	}
 	
+	public IDFA uncomplement(IDFA dfa, JailVMOptions options) throws JailVMException {
+		IDFA copy = new GraphDFA();
+		DirectedGraphWriter writer = new DirectedGraphWriter(copy.getGraph());
+		writer.getVertexCopier().keepAll();
+		writer.getEdgeCopier().keepAll();
+		new FAUncomplementorAlgo().execute(dfa,writer);
+		return copy;
+	}
+	
 	/** Generates a random DFA. */
 	public IDFA randdfa(JailVMOptions options, JailVM vm) throws JailVMException {
 		RandomDFAInput input = new RandomDFAInput();
@@ -214,6 +229,16 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 		result.setOptions(options);
 		new RandomGraphAlgo().execute(input,result);
 		return (IDFA) result.adapt(IDFA.class);
+	}
+	
+	/** Generates a random DFA. */
+	public IRandomWalkResult randsample(IDFA dfa, JailVMOptions options, JailVM vm) throws JailVMException {
+		DFARandomWalkInput input = new DFARandomWalkInput(dfa);
+		DFARandomWalkResult result = new DFARandomWalkResult();
+		input.setOptions(options);
+		result.setOptions(options);
+		new RandomWalkAlgo().execute(input,result);
+		return result;
 	}
 	
 	/** Adapts an object. */

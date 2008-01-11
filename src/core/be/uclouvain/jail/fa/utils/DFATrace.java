@@ -44,9 +44,9 @@ public class DFATrace<T> implements IDFATrace<T> {
 	}
 
 	/** Returns the last state of this trace. */
-	public Object getEndState() {
+	public Object getLastState() {
 		DirectedGraphPath path = (DirectedGraphPath) getGraphPath().adapt(DirectedGraphPath.class);
-		return path.getEndVertex();
+		return path.getLastVertex();
 	}
 
 	/** Returns true if this trace is accepted by the DFA. Acceptation is
@@ -54,7 +54,7 @@ public class DFATrace<T> implements IDFATrace<T> {
 	 * is not marked as error. */
 	public boolean isAccepted() {
 		IDFA dfa = trace.getDFA();
-		Object endState = getEndState();
+		Object endState = getLastState();
 		return FAStateKind.ACCEPTING.equals(dfa.getStateKind(endState));
 	}
 
@@ -70,7 +70,7 @@ public class DFATrace<T> implements IDFATrace<T> {
 	 * one. */
 	public boolean isError() {
 		IDFA dfa = trace.getDFA();
-		Object endState = getEndState();
+		Object endState = getLastState();
 		return FAStateKind.ERROR.equals(dfa.getStateKind(endState));
 	}
 	
@@ -78,7 +78,7 @@ public class DFATrace<T> implements IDFATrace<T> {
 	 * one. */
 	public boolean isAvoid() {
 		IDFA dfa = trace.getDFA();
-		Object endState = getEndState();
+		Object endState = getLastState();
 		return FAStateKind.AVOID.equals(dfa.getStateKind(endState));
 	}
 	

@@ -1,0 +1,31 @@
+(execute 'commons.jail');
+
+// identifies all states by incrementation
+define (identify <G>)
+	     (copy G :vertex {@id    -> increment()});
+
+// generate a random DFA with aai tuning
+A = <§seqp Q0. §>;
+G = (randdfa A :stateCount stateCount :alphabetSize 2 :accepting 0.5 :tolerance 0.01);
+
+// identify the generated DFA
+G = (identify G);
+
+// print it when done
+//(print G :format dialect);
+//(show G);
+
+H = (randsample (G) :pathCount 5000 :pathLength 4 :chooseRoot false 
+		                :extend true :posProba 0.5);
+H = (cast H 'be.uclouvain.jail.fa.INFA');
+//H = (identify H);
+
+PTA = (determinize H :state {@label -> allsame(@id), @id -> allsame(@id)});
+
+R = (rpni PTA);
+//B = (bluefringe (identify PTA) :state {@label -> group(@id)});
+
+(show G);
+//(show PTA);
+(show R);
+(print R :format 'dot');

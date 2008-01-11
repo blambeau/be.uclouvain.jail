@@ -134,6 +134,11 @@ public class DirectedGraph implements IDirectedGraph {
 		return graph.getUserInfo();
 	}
 
+	/** Returns user info attached to the graph. */
+	public IUserInfo getGraphInfo() {
+		return graph.getGraphInfo();
+	}
+
 	/** Attachs some user info to the graph. */
 	public void setUserInfo(IUserInfo info) {
 		graph.setUserInfo(info);

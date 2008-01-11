@@ -39,6 +39,11 @@ public class NetworkGraphDecorator implements IDirectedGraph {
 	}
 
 	/** Returns user info attached to the graph. */
+	public IUserInfo getGraphInfo() {
+		return info;
+	}
+
+	/** Returns user info attached to the graph. */
 	public IUserInfo getUserInfo() {
 		return info;
 	}
@@ -47,7 +52,6 @@ public class NetworkGraphDecorator implements IDirectedGraph {
 	public void setUserInfo(IUserInfo info) {
 		this.info = info;
 	}
-	
 
 	/** Returns UserInfo attached to an edge or a vertex. */
 	public IUserInfo getUserInfoOf(Object vertexOrEdge) {

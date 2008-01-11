@@ -125,7 +125,7 @@ public class DefaultDFAComplementorResult implements IDFAComplementorResult {
 	/** Creates a user info for the error state. */
 	protected IUserInfo createErrorStateInfo() {
 		helper.addKeyValue(AttributeGraphFAInformer.STATE_INITIAL_KEY, false);
-		helper.addKeyValue(AttributeGraphFAInformer.STATE_KIND_KEY, FAStateKind.ERROR);
+		helper.addKeyValue(AttributeGraphFAInformer.STATE_KIND_KEY, FAStateKind.AVOID);
 		return helper.install();
 	}
 

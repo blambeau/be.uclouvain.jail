@@ -44,6 +44,11 @@ public class DirectedGraphWriter<T> implements IDirectedGraphWriter,
 		return gInfoCopier;
 	}
 	
+	/** Sets the graph copier. */
+	public void setGraphCopier(UserInfoCopier copier) {
+		this.gInfoCopier = copier;
+	}
+	
 	/** Returns the graph rewriter to use. */
 	public IUserInfoCreator<IUserInfo> getGraphRewriter() {
 		return gInfoCopier;
@@ -57,6 +62,11 @@ public class DirectedGraphWriter<T> implements IDirectedGraphWriter,
 	/** Returns vertex info creator. */
 	public UserInfoCopier getVertexCopier() {
 		return vInfoCopier;
+	}
+	
+	/** Sets the vertex copier. */
+	public void setVertexCopier(UserInfoCopier copier) {
+		this.vInfoCopier = copier;
 	}
 	
 	/** Returns the vertex rewriter to use. */
@@ -74,6 +84,11 @@ public class DirectedGraphWriter<T> implements IDirectedGraphWriter,
 		return eInfoCopier;
 	}
 	
+	/** Sets the edge copier. */
+	public void setEdgeCopier(UserInfoCopier copier) {
+		this.eInfoCopier = copier;
+	}
+	
 	/** Returns the edge rewriter to use. */
 	public IUserInfoCreator<IUserInfo> getEdgeRewriter() {
 		return eInfoCopier;
@@ -84,18 +99,33 @@ public class DirectedGraphWriter<T> implements IDirectedGraphWriter,
 		return eInfoCopier.create(info);
 	}
 	
+	/** Returns graph info. */
+	public IUserInfo getGraphInfo() {
+		return writer.getGraphInfo();
+	}
+
 	/** Creates the graph info. */
 	public void setUserInfo(IUserInfo info) {
 		info = rewriteGraphInfo(info);
 		writer.setUserInfo(info.copy());
 	}
 	
+	/** Returns vertex info. */
+	public IUserInfo getVertexInfo(Object vertex) {
+		return writer.getVertexInfo(vertex);
+	}
+
 	/** Creates a vertex. */
 	public Object createVertex(IUserInfo info) {
 		info = rewriteVertexInfo(info);
 		return writer.createVertex(info);
 	}
 	
+	/** Returns an edge info. */
+	public IUserInfo getEdgeInfo(Object edge) {
+		return writer.getEdgeInfo(edge);
+	}
+
 	/** Creates an edge. */
 	public Object createEdge(Object source, Object target, IUserInfo info) {
 		info = rewriteEdgeInfo(info);

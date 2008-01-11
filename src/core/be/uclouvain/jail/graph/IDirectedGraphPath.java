@@ -50,6 +50,12 @@ public interface IDirectedGraphPath extends IAdaptable, Iterable<Object> {
 	/** Returns the graph from which the path is extracted. */
 	public IDirectedGraph getGraph();
 	
+	/** Returns root vertex of the path. */
+	public Object getRootVertex();
+	
+	/** Returns the last vertex. */
+	public Object getLastVertex();
+	
 	/** Returns the size of the path, defined as the number of used edges in 
 	 * the path. The number of visited vertices is equal to getPathSize()+1
 	 * by definition. */
@@ -64,8 +70,7 @@ public interface IDirectedGraphPath extends IAdaptable, Iterable<Object> {
 	/** Accepts a visitor. */
 	public void accept(IVisitor visitor);
 	
-	/** Flushes this path in a graph writer, returning the last created
-	 *  vertex. */
-	public Object flush(IDirectedGraphWriter writer);
+	/** Flushes this path in a graph writer, returning created vertices. */
+	public Object[] flush(IDirectedGraphWriter writer);
 	
 }

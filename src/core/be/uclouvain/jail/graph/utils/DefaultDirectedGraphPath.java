@@ -46,11 +46,23 @@ public class DefaultDirectedGraphPath implements IDirectedGraphPath {
 	}
 	
 	/** Returns the root vertex. */
-	protected Object getRootVertex() {
+	public Object getRootVertex() {
 		if (root != null) { return root; }
 		Object firstEdge = edges.get(0);
 		root = graph.getEdgeSource(firstEdge);
 		return root;
+	}
+	
+	/** Returns the last vertex. */
+	public Object getLastVertex() {
+		if (edges == null) { return root; }
+		Object edge = null;
+		if (edges instanceof LinkedList) {
+			edge = ((LinkedList)edges).getLast();
+		} else {
+			edge = edges.get(edges.size()-1);
+		}
+		return graph.getEdgeTarget(edge);
 	}
 	
 	/** Adds an edge at end of the path. */
@@ -116,7 +128,7 @@ public class DefaultDirectedGraphPath implements IDirectedGraphPath {
 	}
 
 	/** Flushes this path in a graph writer. */
-	public Object flush(IDirectedGraphWriter writer) {
+	public Object[] flush(IDirectedGraphWriter writer) {
 		// create vertices and save it
 		Object[] vertices = new Object[size()+1];
 		int i=0;
@@ -133,7 +145,7 @@ public class DefaultDirectedGraphPath implements IDirectedGraphPath {
 			}
 		}
 		
-		return vertices[vertices.length-1];
+		return vertices;
 	}
 	
 	/** Adapts to another type. */
