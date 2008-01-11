@@ -90,10 +90,23 @@ public class Jail implements IJailVMEnvironment {
 	private PrintWriter out;
 	
 	/** Starts the virtual machine. */
-	public void startVM(String jailFile) throws IOException {
+	public void startVM(String[] args) throws IOException {
+		String jailFile = null;
+		
 		// create the virtual machine
 		JailVM vm = new JailVM(this);
 
+		for (int i=0; i<args.length; i++) {
+			String arg = args[i];
+			if (arg.startsWith("--")) {
+				arg = arg.substring(2);
+				String value = args[++i];
+				vm.affect(arg, value);
+			} else {
+				jailFile = arg;
+			}
+		}
+		
 		// create a in and out
 		ConsoleReader reader = new ConsoleReader();
         out = new PrintWriter(System.out);
@@ -139,7 +152,7 @@ public class Jail implements IJailVMEnvironment {
 	/** Starts the Jail VM on a file. */
 	public static void main(String[] args) throws Exception {
 		try {
-			new Jail().startVM(args.length==1 ? args[0] : null);
+			new Jail().startVM(args);
 		} catch (IOException ex) {
 			System.out.println("An IOException occured when starting Jail.");
 			ex.printStackTrace();

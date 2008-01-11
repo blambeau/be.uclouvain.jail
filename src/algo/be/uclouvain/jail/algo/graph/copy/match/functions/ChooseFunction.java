@@ -23,7 +23,7 @@ public class ChooseFunction implements IGMatchFunction {
 	public Object execute(Object...args) {
 		// randomly generates an integer
 		if (args == null || args.length==0) {
-			return new Integer(r.nextInt());
+			return new Double(r.nextDouble());
 		}
 		
 		// randomly chooses a value from args

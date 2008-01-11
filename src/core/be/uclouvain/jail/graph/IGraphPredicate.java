@@ -1,7 +1,6 @@
 package be.uclouvain.jail.graph;
 
-import org.apache.commons.collections.Predicate;
-
+import be.uclouvain.jail.common.IPredicate;
 import be.uclouvain.jail.graph.constraints.AbstractGraphPredicate;
 
 /** 
@@ -20,7 +19,7 @@ import be.uclouvain.jail.graph.constraints.AbstractGraphPredicate;
  * 
  * @author blambeau
  */
-public interface IGraphPredicate extends Predicate {
+public interface IGraphPredicate extends IPredicate<IDirectedGraph> {
 
 	/** Returns true if the property is respected, false otherwise. */
 	public boolean evaluate(IDirectedGraph graph);

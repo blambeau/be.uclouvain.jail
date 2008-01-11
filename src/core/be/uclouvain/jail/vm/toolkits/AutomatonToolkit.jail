@@ -77,3 +77,27 @@ define native (compose <D...> :state? <S> :edge? <E>) returns <C>;
  * <C>             + (IDFA) returns the complemented DFA.
  */
 define native (complement <D> :heuristic <H> :state? <S> :edge? <E>) returns <C>;
+
+
+/**
+ * Generates random DFAs.
+ *
+ * This algorithm is a native specialization of random graph tuned to generate
+ * interesting DFAs easily. The available parameters are:
+ *
+ * <S>             + (Integer) number of states to generate (default 20).
+ * <M>             + (Integer) maximal output degree of states (default 4).
+ * <A>             + (Integer) number of letters of the alphabet (default 2).
+ * <P>             + (Double)  probability that a state is accepting (default 0.5).
+ * <F>             + (Double)  multiplication factor to apply due to DFA cleaning (default 1.62).
+ * <T>             + (Double)  tolerance on state count (in percent) (default 0.1).
+ * <M>             + (Boolean) minimize automaton at cleaning? (default true).
+ * <D>             + (Boolean) determinize automaton at cleaning? (default true).
+ * <Y>             + (Integer) try <Y> times before failure.
+ */
+define native (randdfa :stateCount? <S> :maxOutDegree <M>
+                       :alphabetSize? <A> :accepting? <P>
+                       :stateMultFactor? <F> :tolerance? <T>
+                       :minimize? <M> :determinize? <D>
+                       :maxTry <Y>);
+                       

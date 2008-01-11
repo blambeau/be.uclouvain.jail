@@ -22,6 +22,11 @@ public class MapUserInfo implements IUserInfo {
 		this.info.putAll(copy.info);
 	}
 	
+	/** Returns true if an attribute is present. */
+	public boolean hasAttribute(String key) {
+		return info.containsKey(key);
+	}
+	
 	/* (non-Javadoc)
 	 * @see be.uclouvain.jail.uinfo.IUserInfo#getKeys()
 	 */

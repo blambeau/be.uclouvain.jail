@@ -53,7 +53,11 @@ public class DSPResult<T> {
 		}
 		
 		// return path
-		return new DefaultDirectedGraphPath(input.getGraph(),edges);
+		if (edges.isEmpty()) {
+			return new DefaultDirectedGraphPath(input.getGraph(),root);
+		} else {
+			return new DefaultDirectedGraphPath(input.getGraph(),edges);
+		}
 	}
 	
 	/** Flushes this result as a spanning tree. */

@@ -1,4 +1,4 @@
-package be.uclouvain.jail.dialect.commons;
+package be.uclouvain.jail.dialect.utils;
 
 /** Defines reusable utilities on JAIL grammars. */
 grammar UTILS as u {
@@ -11,7 +11,9 @@ grammar UTILS as u {
 	<u:string_literal>     ::= tor:<u:d_string_literal>
 	                         | tor:<u:s_string_literal>
 	                         ; [u:return]
-	<u:integer_literal>    ::= [0-9]+
+	<u:integer_literal>    ::= '0' | [1-9][0-9]*
+	                         ; [u:diff]
+	<u:double_literal>     ::= <u:integer_literal> '.' [0-9]+
 	                         ; [u:diff]
 	<u:boolean_literal>    ::= tor:"true"
 	                         | tor:"false"
@@ -32,6 +34,8 @@ grammar UTILS as u {
 	                         ; [u:int]
 	<u:integer>            ::= i:<u:integer_literal>
 	                         ; [u:integer]
+	<u:double>             ::= d:<u:double_literal>
+	                         ; [u:double]
 
 	<u:bool>               ::= b:<u:boolean_literal>
 	                         ; [u:bool]
@@ -133,6 +137,9 @@ grammar UTILS as u {
 	                         ;
 	[u:integer]            ::= {Integer}{}
 	                           {Integer.valueOf((String)_i)}
+	                         ;
+	[u:double]             ::= {Double}{}
+	                           {Double.valueOf((String)_d)}
 	                         ;
 	[u:bool]               ::= {Boolean}{}
 	                           {Boolean.parseBoolean((String)_b)}

@@ -41,7 +41,6 @@ public class UTILSParser extends PEGParser {
 			{
 				StringBuffer _sb_i = new StringBuffer();
 				char _zz_first = '"';
-				int _zz_start = pos.offset();
 				while (!pos.isEof()) {
 					char f = pos.charAt();
 					if (f == _zz_first && !pos.previousIs('\\')) {
@@ -51,18 +50,13 @@ public class UTILSParser extends PEGParser {
 						_sb_i.append(f);
 					}
 				}
-				if (_zz_start == pos.offset()) {
-					throw new ParseException("!<symbol> expected, "
-							+ pos.charAt() + " found.", pos.location());
-				}
 				_i = _sb_i.toString();
 			}
 			Object _e = null;
 			_e = p$Char(pos, '"');
 			return buffer(_b, _i, _e);
 		} else {
-			throw new ParseException("<u:d_string_literal> expected, "
-					+ pos.charAt() + " found.", pos.location());
+			throw new ParseException("<u:d_string_literal> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -76,7 +70,6 @@ public class UTILSParser extends PEGParser {
 			{
 				StringBuffer _sb_i = new StringBuffer();
 				char _zz_first = '\'';
-				int _zz_start = pos.offset();
 				while (!pos.isEof()) {
 					char f = pos.charAt();
 					if (f == _zz_first && !pos.previousIs('\\')) {
@@ -86,18 +79,13 @@ public class UTILSParser extends PEGParser {
 						_sb_i.append(f);
 					}
 				}
-				if (_zz_start == pos.offset()) {
-					throw new ParseException("!<symbol> expected, "
-							+ pos.charAt() + " found.", pos.location());
-				}
 				_i = _sb_i.toString();
 			}
 			Object _e = null;
 			_e = p$Char(pos, '\'');
 			return buffer(_n, _i, _e);
 		} else {
-			throw new ParseException("<u:s_string_literal> expected, "
-					+ pos.charAt() + " found.", pos.location());
+			throw new ParseException("<u:s_string_literal> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -128,15 +116,65 @@ public class UTILSParser extends PEGParser {
 				pos.rollback(ex);
 			}
 		}
-		return (Object) pos.error("<u:string_literal> expected, "
-				+ pos.charAt() + " found.");
+		return (Object) pos.error("<u:string_literal> expected, " + pos.charAt() + " found.");
 	}
 
 	/** &lt;u:integer_literal&gt; */
 	public final String pIntegerLiteral(Pos pos) throws ParseException {
 		char _alt_c = pos.charAt();
-		if ((_alt_c >= '0' && _alt_c <= '9')) {
+		_alt_c = pos.charAt();
+		if ((_alt_c == '0')) {
+			try {
+				pos.save();
+				int start = pos.offset();
+				p$Char(pos, '0');
+				pos.commit();
+				return pos.diff(start);
+			} catch (ParseException ex) {
+				pos.rollback(ex);
+			}
+		}
+		_alt_c = pos.charAt();
+		if ((_alt_c >= '1' && _alt_c <= '9')) {
+			try {
+				pos.save();
+				int start = pos.offset();
+				{
+					char zz = pos.charAt();
+					if ((zz >= '1' && zz <= '9')) {
+						pos.more();
+					} else {
+						throw new ParseException("<cpattern> expected.", pos.location());
+					}
+				}
+
+				{
+					while (!pos.isEof()) {
+						char zz = pos.charAt();
+						if ((zz >= '0' && zz <= '9')) {
+							pos.more();
+						} else {
+							break;
+						}
+					}
+				}
+				pos.commit();
+				return pos.diff(start);
+			} catch (ParseException ex) {
+				pos.rollback(ex);
+			}
+		}
+		return (String) pos.error("<u:integer_literal> expected, " + pos.charAt() + " found.");
+	}
+
+	/** &lt;u:double_literal&gt; */
+	public final String pDoubleLiteral(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if (((_alt_c == '0') || (_alt_c >= '1' && _alt_c <= '9'))) {
 			int start = pos.offset();
+			u.pIntegerLiteral(pos);
+			p$Char(pos, '.');
+
 			{
 				int _zz_start = pos.offset();
 				while (!pos.isEof()) {
@@ -148,14 +186,12 @@ public class UTILSParser extends PEGParser {
 					}
 				}
 				if (_zz_start == pos.offset()) {
-					throw new ParseException("<cpattern> expected.", pos
-							.location());
+					throw new ParseException("<cpattern> expected.", pos.location());
 				}
 			}
 			return pos.diff(start);
 		} else {
-			throw new ParseException("<u:integer_literal> expected, "
-					+ pos.charAt() + " found.", pos.location());
+			throw new ParseException("<u:double_literal> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -186,8 +222,7 @@ public class UTILSParser extends PEGParser {
 				pos.rollback(ex);
 			}
 		}
-		return (Object) pos.error("<u:boolean_literal> expected, "
-				+ pos.charAt() + " found.");
+		return (Object) pos.error("<u:boolean_literal> expected, " + pos.charAt() + " found.");
 	}
 
 	/** &lt;u:d_string&gt; */
@@ -213,8 +248,7 @@ public class UTILSParser extends PEGParser {
 			p$Char(pos, '"');
 			return _tor;
 		} else {
-			throw new ParseException("<u:d_string> expected, " + pos.charAt()
-					+ " found.", pos.location());
+			throw new ParseException("<u:d_string> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -241,8 +275,7 @@ public class UTILSParser extends PEGParser {
 			p$Char(pos, '\'');
 			return _tor;
 		} else {
-			throw new ParseException("<u:s_string> expected, " + pos.charAt()
-					+ " found.", pos.location());
+			throw new ParseException("<u:s_string> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -273,8 +306,7 @@ public class UTILSParser extends PEGParser {
 				pos.rollback(ex);
 			}
 		}
-		return (Object) pos.error("<u:string> expected, " + pos.charAt()
-				+ " found.");
+		return (Object) pos.error("<u:string> expected, " + pos.charAt() + " found.");
 	}
 
 	/** &lt;u:char&gt; */
@@ -287,26 +319,36 @@ public class UTILSParser extends PEGParser {
 	/** &lt;u:int&gt; */
 	public final Integer pInt(Pos pos) throws ParseException {
 		char _alt_c = pos.charAt();
-		if ((_alt_c >= '0' && _alt_c <= '9')) {
+		if (((_alt_c == '0') || (_alt_c >= '1' && _alt_c <= '9'))) {
 			Object _i = null;
 			_i = u.pIntegerLiteral(pos);
 			return Integer.parseInt((String) _i);
 		} else {
-			throw new ParseException("<u:int> expected, " + pos.charAt()
-					+ " found.", pos.location());
+			throw new ParseException("<u:int> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
 	/** &lt;u:integer&gt; */
 	public final Integer pInteger(Pos pos) throws ParseException {
 		char _alt_c = pos.charAt();
-		if ((_alt_c >= '0' && _alt_c <= '9')) {
+		if (((_alt_c == '0') || (_alt_c >= '1' && _alt_c <= '9'))) {
 			Object _i = null;
 			_i = u.pIntegerLiteral(pos);
 			return Integer.valueOf((String) _i);
 		} else {
-			throw new ParseException("<u:integer> expected, " + pos.charAt()
-					+ " found.", pos.location());
+			throw new ParseException("<u:integer> expected, " + pos.charAt() + " found.", pos.location());
+		}
+	}
+
+	/** &lt;u:double&gt; */
+	public final Double pDouble(Pos pos) throws ParseException {
+		char _alt_c = pos.charAt();
+		if (((_alt_c == '0') || (_alt_c >= '1' && _alt_c <= '9'))) {
+			Object _d = null;
+			_d = u.pDoubleLiteral(pos);
+			return Double.valueOf((String) _d);
+		} else {
+			throw new ParseException("<u:double> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -318,8 +360,7 @@ public class UTILSParser extends PEGParser {
 			_b = u.pBooleanLiteral(pos);
 			return Boolean.parseBoolean((String) _b);
 		} else {
-			throw new ParseException("<u:bool> expected, " + pos.charAt()
-					+ " found.", pos.location());
+			throw new ParseException("<u:bool> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -331,8 +372,7 @@ public class UTILSParser extends PEGParser {
 			_b = u.pBooleanLiteral(pos);
 			return Boolean.valueOf((String) _b);
 		} else {
-			throw new ParseException("<u:boolean> expected, " + pos.charAt()
-					+ " found.", pos.location());
+			throw new ParseException("<u:boolean> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -352,14 +392,12 @@ public class UTILSParser extends PEGParser {
 					}
 				}
 				if (_zz_start == pos.offset()) {
-					throw new ParseException("<cpattern> expected.", pos
-							.location());
+					throw new ParseException("<cpattern> expected.", pos.location());
 				}
 			}
 			return pos.diff(start);
 		} else {
-			throw new ParseException("<u:lowerCase_word> expected, "
-					+ pos.charAt() + " found.", pos.location());
+			throw new ParseException("<u:lowerCase_word> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -379,14 +417,12 @@ public class UTILSParser extends PEGParser {
 					}
 				}
 				if (_zz_start == pos.offset()) {
-					throw new ParseException("<cpattern> expected.", pos
-							.location());
+					throw new ParseException("<cpattern> expected.", pos.location());
 				}
 			}
 			return pos.diff(start);
 		} else {
-			throw new ParseException("<u:upperCase_word> expected, "
-					+ pos.charAt() + " found.", pos.location());
+			throw new ParseException("<u:upperCase_word> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -406,43 +442,37 @@ public class UTILSParser extends PEGParser {
 					}
 				}
 				if (_zz_start == pos.offset()) {
-					throw new ParseException("<cpattern> expected.", pos
-							.location());
+					throw new ParseException("<cpattern> expected.", pos.location());
 				}
 			}
 			return pos.diff(start);
 		} else {
-			throw new ParseException("<u:alpha_word> expected, " + pos.charAt()
-					+ " found.", pos.location());
+			throw new ParseException("<u:alpha_word> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
 	/** &lt;u:alphaNum_word&gt; */
 	public final String pAlphaNumWord(Pos pos) throws ParseException {
 		char _alt_c = pos.charAt();
-		if (((_alt_c >= '0' && _alt_c <= '9')
-				|| (_alt_c >= 'A' && _alt_c <= 'Z') || (_alt_c >= 'a' && _alt_c <= 'z'))) {
+		if (((_alt_c >= '0' && _alt_c <= '9') || (_alt_c >= 'A' && _alt_c <= 'Z') || (_alt_c >= 'a' && _alt_c <= 'z'))) {
 			int start = pos.offset();
 			{
 				int _zz_start = pos.offset();
 				while (!pos.isEof()) {
 					char zz = pos.charAt();
-					if ((zz >= 'a' && zz <= 'z') || (zz >= 'A' && zz <= 'Z')
-							|| (zz >= '0' && zz <= '9')) {
+					if ((zz >= 'a' && zz <= 'z') || (zz >= 'A' && zz <= 'Z') || (zz >= '0' && zz <= '9')) {
 						pos.more();
 					} else {
 						break;
 					}
 				}
 				if (_zz_start == pos.offset()) {
-					throw new ParseException("<cpattern> expected.", pos
-							.location());
+					throw new ParseException("<cpattern> expected.", pos.location());
 				}
 			}
 			return pos.diff(start);
 		} else {
-			throw new ParseException("<u:alphaNum_word> expected, "
-					+ pos.charAt() + " found.", pos.location());
+			throw new ParseException("<u:alphaNum_word> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -462,14 +492,12 @@ public class UTILSParser extends PEGParser {
 					}
 				}
 				if (_zz_start == pos.offset()) {
-					throw new ParseException("<cpattern> expected.", pos
-							.location());
+					throw new ParseException("<cpattern> expected.", pos.location());
 				}
 			}
 			return pos.diff(start);
 		} else {
-			throw new ParseException("<u:num_word> expected, " + pos.charAt()
-					+ " found.", pos.location());
+			throw new ParseException("<u:num_word> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -481,8 +509,7 @@ public class UTILSParser extends PEGParser {
 			_c = p$Char(pos, ' ');
 			return Character.valueOf((Character) _c);
 		} else {
-			throw new ParseException("<u:space> expected, " + pos.charAt()
-					+ " found.", pos.location());
+			throw new ParseException("<u:space> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -513,8 +540,7 @@ public class UTILSParser extends PEGParser {
 				pos.rollback(ex);
 			}
 		}
-		return (Object) pos.error("<u:inline_space> expected, " + pos.charAt()
-				+ " found.");
+		return (Object) pos.error("<u:inline_space> expected, " + pos.charAt() + " found.");
 	}
 
 	/** &lt;u:eol&gt; */
@@ -535,8 +561,7 @@ public class UTILSParser extends PEGParser {
 			p$Char(pos, '\n');
 			return pos.diff(start);
 		} else {
-			throw new ParseException("<u:eol> expected, " + pos.charAt()
-					+ " found.", pos.location());
+			throw new ParseException("<u:eol> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -548,8 +573,7 @@ public class UTILSParser extends PEGParser {
 			_c = p$Char(pos, '\0');
 			return Character.valueOf((Character) _c);
 		} else {
-			throw new ParseException("<u:eof> expected, " + pos.charAt()
-					+ " found.", pos.location());
+			throw new ParseException("<u:eof> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -561,8 +585,7 @@ public class UTILSParser extends PEGParser {
 			_c = p$Char(pos, '\t');
 			return Character.valueOf((Character) _c);
 		} else {
-			throw new ParseException("<u:tab> expected, " + pos.charAt()
-					+ " found.", pos.location());
+			throw new ParseException("<u:tab> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -593,8 +616,7 @@ public class UTILSParser extends PEGParser {
 				pos.rollback(ex);
 			}
 		}
-		return (Object) pos.error("<u:aSpace> expected, " + pos.charAt()
-				+ " found.");
+		return (Object) pos.error("<u:aSpace> expected, " + pos.charAt() + " found.");
 	}
 
 	/** &lt;u:aSpace_string&gt; */
@@ -605,8 +627,7 @@ public class UTILSParser extends PEGParser {
 			u.pASpace(pos);
 			return pos.diff(start);
 		} else {
-			throw new ParseException("<u:aSpace_string> expected, "
-					+ pos.charAt() + " found.", pos.location());
+			throw new ParseException("<u:aSpace_string> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -630,8 +651,7 @@ public class UTILSParser extends PEGParser {
 			}
 			return pos.diff(start);
 		} else {
-			throw new ParseException("<u:spaces> expected, " + pos.charAt()
-					+ " found.", pos.location());
+			throw new ParseException("<u:spaces> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -655,8 +675,7 @@ public class UTILSParser extends PEGParser {
 			u.pEol(pos);
 			return pos.diff(start);
 		} else {
-			throw new ParseException("<u:eol_spaces> expected, " + pos.charAt()
-					+ " found.", pos.location());
+			throw new ParseException("<u:eol_spaces> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -699,8 +718,7 @@ public class UTILSParser extends PEGParser {
 				pos.rollback(ex);
 			}
 		}
-		return (Object) pos.error("<u:comment> expected, " + pos.charAt()
-				+ " found.");
+		return (Object) pos.error("<u:comment> expected, " + pos.charAt() + " found.");
 	}
 
 	/** &lt;u:eol_comment&gt; */
@@ -730,15 +748,13 @@ public class UTILSParser extends PEGParser {
 					}
 				}
 				if (_zz_start == pos.offset()) {
-					throw new ParseException("!<u:eol> expected, "
-							+ pos.charAt() + " found.", pos.location());
+					throw new ParseException("!<u:eol> expected, " + pos.charAt() + " found.", pos.location());
 				}
 			}
 			u.pEol(pos);
 			return pos.diff(start);
 		} else {
-			throw new ParseException("<u:eol_comment> expected, "
-					+ pos.charAt() + " found.", pos.location());
+			throw new ParseException("<u:eol_comment> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -769,15 +785,13 @@ public class UTILSParser extends PEGParser {
 					}
 				}
 				if (_zz_start == pos.offset()) {
-					throw new ParseException("!<u:eol> expected, "
-							+ pos.charAt() + " found.", pos.location());
+					throw new ParseException("!<u:eol> expected, " + pos.charAt() + " found.", pos.location());
 				}
 			}
 			u.pEol(pos);
 			return pos.diff(start);
 		} else {
-			throw new ParseException("<u:sql_comment> expected, "
-					+ pos.charAt() + " found.", pos.location());
+			throw new ParseException("<u:sql_comment> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -800,15 +814,13 @@ public class UTILSParser extends PEGParser {
 					}
 				}
 				if (_zz_start == pos.offset()) {
-					throw new ParseException("!*/ expected, " + pos.charAt()
-							+ " found.", pos.location());
+					throw new ParseException("!*/ expected, " + pos.charAt() + " found.", pos.location());
 				}
 			}
 			p$Exact(pos, "*/");
 			return pos.diff(start);
 		} else {
-			throw new ParseException("<u:cpp_comment> expected, "
-					+ pos.charAt() + " found.", pos.location());
+			throw new ParseException("<u:cpp_comment> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -831,15 +843,13 @@ public class UTILSParser extends PEGParser {
 					}
 				}
 				if (_zz_start == pos.offset()) {
-					throw new ParseException("!*/ expected, " + pos.charAt()
-							+ " found.", pos.location());
+					throw new ParseException("!*/ expected, " + pos.charAt() + " found.", pos.location());
 				}
 			}
 			p$Exact(pos, "*/");
 			return pos.diff(start);
 		} else {
-			throw new ParseException("<u:javaDoc_comment> expected, "
-					+ pos.charAt() + " found.", pos.location());
+			throw new ParseException("<u:javaDoc_comment> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -870,20 +880,17 @@ public class UTILSParser extends PEGParser {
 				pos.rollback(ex);
 			}
 		}
-		return (Object) pos.error("<u:aSpacing> expected, " + pos.charAt()
-				+ " found.");
+		return (Object) pos.error("<u:aSpacing> expected, " + pos.charAt() + " found.");
 	}
 
 	/** &lt;u:spacing&gt; */
 	public final String pSpacing(Pos pos) throws ParseException {
 		char _alt_c = pos.charAt();
-		if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
-				|| (_alt_c == ' ') || (_alt_c == '/'))) {
+		if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r') || (_alt_c == ' ') || (_alt_c == '/'))) {
 			int start = pos.offset();
 			u.pASpacing(pos);
 			_alt_c = pos.charAt();
-			while (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
-					|| (_alt_c == ' ') || (_alt_c == '/'))) {
+			while (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r') || (_alt_c == ' ') || (_alt_c == '/'))) {
 				try {
 					pos.save();
 					u.pASpacing(pos);
@@ -896,8 +903,7 @@ public class UTILSParser extends PEGParser {
 			}
 			return pos.diff(start);
 		} else {
-			throw new ParseException("<u:spacing> expected, " + pos.charAt()
-					+ " found.", pos.location());
+			throw new ParseException("<u:spacing> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -908,8 +914,7 @@ public class UTILSParser extends PEGParser {
 			Object _tor = null;
 			_tor = u.pIdentifierChars(pos);
 			_alt_c = pos.charAt();
-			if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
-					|| (_alt_c == ' ') || (_alt_c == '/'))) {
+			if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r') || (_alt_c == ' ') || (_alt_c == '/'))) {
 				try {
 					pos.save();
 					u.pSpacing(pos);
@@ -920,8 +925,7 @@ public class UTILSParser extends PEGParser {
 			}
 			return _tor;
 		} else {
-			throw new ParseException("<u:identifier> expected, " + pos.charAt()
-					+ " found.", pos.location());
+			throw new ParseException("<u:identifier> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -935,16 +939,14 @@ public class UTILSParser extends PEGParser {
 				if ((zz >= 'a' && zz <= 'z') || (zz >= 'A' && zz <= 'Z')) {
 					pos.more();
 				} else {
-					throw new ParseException("<cpattern> expected.", pos
-							.location());
+					throw new ParseException("<cpattern> expected.", pos.location());
 				}
 			}
 
 			{
 				while (!pos.isEof()) {
 					char zz = pos.charAt();
-					if ((zz >= 'a' && zz <= 'z') || (zz >= 'A' && zz <= 'Z')
-							|| (zz >= '0' && zz <= '9') || (zz == '_')
+					if ((zz >= 'a' && zz <= 'z') || (zz >= 'A' && zz <= 'Z') || (zz >= '0' && zz <= '9') || (zz == '_')
 							|| (zz == '$') || (zz == '#')) {
 						pos.more();
 					} else {
@@ -954,8 +956,7 @@ public class UTILSParser extends PEGParser {
 			}
 			return pos.diff(start);
 		} else {
-			throw new ParseException("<u:identifier_chars> expected, "
-					+ pos.charAt() + " found.", pos.location());
+			throw new ParseException("<u:identifier_chars> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -978,8 +979,7 @@ public class UTILSParser extends PEGParser {
 				_alt_c = pos.charAt();
 			}
 			_alt_c = pos.charAt();
-			if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r')
-					|| (_alt_c == ' ') || (_alt_c == '/'))) {
+			if (((_alt_c == '\t') || (_alt_c == '\n') || (_alt_c == '\r') || (_alt_c == ' ') || (_alt_c == '/'))) {
 				try {
 					pos.save();
 					u.pSpacing(pos);
@@ -990,8 +990,7 @@ public class UTILSParser extends PEGParser {
 			}
 			return pos.trim(start);
 		} else {
-			throw new ParseException("<u:qidentifier> expected, "
-					+ pos.charAt() + " found.", pos.location());
+			throw new ParseException("<u:qidentifier> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 
@@ -1004,8 +1003,7 @@ public class UTILSParser extends PEGParser {
 			_tor = u.pIdentifierChars(pos);
 			return _tor;
 		} else {
-			throw new ParseException("<u:qidentifier_1_1> expected, "
-					+ pos.charAt() + " found.", pos.location());
+			throw new ParseException("<u:qidentifier_1_1> expected, " + pos.charAt() + " found.", pos.location());
 		}
 	}
 

@@ -1,5 +1,6 @@
 package be.uclouvain.jail.algo.graph.rand;
 
+import be.uclouvain.jail.algo.utils.AbstractAlgoInput;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.IGraphPredicate;
 import be.uclouvain.jail.graph.constraints.AbstractGraphPredicate;
@@ -9,18 +10,29 @@ import be.uclouvain.jail.graph.constraints.AbstractGraphPredicate;
  * 
  * @author blambeau
  */
-public class DefaultRandomGraphInput implements IRandomGraphInput {
+public class DefaultRandomGraphInput extends AbstractAlgoInput implements IRandomGraphInput {
 
 	/** Number of states generated/to generate. */
-	private int stateCount=10;
+	protected int stateCount=10;
 	
 	/** Number of edges generated/to generate. */
-	private int edgeCount=25;
+	protected int edgeCount=25;
 	
-	/** Number of tries allowed. */
+	/** Number of tries allowed before failure. */
+	private int maxTry=100;
+
+	/** Number of tries already done. */
 	private int nbTries;
-	private int tries=5;
 	
+	/** Install options. */
+	@Override
+	protected void installOptions() {
+		super.installOptions();
+		super.addOption("stateCount", false, Integer.class, null);
+		super.addOption("edgeCount", false, Integer.class, null);
+		super.addOption("maxTry", false, Integer.class, null);
+	}
+
 	/** Sets state count. */
 	public void setStateCount(int stateCount) {
 		this.stateCount = stateCount;
@@ -29,6 +41,11 @@ public class DefaultRandomGraphInput implements IRandomGraphInput {
 	/** Sets edge count. */
 	public void setEdgeCount(int edgeCount) {
 		this.edgeCount = edgeCount;
+	}
+	
+	/** Sets number of tries before failure. */
+	public void setMaxTry(int maxTry) {
+		this.maxTry = maxTry;
 	}
 	
 	/** Returns always true. */
@@ -62,7 +79,7 @@ public class DefaultRandomGraphInput implements IRandomGraphInput {
 	public IGraphPredicate getTryStopPredicate() {
 		return new AbstractGraphPredicate() {
 			public boolean evaluate(IDirectedGraph graph) {
-				return (nbTries++ == tries);
+				return (nbTries++ == maxTry);
 			}
 		};
 	}

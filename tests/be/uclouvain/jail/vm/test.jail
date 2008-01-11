@@ -31,6 +31,8 @@ A = <§dot
 §>;
 
 (print (A) :format 'dot');
+(print (A) :format 'dot' :stateCount 2);
+(randdfa (A) :stateCount 20 :alphabetSize 2);
 (jdotty (adaptations (A)) :format 'dot');
 \help
 \help save

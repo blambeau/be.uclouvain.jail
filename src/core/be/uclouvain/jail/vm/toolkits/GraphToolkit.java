@@ -3,7 +3,6 @@ package be.uclouvain.jail.vm.toolkits;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.util.Random;
 
 import net.chefbe.javautils.adapt.IAdaptable;
 import net.chefbe.javautils.adapt.IAdapter;
@@ -12,6 +11,10 @@ import be.uclouvain.jail.algo.graph.copy.match.GMatchPopulator;
 import be.uclouvain.jail.algo.graph.rand.DefaultRandomGraphInput;
 import be.uclouvain.jail.algo.graph.rand.DefaultRandomGraphResult;
 import be.uclouvain.jail.algo.graph.rand.RandomGraphAlgo;
+import be.uclouvain.jail.algo.graph.walk.DefaultRandomWalkInput;
+import be.uclouvain.jail.algo.graph.walk.DefaultRandomWalkResult;
+import be.uclouvain.jail.algo.graph.walk.IRandomWalkResult;
+import be.uclouvain.jail.algo.graph.walk.RandomWalkAlgo;
 import be.uclouvain.jail.dialect.IPrintable;
 import be.uclouvain.jail.dialect.dot.DOTDirectedGraphPrintable;
 import be.uclouvain.jail.dialect.dot.DOTGraphDialect;
@@ -104,32 +107,20 @@ public class GraphToolkit extends JailReflectionToolkit implements IAdapter {
 	public IDirectedGraph randgraph(JailVMOptions options) throws JailVMException {
 		DefaultRandomGraphInput input = new DefaultRandomGraphInput();
 		DefaultRandomGraphResult result = new DefaultRandomGraphResult();
-		
-		// handle state and edge count
-		if (options.hasOption("stateCount")) {
-			input.setStateCount(options.getOptionValue("stateCount",Integer.class,20));
-		}
-		if (options.hasOption("edgeCount")) {
-			input.setEdgeCount(options.getOptionValue("edgeCount",Integer.class,20));
-		}
-		
-		// add vertex populator
-		if (options.hasOption("vertex")) {
-			GMatchPopulator<Random> populator = options.getOptionValue("vertex",GMatchPopulator.class,null);
-			result.getVertexRandomizer().addPopulator(populator);
-		}
-		// add edge populator
-		if (options.hasOption("edge")) {
-			GMatchPopulator<Random> populator = options.getOptionValue("edge",GMatchPopulator.class,null);
-			result.getEdgeRandomizer().addPopulator(populator);
-		}
-		// handle connex
-		if (options.hasOption("connex")) {
-			result.setConnex(options.getOptionValue("connex",Boolean.class,Boolean.TRUE));
-		}
-
+		input.setOptions(options);
+		result.setOptions(options);
 		new RandomGraphAlgo().execute(input,result);
 		return (IDirectedGraph) result.adapt(IDirectedGraph.class);
+	}
+	
+	/** Randomly walks a graph. */
+	public IRandomWalkResult randwalk(IDirectedGraph g, JailVMOptions options) throws JailVMException {
+		DefaultRandomWalkInput input = new DefaultRandomWalkInput(g);
+		DefaultRandomWalkResult result = new DefaultRandomWalkResult();
+		input.setOptions(options);
+		result.setOptions(options);
+		new RandomWalkAlgo().execute(input,result);
+		return result;
 	}
 	
 	/** Adapts who to the requested type. */

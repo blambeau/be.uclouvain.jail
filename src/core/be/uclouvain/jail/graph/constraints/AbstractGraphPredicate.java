@@ -20,16 +20,6 @@ import be.uclouvain.jail.graph.IGraphPredicate;
  */
 public abstract class AbstractGraphPredicate implements IGraphPredicate {
 
-	/** Checks that g is a graph and delegates the job to the user-friendly
-	 * API method. */
-	public final boolean evaluate(Object g) {
-		if (g instanceof IDirectedGraph == false) {
-			return false;
-		} else {
-			return evaluate((IDirectedGraph)g);
-		}
-	}
-
 	/** To be implemented by subclasses. */
 	public abstract boolean evaluate(IDirectedGraph graph);
 

@@ -3,9 +3,12 @@ package be.uclouvain.jail.algo.graph.rand;
 import java.util.Random;
 
 import net.chefbe.javautils.adapt.AdaptUtils;
+import be.uclouvain.jail.algo.commons.Unable;
 import be.uclouvain.jail.algo.graph.connex.GraphConXDetector;
+import be.uclouvain.jail.algo.graph.copy.match.GMatchPopulator;
 import be.uclouvain.jail.algo.graph.utils.IGraphMemberGroup;
 import be.uclouvain.jail.algo.graph.utils.IGraphPartition;
+import be.uclouvain.jail.algo.utils.AbstractAlgoResult;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
@@ -16,19 +19,19 @@ import be.uclouvain.jail.uinfo.UserInfoRandomizer;
  * 
  * @author blambeau
  */
-public class DefaultRandomGraphResult implements IRandomGraphOutput {
+public class DefaultRandomGraphResult extends AbstractAlgoResult implements IRandomGraphResult {
 
 	/** Resulting graph. */
-	private IDirectedGraph g;
+	protected IDirectedGraph g;
 	
 	/** Ensure connex graph? */
-	private boolean connex = false;
+	protected boolean connex = false;
 	
 	/** Vertex creator to use. */
-	private UserInfoRandomizer vertexRandomizer;
+	protected UserInfoRandomizer vertexRandomizer;
 	
 	/** Edge creator to use. */
-	private UserInfoRandomizer edgeRandomizer;
+	protected UserInfoRandomizer edgeRandomizer;
 	
 	/** Creates a result instance. */
 	public DefaultRandomGraphResult() {
@@ -36,9 +39,23 @@ public class DefaultRandomGraphResult implements IRandomGraphOutput {
 		edgeRandomizer = new UserInfoRandomizer();
 	}
 	
+	/** Install options. */
+	@Override
+	protected void installOptions() {
+		super.installOptions();
+		super.addOption("connex", false, Boolean.class, null);
+		super.addOption("vertex", "vertexPopulator", false, GMatchPopulator.class, null);
+		super.addOption("edge", "edgePopulator", false, GMatchPopulator.class, null);
+	}
+
 	/** Returns the vertex random creator. */
 	public UserInfoRandomizer getVertexRandomizer() {
 		return vertexRandomizer;
+	}
+	
+	/** Adds a gmatch vertex populator. */
+	public void setVertexPopulator(GMatchPopulator<Random> populator) {
+		vertexRandomizer.addPopulator(populator);
 	}
 	
 	/** Returns the edge random creator. */
@@ -46,9 +63,18 @@ public class DefaultRandomGraphResult implements IRandomGraphOutput {
 		return edgeRandomizer;
 	}
 	
+	/** Adds a gmatch edge populator. */
+	public void setEdgePopulator(GMatchPopulator<Random> populator) {
+		edgeRandomizer.addPopulator(populator);
+	}
+	
 	/** Force one connex composant in resulting graph? */
 	public void setConnex(Boolean connex) {
 		this.connex = connex;
+	}
+	
+	/** Lets the output know that the algo has started. */
+	public void started(IRandomGraphInput input) {
 	}
 	
 	/** Factors a graph instance. */
@@ -57,22 +83,22 @@ public class DefaultRandomGraphResult implements IRandomGraphOutput {
 	}
 
 	/** Creates a random vertex info. */
-	public IUserInfo createVertexInfo(Random r) {
+	public IUserInfo createVertexInfo(IDirectedGraph graph, Random r) {
 		return vertexRandomizer.create(r);
 	}
 	
 	/** Creates a random edge info. */
-	public IUserInfo createEdgeInfo(Object source, Object target, Random r) {
+	public IUserInfo createEdgeInfo(IDirectedGraph graph, Object source, Object target, Random r) {
 		return edgeRandomizer.create(r);
 	}
 
 	/** Throws an UnsupportedOperationException. */
 	public void failed() {
-		throw new UnsupportedOperationException("Failed to generate random graph");
+		throw new Unable("Failed to generate random graph");
 	}
 
 	/** Cleans a directed graph before acceptation. */
-	public boolean clean(IDirectedGraph g) {
+	public IDirectedGraph clean(IDirectedGraph g) {
 		if (connex) {
 			// compute connex composants
 			IGraphPartition p = new GraphConXDetector(g).getGraphPartition();
@@ -96,7 +122,7 @@ public class DefaultRandomGraphResult implements IRandomGraphOutput {
 			}
 		}
 		
-		return true;
+		return g;
 	}
 	
 	/** Marks the output graph as g. */ 
@@ -104,6 +130,11 @@ public class DefaultRandomGraphResult implements IRandomGraphOutput {
 		this.g = g;
 	}
 
+	/** Sets the resulting directed graph. */
+	protected void setDirectedGraph(IDirectedGraph g) {
+		this.g = g;
+	}
+	
 	/** Adapts to a type. */
 	public <T> Object adapt(Class<T> c) {
 		if (c.isAssignableFrom(getClass())) {

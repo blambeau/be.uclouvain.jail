@@ -85,7 +85,7 @@ public class IntegerAlphabet implements IAlphabet<Integer> {
 			public Integer next() {
 				Integer toReturn = next;
 				next += offset;
-				if (next > (start+offset*size)) {
+				if (next >= (start+offset*size)) {
 					next = null;
 				}
 				return toReturn;

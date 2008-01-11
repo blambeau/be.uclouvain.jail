@@ -12,6 +12,9 @@ import net.chefbe.javautils.adapt.IAdaptable;
  */
 public interface IUserInfo extends IAdaptable {
 
+	/** Returns true if an attribute is present. */
+	public boolean hasAttribute(String key);
+	
 	/** Returns a user info attribute mapped to a key. */
 	public Object getAttribute(String key);
 

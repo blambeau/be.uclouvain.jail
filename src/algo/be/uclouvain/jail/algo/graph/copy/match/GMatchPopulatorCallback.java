@@ -134,7 +134,7 @@ public abstract class GMatchPopulatorCallback<T> extends GMatchCallback<Object> 
 		}
 		
 		if (Boolean.TRUE.equals(test)) {
-			return node.getAttr("value");
+			return makeCall(node.childFor("value"));
 		} else {
 			return contin;
 		}
@@ -188,16 +188,16 @@ public abstract class GMatchPopulatorCallback<T> extends GMatchCallback<Object> 
 			       (left != null && right != null && 
 			    	left.toString().equals(right.toString()));
 		} else if ("<=".equals(op)) {
-			Comparable lComp = toComparable(right);
+			Comparable lComp = toComparable(left);
 			return lComp.compareTo(right) <= 0;
 		} else if ("<".equals(op)) {
-			Comparable lComp = toComparable(right);
+			Comparable lComp = toComparable(left);
 			return lComp.compareTo(right) < 0;
 		} else if (">=".equals(op)) {
-			Comparable lComp = toComparable(right);
+			Comparable lComp = toComparable(left);
 			return lComp.compareTo(right) >= 0;
 		} else if (">".equals(op)) {
-			Comparable lComp = toComparable(right);
+			Comparable lComp = toComparable(left);
 			return lComp.compareTo(right) > 0;
 		} else if ("!=".equals(op)) {
 			return (left==null && right!=null) ||

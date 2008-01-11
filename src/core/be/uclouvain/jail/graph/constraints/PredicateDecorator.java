@@ -2,8 +2,7 @@ package be.uclouvain.jail.graph.constraints;
 
 import org.apache.commons.collections.Predicate;
 
-import be.uclouvain.jail.graph.IDirectedGraph;
-import be.uclouvain.jail.graph.IGraphPredicate;
+import be.uclouvain.jail.common.IPredicate;
 
 /**
  * Decorates à jakarta commons collection predicate to a {@link GraphPredicate}.
@@ -13,7 +12,7 @@ import be.uclouvain.jail.graph.IGraphPredicate;
  * 
  * @author blambeau
  */
-public class PredicateDecorator implements IGraphPredicate {
+public class PredicateDecorator<T> implements IPredicate<T> {
 
 	/** Decorated predicate. */
 	private Predicate p;
@@ -23,19 +22,9 @@ public class PredicateDecorator implements IGraphPredicate {
 		this.p = p;
 	}
 
-	/** Checks that g is a graph and delegates it to the decorated
-	 * predicate. */
-	public boolean evaluate(Object g) {
-		if (g instanceof IDirectedGraph) {
-			return p.evaluate(g);
-		} else {
-			return false;
-		}
-	}
-
 	/** Delegated to the decorated predicate. */
-	public boolean evaluate(IDirectedGraph graph) {
-		return p.evaluate(graph);
+	public boolean evaluate(T value) {
+		return p.evaluate(value);
 	}
 
 }

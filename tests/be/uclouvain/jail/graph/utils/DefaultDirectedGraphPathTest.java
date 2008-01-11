@@ -1,7 +1,6 @@
 package be.uclouvain.jail.graph.utils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -120,11 +119,13 @@ public class DefaultDirectedGraphPathTest extends TestCase {
 	
 	/** Tests an empty path. */
 	public void testEmptyPath() {
-		IDirectedGraphPath path = new DefaultDirectedGraphPath(graph,Collections.emptyList());
+		Object root = graph.getVerticesTotalOrder().getElementAt(0);
+		IDirectedGraphPath path = new DefaultDirectedGraphPath(graph,root);
 		assertEquals(0,path.size());
 		assertFalse(path.edges().iterator().hasNext());
 		assertFalse(path.iterator().hasNext());
-		assertFalse(path.vertices().iterator().hasNext());
+		assertTrue(path.vertices().iterator().hasNext());
+		assertEquals(root, path.vertices().iterator().next());
 	}
 
 	/** Tests a one size path. */

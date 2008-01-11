@@ -4,7 +4,7 @@ import net.chefbe.autogram.ast2.parsing.active.ActiveParser;
 
 grammar GMatch as gm extends ActiveParser {
 	
-	using be.uclouvain.jail.dialect.commons.UTILS as u;
+	using be.uclouvain.jail.dialect.utils.UTILS as u;
 	
 	<gm:match_test>                    ::= rule:<gm:match_testone u:list> <u:eof>
 	                                     ; [u:node]
@@ -64,6 +64,7 @@ grammar GMatch as gm extends ActiveParser {
 
 	<gm:literal>                       ::= value:<u:string>
 	                                     | value:<u:boolean>
+	                                     | value:<u:double>
 	                                     | value:<u:integer>
 	                                     ; [u:node]
 	                                     
@@ -87,9 +88,9 @@ grammar GMatch as gm extends ActiveParser {
 	                                     | tor:<gm:literal> <u:spacing>?
 	                                     ; [u:return]
 	<gm:bool_dyadop>                   ::= tor:<'!=' u:symbol>
-	                                     | tor:<'>=' u:symbol>
+	                                     | tor:<">=" u:symbol>
 	                                     | tor:<'>' u:symbol>
-	                                     | tor:<'<=' u:symbol>
+	                                     | tor:<"<=" u:symbol>
 	                                     | tor:<'<' u:symbol>
 	                                     | tor:<'=' u:symbol>
 	                                     ; [u:return]

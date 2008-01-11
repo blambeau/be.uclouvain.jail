@@ -20,12 +20,15 @@ import be.uclouvain.jail.algo.fa.kernel.IDFAKernelExtractorResult;
 import be.uclouvain.jail.algo.fa.minimize.DFAMinimizerAlgo;
 import be.uclouvain.jail.algo.fa.minimize.DefaultDFAMinimizerInput;
 import be.uclouvain.jail.algo.fa.minimize.DefaultDFAMinimizerResult;
+import be.uclouvain.jail.algo.fa.rand.RandomDFAInput;
+import be.uclouvain.jail.algo.fa.rand.RandomDFAResult;
 import be.uclouvain.jail.algo.fa.tmoves.DefaultTauRemoverInput;
 import be.uclouvain.jail.algo.fa.tmoves.DefaultTauRemoverResult;
 import be.uclouvain.jail.algo.fa.tmoves.ITauInformer;
 import be.uclouvain.jail.algo.fa.tmoves.TauRemoverAlgo;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchAggregator;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchPopulator;
+import be.uclouvain.jail.algo.graph.rand.RandomGraphAlgo;
 import be.uclouvain.jail.dialect.seqp.SEQPGraphDialect;
 import be.uclouvain.jail.fa.FAStateKind;
 import be.uclouvain.jail.fa.IDFA;
@@ -200,6 +203,16 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 		}
 		
 		new DFAComplementorAlgo().execute(input,result);
+		return (IDFA) result.adapt(IDFA.class);
+	}
+	
+	/** Generates a random DFA. */
+	public IDFA randdfa(JailVMOptions options, JailVM vm) throws JailVMException {
+		RandomDFAInput input = new RandomDFAInput();
+		RandomDFAResult result = new RandomDFAResult();
+		input.setOptions(options);
+		result.setOptions(options);
+		new RandomGraphAlgo().execute(input,result);
 		return (IDFA) result.adapt(IDFA.class);
 	}
 	

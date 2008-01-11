@@ -20,6 +20,9 @@ public class DefaultDirectedGraphPath implements IDirectedGraphPath {
 	/** Graph from which path has been extracted. */
 	private IDirectedGraph graph;
 	
+	/** Root of the path. */
+	private Object root;
+	
 	/** Edges of the path. */
 	private List<Object> edges;
 	
@@ -28,17 +31,40 @@ public class DefaultDirectedGraphPath implements IDirectedGraphPath {
 	
 	/** Creates a path from a graph and some edges. */
 	public DefaultDirectedGraphPath(IDirectedGraph graph, List<Object> edges) {
+		if (edges.isEmpty()) { 
+			throw new IllegalArgumentException("Edge list cannot be empty, use other constructor."); 
+		}
 		this.graph = graph;
 		this.edges = edges;
 	}
 	
+	/** Creates an empty path from a root node. */
+	public DefaultDirectedGraphPath(IDirectedGraph graph, Object root) {
+		this.graph = graph;
+		this.edges = null;
+		this.root = root;
+	}
+	
 	/** Returns the root vertex. */
 	protected Object getRootVertex() {
-		if (size() == 0) {
-			return null;
-		}
+		if (root != null) { return root; }
 		Object firstEdge = edges.get(0);
-		return graph.getEdgeSource(firstEdge);
+		root = graph.getEdgeSource(firstEdge);
+		return root;
+	}
+	
+	/** Adds an edge at end of the path. */
+	public void addEdge(Object edge) {
+		if (edges == null) { edges = new LinkedList<Object>(); }
+		
+		// add edge
+		edges.add(edge);
+		
+		// if vertices has been created, add target vertex
+		if (vertices != null) {
+			Object target = graph.getEdgeTarget(edge);
+			vertices.add(target);
+		}
 	}
 	
 	/** Returns the graph from which the path is extracted. */
@@ -50,26 +76,24 @@ public class DefaultDirectedGraphPath implements IDirectedGraphPath {
 	 * the path. The number of visited vertices is equal to getPathSize()+1
 	 * by definition. */
 	public int size() {
-		return edges.size();
+		return edges == null ? 0 : edges.size();
 	}
 
 	/** Returns an iterator on path edges. */
 	public List<Object> edges() {
-		return edges;
+		return edges == null ? Collections.emptyList() : edges;
 	}
 
 	/** Returns an iterator on path edges. */ 
 	public Iterator<Object> iterator() {
-		return edges.iterator();
+		return edges().iterator();
 	}
 	
 	/** Returns an iterator on path vertices. */
 	public List<Object> vertices() {
-		if (vertices != null) {
-			return vertices;
-		}
-		if (size() == 0) {
-			vertices = Collections.emptyList();
+		if (vertices != null) { return vertices; }
+		if (edges == null) {
+			vertices = Collections.singletonList(root);
 		} else {
 			vertices = new LinkedList<Object>();
 			vertices.add(getRootVertex());
@@ -82,18 +106,17 @@ public class DefaultDirectedGraphPath implements IDirectedGraphPath {
 
 	/** Accepts a visitor. */
 	public void accept(IVisitor visitor) {
-		if (size() == 0) { return; }
 		visitor.visit(null, getRootVertex());
-		for (Object edge: edges) {
-			Object target = graph.getEdgeTarget(edge);
-			visitor.visit(edge, target);
+		if (edges != null) {
+			for (Object edge: edges) {
+				Object target = graph.getEdgeTarget(edge);
+				visitor.visit(edge, target);
+			}
 		}
 	}
 
 	/** Flushes this path in a graph writer. */
 	public Object flush(IDirectedGraphWriter writer) {
-		if (size()==0) { return null; }
-
 		// create vertices and save it
 		Object[] vertices = new Object[size()+1];
 		int i=0;
@@ -103,9 +126,11 @@ public class DefaultDirectedGraphPath implements IDirectedGraphPath {
 		
 		// create edges
 		i=0;
-		for (Object edge: edges) {
-			writer.createEdge(vertices[i], vertices[i+1], graph.getEdgeInfo(edge));
-			i++;
+		if (edges != null) {
+			for (Object edge: edges) {
+				writer.createEdge(vertices[i], vertices[i+1], graph.getEdgeInfo(edge));
+				i++;
+			}
 		}
 		
 		return vertices[vertices.length-1];

@@ -11,6 +11,7 @@ import net.chefbe.autogram.ast2.parsing.ParseException;
 import net.chefbe.javautils.adapt.AdaptUtils;
 import net.chefbe.javautils.adapt.IAdapter;
 import net.chefbe.javautils.adapt.NetworkAdaptationTool;
+import net.chefbe.javautils.adapt.StringAdaptationTool;
 import be.uclouvain.jail.adapt.NetworkGraphDecorator;
 import be.uclouvain.jail.dialect.IGraphDialect;
 import be.uclouvain.jail.graph.IDirectedGraph;
@@ -40,6 +41,10 @@ public class JailCoreToolkit extends JailReflectionToolkit {
 				return null;
 			}
 		});
+		
+		vm.registerAdaptation(String.class, Boolean.class, StringAdaptationTool.TO_BOOL);
+		vm.registerAdaptation(String.class, Integer.class, StringAdaptationTool.TO_INT);
+		vm.registerAdaptation(String.class, Double.class, StringAdaptationTool.TO_DOUBLE);
 	}
 
 	/** Registers an external loader. */

@@ -23,5 +23,5 @@ public abstract class AbstractPrintable implements IPrintable {
 
 	/** Prints on a writer. */
 	protected abstract void print(PrintWriter writer) throws IOException;
-	
+
 }

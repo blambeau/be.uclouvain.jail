@@ -1,5 +1,7 @@
 package be.uclouvain.jail.algo.graph.copy.match.functions;
 
+import be.uclouvain.jail.uinfo.functions.OnFirstPopulator;
+
 /**
  * GMatch version of {@link OnFirstPopulator}.
  * 

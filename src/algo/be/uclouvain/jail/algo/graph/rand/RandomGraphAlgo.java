@@ -17,7 +17,7 @@ public class RandomGraphAlgo {
 	private IRandomGraphInput input;
 
 	/** Input information. */
-	private IRandomGraphOutput output;
+	private IRandomGraphResult output;
 
 	/** Graph under construction. */
 	private IDirectedGraph graph;
@@ -30,7 +30,7 @@ public class RandomGraphAlgo {
 	private void createVertices() {
 		IGraphPredicate stop = input.getVertexStopPredicate();
 		do {
-			graph.createVertex(output.createVertexInfo(r));
+			graph.createVertex(output.createVertexInfo(graph, r));
 		} while (!stop.evaluate(graph));
 	}
 
@@ -48,7 +48,7 @@ public class RandomGraphAlgo {
 			Object target = vertices.getElementAt(sindex);
 			
 			// connect
-			IUserInfo edgeInfo = output.createEdgeInfo(cur, target, r);
+			IUserInfo edgeInfo = output.createEdgeInfo(graph, cur, target, r);
 			if (edgeInfo != null) {
 				graph.createEdge(cur, target, edgeInfo);
 			}
@@ -57,12 +57,15 @@ public class RandomGraphAlgo {
 	}
 	
 	/** Launches the generation. */
-	public void execute(IRandomGraphInput input, IRandomGraphOutput output) {
+	public void execute(IRandomGraphInput input, IRandomGraphResult output) {
 		// initialization
 		this.input = input;
 		this.output = output;
 		this.r = new Random(System.currentTimeMillis());
 
+		// Let output known that the algo has started
+		output.started(input);
+		
 		// launch main loop, continue until stop or accept
 		IGraphPredicate accept = input.getAcceptPredicate();
 		IGraphPredicate stop = input.getTryStopPredicate();
@@ -70,7 +73,8 @@ public class RandomGraphAlgo {
 			graph = output.factorGraph();
 			createVertices();
 			createEdges();
-			if (output.clean(graph) && accept.evaluate(graph)) {
+			graph = output.clean(graph);
+			if (graph != null && accept.evaluate(graph)) {
 				output.success(graph);
 				return;
 			} else if (stop.evaluate(graph)) {

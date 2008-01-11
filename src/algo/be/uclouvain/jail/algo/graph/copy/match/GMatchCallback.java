@@ -95,5 +95,4 @@ public class GMatchCallback<T> extends CallbackBase<T> {
 	public T BOOL_BOOLTERM(IASTNode node) throws Exception {
 		return nonOverrided(node);
 	}
-
 }

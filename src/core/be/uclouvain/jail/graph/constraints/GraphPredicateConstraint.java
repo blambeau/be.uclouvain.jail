@@ -1,7 +1,5 @@
 package be.uclouvain.jail.graph.constraints;
 
-import org.apache.commons.collections.Predicate;
-
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.IGraphPredicate;
 
@@ -20,11 +18,6 @@ public class GraphPredicateConstraint extends AbstractGraphConstraint {
 		this.predicate = predicate;
 	}
 
-	/** Shortcut to <code>new GraphPredicateConstraint(new PredicateDecorator(p))</code>. */ 
-	public GraphPredicateConstraint(Predicate p) {
-		this(new PredicateDecorator(p));
-	}
-	
 	/** Delegated to the decorated predicate. */
 	@Override
 	public boolean isRespectedBy(IDirectedGraph graph) {

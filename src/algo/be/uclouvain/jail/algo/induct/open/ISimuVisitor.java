@@ -2,6 +2,7 @@ package be.uclouvain.jail.algo.induct.open;
 
 import be.uclouvain.jail.algo.induct.internal.IWork;
 import be.uclouvain.jail.algo.induct.internal.Simulation;
+import be.uclouvain.jail.algo.induct.utils.FilteredSimuVisitor;
 
 /** 
  * Allows simulation to be visited.
