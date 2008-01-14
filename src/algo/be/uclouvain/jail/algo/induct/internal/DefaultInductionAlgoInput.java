@@ -3,7 +3,9 @@ package be.uclouvain.jail.algo.induct.internal;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchAggregator;
 import be.uclouvain.jail.algo.induct.open.ICompatibility;
 import be.uclouvain.jail.algo.induct.open.IEvaluator;
+import be.uclouvain.jail.algo.induct.open.IMembershipQueryTester;
 import be.uclouvain.jail.algo.induct.open.IOracle;
+import be.uclouvain.jail.algo.induct.utils.AbstractMembershipOracle;
 import be.uclouvain.jail.algo.induct.utils.ClassicEvaluator;
 import be.uclouvain.jail.algo.utils.AbstractAlgoInput;
 import be.uclouvain.jail.fa.IDFA;
@@ -50,6 +52,8 @@ public class DefaultInductionAlgoInput extends AbstractAlgoInput implements IInd
 		stateAggregator.stateKind(AttributeGraphFAInformer.STATE_KIND_KEY,
                 FAStateKindFunction.OR,
                 FAStateKindFunction.OR,true);
+		stateAggregator.first(MappingUtils.KDP_REPRESENTOR);
+		stateAggregator.first(MappingUtils.KP_REPRESENTOR);
 		edgeAggregator.first(AttributeGraphFAInformer.EDGE_LETTER_KEY);
 	}
 
@@ -60,6 +64,8 @@ public class DefaultInductionAlgoInput extends AbstractAlgoInput implements IInd
 		super.addOption("threshold", "consolidationThreshold", false, Integer.class, null);
 		super.addOption("state", "statePopulator", false, GMatchAggregator.class, null);
 		super.addOption("edge", "edgePopulator", false, GMatchAggregator.class, null);
+		super.addOption("oracle", false, IOracle.class, null);
+		super.addOption("querier",false, IMembershipQueryTester.class, null);
 	}
 
 	/** Returns input PTA. */
@@ -85,6 +91,14 @@ public class DefaultInductionAlgoInput extends AbstractAlgoInput implements IInd
 	/** Sets oracle to use. */
 	public void setOracle(IOracle oracle) {
 		this.oracle = oracle;
+	}
+	
+	/** Sets the querier to use. */
+	public void setQuerier(IMembershipQueryTester tester) {
+		if (oracle instanceof AbstractMembershipOracle == false) {
+			throw new IllegalArgumentException("Oracle does not accept querier.");
+		}
+		((AbstractMembershipOracle)oracle).setTester(tester);
 	}
 	
 	/** Returns evaluator. */

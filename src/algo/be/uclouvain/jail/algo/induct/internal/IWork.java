@@ -1,5 +1,7 @@
 package be.uclouvain.jail.algo.induct.internal;
 
+import be.uclouvain.jail.algo.induct.utils.WorkDecorator;
+
 /** 
  * Simulated step in a simulation. 
  *
@@ -26,5 +28,8 @@ public interface IWork {
 
 	/** Returns merge target. */
 	public Object target();
+	
+	/** Decorates the work. */
+	public WorkDecorator decorate();
 	
 }

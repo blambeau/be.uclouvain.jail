@@ -4,10 +4,12 @@ import be.uclouvain.jail.algo.induct.internal.IWork;
 import be.uclouvain.jail.algo.induct.internal.PTAEdge;
 import be.uclouvain.jail.algo.induct.internal.PTAState;
 
-/** Decorates Gain works to help creating 
- * membership queries. */ 
+/** Decorates Gain works to help creating membership queries. */ 
 public interface IGainD extends IWork {
 
+	/** Returns the PTAState which gains. */
+	public PTAState targetInPTA();
+	
 	/** Returns gained edge. */
 	public PTAEdge edgeGain();
 	

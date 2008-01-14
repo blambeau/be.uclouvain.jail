@@ -35,7 +35,7 @@ public class FilteredSimuVisitor implements ISimuVisitor {
 	}
 	
 	/** Filters work, delegated to doOnWork when of interest. */
-	public void onWork(Simulation simu, IWork work) {
+	public final void onWork(Simulation simu, IWork work) {
 		WorkType type = work.type();
 		if (interest[type.id()]) {
 			doOnWork(simu, work, type);

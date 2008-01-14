@@ -7,6 +7,11 @@ import java.util.Map;
 
 import be.uclouvain.jail.algo.commons.Avoid;
 import be.uclouvain.jail.algo.induct.open.ISimuVisitor;
+import be.uclouvain.jail.algo.induct.utils.KStateGainD;
+import be.uclouvain.jail.algo.induct.utils.KStateMergeD;
+import be.uclouvain.jail.algo.induct.utils.OStateGainD;
+import be.uclouvain.jail.algo.induct.utils.OStateMergeD;
+import be.uclouvain.jail.algo.induct.utils.WorkDecorator;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.utils.ITotalOrder;
@@ -100,6 +105,11 @@ public class Simulation {
 			// update the kernel state values
 			handler.updateKState(tkState, handler.mergeStateUserInfo(state,tkState));
 		}
+
+		/** Factors a KStateMergeD. */
+		public WorkDecorator decorate() {
+			return new KStateMergeD(this);
+		}
 		
 	}
 
@@ -131,6 +141,11 @@ public class Simulation {
 			handler.updateOState(target, handler.mergeStateUserInfo(victim,target));
 		}
 		
+		/** Factors a OStateMergeD. */
+		public WorkDecorator decorate() {
+			return new OStateMergeD(this);
+		}
+		
 	}
 
 	/** Merge of another edge with a kernel one. */
@@ -160,6 +175,12 @@ public class Simulation {
 			// update the kernel edge values
 			handler.updateKEdge(tkEdge, handler.mergeEdgeUserInfo(edge, tkEdge));
 		}
+
+		/** Factors a KEdgeMergeD. */
+		public WorkDecorator decorate() {
+			throw new UnsupportedOperationException("No such decorator (KEdgeMergeD)");
+		}
+		
 	}
 
 	/** Merge of two another edges. */
@@ -188,6 +209,11 @@ public class Simulation {
 			
 			// update the kernel edge values.
 			handler.updateOEdge(target, handler.mergeEdgeUserInfo(victim, target));
+		}
+		
+		/** Factors a OEdgeMergeD. */
+		public WorkDecorator decorate() {
+			throw new UnsupportedOperationException("No such decorator (OEdgeMergeD)");
 		}
 		
 	}
@@ -223,6 +249,11 @@ public class Simulation {
 			this.ptaEdge = ptaEdge;
 		}
 		
+		/** Factors a KStateGainD. */
+		public WorkDecorator decorate() {
+			return new KStateGainD(this);
+		}
+		
 	}
 
 	/** Other state outgoing transition gain. */
@@ -254,6 +285,11 @@ public class Simulation {
 		public OStateGain(PTAState state, PTAEdge edge) {
 			this.state = state;
 			this.edge = edge;
+		}
+		
+		/** Factors a OStateGainD. */
+		public WorkDecorator decorate() {
+			return new OStateGainD(this);
 		}
 		
 	}

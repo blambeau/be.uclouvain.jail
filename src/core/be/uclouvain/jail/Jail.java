@@ -89,6 +89,21 @@ public class Jail implements IJailVMEnvironment {
 	/** Out writer to use. */
 	private PrintWriter out;
 	
+	/** Console reader. */
+	private ConsoleReader reader;
+	
+	/** Current instance of Jail. */ 
+	private static Jail instance;
+	
+	/** Returns an instance of Jail. */
+	public static synchronized Jail instance() throws IOException {
+		if (instance == null) { 
+			instance = new Jail(); 
+			instance.startVM(new String[]{});
+		}
+		return instance;
+	}
+	
 	/** Starts the virtual machine. */
 	public void startVM(String[] args) throws IOException {
 		String jailFile = null;
@@ -108,7 +123,7 @@ public class Jail implements IJailVMEnvironment {
 		}
 		
 		// create a in and out
-		ConsoleReader reader = new ConsoleReader();
+		reader = new ConsoleReader();
         out = new PrintWriter(System.out);
         
         // reload history
@@ -149,14 +164,9 @@ public class Jail implements IJailVMEnvironment {
         reader.getHistory().flushBuffer();
 	}
 	
-	/** Starts the Jail VM on a file. */
-	public static void main(String[] args) throws Exception {
-		try {
-			new Jail().startVM(args);
-		} catch (IOException ex) {
-			System.out.println("An IOException occured when starting Jail.");
-			ex.printStackTrace();
-		}
+	/** Returns a console reader. */
+	public ConsoleReader getConsoleReader() {
+		return reader;
 	}
 
 	/** Returns a console writer. */
@@ -187,6 +197,17 @@ public class Jail implements IJailVMEnvironment {
 		out.println(message);
 		out.println();
 		out.flush();
+	}
+	
+	/** Starts the Jail VM on a file. */
+	public static void main(String[] args) throws Exception {
+		try {
+			instance = new Jail();
+			instance.startVM(args);
+		} catch (IOException ex) {
+			System.out.println("An IOException occured when starting Jail.");
+			ex.printStackTrace();
+		}
 	}
 	
 }

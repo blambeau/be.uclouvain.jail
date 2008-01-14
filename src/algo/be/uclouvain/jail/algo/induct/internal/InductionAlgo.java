@@ -84,17 +84,17 @@ public abstract class InductionAlgo {
 		// consolidate pta initial state (creation of PTA rootState 
 		// creates the whole PTA decorator as a side effect)
 		Object ptaInitial = pta.getInitialState();
-		PTAState rootState = new PTAState(this, pta, ptaInitial);
+		PTAState rootState = new PTAState(this, pta, ptaInitial, null);
 		rootState.consolidate(this);
 	}
 
 	/** Returns current solution. */
-	protected IDFA getDFA() {
+	public IDFA getDFA() {
 		return dfa;
 	}
 
 	/** Returns source PTA. */
-	protected IDFA getPTA() {
+	public IDFA getPTA() {
 		return pta;
 	}
 

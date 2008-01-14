@@ -1,5 +1,6 @@
 package be.uclouvain.jail.algo.induct.internal;
 
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -7,7 +8,10 @@ import java.util.TreeMap;
 import be.uclouvain.jail.algo.commons.Avoid;
 import be.uclouvain.jail.algo.induct.open.IWalker;
 import be.uclouvain.jail.fa.IDFA;
+import be.uclouvain.jail.fa.IDFATrace;
+import be.uclouvain.jail.fa.utils.DefaultDFATrace;
 import be.uclouvain.jail.graph.IDirectedGraph;
+import be.uclouvain.jail.graph.utils.DefaultDirectedGraphPath;
 import be.uclouvain.jail.uinfo.IUserInfo;
 
 /** Provides a state of the decorated PTA. */
@@ -19,29 +23,39 @@ public class PTAState {
 	/** Attached values. */
 	private IUserInfo values;
 
-	/** Associated states in the real PTA. */
+	/** Parent edge. */
+	private PTAEdge parent;
+	
+	/** Associated state in the real PTA. */
 	private Object representor;
 
 	/** Delta function. */
 	private Map<Object,PTAEdge> delta;
 
+	/** Creates a PTAState. */
 	@SuppressWarnings("unchecked")
-	public PTAState(InductionAlgo algo, final IDFA pta, Object root) {
+	public PTAState(InductionAlgo algo, final IDFA pta, Object representor, PTAEdge parent) {
 		this.algo = algo;
 		IDirectedGraph g = pta.getGraph();
 
 		// initialize me
-		this.representor = root;
-		values = pta.getGraph().getVertexInfo(root);
+		this.representor = representor;
+		this.parent = parent;
+		values = pta.getGraph().getVertexInfo(representor);
 
 		// prepare collection of outgoing edges
 		delta = new TreeMap<Object,PTAEdge>(pta.getAlphabet());
-		for (Object edge : g.getOutgoingEdges(root)) {
+		for (Object edge : g.getOutgoingEdges(representor)) {
 			Object letter = pta.getEdgeLetter(edge);
-			delta.put(letter, new PTAEdge(algo, pta, edge));
+			delta.put(letter, new PTAEdge(algo, pta, edge, this));
 		}
 	}
 
+	/** Returns induction algo. */
+	public InductionAlgo getRunningAlgo() {
+		return algo;
+	}
+	
 	/** Returns representor. */
 	public Object representor() {
 		return representor;
@@ -98,6 +112,11 @@ public class PTAState {
 	protected void prepare(InductionAlgo algo, Simulation simu, Object tkState) throws Avoid {
 		assert (tkState != null) : "Not null tkState.";
 		assert (tkState instanceof PTAState == false) : "Real tkState.";
+		/*
+		assert (MappingUtils.pRepresentor(algo, tkState) != null) : "tkState " + 
+			algo.getDFA().getGraph().getVerticesTotalOrder().indexOf(tkState) +
+		" has a representor.";
+		*/
 		
 		IDFA dfa = algo.getDFA();
 		Fringe fringe = algo.getFringe();
@@ -134,17 +153,6 @@ public class PTAState {
 				}
 			}
 		}
-
-		// Compute victim state gains.
-		/*
-		IDFA pta = algo.getPTA();
-		Object ptaTkState = MappingUtils.sRepresentor(algo, tkState);
-		Collection<Object> ptaTkLetters = pta.getOutgoingLetters(ptaTkState);
-		Set<Object> diff = SetUtils.minus(ptaTkLetters,delta.keySet());
-		for (Object letter : diff) {
-			simu.addVStateGain(this,pta.getOutgoingEdge(ptaTkState, letter));
-		}
-		*/
 	}
 
 	/** Prepate merge with another (white) state. */
@@ -174,6 +182,32 @@ public class PTAState {
 
 	}
 
+	/** Returns the short prefix of the state. */
+	public <T> IDFATrace<T> getShortPrefix() {
+		IDFA pta = getRunningAlgo().getPTA();
+		IDirectedGraph graph = pta.getGraph();
+
+		// I'm the root ?
+		if (parent == null) {
+			// YES. create an empty path
+			DefaultDirectedGraphPath path = new DefaultDirectedGraphPath(graph,representor());
+			return new DefaultDFATrace<T>(pta,path); 
+		} else {
+			// NO. build edges and create path
+			LinkedList<Object> list = new LinkedList<Object>();
+			getShortPrefix(list);
+			DefaultDirectedGraphPath path = new DefaultDirectedGraphPath(graph,list);
+			return new DefaultDFATrace<T>(pta,path);
+		}
+	}
+	
+	/** Participates to short prefix construction. */
+	protected void getShortPrefix(LinkedList<Object> edges) {
+		if (parent != null) {
+			parent.getShortPrefix(edges);
+		}
+	}
+	
 	/** Accepts a walker. */
 	public void accept(IWalker walker) {
 		accept(null, walker);

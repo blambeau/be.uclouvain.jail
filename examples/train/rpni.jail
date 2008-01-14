@@ -7,20 +7,32 @@ define (allaccept <A>)
 				                           else @kind}
 		   );
 
+TRAIN = (allaccept <§seqp
+   SC[@kind='ACCEPTING'] = start->RC|open->SO|alarm->SA,
+	 RC[@kind='ACCEPTING'] = stop->SC|alarm->RA,
+	 SO[@kind='ACCEPTING'] = close->SC,
+	 SA[@kind='ACCEPTING'] = eopen->SO,
+	 RA[@kind='ACCEPTING'] = estop->SA.
+§>);
+(show TRAIN);
+
 TRAIN_SAMPLE = (allaccept <§jis
 + start stop start
-+ start alarm stop open close start
-+ open close start alarm stop
-- start open
-- start alarm open
++ start alarm estop eopen close start
++ open close start alarm estop eopen
++ start stop alarm eopen
+- start eopen
+- start alarm eopen
 §>);
 (show (TRAIN_SAMPLE));
 
 PTA = (determinize (TRAIN_SAMPLE));
 (show (PTA));
 
-RPNIED = (rpni (PTA));
+RPNIED = (rpni (PTA) :oracle 'blambeau' :querier TRAIN);
 (show (RPNIED));
 
+/*
 BLUEFRINGED = (bluefringe (PTA) :treshold 1);
 (show (BLUEFRINGED));
+*/

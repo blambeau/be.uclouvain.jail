@@ -3,43 +3,13 @@ package be.uclouvain.jail.algo.induct.utils;
 import be.uclouvain.jail.algo.induct.internal.IWork;
 import be.uclouvain.jail.algo.induct.internal.PTAEdge;
 import be.uclouvain.jail.algo.induct.internal.PTAState;
-import be.uclouvain.jail.algo.induct.internal.Simulation;
-import be.uclouvain.jail.algo.induct.internal.WorkType;
 
 /** Decorates another state gain. */
-public class OStateGainD implements IGainD {
-
-	/** Decorated work. */
-	private IWork work;
+public final class OStateGainD extends WorkDecorator implements IGainD {
 
 	/** Creates a decorator. */
 	public OStateGainD(IWork work) {
-		if (!WorkType.OStateGain.equals(work.type())) {
-			throw new IllegalArgumentException("OStateGain work expected.");
-		} else {
-			this.work = work;
-			return;
-		}
-	}
-
-	/** Returns the simulation. */
-	public Simulation simulation() {
-		return work.simulation();
-	}
-
-	/** Returns work type. */
-	public WorkType type() {
-		return work.type();
-	}
-
-	/** Returns work's target. */
-	public Object target() {
-		return work.target();
-	}
-
-	/** Returns work's victim. */
-	public Object victim() {
-		return work.victim();
+		super(work);
 	}
 
 	/** Returns the target state. */
@@ -47,6 +17,11 @@ public class OStateGainD implements IGainD {
 		return (PTAState) work.target();
 	}
 
+	/** Returns the PTAState which gains. */
+	public PTAState targetInPTA() {
+		return oState();
+	}
+	
 	/** Returns gained letter. */
 	public Object letter() {
 		return edgeGain().letter();

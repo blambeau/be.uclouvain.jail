@@ -25,11 +25,6 @@ public class WorkUtils {
 	public static IDFA getSourcePTA(IWork work) {
 		return work.simulation().getSourcePTA();
 	}
-
-	/** Computes the short prefix of a PTA state. */
-	public static Object[] shortPrefix(Object ptaState) {
-		return null;
-	}
 	
 	/** Returns a string representation of a work. */
 	public static String toString(IWork subWork) {

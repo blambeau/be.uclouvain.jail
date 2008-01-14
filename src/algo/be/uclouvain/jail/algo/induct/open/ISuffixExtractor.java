@@ -1,5 +1,7 @@
 package be.uclouvain.jail.algo.induct.open;
 
+import java.util.Iterator;
+
 import be.uclouvain.jail.algo.induct.internal.PTAState;
 import be.uclouvain.jail.fa.IDFATrace;
 
@@ -11,6 +13,6 @@ import be.uclouvain.jail.fa.IDFATrace;
 public interface ISuffixExtractor {
 
 	/** Extracts suffixes of a state. */
-	public IDFATrace[] extract(PTAState state);
+	public <T> Iterator<IDFATrace<T>> extract(PTAState state);
 	
 }

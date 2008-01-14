@@ -1,6 +1,7 @@
 package be.uclouvain.jail.algo.induct.utils;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
@@ -8,7 +9,10 @@ import be.uclouvain.jail.algo.induct.internal.PTAEdge;
 import be.uclouvain.jail.algo.induct.internal.PTAState;
 import be.uclouvain.jail.algo.induct.open.ISuffixExtractor;
 import be.uclouvain.jail.algo.induct.open.IWalker;
+import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.IDFATrace;
+import be.uclouvain.jail.fa.utils.DefaultDFATrace;
+import be.uclouvain.jail.graph.utils.DefaultDirectedGraphPath;
 
 /**
  * Extracts long suffixes.
@@ -18,38 +22,63 @@ import be.uclouvain.jail.fa.IDFATrace;
  */
 public class LongSuffixExtractor implements ISuffixExtractor, IWalker {
 
+	/** Requesting root. */
+	private PTAState state;
+	
 	/** Traces. */
-	private List<IDFATrace> traces;
+	private List traces;
 	
 	/** Walk stack. */
 	private Stack<PTAEdge> stack;
 	
 	/** Extracts suffixes of the state. */
-	public IDFATrace[] extract(PTAState state) {
-		traces = new ArrayList<IDFATrace>();
+	@SuppressWarnings("unchecked")
+	public <T> Iterator<IDFATrace<T>> extract(PTAState state) {
+		this.state = state;
+		traces = new ArrayList<IDFATrace<T>>();
 		stack = new Stack<PTAEdge>();
 
 		// walk the state
 		state.accept(this);
 		
 		// return traces
-		IDFATrace[] result = new IDFATrace[traces.size()];
-		return traces.toArray(result);
+		return traces.iterator();
 	}
 
+	/** Flushes a suffix. */
+	@SuppressWarnings("unchecked")
 	private void flush() {
+		IDFA pta = state.getRunningAlgo().getPTA();
 		
+		// creates an empty path on the state
+		DefaultDirectedGraphPath path = factorPath(pta,state);
+		
+		// add edges
+		for (PTAEdge edge: stack) {
+			Object ptaEdge = edge.representor();
+			path.addEdge(ptaEdge);
+		}
+		
+		// create a trace and add it to traces
+		IDFATrace trace = new DefaultDFATrace(pta,path);
+		traces.add(trace);
+	}
+	
+	/** Factors a path. */
+	protected DefaultDirectedGraphPath factorPath(IDFA pta, PTAState root) {
+		return new DefaultDirectedGraphPath(pta.getGraph(),root.representor());
 	}
 	
 	/** On left push the edge. */
 	public boolean walksLeftOf(PTAEdge edge, PTAState state) {
-		if (edge != null) { stack.add(edge); }
+		if (edge != null) { stack.push(edge); }
 		return true;
 	}
 
 	/** On right. */
 	public boolean walksRightOf(PTAEdge edge, PTAState state, boolean flag) {
 		if (state.letters().isEmpty()) { flush(); }
+		if (!stack.isEmpty()) { stack.pop(); }
 		return false;
 	}
 
