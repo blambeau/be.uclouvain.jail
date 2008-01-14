@@ -8,8 +8,8 @@ import java.util.Map;
 
 import be.uclouvain.jail.algo.fa.equiv.IDFAEquivOutput.CounterExampleKind;
 import be.uclouvain.jail.fa.IDFA;
-import be.uclouvain.jail.fa.IDFATrace;
-import be.uclouvain.jail.fa.utils.DefaultDFATrace;
+import be.uclouvain.jail.fa.IFATrace;
+import be.uclouvain.jail.fa.utils.DefaultFATrace;
 import be.uclouvain.jail.graph.GraphConstraintViolationException;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.IDirectedGraphPath;
@@ -46,10 +46,10 @@ public class DFAEquivAlgo {
 		public CounterExampleKind kind;
 		
 		/** Counter example trace. */
-		public IDFATrace trace;
+		public IFATrace trace;
 
 		/** Creates a non-equivalence exception. */
-		public NonEquivException(CounterExampleKind kind, IDFATrace trace) {
+		public NonEquivException(CounterExampleKind kind, IFATrace trace) {
 			this.kind = kind;
 			this.trace = trace;
 		}
@@ -90,17 +90,17 @@ public class DFAEquivAlgo {
 	}
 	
 	/** Returns current trace. */
-	private IDFATrace getTestedTrace() {
+	private IFATrace getTestedTrace() {
 		if (input.isCounterExampleEnabled()) {
 			IDirectedGraphPath path = new DefaultDirectedGraphPath(tested.getGraph(),stack);
-			return new DefaultDFATrace(tested,path);
+			return new DefaultFATrace(tested,path);
 		} else {
 			return null;
 		}
 	}
 	
 	/** Returns a reference equivalent trace extended with one rejected edge. */
-	private IDFATrace getReferenceTrace(Object rejEdge) {
+	private IFATrace getReferenceTrace(Object rejEdge) {
 		if (!input.isCounterExampleEnabled()) {
 			return null;
 		}
@@ -122,7 +122,7 @@ public class DFAEquivAlgo {
 		
 		// create and return trace
 		IDirectedGraphPath path = new DefaultDirectedGraphPath(reference.getGraph(),edges);
-		return new DefaultDFATrace(reference,path);
+		return new DefaultFATrace(reference,path);
 	}
 	
 	/** Factors a NonEquivException for STATE kind. */

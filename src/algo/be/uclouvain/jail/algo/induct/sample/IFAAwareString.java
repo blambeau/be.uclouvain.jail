@@ -1,6 +1,6 @@
 package be.uclouvain.jail.algo.induct.sample;
 
-import be.uclouvain.jail.graph.IDirectedGraph;
+import be.uclouvain.jail.graph.IDirectedGraphWriter;
 
 /**
  * Extension of ISampleString for those that are able to participate
@@ -12,6 +12,6 @@ import be.uclouvain.jail.graph.IDirectedGraph;
 public interface IFAAwareString<L> extends ISampleString<L> {
 
 	/** Fills a graph. */
-	public void fill(IDirectedGraph g);
+	public Object[] fill(IDirectedGraphWriter g);
 	
 }

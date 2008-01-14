@@ -1,6 +1,6 @@
 package be.uclouvain.jail.algo.fa.equiv;
 
-import be.uclouvain.jail.fa.IDFATrace;
+import be.uclouvain.jail.fa.IFATrace;
 
 /**
  * Provides a default implementation of {@link IDFAEquivOutput}.
@@ -13,7 +13,7 @@ public class DefaultDFAEquivOutput implements IDFAEquivOutput {
 	private boolean equivalence;
 	
 	/** Counter-example trace. */
-	private IDFATrace trace;
+	private IFATrace trace;
 
 	/** Counter example kind. */
 	private CounterExampleKind kind;
@@ -31,7 +31,7 @@ public class DefaultDFAEquivOutput implements IDFAEquivOutput {
 	/** Mark equivalence as unproved and register the provided
 	 * counter-example (that may be null, according to counterExampleEnabled flag
 	 * of the algorithm input). */ 
-	public void counterExampleFound(CounterExampleKind kind, IDFATrace trace) {
+	public void counterExampleFound(CounterExampleKind kind, IFATrace trace) {
 		this.equivalence = false;
 		this.trace = trace;
 		this.kind = kind;
@@ -43,7 +43,7 @@ public class DefaultDFAEquivOutput implements IDFAEquivOutput {
 	}
 
 	/** Returns the counter-example. */
-	public IDFATrace getCounterExample() {
+	public IFATrace getCounterExample() {
 		return trace;
 	}
 	

@@ -168,4 +168,9 @@ public class GraphToolkit extends JailReflectionToolkit implements IAdapter {
 		}
 	}
 
+	/** Returns name of the toolkit. */
+	public String toString() {
+		return "GraphToolkit";
+	}
+	
 }

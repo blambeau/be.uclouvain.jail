@@ -281,5 +281,10 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 			throw new IllegalStateException("Unable to convert " + who + " to a INFA");
 		}
 	}
+
+	/** Returns name of the toolkit. */
+	public String toString() {
+		return "AutomatonToolkit";
+	}
 	
 }

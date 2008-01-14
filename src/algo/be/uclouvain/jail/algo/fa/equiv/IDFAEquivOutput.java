@@ -1,6 +1,6 @@
 package be.uclouvain.jail.algo.fa.equiv;
 
-import be.uclouvain.jail.fa.IDFATrace;
+import be.uclouvain.jail.fa.IFATrace;
 
 /** 
  * Encapsulates output of the equivalence algorithm.
@@ -41,7 +41,7 @@ public interface IDFAEquivOutput {
 	/** Mark equivalence as unproved and register the provided
 	 * counter-example (that may be null, according to counterExampleEnabled flag
 	 * of the algorithm input). */ 
-	public void counterExampleFound(CounterExampleKind kind, IDFATrace trace);
+	public void counterExampleFound(CounterExampleKind kind, IFATrace trace);
 	
 	/** Returns true if equivalence has been proved. */
 	public boolean areEquivalent();
@@ -50,6 +50,6 @@ public interface IDFAEquivOutput {
 	public CounterExampleKind getCounterExampleKind();
 	
 	/** Returns the counter-example. */
-	public IDFATrace getCounterExample();
+	public IFATrace getCounterExample();
 	
 }

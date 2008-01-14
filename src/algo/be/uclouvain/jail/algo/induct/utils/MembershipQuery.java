@@ -4,8 +4,8 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import be.uclouvain.jail.fa.FAStateKind;
-import be.uclouvain.jail.fa.IDFA;
-import be.uclouvain.jail.fa.IDFATrace;
+import be.uclouvain.jail.fa.IFA;
+import be.uclouvain.jail.fa.IFATrace;
 import be.uclouvain.jail.graph.IDirectedGraphPath;
 
 /**
@@ -16,24 +16,24 @@ import be.uclouvain.jail.graph.IDirectedGraphPath;
 public class MembershipQuery<T> implements Iterable<T> {
 
 	/** Query prefix. */
-	private IDFATrace<T> prefix;
+	private IFATrace<T> prefix;
 
 	/** Query suffix. */
-	private IDFATrace<T> suffix;
+	private IFATrace<T> suffix;
 
 	/** Creates a query instance. */
-	public MembershipQuery(IDFATrace<T> prefix, IDFATrace<T> suffix) {
+	public MembershipQuery(IFATrace<T> prefix, IFATrace<T> suffix) {
 		this.prefix = prefix;
 		this.suffix = suffix;
 	}
 	
 	/** Returns the prefix. */
-	public IDFATrace<T> prefix() {
+	public IFATrace<T> prefix() {
 		return prefix;
 	}
 	
 	/** Returns the suffix. */
-	public IDFATrace<T> suffix() {
+	public IFATrace<T> suffix() {
 		return suffix;
 	}
 
@@ -44,7 +44,7 @@ public class MembershipQuery<T> implements Iterable<T> {
 	
 	/** Checks if the query is a positive one. */
 	public boolean isPositive() {
-		IDFA dfa = suffix.getDFA();
+		IFA dfa = suffix.getFA();
 		IDirectedGraphPath path = suffix.getGraphPath();
 		Object endState = path.getLastVertex();
 		return FAStateKind.ACCEPTING.equals(dfa.getStateKind(endState));

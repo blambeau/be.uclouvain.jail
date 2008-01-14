@@ -3,9 +3,10 @@ package be.uclouvain.jail.fa.utils;
 import java.util.Iterator;
 
 import be.uclouvain.jail.fa.FAStateKind;
-import be.uclouvain.jail.fa.IDFA;
-import be.uclouvain.jail.fa.IDFATrace;
+import be.uclouvain.jail.fa.IFA;
+import be.uclouvain.jail.fa.IFATrace;
 import be.uclouvain.jail.graph.IDirectedGraphPath;
+import be.uclouvain.jail.graph.IDirectedGraphWriter;
 import be.uclouvain.jail.graph.utils.DirectedGraphPath;
 
 /**
@@ -17,24 +18,29 @@ import be.uclouvain.jail.graph.utils.DirectedGraphPath;
  * @author blambeau
  * @param <T> type of trace letters.
  */
-public class DFATrace<T> implements IDFATrace<T> {
+public class FATrace<T> implements IFATrace<T> {
 
 	/** Decorated trace. */
-	private IDFATrace trace;
+	private IFATrace trace;
 	
 	/** Creates a decorator instance. */
-	public DFATrace(IDFATrace trace) {
+	public FATrace(IFATrace trace) {
 		this.trace = trace;
 	}
 	
 	/** Returns the dfa from which this trace has been extracted. */
-	public IDFA getDFA() {
-		return trace.getDFA();
+	public IFA getFA() {
+		return trace.getFA();
 	}
 
 	/** Returns the underlying graph path. */
 	public IDirectedGraphPath getGraphPath() {
 		return trace.getGraphPath();
+	}
+	
+	/** Returns size of the trace. */
+	public int size() {
+		return getGraphPath().size();
 	}
 
 	/** Returns an iterator on trace letters. */
@@ -53,7 +59,7 @@ public class DFATrace<T> implements IDFATrace<T> {
 	 * defined as the fact that the trace ends in an accepting state that 
 	 * is not marked as error. */
 	public boolean isAccepted() {
-		IDFA dfa = trace.getDFA();
+		IFA dfa = trace.getFA();
 		Object endState = getLastState();
 		return FAStateKind.ACCEPTING.equals(dfa.getStateKind(endState));
 	}
@@ -69,7 +75,7 @@ public class DFATrace<T> implements IDFATrace<T> {
 	/** Returns true if this trace reachs a state that is marked as an error
 	 * one. */
 	public boolean isError() {
-		IDFA dfa = trace.getDFA();
+		IFA dfa = trace.getFA();
 		Object endState = getLastState();
 		return FAStateKind.ERROR.equals(dfa.getStateKind(endState));
 	}
@@ -77,9 +83,14 @@ public class DFATrace<T> implements IDFATrace<T> {
 	/** Returns true if this trace reachs a state that is marked as an error
 	 * one. */
 	public boolean isAvoid() {
-		IDFA dfa = trace.getDFA();
+		IFA dfa = trace.getFA();
 		Object endState = getLastState();
 		return FAStateKind.AVOID.equals(dfa.getStateKind(endState));
+	}
+	
+	/** Flushes the trace in a writer. */
+	public Object[] flush(IDirectedGraphWriter writer) {
+		return getGraphPath().flush(writer);
 	}
 	
 	/** Adapts this trace to some type. */

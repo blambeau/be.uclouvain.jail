@@ -10,6 +10,7 @@ import be.uclouvain.jail.fa.INFA;
 import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.fa.impl.GraphNFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
+import be.uclouvain.jail.graph.IDirectedGraphWriter;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.uinfo.IUserInfoHelper;
@@ -88,7 +89,7 @@ public class DefaultSampleString<L> implements IFAAwareString<L> {
 	}
 	
 	/** Fills a NFA. */
-	public void fill(IDirectedGraph g) {
+	public Object[] fill(IDirectedGraphWriter g) {
 		int size = size();
 
 		// create initial state
@@ -97,8 +98,15 @@ public class DefaultSampleString<L> implements IFAAwareString<L> {
                                size==0 && !positive); // error is empty negative string
 		Object current = g.createVertex(sInfo);
 		
+		// prepare result
+		List<Object> states = new ArrayList<Object>(size+1);
+		
 		// create next states
 		for (int i=1; i<=size; i++) {
+			// add current to result
+			states.add(current);
+			
+			// create edge and state info
 			IUserInfo eInfo = eInfo(letters.get(i-1));
 			sInfo = sInfo(false, i==size && positive, i==size && !positive);
 			
@@ -109,6 +117,8 @@ public class DefaultSampleString<L> implements IFAAwareString<L> {
 			// current becomes next
 			current = next;
 		}
+		
+		return states.toArray();
 	}
 
 	/** Provides adaptations. */

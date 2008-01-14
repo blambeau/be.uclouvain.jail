@@ -29,10 +29,12 @@ TRAIN_SAMPLE = (allaccept <§jis
 PTA = (determinize (TRAIN_SAMPLE));
 (show (PTA));
 
-RPNIED = (rpni (PTA) :oracle 'blambeau' :querier TRAIN);
-(show (RPNIED));
+R  = (rpni PTA);
+R2 = (rpni PTA :oracle 'blambeau' :querier TRAIN);
+B  = (bluefringe PTA :threshold 1);
+B2 = (bluefringe PTA :threshold 1 :oracle 'blambeau' :querier TRAIN);
 
-/*
-BLUEFRINGED = (bluefringe (PTA) :treshold 1);
-(show (BLUEFRINGED));
-*/
+(show (R));
+(show (R2));
+(show (B));
+(show (B2));

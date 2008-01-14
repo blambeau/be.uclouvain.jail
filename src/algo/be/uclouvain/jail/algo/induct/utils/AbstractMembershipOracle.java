@@ -9,7 +9,7 @@ import be.uclouvain.jail.algo.induct.internal.Simulation;
 import be.uclouvain.jail.algo.induct.open.IMembershipQueryTester;
 import be.uclouvain.jail.algo.induct.open.IOracle;
 import be.uclouvain.jail.algo.induct.open.ISuffixExtractor;
-import be.uclouvain.jail.fa.IDFATrace;
+import be.uclouvain.jail.fa.IFATrace;
 
 /**
  * Provides a base implementation for membership query oracles.
@@ -42,28 +42,33 @@ public abstract class AbstractMembershipOracle implements IOracle {
 	}
 	
 	/** Returns an iterator on state suffixes. */
-	protected <T> Iterator<IDFATrace<T>> suffixesOf(PTAState state) {
+	protected <T> Iterator<IFATrace<T>> suffixesOf(PTAState state) {
 		return sExtractor.extract(state);
 	}
 	
 	/** Computes the short prefix of a state. */
-	protected <T> IDFATrace<T> shortPrefixOf(PTAState state) {
+	protected <T> IFATrace<T> shortPrefixOf(PTAState state) {
 		return state.getShortPrefix();
 	}
 	
 	/** Send queries to the tester. */
 	protected <T> void sendQueries(PTAState target, PTAState gained) throws Avoid, Restart {
-		IDFATrace<T> prefix = shortPrefixOf(target);
-		Iterator<IDFATrace<T>> suffixes = suffixesOf(gained);
+		IFATrace<T> prefix = shortPrefixOf(target);
+		Iterator<IFATrace<T>> suffixes = suffixesOf(gained);
 		while (suffixes.hasNext()) {
-			IDFATrace<T> suffix = suffixes.next();
+			IFATrace<T> suffix = suffixes.next();
 			sendQuery(prefix,suffix);
 		}
 	}
 	
 	/** Sends a query. */
-	protected <T> void sendQuery(IDFATrace<T> prefix, IDFATrace<T> suffix) throws Avoid, Restart {
+	protected <T> void sendQuery(IFATrace<T> prefix, IFATrace<T> suffix) throws Avoid, Restart {
 		MembershipQuery<T> query = new MembershipQuery<T>(prefix,suffix);
+		
+		// bypass negative queries for now
+		if (!query.isPositive()) { return; }
+		
+		// send query to the tester
 		if (tester.accept(query)) {
 			queryAccepted(query);
 		} else {

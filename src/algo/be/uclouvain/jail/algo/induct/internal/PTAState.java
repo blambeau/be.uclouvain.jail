@@ -8,8 +8,8 @@ import java.util.TreeMap;
 import be.uclouvain.jail.algo.commons.Avoid;
 import be.uclouvain.jail.algo.induct.open.IWalker;
 import be.uclouvain.jail.fa.IDFA;
-import be.uclouvain.jail.fa.IDFATrace;
-import be.uclouvain.jail.fa.utils.DefaultDFATrace;
+import be.uclouvain.jail.fa.IFATrace;
+import be.uclouvain.jail.fa.utils.DefaultFATrace;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.utils.DefaultDirectedGraphPath;
 import be.uclouvain.jail.uinfo.IUserInfo;
@@ -183,7 +183,7 @@ public class PTAState {
 	}
 
 	/** Returns the short prefix of the state. */
-	public <T> IDFATrace<T> getShortPrefix() {
+	public <T> IFATrace<T> getShortPrefix() {
 		IDFA pta = getRunningAlgo().getPTA();
 		IDirectedGraph graph = pta.getGraph();
 
@@ -191,13 +191,13 @@ public class PTAState {
 		if (parent == null) {
 			// YES. create an empty path
 			DefaultDirectedGraphPath path = new DefaultDirectedGraphPath(graph,representor());
-			return new DefaultDFATrace<T>(pta,path); 
+			return new DefaultFATrace<T>(pta,path); 
 		} else {
 			// NO. build edges and create path
 			LinkedList<Object> list = new LinkedList<Object>();
 			getShortPrefix(list);
 			DefaultDirectedGraphPath path = new DefaultDirectedGraphPath(graph,list);
-			return new DefaultDFATrace<T>(pta,path);
+			return new DefaultFATrace<T>(pta,path);
 		}
 	}
 	

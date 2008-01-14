@@ -20,7 +20,7 @@ import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
  * @author blambeau
  * @param <L> type of the letters.
  */
-public class DefaultSample<L> implements ISample<L> {
+public class DefaultSample<L> implements IExtensibleSample<L> {
 
 	/** Alphabet to use. */
 	private IAlphabet<L> alphabet;

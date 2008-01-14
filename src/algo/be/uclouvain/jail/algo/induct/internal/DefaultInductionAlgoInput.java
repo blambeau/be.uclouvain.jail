@@ -1,5 +1,6 @@
 package be.uclouvain.jail.algo.induct.internal;
 
+import net.chefbe.javautils.adapt.IAdaptable;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchAggregator;
 import be.uclouvain.jail.algo.induct.open.ICompatibility;
 import be.uclouvain.jail.algo.induct.open.IEvaluator;
@@ -8,7 +9,6 @@ import be.uclouvain.jail.algo.induct.open.IOracle;
 import be.uclouvain.jail.algo.induct.utils.AbstractMembershipOracle;
 import be.uclouvain.jail.algo.induct.utils.ClassicEvaluator;
 import be.uclouvain.jail.algo.utils.AbstractAlgoInput;
-import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.functions.FAStateKindFunction;
 import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.uinfo.UserInfoAggregator;
@@ -19,7 +19,7 @@ import be.uclouvain.jail.uinfo.UserInfoAggregator;
 public class DefaultInductionAlgoInput extends AbstractAlgoInput implements IInductionAlgoInput {
 
 	/** Input sample. */
-	private IDFA pta;
+	private IAdaptable input;
 
 	/** Oracle (optional). */
 	private IOracle oracle;
@@ -40,8 +40,8 @@ public class DefaultInductionAlgoInput extends AbstractAlgoInput implements IInd
 	private ICompatibility compatibility;
 
 	/** Creates a induction info. */
-	public DefaultInductionAlgoInput(IDFA pta) {
-		this.pta = pta;
+	public DefaultInductionAlgoInput(IAdaptable input) {
+		this.input = input;
 		oracle = null;
 		evaluator = new ClassicEvaluator();
 		cThreshold = -1;
@@ -69,8 +69,8 @@ public class DefaultInductionAlgoInput extends AbstractAlgoInput implements IInd
 	}
 
 	/** Returns input PTA. */
-	public IDFA getInputPTA() {
-		return pta;
+	public IAdaptable getInput() {
+		return input;
 	}
 
 	/** Returns compatibility informer. */

@@ -1,10 +1,10 @@
 package be.uclouvain.jail.algo.induct.internal;
 
+import net.chefbe.javautils.adapt.IAdaptable;
 import be.uclouvain.jail.algo.commons.IAlgoInput;
 import be.uclouvain.jail.algo.induct.open.ICompatibility;
 import be.uclouvain.jail.algo.induct.open.IEvaluator;
 import be.uclouvain.jail.algo.induct.open.IOracle;
-import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.uinfo.UserInfoAggregator;
 
 /**
@@ -14,8 +14,8 @@ import be.uclouvain.jail.uinfo.UserInfoAggregator;
  */
 public interface IInductionAlgoInput extends IAlgoInput {
 
-	/** Returns the input PTA. */
-	public IDFA getInputPTA();
+	/** Returns input of the induction. */
+	public IAdaptable getInput();
 
 	/** Returns compatibility. */
 	public ICompatibility getCompatibility();

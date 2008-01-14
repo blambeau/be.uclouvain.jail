@@ -56,7 +56,7 @@ public abstract class InductionAlgo {
 	/** Initializes the algorithm. */
 	private void initialize() throws Avoid {
 		// create PTA
-		this.pta = input.getInputPTA();
+		this.pta = (IDFA) input.getInput().adapt(IDFA.class);
 		assert new PTAGraphConstraint().isRespectedBy(this.pta.getGraph()) : "Valid input PTA.";
 		
 		// create target DFA

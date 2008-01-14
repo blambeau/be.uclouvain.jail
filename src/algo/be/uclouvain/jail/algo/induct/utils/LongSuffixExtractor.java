@@ -10,8 +10,8 @@ import be.uclouvain.jail.algo.induct.internal.PTAState;
 import be.uclouvain.jail.algo.induct.open.ISuffixExtractor;
 import be.uclouvain.jail.algo.induct.open.IWalker;
 import be.uclouvain.jail.fa.IDFA;
-import be.uclouvain.jail.fa.IDFATrace;
-import be.uclouvain.jail.fa.utils.DefaultDFATrace;
+import be.uclouvain.jail.fa.IFATrace;
+import be.uclouvain.jail.fa.utils.DefaultFATrace;
 import be.uclouvain.jail.graph.utils.DefaultDirectedGraphPath;
 
 /**
@@ -33,9 +33,9 @@ public class LongSuffixExtractor implements ISuffixExtractor, IWalker {
 	
 	/** Extracts suffixes of the state. */
 	@SuppressWarnings("unchecked")
-	public <T> Iterator<IDFATrace<T>> extract(PTAState state) {
+	public <T> Iterator<IFATrace<T>> extract(PTAState state) {
 		this.state = state;
-		traces = new ArrayList<IDFATrace<T>>();
+		traces = new ArrayList<IFATrace<T>>();
 		stack = new Stack<PTAEdge>();
 
 		// walk the state
@@ -60,7 +60,7 @@ public class LongSuffixExtractor implements ISuffixExtractor, IWalker {
 		}
 		
 		// create a trace and add it to traces
-		IDFATrace trace = new DefaultDFATrace(pta,path);
+		IFATrace trace = new DefaultFATrace(pta,path);
 		traces.add(trace);
 	}
 	

@@ -32,7 +32,7 @@ public class MappingUtils {
 
 	/** Updates the Dec/PTA representor of a the kernel DFA state. */
 	protected static void updPRepresentor(InductionAlgo algo, Object kState, PTAState ptaState) {
-		System.out.println("Updating PTA representor of " + algo.getDFA().getGraph().getVerticesTotalOrder().indexOf(kState) + " " + kState);
+		//System.out.println("Updating PTA representor of " + algo.getDFA().getGraph().getVerticesTotalOrder().indexOf(kState) + " " + kState);
 		IDFA dfa = algo.getDFA();
 		assert (ptaState != null) : "We never map a null PTAState.";
 		dfa.getGraph().getVertexInfo(kState).setAttribute(KDP_REPRESENTOR, ptaState);
@@ -41,7 +41,7 @@ public class MappingUtils {
 	/** Returns the PTA representor of a kernel state. */ 
 	public static PTAState pRepresentor(InductionAlgo algo, Object kState) {
 		IDFA dfa = algo.getDFA();
-		System.out.println("Requesting PTA representor of " + algo.getDFA().getGraph().getVerticesTotalOrder().indexOf(kState) + " " + kState);
+		//System.out.println("Requesting PTA representor of " + algo.getDFA().getGraph().getVerticesTotalOrder().indexOf(kState) + " " + kState);
 		PTAState state = (PTAState) dfa.getGraph().getVertexInfo(kState).getAttribute(KDP_REPRESENTOR);
 		assert (state != null) : "We never request a PTA representor which does not exist yet.";
 		return state;

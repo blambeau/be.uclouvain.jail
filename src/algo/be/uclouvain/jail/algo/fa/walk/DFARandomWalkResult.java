@@ -5,6 +5,8 @@ import be.uclouvain.jail.algo.fa.determinize.NFADeterminizer;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchPopulator;
 import be.uclouvain.jail.algo.graph.walk.DefaultRandomWalkResult;
 import be.uclouvain.jail.algo.graph.walk.IRandomWalkInput;
+import be.uclouvain.jail.algo.induct.sample.ISample;
+import be.uclouvain.jail.algo.induct.sample.MCASample;
 import be.uclouvain.jail.fa.FAStateKind;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.INFA;
@@ -105,6 +107,9 @@ public class DFARandomWalkResult extends DefaultRandomWalkResult {
 		} else if (IDFA.class.equals(c)) {
 			INFA nfa = new GraphNFA((IDirectedGraph)super.adapt(IDirectedGraph.class));
 			return new NFADeterminizer(nfa).getResultingDFA();
+		} else if (ISample.class.equals(c)) {
+			INFA nfa = new GraphNFA((IDirectedGraph)super.adapt(IDirectedGraph.class));
+			return new MCASample(nfa);
 		}
 		
 		return super.adapt(c);

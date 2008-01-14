@@ -5,19 +5,19 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.chefbe.javautils.adapt.AdaptUtils;
-import be.uclouvain.jail.fa.IDFA;
-import be.uclouvain.jail.fa.IDFATrace;
+import be.uclouvain.jail.fa.IFA;
+import be.uclouvain.jail.fa.IFATrace;
 import be.uclouvain.jail.graph.IDirectedGraphPath;
 
 /**
- * Provides a default implementation of {@link IDFATrace}.
+ * Provides a default implementation of {@link IFATrace}.
  * 
  * @author blambeau
  */
-public class DefaultDFATrace<T> implements IDFATrace<T> {
+public class DefaultFATrace<T> implements IFATrace<T> {
 
-	/** DFA from which this trace is extracted. */
-	private IDFA dfa;
+	/** FA from which this trace is extracted. */
+	private IFA fa;
 	
 	/** Underlying graph path. */
 	private IDirectedGraphPath path;
@@ -26,15 +26,15 @@ public class DefaultDFATrace<T> implements IDFATrace<T> {
 	private List<T> letters; 
 	
 	/** Creates a trace instance. */
-	public DefaultDFATrace(IDFA dfa, IDirectedGraphPath path) {
-		this.dfa = dfa;
+	public DefaultFATrace(IFA dfa, IDirectedGraphPath path) {
+		this.fa = dfa;
 		this.path = path;
 	}
 
 	/** Returns the dfa from which this trace has been 
 	 * extracted. */
-	public IDFA getDFA() {
-		return dfa;
+	public IFA getFA() {
+		return fa;
 	}
 
 	/** Returns the underlying graph path. */
@@ -48,7 +48,7 @@ public class DefaultDFATrace<T> implements IDFATrace<T> {
 		if (letters == null) {
 			letters = new ArrayList<T>(path.size());
 			for (Object edge: path.edges()) {
-				letters.add((T)dfa.getEdgeLetter(edge));
+				letters.add((T)fa.getEdgeLetter(edge));
 			}
 		}
 		return letters.iterator();

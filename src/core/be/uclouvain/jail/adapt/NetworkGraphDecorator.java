@@ -69,7 +69,9 @@ public class NetworkGraphDecorator implements IDirectedGraph {
 	/** Returns informations attached to a vertex. */
 	public IUserInfo getVertexInfo(Object vertex) {
 		NetworkNode node = (NetworkNode) vertex;
-		return helper.keyValue("label", node.getDomain().getSimpleName());
+		helper.addKeyValue("label", node.getDomain().getSimpleName());
+		helper.addKeyValue("shape", "box");
+		return helper.install();
 	}
 	
 	/** Sets informations attached to a vertex. */

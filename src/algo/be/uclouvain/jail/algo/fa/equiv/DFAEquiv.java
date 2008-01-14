@@ -2,7 +2,7 @@ package be.uclouvain.jail.algo.fa.equiv;
 
 import be.uclouvain.jail.algo.fa.equiv.IDFAEquivOutput.CounterExampleKind;
 import be.uclouvain.jail.fa.IDFA;
-import be.uclouvain.jail.fa.IDFATrace;
+import be.uclouvain.jail.fa.IFATrace;
 
 /**
  * Provides a user-friendly API to check equivalence of DFAs.
@@ -55,7 +55,7 @@ public class DFAEquiv {
 	}
 	
 	/** Returns kind of counter example. */
-	public IDFATrace getCounterExample() {
+	public IFATrace getCounterExample() {
 		if (!executed) { execute(); }
 		return output.getCounterExample();
 	}
