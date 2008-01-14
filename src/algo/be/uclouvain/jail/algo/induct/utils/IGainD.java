@@ -1,17 +1,20 @@
 package be.uclouvain.jail.algo.induct.utils;
 
-import java.util.Iterator;
+import be.uclouvain.jail.algo.induct.internal.IWork;
+import be.uclouvain.jail.algo.induct.internal.PTAEdge;
+import be.uclouvain.jail.algo.induct.internal.PTAState;
 
-/** Decorates Gain works to help creating membership queries. */ 
-public interface IGainD {
+/** Decorates Gain works to help creating 
+ * membership queries. */ 
+public interface IGainD extends IWork {
 
-	/** Computes the short prefix. */
-	public Object[] shortPrefix();
+	/** Returns gained edge. */
+	public PTAEdge edgeGain();
 	
-	/** Returns gained letter. */
+	/** Returns letter on the gained edge. */
 	public Object letter();
 	
-	/** Computes the suffixes. */
-	public Iterator<Suffix> suffixes();
+	/** Returns target of the gained edge. */
+	public PTAState stateGain();
 	
 }

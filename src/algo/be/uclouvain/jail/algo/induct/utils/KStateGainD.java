@@ -1,16 +1,10 @@
 package be.uclouvain.jail.algo.induct.utils;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import be.uclouvain.jail.algo.induct.internal.IWork;
-import be.uclouvain.jail.algo.induct.internal.InductionAlgo;
-import be.uclouvain.jail.algo.induct.internal.MappingUtils;
 import be.uclouvain.jail.algo.induct.internal.PTAEdge;
 import be.uclouvain.jail.algo.induct.internal.PTAState;
+import be.uclouvain.jail.algo.induct.internal.Simulation;
 import be.uclouvain.jail.algo.induct.internal.WorkType;
-import be.uclouvain.jail.algo.induct.internal.WorkUtils;
 
 /** Decorates a KStateGain with utilities. */
 public class KStateGainD implements IGainD {
@@ -18,11 +12,32 @@ public class KStateGainD implements IGainD {
 	/** Decorated work. */
 	private IWork work;
 
+	/** Creates a decorator instance. */
 	public KStateGainD(IWork work) {
 		if (!WorkType.KStateGain.equals(work.type())) {
 			throw new IllegalArgumentException("KStateGain work expected.");
 		}
 		this.work = work;
+	}
+
+	/** Returns the simulation. */
+	public Simulation simulation() {
+		return work.simulation();
+	}
+
+	/** Returns work type. */
+	public WorkType type() {
+		return work.type();
+	}
+
+	/** Returns work's target. */
+	public Object target() {
+		return work.target();
+	}
+
+	/** Returns work's victim. */
+	public Object victim() {
+		return work.victim();
 	}
 
 	/** Returns the kernel state. */
@@ -45,21 +60,6 @@ public class KStateGainD implements IGainD {
 	/** Returns the target of the gained edge (aka gained state). */
 	public PTAState stateGain() {
 		return edgeGain().target();
-	}
-
-	/** Returns the short prefix of the target kernel state. */
-	public Object[] shortPrefix() {
-		InductionAlgo algo = WorkUtils.getRunningAlgo(work);
-		Object rep = MappingUtils.sRepresentor(algo, kState());
-		assert (rep != null) : "Kernel state has a representor.";
-		return WorkUtils.shortPrefix(rep);
-	}
-
-	/** Extracts the suffixes of the merge state. */
-	public Iterator<Suffix> suffixes() {
-		List<Suffix> suffixes = new ArrayList<Suffix>();
-		stateGain().accept(new SuffixesExtractor(WorkUtils.getSourcePTA(work), suffixes));
-		return suffixes.iterator();
 	}
 
 }

@@ -19,6 +19,7 @@ public class FilteredSimuVisitor implements ISimuVisitor {
 		this(null,types);
 	}
 
+	/** Creates a visitor instance. */
 	public FilteredSimuVisitor(ISimuVisitor realVisitor, WorkType...types) {
 		if (types == null || types.length == 0) {
 			throw new IllegalArgumentException("Interests cannot be empty.");

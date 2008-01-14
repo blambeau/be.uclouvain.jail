@@ -1,14 +1,12 @@
 package be.uclouvain.jail.algo.induct.utils;
 
-import java.util.Iterator;
+import be.uclouvain.jail.algo.induct.internal.IWork;
+import be.uclouvain.jail.algo.induct.internal.PTAState;
 
 /** Decorates Merge works to help creating membership queries. */ 
-public interface IMergeD {
+public interface IMergeD extends IWork {
 
-	/** Returns the short prefix of target state. */
-	public Object[] shortPrefix();
-
-	/** Returns suffixes of the victim state. */
-	public Iterator suffixes();
-
+	/** Returns gained state. */
+	public PTAState stateGain();
+	
 }

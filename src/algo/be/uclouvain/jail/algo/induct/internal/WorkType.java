@@ -19,11 +19,8 @@ public enum WorkType {
 	KStateGain(4), 
 	
 	/** Other state gain. */
-	OStateGain(5),
+	OStateGain(5);
 
-	/** Victim state gain. */
-	VStateGain(6);
-	
 	/** Identifier of the work. */
 	private int id;
 

@@ -258,37 +258,6 @@ public class Simulation {
 		
 	}
 
-	/** Victim state outgoing transition gain. */
-	class VStateGain extends AbstractSubWork {
-
-		/** Victim state. */
-		protected PTAState state;
-
-		/** Gained edge. */
-		protected Object edge;
-
-		/** Commits the work. */
-		protected void commit() {
-		}
-
-		/** Returns the victim, i.e. gained edge. */
-		public Object victim() {
-			return edge;
-		}
-
-		/** Returns the target state. */
-		public Object target() {
-			return state;
-		}
-
-		/** Creates a work instance. */
-		public VStateGain(PTAState state, Object edge) {
-			this.state = state;
-			this.edge = edge;
-		}
-		
-	}
-
 	/** Creates a simulation instance with initial merge info. */
 	protected Simulation(InductionAlgo algo, PTAEdge edge, Object tkState) {
 		// initialize instance variables
@@ -449,11 +418,6 @@ public class Simulation {
 		assert (!oStateGains.containsKey(pair)) : "Gain => not already gained.";
 		addSubWork(new OStateGain(state, edge));
 		oStateGains.put(pair, edge);
-	}
-
-	/** Adds victim state gain. */
-	protected void addVStateGain(PTAState state, Object edge) {
-		addSubWork(new VStateGain(state, edge));
 	}
 
 	/** Returns a kernel state gain. */

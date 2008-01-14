@@ -1,14 +1,10 @@
 package be.uclouvain.jail.algo.induct.utils;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import be.uclouvain.jail.algo.induct.internal.IWork;
 import be.uclouvain.jail.algo.induct.internal.PTAEdge;
 import be.uclouvain.jail.algo.induct.internal.PTAState;
+import be.uclouvain.jail.algo.induct.internal.Simulation;
 import be.uclouvain.jail.algo.induct.internal.WorkType;
-import be.uclouvain.jail.algo.induct.internal.WorkUtils;
 
 /** Decorates another state gain. */
 public class OStateGainD implements IGainD {
@@ -26,8 +22,28 @@ public class OStateGainD implements IGainD {
 		}
 	}
 
+	/** Returns the simulation. */
+	public Simulation simulation() {
+		return work.simulation();
+	}
+
+	/** Returns work type. */
+	public WorkType type() {
+		return work.type();
+	}
+
+	/** Returns work's target. */
+	public Object target() {
+		return work.target();
+	}
+
+	/** Returns work's victim. */
+	public Object victim() {
+		return work.victim();
+	}
+
 	/** Returns the target state. */
-	public PTAState targetState() {
+	public PTAState oState() {
 		return (PTAState) work.target();
 	}
 
@@ -46,20 +62,6 @@ public class OStateGainD implements IGainD {
 	/** Returns the gained state (target of the gained edge). */
 	public PTAState stateGain() {
 		return edgeGain().target();
-	}
-
-	/** Returns the short prefix of the target state. */
-	public Object[] shortPrefix() {
-		Object rep = targetState().representor();
-		assert (rep != null) : "Target state has a representor.";
-		return WorkUtils.shortPrefix(rep);
-	}
-
-	/** Extracts the suffixes of the target state. */
-	public Iterator<Suffix> suffixes() {
-		List<Suffix> suffixes = new ArrayList<Suffix>();
-		stateGain().accept(new SuffixesExtractor(WorkUtils.getSourcePTA(work), suffixes));
-		return suffixes.iterator();
 	}
 
 }
