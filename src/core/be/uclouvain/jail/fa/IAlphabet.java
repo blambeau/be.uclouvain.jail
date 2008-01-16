@@ -20,6 +20,12 @@ import be.uclouvain.jail.graph.utils.ITotalOrder;
  */
 public interface IAlphabet<L> extends Comparator<L>, Iterable<L> {
 
+	/** Converts an iterable of letters to a word. */
+	public IWord<L> word(Iterable<L> letters);
+	
+	/** Returns a comparator for words. */
+	public Comparator<IWord<L>> getWordComparator();
+	
 	/** Returns true if the letter is known by its alphabet. */
 	public boolean contains(L letter);
 	

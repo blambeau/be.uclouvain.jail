@@ -1,13 +1,20 @@
-package be.uclouvain.jail.algo.induct.sample;
+package be.uclouvain.jail.fa.utils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import net.chefbe.javautils.adapt.AdaptUtils;
+import net.chefbe.javautils.comparisons.HashCodeUtils;
 import be.uclouvain.jail.fa.FAStateKind;
+import be.uclouvain.jail.fa.IAlphabet;
+import be.uclouvain.jail.fa.IDFA;
+import be.uclouvain.jail.fa.IFlushableString;
 import be.uclouvain.jail.fa.INFA;
+import be.uclouvain.jail.fa.IString;
+import be.uclouvain.jail.fa.IWord;
 import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
+import be.uclouvain.jail.fa.impl.GraphDFA;
 import be.uclouvain.jail.fa.impl.GraphNFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.IDirectedGraphWriter;
@@ -22,41 +29,34 @@ import be.uclouvain.jail.uinfo.UserInfoHelper;
  * @author blambeau
  * @param <L> type of the string letters.
  */
-public class DefaultSampleString<L> implements IFAAwareString<L> {
+public class DefaultString<L> implements IFlushableString<L> {
 
 	/** Positive string? */
 	private boolean positive;
 	
-	/** String letters. */
-	private List<L> letters;
+	/** Underlying word. */
+	private IWord<L> word;
 
 	/** Creates a string with letters. */
-	public DefaultSampleString(boolean positive, List<L> letters) {
-		this.letters = letters;
+	public DefaultString(IAlphabet<L> alphabet, Iterable<L> letters, boolean positive) {
+		this.word = new DefaultWord<L>(alphabet, letters);
 		this.positive = positive;
 	}
 	
 	/** Creates a string with letters. */
-	public DefaultSampleString(boolean positive, L...letters) {
-		this.letters = new ArrayList<L>();
-		for (L letter: letters) {
-			this.letters.add(letter);
-		}
+	public DefaultString(IAlphabet<L> alphabet, L[] letters, boolean positive) {
+		this.word = new DefaultWord<L>(alphabet, letters);
 		this.positive = positive;
 	}
 	
-	/** Copy constructor. */
-	public DefaultSampleString(ISampleString<L> copy) {
-		this.letters = new ArrayList<L>();
-		for (L letter: copy) {
-			this.letters.add(letter);
-		}
-		this.positive = copy.isPositive();
+	/** Returns alphabet which generated this word. */
+	public IAlphabet<L> getAlphabet() {
+		return word.getAlphabet();
 	}
 	
 	/** Returns size of the string. */
 	public int size() {
-		return letters.size();
+		return word.size();
 	}
 	
 	/** Returns true if the string is negative. */
@@ -71,14 +71,60 @@ public class DefaultSampleString<L> implements IFAAwareString<L> {
 
 	/** Returns an iterator on string letters. */
 	public Iterator<L> iterator() {
-		return letters.iterator();
+		return word.iterator();
 	}
+	
+	/** Compares with another string. */
+	public int compareTo(IString<L> other) {
+		int c = getAlphabet().getWordComparator().compare(this, other);
+
+		// if not equal let return c
+		if (c != 0) { return c; }
+		
+		// otherwise, positive strings are greater
+		// than negative ones
+		return new Boolean(positive).compareTo(other.isPositive());
+	}
+
+	/** Compares with another word. */
+	@SuppressWarnings("unchecked")
+	public int compareTo(Object who) {
+		if (who == this) { return 0; }
+		if (who instanceof IString == false) { return 1; }
+		try {
+			return compareTo((IString<L>)who);
+		} catch (ClassCastException ex) {
+			return 1;
+		}
+	}
+	
+	/** Returns an hash code. */
+	public int hashCode() {
+		int hash = HashCodeUtils.SEED;
+		hash = HashCodeUtils.hash(hash, word.hashCode());
+		hash = HashCodeUtils.hash(hash, positive);
+		return hash;
+	}
+	
+	/** Compares with another word. */
+	public boolean equals(Object who) {
+		if (who == this) { return true; }
+		if (who instanceof DefaultString) {
+			DefaultString other = (DefaultString) who;
+			return word.equals(other.word)
+			    && new Boolean(positive).equals(other.isPositive());
+		}
+		return compareTo(who) == 0;
+	}
+
+	
 
 	/** Factors a state info. */
 	private IUserInfo sInfo(boolean initial, boolean accepting, boolean error) {
 		IUserInfoHelper helper = UserInfoHelper.instance();
 		helper.addKeyValue(AttributeGraphFAInformer.STATE_INITIAL_KEY, initial);
-		helper.addKeyValue(AttributeGraphFAInformer.STATE_KIND_KEY, FAStateKind.fromBools(accepting,error));
+		helper.addKeyValue(AttributeGraphFAInformer.STATE_KIND_KEY, 
+				FAStateKind.fromBools(accepting,error));
 		return helper.install();
 	}
 	
@@ -102,12 +148,13 @@ public class DefaultSampleString<L> implements IFAAwareString<L> {
 		List<Object> states = new ArrayList<Object>(size+1);
 		
 		// create next states
-		for (int i=1; i<=size; i++) {
+		int i=1;
+		for (L letter: this) {
 			// add current to result
 			states.add(current);
 			
 			// create edge and state info
-			IUserInfo eInfo = eInfo(letters.get(i-1));
+			IUserInfo eInfo = eInfo(letter);
 			sInfo = sInfo(false, i==size && positive, i==size && !positive);
 			
 			// create next state and connect
@@ -116,6 +163,7 @@ public class DefaultSampleString<L> implements IFAAwareString<L> {
 			
 			// current becomes next
 			current = next;
+			i++;
 		}
 		
 		return states.toArray();
@@ -135,6 +183,10 @@ public class DefaultSampleString<L> implements IFAAwareString<L> {
 			INFA nfa = new GraphNFA();
 			fill(nfa.getGraph());
 			return nfa;
+		} else if (IDFA.class.equals(c)) {
+			IDFA dfa = new GraphDFA();
+			fill(dfa.getGraph());
+			return dfa;
 		}
 		 
 		// allow external adapters to do their work

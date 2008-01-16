@@ -5,8 +5,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.chefbe.javautils.adapt.AdaptUtils;
+import be.uclouvain.jail.fa.IAlphabet;
 import be.uclouvain.jail.fa.IFA;
 import be.uclouvain.jail.fa.IFATrace;
+import be.uclouvain.jail.fa.IWord;
 import be.uclouvain.jail.graph.IDirectedGraphPath;
 
 /**
@@ -59,6 +61,13 @@ public class DefaultFATrace<T> implements IFATrace<T> {
 		if (c.isAssignableFrom(this.getClass())) {
 			return this;
 		}
+
+		// adapt to a word
+		if (IWord.class.equals(c)) {
+			IAlphabet<T> alphabet = getFA().getAlphabet();
+			return alphabet.word(this);
+		}
+		
 		return AdaptUtils.externalAdapt(this,c);
 	}
 

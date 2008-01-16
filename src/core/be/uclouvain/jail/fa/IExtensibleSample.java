@@ -1,4 +1,4 @@
-package be.uclouvain.jail.algo.induct.sample;
+package be.uclouvain.jail.fa;
 
 /**
  * Extensible sample, which allows adding strings.
@@ -9,6 +9,6 @@ package be.uclouvain.jail.algo.induct.sample;
 public interface IExtensibleSample<L> extends ISample<L> {
 
 	/** Adds a sample string. */
-	public void addSampleString(ISampleString<L> string);
+	public void addString(IString<L> string);
 
 }

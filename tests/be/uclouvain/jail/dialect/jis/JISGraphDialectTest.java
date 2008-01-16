@@ -5,9 +5,9 @@ import java.io.IOException;
 import junit.framework.TestCase;
 import net.chefbe.autogram.ast2.parsing.ParseException;
 import be.uclouvain.jail.algo.fa.equiv.DFAEquiv;
-import be.uclouvain.jail.algo.induct.sample.ISample;
-import be.uclouvain.jail.algo.induct.sample.ISampleString;
 import be.uclouvain.jail.fa.IDFA;
+import be.uclouvain.jail.fa.ISample;
+import be.uclouvain.jail.fa.IString;
 import be.uclouvain.jail.tests.JailTestUtils;
 
 /**
@@ -33,10 +33,9 @@ public class JISGraphDialectTest extends TestCase {
 		assertEquals(1,sample.size());
 		
 		// string is of size 0
-		ISampleString<String> s = sample.iterator().next();
+		IString<String> s = sample.iterator().next();
 		assertEquals(0,s.size());
 		assertTrue(s.isPositive());
-		assertFalse(s.isNegative());
 		
 		// assert equivalence with EMPTY DFA
 		IDFA pta = (IDFA) sample.adapt(IDFA.class);
@@ -54,10 +53,9 @@ public class JISGraphDialectTest extends TestCase {
 		assertEquals(1,sample.size());
 		
 		// string is of size 0
-		ISampleString<String> s = sample.iterator().next();
+		IString<String> s = sample.iterator().next();
 		assertEquals(0,s.size());
 		assertFalse(s.isPositive());
-		assertTrue(s.isNegative());
 
 		// assert equivalence with EMPTY NEG DFA
 		IDFA pta = (IDFA) sample.adapt(IDFA.class);
@@ -74,10 +72,9 @@ public class JISGraphDialectTest extends TestCase {
 		assertEquals(1,sample.size());
 		
 		// string is of size 0
-		ISampleString<String> s = sample.iterator().next();
+		IString<String> s = sample.iterator().next();
 		assertEquals(1,s.size());
 		assertTrue(s.isPositive());
-		assertFalse(s.isNegative());
 		assertEquals("a", s.iterator().next());
 		
 		// assert equivalence with EMPTY DFA

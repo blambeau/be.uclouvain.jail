@@ -16,20 +16,19 @@ G = (randdfa A :stateCount stateCount :alphabetSize 2 :accepting 1.0 :tolerance 
 // identify the generated DFA
 G = (identify (complement G));
 
-H = (randsample G :pathCount 10 :pathLength 7 :chooseRoot false 
-		                            :extend false :posProba 1.0);
-
-PTA = (allaccept (determinize H :state {@label -> allsame(@id)}));
+H = (randsample G :pathCount pathCount :pathLength 8 :chooseRoot false 
+		                                   :extend false :posProba 1.0);
+PTA = (determinize H :state {@label -> allsame(@id)});
 
 R  = (rpni PTA);
 R2 = (rpni PTA :oracle 'blambeau' :querier G);
 B  = (bluefringe PTA);
 B2 = (bluefringe PTA :oracle 'blambeau' :querier G);
 
-(show G);
+(show (uncomplement G));
 //(show H);
 (show PTA);
-(show R);
-(show R2);
-(show B);
-(show B2);
+(show (uncomplement R));
+(show (uncomplement R2));
+(show (uncomplement B));
+(show (uncomplement B2));

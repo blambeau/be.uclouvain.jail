@@ -10,10 +10,11 @@ import java.io.PrintWriter;
 import net.chefbe.autogram.ast2.ILocation;
 import net.chefbe.autogram.ast2.parsing.ParseException;
 import net.chefbe.autogram.ast2.utils.BaseLocation;
-import be.uclouvain.jail.algo.induct.sample.DefaultSample;
-import be.uclouvain.jail.algo.induct.sample.DefaultSampleString;
-import be.uclouvain.jail.algo.induct.sample.ISample;
 import be.uclouvain.jail.dialect.utils.AbstractGraphDialect;
+import be.uclouvain.jail.fa.IAlphabet;
+import be.uclouvain.jail.fa.ISample;
+import be.uclouvain.jail.fa.utils.DefaultSample;
+import be.uclouvain.jail.fa.utils.DefaultString;
 import be.uclouvain.jail.vm.JailVMOptions;
 
 /** Installs the DOT graph dialect. */
@@ -37,6 +38,7 @@ public class JISGraphDialect extends AbstractGraphDialect {
 
 		// create target graph
 		DefaultSample<String> sample = new DefaultSample<String>();
+		IAlphabet<String> alphabet = sample.getAlphabet();
 		
 		// read all lines
 		String line = null;
@@ -59,9 +61,9 @@ public class JISGraphDialect extends AbstractGraphDialect {
 			
 			// convert it to a sample string
 			if (start == '+') {
-				sample.addSampleString(new DefaultSampleString<String>(true,letters));
+				sample.addString(new DefaultString<String>(alphabet,letters,true));
 			} else if (start == '-') {
-				sample.addSampleString(new DefaultSampleString<String>(false,letters));
+				sample.addString(new DefaultString<String>(alphabet,letters,false));
 			} else {
 				throw new ParseException("JIS lines must start with + or -");
 			}

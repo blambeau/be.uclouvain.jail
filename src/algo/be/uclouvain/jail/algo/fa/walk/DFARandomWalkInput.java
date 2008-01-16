@@ -48,6 +48,11 @@ public class DFARandomWalkInput extends DefaultRandomWalkInput {
 		super.addOption("maxTry", false, Integer.class, null);
 	}
 
+	/** Returns input DFA. */
+	public IDFA getDFA() {
+		return dfa;
+	}
+	
 	/** Extend the strings? */
 	public void setExtend(boolean extend) {
 		this.extend = extend;

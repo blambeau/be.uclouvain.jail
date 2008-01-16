@@ -55,6 +55,12 @@ public abstract class InductionAlgo {
 	
 	/** Initializes the algorithm. */
 	private void initialize() throws Avoid {
+		// initialize oracle if any
+		IOracle oracle = input.getOracle();
+		if (oracle != null) {
+			oracle.initialize(this);
+		}
+		
 		// create PTA
 		this.pta = (IDFA) input.getInput().adapt(IDFA.class);
 		assert new PTAGraphConstraint().isRespectedBy(this.pta.getGraph()) : "Valid input PTA.";

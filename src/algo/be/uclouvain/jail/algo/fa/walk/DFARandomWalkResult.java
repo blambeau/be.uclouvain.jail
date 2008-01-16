@@ -1,17 +1,22 @@
 package be.uclouvain.jail.algo.fa.walk;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import be.uclouvain.jail.algo.commons.Unable;
 import be.uclouvain.jail.algo.fa.determinize.NFADeterminizer;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchPopulator;
 import be.uclouvain.jail.algo.graph.walk.DefaultRandomWalkResult;
 import be.uclouvain.jail.algo.graph.walk.IRandomWalkInput;
-import be.uclouvain.jail.algo.induct.sample.ISample;
-import be.uclouvain.jail.algo.induct.sample.MCASample;
 import be.uclouvain.jail.fa.FAStateKind;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.INFA;
+import be.uclouvain.jail.fa.ISample;
+import be.uclouvain.jail.fa.IWord;
 import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.fa.impl.GraphNFA;
+import be.uclouvain.jail.fa.utils.FATrace;
+import be.uclouvain.jail.fa.utils.MCASample;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.IDirectedGraphPath;
 import be.uclouvain.jail.graph.utils.DirectedGraphWriter;
@@ -27,6 +32,9 @@ public class DFARandomWalkResult extends DefaultRandomWalkResult {
 	/** Associated input. */
 	private DFARandomWalkInput input;
 	
+	/** Words. */
+	private Set<IWord> words;
+	
 	/** Tries. */
 	private int tries = 0;
 	
@@ -37,6 +45,7 @@ public class DFARandomWalkResult extends DefaultRandomWalkResult {
 			throw new Unable("DFARandomWalkResult expects a DFARandomWalkInput as associated input");
 		}
 		this.input = (DFARandomWalkInput) input;
+		this.words = new HashSet<IWord>();
 		super.started(input);
 	}
 
@@ -74,6 +83,18 @@ public class DFARandomWalkResult extends DefaultRandomWalkResult {
 		}
 	}
 
+	/** Checks that a path has not been found yet. */
+	private boolean checkNotYetFound(IDirectedGraphPath path) {
+		FATrace trace = new FATrace(input.getDFA(),path);
+		IWord word = trace.getWord();
+		if (words.contains(word)) {
+			return false;
+		} else {
+			words.add(word);
+			return true;
+		}
+	}
+	
 	/** Checks path length. */
 	@Override
 	public void addWalkPath(IDirectedGraphPath path) {
@@ -84,11 +105,18 @@ public class DFARandomWalkResult extends DefaultRandomWalkResult {
 			double actual = path.size();
 			double diff = Math.abs(wish-actual)/wish;
 			isOk = diff<input.tolerance;
-			if (!isOk && (++tries > input.maxTry)) { 
-				throw new Unable();
-			}
         }
 
+        // able to do it?
+        if (!isOk && (++tries > input.maxTry)) { 
+			throw new Unable();
+		}
+        
+        // check that the string is not known yet
+        if (isOk) {
+        	isOk = checkNotYetFound(path);
+        }
+        
         // add path when ok
 		if (isOk) {
 			super.addWalkPath(path);

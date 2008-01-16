@@ -3,9 +3,13 @@ package be.uclouvain.jail.algo.induct.utils;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import net.chefbe.javautils.adapt.AdaptUtils;
+import net.chefbe.javautils.adapt.IAdaptable;
 import be.uclouvain.jail.fa.FAStateKind;
+import be.uclouvain.jail.fa.IAlphabet;
 import be.uclouvain.jail.fa.IFA;
 import be.uclouvain.jail.fa.IFATrace;
+import be.uclouvain.jail.fa.IString;
 import be.uclouvain.jail.graph.IDirectedGraphPath;
 
 /**
@@ -13,7 +17,7 @@ import be.uclouvain.jail.graph.IDirectedGraphPath;
  * 
  * @author blambeau
  */
-public class MembershipQuery<T> implements Iterable<T> {
+public class MembershipQuery<T> implements Iterable<T>, IString<T>, IAdaptable {
 
 	/** Query prefix. */
 	private IFATrace<T> prefix;
@@ -36,6 +40,11 @@ public class MembershipQuery<T> implements Iterable<T> {
 	public IFATrace<T> suffix() {
 		return suffix;
 	}
+	
+	/** Returns the alphabet. */
+	public IAlphabet<T> getAlphabet() {
+		return prefix.getFA().getAlphabet();
+	}
 
 	/** Returns query size, as number of letters. */
 	public int size() {
@@ -48,19 +57,6 @@ public class MembershipQuery<T> implements Iterable<T> {
 		IDirectedGraphPath path = suffix.getGraphPath();
 		Object endState = path.getLastVertex();
 		return FAStateKind.ACCEPTING.equals(dfa.getStateKind(endState));
-	}
-	
-	/** Returns a string representation. */
-	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		for (T letter: prefix) {
-			sb.append(letter).append(" ");
-		}
-		sb.append(" | ");
-		for (T letter: suffix) {
-			sb.append(letter).append(" ");
-		}
-		return sb.toString();
 	}
 	
 	/** Returns an iterator on letters. */
@@ -108,5 +104,52 @@ public class MembershipQuery<T> implements Iterable<T> {
 			
 		};
 	}
+
+	/** Compares with another string. */
+	public int compareTo(IString<T> other) {
+		int c = getAlphabet().getWordComparator().compare(this, other);
+
+		// if not equal let return c
+		if (c != 0) { return c; }
+		
+		// otherwise, positive strings are greater
+		// than negative ones
+		return new Boolean(isPositive()).compareTo(other.isPositive());
+	}
+
+	/** Compares with another word. */
+	@SuppressWarnings("unchecked")
+	public int compareTo(Object who) {
+		if (who == this) { return 0; }
+		if (who instanceof IString == false) { return 1; }
+		try {
+			return compareTo((IString<T>)who);
+		} catch (ClassCastException ex) {
+			return 1;
+		}
+	}
 	
+	/** Returns a string representation. */
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		for (T letter: prefix) {
+			sb.append(letter).append(" ");
+		}
+		sb.append(" | ");
+		for (T letter: suffix) {
+			sb.append(letter).append(" ");
+		}
+		return sb.toString();
+	}
+	
+	/** Provides adaptations. */
+	public <L> Object adapt(Class<L> c) {
+		if (c.isAssignableFrom(getClass())) {
+			return this;
+		}
+		
+		// allow external adapters to do their work
+		return AdaptUtils.externalAdapt(this,c);
+	}
+
 }

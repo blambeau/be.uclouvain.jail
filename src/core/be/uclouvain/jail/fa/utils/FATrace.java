@@ -3,8 +3,10 @@ package be.uclouvain.jail.fa.utils;
 import java.util.Iterator;
 
 import be.uclouvain.jail.fa.FAStateKind;
+import be.uclouvain.jail.fa.IAlphabet;
 import be.uclouvain.jail.fa.IFA;
 import be.uclouvain.jail.fa.IFATrace;
+import be.uclouvain.jail.fa.IWord;
 import be.uclouvain.jail.graph.IDirectedGraphPath;
 import be.uclouvain.jail.graph.IDirectedGraphWriter;
 import be.uclouvain.jail.graph.utils.DirectedGraphPath;
@@ -28,6 +30,11 @@ public class FATrace<T> implements IFATrace<T> {
 		this.trace = trace;
 	}
 	
+	/** Creates a decorator from fa and path. */
+	public FATrace(IFA fa, IDirectedGraphPath path) {
+		this(new DefaultFATrace(fa,path));
+	}
+	
 	/** Returns the dfa from which this trace has been extracted. */
 	public IFA getFA() {
 		return trace.getFA();
@@ -49,6 +56,12 @@ public class FATrace<T> implements IFATrace<T> {
 		return trace.iterator();
 	}
 
+	/** Converts the trace to a word. */
+	public IWord<T> getWord() {
+		IAlphabet<T> alphabet = trace.getFA().getAlphabet();
+		return alphabet.word(this);
+	}
+	
 	/** Returns the last state of this trace. */
 	public Object getLastState() {
 		DirectedGraphPath path = (DirectedGraphPath) getGraphPath().adapt(DirectedGraphPath.class);
@@ -98,6 +111,12 @@ public class FATrace<T> implements IFATrace<T> {
 		if (c.isAssignableFrom(this.getClass())) {
 			return this;
 		}
+		
+		// adapt to a word
+		if (IWord.class.equals(c)) {
+			return getWord();
+		}
+		
 		return trace.adapt(c);
 	}
 	

@@ -1,4 +1,4 @@
-package be.uclouvain.jail.algo.induct.sample;
+package be.uclouvain.jail.fa.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,10 +10,12 @@ import net.chefbe.javautils.adapt.AdaptUtils;
 import be.uclouvain.jail.algo.fa.determinize.NFADeterminizer;
 import be.uclouvain.jail.fa.IAlphabet;
 import be.uclouvain.jail.fa.IDFA;
+import be.uclouvain.jail.fa.IExtensibleSample;
 import be.uclouvain.jail.fa.IFATrace;
+import be.uclouvain.jail.fa.IFlushableString;
 import be.uclouvain.jail.fa.INFA;
+import be.uclouvain.jail.fa.IString;
 import be.uclouvain.jail.fa.constraints.MCAGraphConstraint;
-import be.uclouvain.jail.fa.utils.DefaultFATrace;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.utils.DefaultDirectedGraphPath;
 
@@ -46,14 +48,19 @@ public class MCASample<L> implements IExtensibleSample<L> {
 		return nfa.getAlphabet();
 	}
 
+	/** Returns true if the sample contains a given string. */
+	public boolean contains(IString<L> s) {
+		return FAWalkUtils.walk(nfa,s).length != 0;
+	}
+	
 	/** Returns number of strings. */
 	public int size() {
 		return inits.size();
 	}
 
 	/** Returns an iterator on strings. */
-	public Iterator<ISampleString<L>> iterator() {
-		return new Iterator<ISampleString<L>>() {
+	public Iterator<IString<L>> iterator() {
+		return new Iterator<IString<L>>() {
 
 			/** Iterator on init states. */
 			private Iterator<Object> it = inits.iterator();
@@ -89,11 +96,11 @@ public class MCASample<L> implements IExtensibleSample<L> {
 			}
 			
 			/** Returns the next string. */
-			public ISampleString<L> next() {
+			public IString<L> next() {
 				if (!hasNext()) { throw new NoSuchElementException(); }
 				Object init = it.next();
 				IFATrace<L> trace = extractTrace(init);
-				return new FATraceSampleString<L>(trace);
+				return new FATraceString<L>(trace);
 			}
 
 			/** Throws Unsupported. */
@@ -105,12 +112,13 @@ public class MCASample<L> implements IExtensibleSample<L> {
 	}
 
 	/** Adds a sample string, by writing in the nfa. */
-	public void addSampleString(ISampleString<L> string) {
+	public void addString(IString<L> s) {
 		Object[] states = null;
-		if (string instanceof IFAAwareString) {
-			states = ((IFAAwareString<L>)string).fill(nfa.getGraph());
+		if (s instanceof IFlushableString) {
+			states = ((IFlushableString<L>)s).fill(nfa.getGraph());
 		} else {
-			DefaultSampleString<L> s2 = new DefaultSampleString<L>(string);
+			IAlphabet<L> alphabet = nfa.getAlphabet();
+			DefaultString<L> s2 = new DefaultString<L>(alphabet,s,s.isPositive());
 			states = s2.fill(nfa.getGraph());
 		}
 		inits.add(states[0]);

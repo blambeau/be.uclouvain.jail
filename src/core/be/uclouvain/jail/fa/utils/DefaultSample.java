@@ -1,16 +1,18 @@
-package be.uclouvain.jail.algo.induct.sample;
+package be.uclouvain.jail.fa.utils;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
 
 import net.chefbe.javautils.adapt.AdaptUtils;
 import be.uclouvain.jail.algo.fa.determinize.NFADeterminizer;
 import be.uclouvain.jail.fa.IAlphabet;
 import be.uclouvain.jail.fa.IDFA;
+import be.uclouvain.jail.fa.IExtensibleSample;
+import be.uclouvain.jail.fa.IFlushableString;
 import be.uclouvain.jail.fa.INFA;
+import be.uclouvain.jail.fa.IString;
 import be.uclouvain.jail.fa.impl.GraphNFA;
-import be.uclouvain.jail.fa.utils.AutoAlphabet;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 
@@ -26,12 +28,12 @@ public class DefaultSample<L> implements IExtensibleSample<L> {
 	private IAlphabet<L> alphabet;
 	
 	/** Sample strings. */
-	private List<ISampleString<L>> strings;
+	private Set<IString<L>> strings;
 	
 	/** Creates an empty sample with an auto alphabet. */
 	public DefaultSample() {
 		this.alphabet = new AutoAlphabet<L>();
-		this.strings = new ArrayList<ISampleString<L>>();
+		this.strings = new HashSet<IString<L>>();
 	}
 
 	/** Returns the alphabet. */
@@ -39,13 +41,18 @@ public class DefaultSample<L> implements IExtensibleSample<L> {
 		return alphabet;
 	}
 
+	/** Returns true if the sample contains a given string. */
+	public boolean contains(IString<L> s) {
+		return strings.contains(s);
+	}
+	
 	/** Returns size of the sample. */
 	public int size() {
 		return strings.size();
 	}
 	
 	/** Adds a sample string. */
-	public void addSampleString(ISampleString<L> string) {
+	public void addString(IString<L> string) {
 		if (alphabet instanceof AutoAlphabet) {
 			for (L letter: string) {
 				((AutoAlphabet<L>)alphabet).addLetter(letter);
@@ -55,17 +62,17 @@ public class DefaultSample<L> implements IExtensibleSample<L> {
 	}
 	
 	/** Returns an iterator on sample strings. */
-	public Iterator<ISampleString<L>> iterator() {
+	public Iterator<IString<L>> iterator() {
 		return strings.iterator();
 	}
 
 	/** Fills a graph with strings. */
 	private void fill(IDirectedGraph g) {
-		for (ISampleString<L> s: strings) {
-			if (s instanceof IFAAwareString) {
-				((IFAAwareString<L>)s).fill(g);
+		for (IString<L> s: strings) {
+			if (s instanceof IFlushableString) {
+				((IFlushableString<L>)s).fill(g);
 			} else {
-				DefaultSampleString<L> s2 = new DefaultSampleString<L>(s);
+				DefaultString<L> s2 = new DefaultString<L>(alphabet,s,s.isPositive());
 				s2.fill(g);
 			}
 		}

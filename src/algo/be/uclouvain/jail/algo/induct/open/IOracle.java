@@ -2,6 +2,7 @@ package be.uclouvain.jail.algo.induct.open;
 
 import be.uclouvain.jail.algo.commons.Avoid;
 import be.uclouvain.jail.algo.commons.Restart;
+import be.uclouvain.jail.algo.induct.internal.InductionAlgo;
 import be.uclouvain.jail.algo.induct.internal.Simulation;
 
 /**
@@ -22,6 +23,9 @@ import be.uclouvain.jail.algo.induct.internal.Simulation;
  */
 public interface IOracle {
 
+	/** Initializes the oracle. */
+	public void initialize(InductionAlgo algo);
+	
 	/** 
 	 * Checks the simulation for acceptance. 
 	 *

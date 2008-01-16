@@ -2,22 +2,29 @@ package be.uclouvain.jail.algo.induct.utils;
 
 import java.util.Iterator;
 
+import net.chefbe.javautils.adapt.IAdaptable;
 import be.uclouvain.jail.algo.commons.Avoid;
 import be.uclouvain.jail.algo.commons.Restart;
+import be.uclouvain.jail.algo.induct.internal.InductionAlgo;
 import be.uclouvain.jail.algo.induct.internal.PTAState;
 import be.uclouvain.jail.algo.induct.internal.Simulation;
 import be.uclouvain.jail.algo.induct.open.IMembershipQueryTester;
 import be.uclouvain.jail.algo.induct.open.IOracle;
 import be.uclouvain.jail.algo.induct.open.ISuffixExtractor;
+import be.uclouvain.jail.fa.IExtensibleSample;
 import be.uclouvain.jail.fa.IFATrace;
+import be.uclouvain.jail.fa.ISample;
 
 /**
  * Provides a base implementation for membership query oracles.
  *  
  * @author blambeau
  */
-public abstract class AbstractMembershipOracle implements IOracle {
+public abstract class AbstractMembershipOracle<T> implements IOracle {
 
+	/** Input sample. */
+	protected ISample<T> sample;
+	
 	/** Simulation. */
 	protected Simulation simulation;
 	
@@ -41,18 +48,27 @@ public abstract class AbstractMembershipOracle implements IOracle {
 		this.tester = tester;
 	}
 	
+	/** Initializes the oracle. */
+	@SuppressWarnings("unchecked")
+	public void initialize(InductionAlgo algo) {
+		IAdaptable input = algo.getInfo().getInput();
+		if (input instanceof ISample) {
+			this.sample = (ISample<T>) input;
+		}
+	}
+	
 	/** Returns an iterator on state suffixes. */
-	protected <T> Iterator<IFATrace<T>> suffixesOf(PTAState state) {
+	protected Iterator<IFATrace<T>> suffixesOf(PTAState state) {
 		return sExtractor.extract(state);
 	}
 	
 	/** Computes the short prefix of a state. */
-	protected <T> IFATrace<T> shortPrefixOf(PTAState state) {
+	protected IFATrace<T> shortPrefixOf(PTAState state) {
 		return state.getShortPrefix();
 	}
 	
 	/** Send queries to the tester. */
-	protected <T> void sendQueries(PTAState target, PTAState gained) throws Avoid, Restart {
+	protected void sendQueries(PTAState target, PTAState gained) throws Avoid, Restart {
 		IFATrace<T> prefix = shortPrefixOf(target);
 		Iterator<IFATrace<T>> suffixes = suffixesOf(gained);
 		while (suffixes.hasNext()) {
@@ -62,11 +78,12 @@ public abstract class AbstractMembershipOracle implements IOracle {
 	}
 	
 	/** Sends a query. */
-	protected <T> void sendQuery(IFATrace<T> prefix, IFATrace<T> suffix) throws Avoid, Restart {
+	protected void sendQuery(IFATrace<T> prefix, IFATrace<T> suffix) throws Avoid, Restart {
 		MembershipQuery<T> query = new MembershipQuery<T>(prefix,suffix);
 		
 		// bypass negative queries for now
 		if (!query.isPositive()) { return; }
+		if (sample != null && sample.contains(query)) { return; }
 		
 		// send query to the tester
 		if (tester.accept(query)) {
@@ -77,12 +94,20 @@ public abstract class AbstractMembershipOracle implements IOracle {
 	}
 	
 	/** Fired when a query is accepted. */
-	protected void queryAccepted(MembershipQuery query) throws Avoid, Restart {
+	protected void queryAccepted(MembershipQuery<T> query) throws Avoid, Restart {
+		if (sample instanceof IExtensibleSample) {
+			((IExtensibleSample<T>)sample).addString(query);
+		}
 	}
 	
 	/** Fired when a query is rejected. */
-	protected void queryRejected(MembershipQuery query) throws Avoid, Restart {
-		throw new Avoid();
+	protected void queryRejected(MembershipQuery<T> query) throws Avoid, Restart {
+		if (sample instanceof IExtensibleSample) {
+			((IExtensibleSample<T>)sample).addString(query);
+			throw new Restart();
+		} else {
+			throw new Avoid();
+		}
 	}
 	
 	/** Accepts the simulation? */

@@ -4,6 +4,7 @@ import be.uclouvain.jail.algo.graph.rand.DefaultRandomGraphInput;
 import be.uclouvain.jail.algo.graph.rand.IRandomGraphInput;
 import be.uclouvain.jail.fa.IAlphabet;
 import be.uclouvain.jail.fa.constraints.DFAGraphConstraint;
+import be.uclouvain.jail.fa.constraints.NoDeadlockGraphConstraint;
 import be.uclouvain.jail.fa.utils.IntegerAlphabet;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.IGraphPredicate;
@@ -75,6 +76,9 @@ public class RandomDFAInput extends DefaultRandomGraphInput {
 			public boolean evaluate(IDirectedGraph graph) {
 				// check that it's a DFA
 				if (!new DFAGraphConstraint().isRespectedBy(graph)) {
+					return false;
+				}
+				if (!new NoDeadlockGraphConstraint().isRespectedBy(graph)) {
 					return false;
 				}
 				
