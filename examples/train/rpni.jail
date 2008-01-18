@@ -26,15 +26,18 @@ TRAIN_SAMPLE = (allaccept <§jis
 §>);
 (show (TRAIN_SAMPLE));
 
-PTA = (determinize (TRAIN_SAMPLE));
-(show (PTA));
-
+// copy sample and execute RPNI with and without oracle
+PTA = (copy TRAIN_SAMPLE);
 R  = (rpni PTA);
 R2 = (rpni PTA :oracle 'blambeau' :querier TRAIN);
+
+
+// copy sample and execute RPNI with and without oracle
+PTA = (copy TRAIN_SAMPLE);
 B  = (bluefringe PTA :threshold 1);
 B2 = (bluefringe PTA :threshold 1 :oracle 'blambeau' :querier TRAIN);
 
-(show (R));
-(show (R2));
-(show (B));
-(show (B2));
+(show (uncomplement R));
+(show (uncomplement R2));
+(show (uncomplement B));
+(show (uncomplement B2));

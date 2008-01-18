@@ -5,21 +5,24 @@ import java.util.Map;
 import java.util.Set;
 
 import net.chefbe.javautils.adapt.AdaptUtils;
+import be.uclouvain.jail.algo.utils.AbstractAlgoResult;
 import be.uclouvain.jail.fa.FAStateKind;
 import be.uclouvain.jail.fa.IDFA;
+import be.uclouvain.jail.fa.IFA;
 import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.fa.impl.GraphDFA;
-import be.uclouvain.jail.graph.utils.DirectedGraphWriter;
+import be.uclouvain.jail.graph.IDirectedGraph;
+import be.uclouvain.jail.graph.IDirectedGraphWriter;
 import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.uinfo.IUserInfoHelper;
-import be.uclouvain.jail.uinfo.UserInfoCopier;
+import be.uclouvain.jail.uinfo.UserInfoHelper;
 
 /**
  * Default implementation of IDFAComplementorResult.
  * 
  * @author blambeau
  */
-public class DefaultDFAComplementorResult implements IDFAComplementorResult {
+public class DefaultDFAComplementorResult extends AbstractAlgoResult implements IDFAComplementorResult {
 
 	/** Input of the algorithm. */
 	private IDFAComplementorInput input;
@@ -28,10 +31,7 @@ public class DefaultDFAComplementorResult implements IDFAComplementorResult {
 	private IDFA inputDFA;
 	
 	/** Resulting DFA. */
-	private IDFA result;
-	
-	/** Graph writer. */
-	private DirectedGraphWriter writer;
+	private IDirectedGraphWriter result;
 	
 	/** Helper to use. */
 	private IUserInfoHelper helper;
@@ -43,27 +43,16 @@ public class DefaultDFAComplementorResult implements IDFAComplementorResult {
 	private Object errorState;
 
 	/** Creates a result instance. */
-	public DefaultDFAComplementorResult(IUserInfoHelper helper) {
-		this.result = new GraphDFA();
-		this.writer = new DirectedGraphWriter(result.getGraph());
-		this.helper = helper;
+	public DefaultDFAComplementorResult() {
+		this.helper = new UserInfoHelper();
 	}
 	
-	/** Returns the state copier. */
-	public UserInfoCopier getStateCopier() {
-		return writer.getVertexCopier();
-	}
-
-	/** Returns the edge copier. */
-	public UserInfoCopier getEdgeCopier() {
-		return writer.getEdgeCopier();
-	}
-
 	/** Algorithm started event. */
 	public void started(IDFAComplementorInput input) {
 		states = new HashMap<Object,Object>();
 		this.input = input;
 		this.inputDFA = input.getDFA();
+		this.result = super.getWriter(new GraphDFA());
 	}
 
 	/** Algorithm ended event. */
@@ -76,7 +65,7 @@ public class DefaultDFAComplementorResult implements IDFAComplementorResult {
 			return states.get(state);
 		} else {
 			IUserInfo info = inputDFA.getGraph().getUserInfoOf(state);
-			Object copy = writer.createVertex(info);
+			Object copy = result.createVertex(info);
 			states.put(state, copy);
 			return copy;
 		}
@@ -87,13 +76,13 @@ public class DefaultDFAComplementorResult implements IDFAComplementorResult {
 		Object source = inputDFA.getGraph().getEdgeSource(edge);
 		Object target = inputDFA.getGraph().getEdgeTarget(edge);
 		IUserInfo info = inputDFA.getGraph().getUserInfoOf(edge);
-		writer.createEdge(ensure(source), ensure(target), info);
+		result.createEdge(ensure(source), ensure(target), info);
 	}
 	
 	/** Finds the error state. */
 	protected Object findError() {
 		if (errorState == null) {
-			errorState = writer.createVertex(createErrorStateInfo());
+			errorState = result.createVertex(createErrorStateInfo());
 		}
 		return errorState;
 	}
@@ -113,7 +102,7 @@ public class DefaultDFAComplementorResult implements IDFAComplementorResult {
 		
 		for (Object letter: missing) {
 			IUserInfo edgeInfo = createMissingEdgeInfo(letter);
-			writer.createEdge(source, target, edgeInfo);
+			result.createEdge(source, target, edgeInfo);
 		}
 	}
 
@@ -136,8 +125,9 @@ public class DefaultDFAComplementorResult implements IDFAComplementorResult {
 		}
 		
 		// natural adaptation to a DFA
-		if (IDFA.class.equals(c)) {
-			return result;
+		if (IDFA.class.equals(c) || IFA.class.equals(c) || 
+			IDirectedGraph.class.equals(c)) {
+			return result.adapt(c);
 		}
 		
 		return AdaptUtils.externalAdapt(this,c);

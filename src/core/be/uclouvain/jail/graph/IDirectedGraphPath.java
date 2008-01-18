@@ -4,7 +4,6 @@ import java.util.List;
 
 import net.chefbe.javautils.adapt.IAdaptable;
 import be.uclouvain.jail.graph.utils.DefaultDirectedGraphPath;
-import be.uclouvain.jail.graph.utils.DirectedGraphPath;
 
 /**
  * Defines a path inside a directed graph.
@@ -16,9 +15,6 @@ import be.uclouvain.jail.graph.utils.DirectedGraphPath;
  * 
  * <p>This interface provides iterators on vertices and edges as well as a 
  * visitable pattern implementation.</p>
- * 
- * <p>A decorator of graph path, providing a useful query API, is implemented in
- * {@link DirectedGraphPath} and can be obtained by adaptation of this interface.</p> 
  * 
  * <p>This interface is not intended to be implemented, a default implementation 
  * being provided by {@link DefaultDirectedGraphPath}.</p>
@@ -67,10 +63,19 @@ public interface IDirectedGraphPath extends IAdaptable, Iterable<Object> {
 	/** Returns an iterator on path vertices. */
 	public List<Object> vertices();
 
+	/** Appends an edge in the path. */
+	public void append(Object edge);
+	
 	/** Accepts a visitor. */
 	public void accept(IVisitor visitor);
+
+	/** Flushes inside a writer and returns the corresponding path. */
+	public IDirectedGraphPath flush(IDirectedGraphWriter writer);
 	
-	/** Flushes this path in a graph writer, returning created vertices. */
-	public Object[] flush(IDirectedGraphWriter writer);
+	/** Appends with another path. */
+	public IDirectedGraphPath append(IDirectedGraphPath path);
+	
+	/** Creates a sub path. */
+	public IDirectedGraphPath subPath(int start, int length);
 	
 }

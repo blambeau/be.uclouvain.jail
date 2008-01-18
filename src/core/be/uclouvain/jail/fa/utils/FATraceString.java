@@ -3,21 +3,25 @@ package be.uclouvain.jail.fa.utils;
 import java.util.Iterator;
 
 import be.uclouvain.jail.fa.IAlphabet;
+import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.IFATrace;
-import be.uclouvain.jail.fa.IFlushableString;
 import be.uclouvain.jail.fa.IString;
+import be.uclouvain.jail.fa.IWalkInfo;
 import be.uclouvain.jail.graph.IDirectedGraphWriter;
 
 /** Decorates a trace as a string. */
-public class FATraceString<L> implements IFlushableString<L> {
+public class FATraceString<L> implements IString<L> {
 
 	/** Decorated trace. */
-	private FATrace<L> trace;
+	private IFATrace<L> trace;
 	
 	/** Creates a string. */
 	@SuppressWarnings("unchecked")
 	public FATraceString(IFATrace<L> trace) {
-		this.trace = (FATrace<L>) trace.adapt(FATrace.class);
+		if (trace == null) { 
+			throw new IllegalArgumentException("Trace cannot be null"); 
+		}
+		this.trace = trace;
 	}
 	
 	/** Returns the alphabet. */
@@ -47,14 +51,7 @@ public class FATraceString<L> implements IFlushableString<L> {
 
 	/** Compares with another string. */
 	public int compareTo(IString<L> other) {
-		int c = getAlphabet().getWordComparator().compare(this, other);
-
-		// if not equal let return c
-		if (c != 0) { return c; }
-		
-		// otherwise, positive strings are greater
-		// than negative ones
-		return new Boolean(isPositive()).compareTo(other.isPositive());
+		return getAlphabet().getStringComparator().compare(this, other);
 	}
 
 	/** Compares with another string. */
@@ -62,23 +59,48 @@ public class FATraceString<L> implements IFlushableString<L> {
 	public int compareTo(Object who) {
 		if (who == this) { return 0; }
 		if (who instanceof IString == false) { return 1; }
-		try {
-			return compareTo((IString<L>)who);
-		} catch (ClassCastException ex) {
-			return 1;
+		try { return compareTo((IString<L>)who); } 
+		catch (ClassCastException ex) { return 1; }
+	}
+
+	/** Walks a DFA. */
+	public IWalkInfo<L> walk(IDFA fa) {
+		return trace.walk(fa);
+	}
+
+	/** Creates a substring. */
+	public IString<L> subString(int start, int length) {
+		return new FATraceString<L>(trace.subTrace(start,length));
+	}
+
+	/** Flushes in a writer and return the equivalent trace. */
+	public IFATrace<L> flush(IDirectedGraphWriter writer) {
+		return trace.flush(writer);
+	}
+
+	/** Returns a string representation. */
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(isPositive() ? "+ " : "- ");
+		int i =0;
+		for (L letter: this) {
+			if (i++ != 0) { sb.append(" "); }
+			sb.append(letter);
 		}
+		return sb.toString();
 	}
-
-	/** Fills the string inside a graph. */
-	public Object[] fill(IDirectedGraphWriter g) {
-		return trace.flush(g);
-	}
-
+	
 	/** Provide adaptations. */
 	public <T> Object adapt(Class<T> c) {
 		if (c.isAssignableFrom(getClass())) {
 			return this;
 		}
+		
+		// my adaptations
+		if (IFATrace.class.equals(c)) {
+			return trace;
+		}
+		
 		return trace.adapt(c);
 	}
 

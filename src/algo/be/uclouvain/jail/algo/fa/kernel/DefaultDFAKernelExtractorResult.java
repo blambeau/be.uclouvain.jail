@@ -9,7 +9,6 @@ import be.uclouvain.jail.fa.impl.GraphNFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.IDirectedGraphWriter;
 import be.uclouvain.jail.graph.utils.DirectedGraphWriter;
-import be.uclouvain.jail.uinfo.UserInfoCopier;
 
 /**
  * Default implementation of {@link IDFAKernelExtractorResult}.
@@ -35,16 +34,6 @@ public class DefaultDFAKernelExtractorResult implements IDFAKernelExtractorResul
 		this(new GraphNFA());
 	}
 
-	/** Returns the state copier. */
-	public UserInfoCopier getStateCopier() {
-		return writer.getVertexCopier();
-	}
-
-	/** Returns the edge copier. */
-	public UserInfoCopier getEdgeCopier() {
-		return writer.getEdgeCopier();
-	}
-	
 	/** Returns the writer. */
 	public IDirectedGraphWriter getNFAWriter() {
 		return writer;

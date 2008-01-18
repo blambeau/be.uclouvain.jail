@@ -7,7 +7,7 @@ import java.util.TreeSet;
 import be.uclouvain.jail.fa.IAlphabet;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.INFA;
-import be.uclouvain.jail.fa.IWord;
+import be.uclouvain.jail.fa.IString;
 import be.uclouvain.jail.fa.impl.GraphFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.utils.CopyTotalOrder;
@@ -32,7 +32,7 @@ public class AutoAlphabet<T> implements IAlphabet<T> {
 	private TreeSet<T> letters;
 	
 	/** Word comparator. */
-	private Comparator<IWord<T>> wordComparator;
+	private Comparator<IString<T>> stringComparator;
 	
 	/** Comparator for letters. */
 	private Comparator<T> comparator;
@@ -40,7 +40,7 @@ public class AutoAlphabet<T> implements IAlphabet<T> {
 	/** Creates an alphabet with an explicit letter comparator. */
 	public AutoAlphabet(Comparator<T> comparator) {
 		this.comparator = comparator == null ? this : comparator;
-		this.wordComparator = new WordComparator<T>(this);
+		this.stringComparator = new StringComparator<T>(this);
 		this.letters = new TreeSet<T>(comparator);
 	}
 
@@ -93,8 +93,8 @@ public class AutoAlphabet<T> implements IAlphabet<T> {
 	}
 	
 	/** Converts letters to a word. */
-	public IWord<T> word(Iterable<T> letters) {
-		return new DefaultWord<T>(this,letters);
+	public IString<T> string(Iterable<T> letters) {
+		return new DefaultString<T>(this,letters,true);
 	}
 
 	/** Returns true if the letter is known. */
@@ -118,8 +118,8 @@ public class AutoAlphabet<T> implements IAlphabet<T> {
 	}
 
 	/** Returns a word comparator. */
-	public Comparator<IWord<T>> getWordComparator() {
-		return wordComparator;
+	public Comparator<IString<T>> getStringComparator() {
+		return stringComparator;
 	}
 
 	/** Compares two letters. */

@@ -11,15 +11,10 @@ define (allaccept <A>)
 
 // generate a random DFA with aai tuning
 A = <§seqp Q0. §>;
-G = (randdfa A :stateCount stateCount :alphabetSize 2 :accepting 1.0 :tolerance 0.01);
-H = (randsample G :pathCount pathCount :pathLength 8 :chooseRoot false 
-		                                   :extend false :posProba 1.0);
-PTA = (determinize H);
-PTA = (cast H 'be.uclouvain.jail.fa.ISample');
-//(show PTA);
-
-R = (rpni PTA :oracle 'blambeau' :querier G);
-
-//(show PTA);
-//(show R);
+G = (randdfa A   :stateCount stateCount :alphabetSize 2 :accepting 1.0 :tolerance 0.01);
+H = (randstrings A :alphabetSize 2 :wordLength 10 :nbStrings nbStrings :labeller G);
+(show G);
+(show H);
+//(show (rpni H));
+//(show (rpni H :oracle 'blambeau' :querier G)); 
 

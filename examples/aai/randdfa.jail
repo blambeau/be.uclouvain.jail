@@ -10,8 +10,10 @@ G = (randdfa A :stateCount stateCount :alphabetSize 2 :accepting 0.5 :tolerance 
 
 // identify the generated DFA
 G = (identify G);
+H = (copy G :vertex {@label -> when choose()<=0.3 then @id else ''});
 
 // print it when done
 //(print G :format dialect);
 (show G);
+(show H);
 

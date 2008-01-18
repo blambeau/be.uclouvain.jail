@@ -1,11 +1,10 @@
 package be.uclouvain.jail.algo.induct.internal;
 
-import net.chefbe.javautils.adapt.IAdaptable;
 import be.uclouvain.jail.algo.commons.IAlgoInput;
 import be.uclouvain.jail.algo.induct.open.ICompatibility;
 import be.uclouvain.jail.algo.induct.open.IEvaluator;
 import be.uclouvain.jail.algo.induct.open.IOracle;
-import be.uclouvain.jail.uinfo.UserInfoAggregator;
+import be.uclouvain.jail.fa.ISample;
 
 /**
  * Defines the contract to be input of an induction algorithm.
@@ -15,7 +14,7 @@ import be.uclouvain.jail.uinfo.UserInfoAggregator;
 public interface IInductionAlgoInput extends IAlgoInput {
 
 	/** Returns input of the induction. */
-	public IAdaptable getInput();
+	public <L> ISample<L> getInput();
 
 	/** Returns compatibility. */
 	public ICompatibility getCompatibility();
@@ -28,11 +27,5 @@ public interface IInductionAlgoInput extends IAlgoInput {
 
 	/** Returns the consolidation threshold. */
 	public int getConsolidationThreshold();
-
-	/** Returns the state aggregator to use. */
-	public UserInfoAggregator getStateAggregator();
-
-	/** Returns the state aggregator to use. */
-	public UserInfoAggregator getEdgeAggregator();
 
 }

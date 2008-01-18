@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import be.uclouvain.jail.fa.IAlphabet;
-import be.uclouvain.jail.fa.IWord;
+import be.uclouvain.jail.fa.IString;
 import be.uclouvain.jail.graph.utils.ITotalOrder;
 import be.uclouvain.jail.graph.utils.ListTotalOrder;
 
@@ -23,7 +23,7 @@ import be.uclouvain.jail.graph.utils.ListTotalOrder;
 public class IntegerAlphabet implements IAlphabet<Integer> {
 
 	/** Word comparator. */
-	private Comparator<IWord<Integer>> wordComparator;
+	private Comparator<IString<Integer>> stringComparator;
 
 	/** Start number, offset between numbers, number of letters. */
 	private int start, offset, size;
@@ -56,8 +56,8 @@ public class IntegerAlphabet implements IAlphabet<Integer> {
 	}
 	
 	/** Converts letters to a word. */
-	public IWord<Integer> word(Iterable<Integer> letters) {
-		return new DefaultWord<Integer>(this,letters);
+	public IString<Integer> string(Iterable<Integer> letters) {
+		return new DefaultString<Integer>(this,letters,true);
 	}
 
 	/** Returns true if the letter is known. */
@@ -75,8 +75,8 @@ public class IntegerAlphabet implements IAlphabet<Integer> {
 	}
 
 	/** Returns a word comparator. */
-	public Comparator<IWord<Integer>> getWordComparator() {
-		return wordComparator;
+	public Comparator<IString<Integer>> getStringComparator() {
+		return stringComparator;
 	}
 
 	/** Compares two letters. */

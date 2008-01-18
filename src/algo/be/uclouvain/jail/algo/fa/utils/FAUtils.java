@@ -9,7 +9,9 @@ import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.graph.utils.DirectedGraphWriter;
 import be.uclouvain.jail.uinfo.IUserInfo;
+import be.uclouvain.jail.uinfo.IUserInfoHandler;
 import be.uclouvain.jail.uinfo.IUserInfoPopulator;
+import be.uclouvain.jail.uinfo.UserInfoHandler;
 
 /**
  * Provides some utilities for FAs. 
@@ -54,11 +56,12 @@ public class FAUtils {
 	/** Returns a copy of a fa for dot presentation. */
 	public static IDirectedGraph copyForDot(IFA fa) {
 		IDirectedGraph graph = new AdjacencyDirectedGraph();
-		DirectedGraphWriter writer = new DirectedGraphWriter(graph);
-		writer.getEdgeCopier().keepAll();
-		writer.getVertexCopier().keepAll();
-		writer.getVertexCopier().addPopulator(getGraph2DotVertexPopulator());
-		writer.getEdgeCopier().addPopulator(getGraph2DotEdgePopulator());
+		IUserInfoHandler handler = new UserInfoHandler();
+		handler.getEdgeCopier().keepAll();
+		handler.getVertexCopier().keepAll();
+		handler.getVertexCopier().addPopulator(getGraph2DotVertexPopulator());
+		handler.getEdgeCopier().addPopulator(getGraph2DotEdgePopulator());
+		DirectedGraphWriter writer = new DirectedGraphWriter(handler, graph);
 		DirectedGraphCopier.copy(fa.getGraph(), writer);
 		return graph;
 	}

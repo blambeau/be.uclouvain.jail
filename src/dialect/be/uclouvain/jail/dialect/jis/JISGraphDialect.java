@@ -13,6 +13,7 @@ import net.chefbe.autogram.ast2.utils.BaseLocation;
 import be.uclouvain.jail.dialect.utils.AbstractGraphDialect;
 import be.uclouvain.jail.fa.IAlphabet;
 import be.uclouvain.jail.fa.ISample;
+import be.uclouvain.jail.fa.utils.AutoAlphabet;
 import be.uclouvain.jail.fa.utils.DefaultSample;
 import be.uclouvain.jail.fa.utils.DefaultString;
 import be.uclouvain.jail.vm.JailVMOptions;
@@ -37,8 +38,8 @@ public class JISGraphDialect extends AbstractGraphDialect {
 		BufferedReader br = new BufferedReader(loc.reader());
 
 		// create target graph
-		DefaultSample<String> sample = new DefaultSample<String>();
-		IAlphabet<String> alphabet = sample.getAlphabet();
+		IAlphabet<String> alphabet = new AutoAlphabet<String>();
+		DefaultSample<String> sample = new DefaultSample<String>(alphabet);
 		
 		// read all lines
 		String line = null;

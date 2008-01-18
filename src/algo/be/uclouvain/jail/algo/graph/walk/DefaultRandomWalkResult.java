@@ -7,10 +7,9 @@ import be.uclouvain.jail.algo.graph.copy.match.GMatchPopulator;
 import be.uclouvain.jail.algo.utils.AbstractAlgoResult;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.IDirectedGraphPath;
-import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.graph.utils.DirectedGraphWriter;
 import be.uclouvain.jail.uinfo.IUserInfo;
-import be.uclouvain.jail.uinfo.UserInfoCopier;
+import be.uclouvain.jail.uinfo.IUserInfoHandler;
 
 /**
  * Provides a default implementation of {@link IRandomWalkResult}.
@@ -22,18 +21,11 @@ public class DefaultRandomWalkResult extends AbstractAlgoResult implements IRand
 	/** Created paths. */
 	private List<IDirectedGraphPath> paths;
 	
-	/** Copier to use for vertices. */
-	private UserInfoCopier vertexCopier;
-	
-	/** Copier to use for edges. */
-	private UserInfoCopier edgeCopier;
-
 	/** Creates a result instance. */
 	public DefaultRandomWalkResult() {
-		vertexCopier = new UserInfoCopier();
-		vertexCopier.keepAll();
-		edgeCopier = new UserInfoCopier();
-		edgeCopier.keepAll();
+		IUserInfoHandler handler = super.getUserInfoHandler();
+		handler.getVertexCopier().keepAll();
+		handler.getEdgeCopier().keepAll();
 	}
 	
 	/** Install options. */
@@ -44,24 +36,14 @@ public class DefaultRandomWalkResult extends AbstractAlgoResult implements IRand
 		super.addOption("edge", "edgePopulator", false, GMatchPopulator.class, null);
 	}
 
-	/** Returns the vertex copier. */
-	public UserInfoCopier getVertexCopier() {
-		return vertexCopier;
-	}
-	
 	/** Adds a gmatch vertex populator. */
 	public void setVertexPopulator(GMatchPopulator<IUserInfo> populator) {
-		vertexCopier.addPopulator(populator);
-	}
-	
-	/** Returns the edge copier. */
-	public UserInfoCopier getEdgeCopier() {
-		return edgeCopier;
+		super.getUserInfoHandler().getVertexCopier().addPopulator(populator);
 	}
 	
 	/** Adds a gmatch edge populator. */
 	public void setEdgePopulator(GMatchPopulator<IUserInfo> populator) {
-		edgeCopier.addPopulator(populator);
+		super.getUserInfoHandler().getEdgeCopier().addPopulator(populator);
 	}
 	
 	/** Fired when algo is started. */ 
@@ -96,15 +78,11 @@ public class DefaultRandomWalkResult extends AbstractAlgoResult implements IRand
 		
 		// adaptation to a graph by flush
 		if (IDirectedGraph.class.equals(c)) {
-			IDirectedGraph g = new AdjacencyDirectedGraph();
-			DirectedGraphWriter w = new DirectedGraphWriter(g);
-			w.setVertexCopier(vertexCopier);
-			w.setEdgeCopier(edgeCopier);
-			
+			DirectedGraphWriter w = new DirectedGraphWriter(getUserInfoHandler());
 			for (IDirectedGraphPath path: paths) {
 				flushPath(path,w);
 			}
-			return g; 
+			return w.getGraph(); 
 		}
 		
 		return super.adapt(c);

@@ -1,6 +1,7 @@
 package be.uclouvain.jail.algo.fa.walk;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import be.uclouvain.jail.algo.commons.Unable;
@@ -10,13 +11,14 @@ import be.uclouvain.jail.algo.graph.walk.DefaultRandomWalkResult;
 import be.uclouvain.jail.algo.graph.walk.IRandomWalkInput;
 import be.uclouvain.jail.fa.FAStateKind;
 import be.uclouvain.jail.fa.IDFA;
+import be.uclouvain.jail.fa.IFATrace;
 import be.uclouvain.jail.fa.INFA;
 import be.uclouvain.jail.fa.ISample;
-import be.uclouvain.jail.fa.IWord;
+import be.uclouvain.jail.fa.IString;
 import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.fa.impl.GraphNFA;
-import be.uclouvain.jail.fa.utils.FATrace;
-import be.uclouvain.jail.fa.utils.MCASample;
+import be.uclouvain.jail.fa.utils.DefaultFATrace;
+import be.uclouvain.jail.fa.utils.DefaultSample;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.IDirectedGraphPath;
 import be.uclouvain.jail.graph.utils.DirectedGraphWriter;
@@ -33,7 +35,7 @@ public class DFARandomWalkResult extends DefaultRandomWalkResult {
 	private DFARandomWalkInput input;
 	
 	/** Words. */
-	private Set<IWord> words;
+	private Set<IString> words;
 	
 	/** Tries. */
 	private int tries = 0;
@@ -45,7 +47,7 @@ public class DFARandomWalkResult extends DefaultRandomWalkResult {
 			throw new Unable("DFARandomWalkResult expects a DFARandomWalkInput as associated input");
 		}
 		this.input = (DFARandomWalkInput) input;
-		this.words = new HashSet<IWord>();
+		this.words = new HashSet<IString>();
 		super.started(input);
 	}
 
@@ -59,9 +61,10 @@ public class DFARandomWalkResult extends DefaultRandomWalkResult {
 	/** Flushes the path inside a writer. */
 	@Override
 	protected void flushPath(IDirectedGraphPath path, DirectedGraphWriter writer) {
-		Object[] vertices = path.flush(writer);
-		for (int i=0; i<vertices.length; i++) {
-			Object vertex = vertices[i];
+		IDirectedGraphPath copy = path.flush(writer);
+		List<Object> vertices = copy.vertices();
+		for (int i=0; i<vertices.size(); i++) {
+			Object vertex = vertices.get(i);
 			IUserInfo info = writer.getVertexInfo(vertex);
 			
 			// set initial
@@ -69,7 +72,7 @@ public class DFARandomWalkResult extends DefaultRandomWalkResult {
 			
 			// set kind
 			String attr = AttributeGraphFAInformer.STATE_KIND_KEY;
-			boolean last = (i==vertices.length-1);
+			boolean last = (i==vertices.size()-1);
 			FAStateKind oldKind = (FAStateKind) info.getAttribute(attr);
 			if (FAStateKind.PASSAGE.equals(oldKind)) {
 				info.setAttribute(attr,last ? FAStateKind.ERROR : FAStateKind.PASSAGE);
@@ -85,8 +88,8 @@ public class DFARandomWalkResult extends DefaultRandomWalkResult {
 
 	/** Checks that a path has not been found yet. */
 	private boolean checkNotYetFound(IDirectedGraphPath path) {
-		FATrace trace = new FATrace(input.getDFA(),path);
-		IWord word = trace.getWord();
+		IFATrace trace = new DefaultFATrace(input.getDFA(),path);
+		IString word = (IString) trace.adapt(IString.class);
 		if (words.contains(word)) {
 			return false;
 		} else {
@@ -117,6 +120,11 @@ public class DFARandomWalkResult extends DefaultRandomWalkResult {
         	isOk = checkNotYetFound(path);
         }
         
+        // able to do it?
+        if (!isOk && (++tries > input.maxTry)) { 
+			throw new Unable();
+		}
+        
         // add path when ok
 		if (isOk) {
 			super.addWalkPath(path);
@@ -136,8 +144,8 @@ public class DFARandomWalkResult extends DefaultRandomWalkResult {
 			INFA nfa = new GraphNFA((IDirectedGraph)super.adapt(IDirectedGraph.class));
 			return new NFADeterminizer(nfa).getResultingDFA();
 		} else if (ISample.class.equals(c)) {
-			INFA nfa = new GraphNFA((IDirectedGraph)super.adapt(IDirectedGraph.class));
-			return new MCASample(nfa);
+			IDFA dfa = (IDFA) adapt(IDFA.class);
+			return new DefaultSample(dfa);
 		}
 		
 		return super.adapt(c);

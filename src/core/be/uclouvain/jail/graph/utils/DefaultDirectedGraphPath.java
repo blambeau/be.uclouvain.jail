@@ -1,5 +1,6 @@
 package be.uclouvain.jail.graph.utils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -116,6 +117,32 @@ public class DefaultDirectedGraphPath implements IDirectedGraphPath {
 		return vertices;
 	}
 
+	/** Appends an edge in the trace. */
+	public void append(Object edge) {
+		addEdge(edge);
+	}
+	
+	/** Appends with another path. */
+	public IDirectedGraphPath append(IDirectedGraphPath path) {
+		List<Object> newEdges = new ArrayList<Object>();
+		
+		// copy my edges
+		for (Object edge: edges()) {
+			newEdges.add(edge);
+		}
+		
+		// copy other's edge
+		for (Object edge: path.edges()) {
+			newEdges.add(edge);
+		}
+		
+		if (newEdges.isEmpty()) {
+			return new DefaultDirectedGraphPath(graph, getRootVertex());
+		} else {
+			return new DefaultDirectedGraphPath(graph, newEdges);
+		}
+	}
+	
 	/** Accepts a visitor. */
 	public void accept(IVisitor visitor) {
 		visitor.visit(null, getRootVertex());
@@ -127,8 +154,17 @@ public class DefaultDirectedGraphPath implements IDirectedGraphPath {
 		}
 	}
 
-	/** Flushes this path in a graph writer. */
-	public Object[] flush(IDirectedGraphWriter writer) {
+	/** Creates a subtrace. */
+	public IDirectedGraphPath subPath(int start, int length) {
+		List<Object> edges = new ArrayList<Object>();
+		for (int i=start; i<start+length; i++) {
+			edges.add(this.edges.get(i));
+		}
+		return new DefaultDirectedGraphPath(graph,edges);
+	}
+	
+	/** Flushes inside a writer and returns the corresponding path. */
+	public IDirectedGraphPath flush(IDirectedGraphWriter writer) {
 		// create vertices and save it
 		Object[] vertices = new Object[size()+1];
 		int i=0;
@@ -138,14 +174,19 @@ public class DefaultDirectedGraphPath implements IDirectedGraphPath {
 		
 		// create edges
 		i=0;
+		List<Object> edgeCopy = new ArrayList<Object>();
 		if (edges != null) {
 			for (Object edge: edges) {
-				writer.createEdge(vertices[i], vertices[i+1], graph.getEdgeInfo(edge));
+				Object e = writer.createEdge(vertices[i], vertices[i+1], graph.getEdgeInfo(edge));
+				edgeCopy.add(e);
 				i++;
 			}
 		}
 		
-		return vertices;
+		IDirectedGraph g = (IDirectedGraph) writer.adapt(IDirectedGraph.class);
+		return (g == null) ? null : 
+			   edgeCopy.isEmpty() ? new DefaultDirectedGraphPath(g,vertices[0]) :
+			   new DefaultDirectedGraphPath(g,edgeCopy);
 	}
 	
 	/** Adapts to another type. */

@@ -4,6 +4,7 @@ import be.uclouvain.jail.algo.commons.Avoid;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
+import be.uclouvain.jail.uinfo.IUserInfoHandler;
 import be.uclouvain.jail.uinfo.UserInfoAggregator;
 
 /** 
@@ -35,8 +36,9 @@ abstract class AbstractValuesHandler implements IValuesHandler {
 		this.algo = algo;
 		this.dfa = algo.getDFA();
 		this.dfag = dfa.getGraph();
-		this.stateAggregator = algo.getStateAggregator();
-		this.edgeAggregator = algo.getEdgeAggregator();
+		IUserInfoHandler handler = algo.getInfo().getInput().getUserInfoHandler();
+		this.stateAggregator = handler.getVertexAggregator();
+		this.edgeAggregator = handler.getEdgeAggregator();
 	}
 
 	/** Merges some state values. */

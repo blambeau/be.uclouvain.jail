@@ -12,11 +12,8 @@ import be.uclouvain.jail.algo.induct.utils.BLambeauOracle;
 import be.uclouvain.jail.algo.induct.utils.ConsoleQueryTester;
 import be.uclouvain.jail.dialect.jis.JISGraphDialect;
 import be.uclouvain.jail.fa.IDFA;
-import be.uclouvain.jail.fa.IExtensibleSample;
-import be.uclouvain.jail.fa.INFA;
 import be.uclouvain.jail.fa.ISample;
-import be.uclouvain.jail.fa.constraints.MCAGraphConstraint;
-import be.uclouvain.jail.fa.utils.MCASample;
+import be.uclouvain.jail.fa.utils.DefaultSample;
 import be.uclouvain.jail.vm.JailReflectionToolkit;
 import be.uclouvain.jail.vm.JailVM;
 import be.uclouvain.jail.vm.JailVMException;
@@ -63,28 +60,22 @@ public class InductionToolkit extends JailReflectionToolkit {
 		// converts MCA as samples
 		IAdapter toSample = new IAdapter() {
 			public Object adapt(Object who, Class<?> c) {
-				INFA nfa = (INFA) who;
-				if (new MCAGraphConstraint().isRespectedBy(nfa.getGraph())) {
-					return new MCASample(nfa);
-				} else {
-					return null;
-				}
+				return new DefaultSample((IDFA)who);
 			}
 		};
-		vm.registerAdaptation(INFA.class, ISample.class, toSample);
-		vm.registerAdaptation(INFA.class, IExtensibleSample.class, toSample);		
+		vm.registerAdaptation(IDFA.class, ISample.class, toSample);
 	}
 	
 	/** Executes RPNI. */
-	public IDFA rpni(IDFA dfa, JailVMOptions opt) throws JailVMException {
-		IInductionAlgoInput input = new DefaultInductionAlgoInput(dfa);
+	public IDFA rpni(ISample<?> in, JailVMOptions opt) throws JailVMException {
+		IInductionAlgoInput input = new DefaultInductionAlgoInput(in);
 		input.setOptions(opt);
 		return new RPNIAlgo().execute(input);
 	}
 	
 	/** Executes RPNI. */
-	public IDFA bluefringe(IDFA dfa, JailVMOptions opt) throws JailVMException {
-		DefaultInductionAlgoInput input = new DefaultInductionAlgoInput(dfa);
+	public IDFA bluefringe(ISample<?> in, JailVMOptions opt) throws JailVMException {
+		DefaultInductionAlgoInput input = new DefaultInductionAlgoInput(in);
 		input.setOptions(opt);
 		return new BlueFringeAlgo().execute(input);
 	}

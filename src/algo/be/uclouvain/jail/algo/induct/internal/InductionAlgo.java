@@ -7,7 +7,6 @@ import be.uclouvain.jail.algo.induct.open.IOracle;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.constraints.PTAGraphConstraint;
 import be.uclouvain.jail.fa.impl.GraphDFA;
-import be.uclouvain.jail.uinfo.UserInfoAggregator;
 
 /** Base implementation of RPNI-like induction algorithms. */
 public abstract class InductionAlgo {
@@ -112,16 +111,6 @@ public abstract class InductionAlgo {
 	/** Returns the values handler. */
 	protected IValuesHandler getValuesHandler() {
 		return valuesHandler;
-	}
-
-	/** Returns used state functions. */
-	protected UserInfoAggregator getStateAggregator() {
-		return input.getStateAggregator();
-	}
-
-	/** Returns used edge functions. */
-	protected UserInfoAggregator getEdgeAggregator() {
-		return input.getEdgeAggregator();
 	}
 
 	/** Checks if two DFA states are compatible. */

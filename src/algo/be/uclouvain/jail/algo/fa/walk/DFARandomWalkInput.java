@@ -30,7 +30,7 @@ public class DFARandomWalkInput extends DefaultRandomWalkInput {
 	protected double tolerance = -1;
 	
 	/** Maximal admitted tries on extension. */
-	protected int maxTry = 100;
+	protected int maxTry = 300;
 	
 	/** Creates an input instance. */
 	public DFARandomWalkInput(IDFA dfa) {

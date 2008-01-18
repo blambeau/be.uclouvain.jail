@@ -20,11 +20,11 @@ import be.uclouvain.jail.graph.utils.ITotalOrder;
  */
 public interface IAlphabet<L> extends Comparator<L>, Iterable<L> {
 
-	/** Converts an iterable of letters to a word. */
-	public IWord<L> word(Iterable<L> letters);
+	/** Converts an iterable of letters to a string. */
+	public IString<L> string(Iterable<L> letters);
 	
 	/** Returns a comparator for words. */
-	public Comparator<IWord<L>> getWordComparator();
+	public Comparator<IString<L>> getStringComparator();
 	
 	/** Returns true if the letter is known by its alphabet. */
 	public boolean contains(L letter);

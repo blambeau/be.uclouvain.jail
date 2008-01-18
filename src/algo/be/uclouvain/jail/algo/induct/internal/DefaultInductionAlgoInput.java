@@ -1,6 +1,5 @@
 package be.uclouvain.jail.algo.induct.internal;
 
-import net.chefbe.javautils.adapt.IAdaptable;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchAggregator;
 import be.uclouvain.jail.algo.induct.open.ICompatibility;
 import be.uclouvain.jail.algo.induct.open.IEvaluator;
@@ -9,6 +8,7 @@ import be.uclouvain.jail.algo.induct.open.IOracle;
 import be.uclouvain.jail.algo.induct.utils.AbstractMembershipOracle;
 import be.uclouvain.jail.algo.induct.utils.ClassicEvaluator;
 import be.uclouvain.jail.algo.utils.AbstractAlgoInput;
+import be.uclouvain.jail.fa.ISample;
 import be.uclouvain.jail.fa.functions.FAStateKindFunction;
 import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.uinfo.UserInfoAggregator;
@@ -19,7 +19,7 @@ import be.uclouvain.jail.uinfo.UserInfoAggregator;
 public class DefaultInductionAlgoInput extends AbstractAlgoInput implements IInductionAlgoInput {
 
 	/** Input sample. */
-	private IAdaptable input;
+	private ISample<?> input;
 
 	/** Oracle (optional). */
 	private IOracle oracle;
@@ -30,30 +30,25 @@ public class DefaultInductionAlgoInput extends AbstractAlgoInput implements IInd
 	/** Consolidation threshold (BlueFringe only). */
 	private int cThreshold;
 
-	/** Installed state functions. */
-	private UserInfoAggregator stateAggregator;
-
-	/** Installed edge functions. */
-	private UserInfoAggregator edgeAggregator;
-
 	/** Compatibility informer. */
 	private ICompatibility compatibility;
 
 	/** Creates a induction info. */
-	public DefaultInductionAlgoInput(IAdaptable input) {
+	public DefaultInductionAlgoInput(ISample<?> input) {
 		this.input = input;
 		oracle = null;
 		evaluator = new ClassicEvaluator();
 		cThreshold = -1;
-		stateAggregator = new UserInfoAggregator();
-		edgeAggregator = new UserInfoAggregator();
 
+		UserInfoAggregator stateAggregator = input.getUserInfoHandler().getVertexAggregator();
 		stateAggregator.boolOr(AttributeGraphFAInformer.STATE_INITIAL_KEY);
 		stateAggregator.stateKind(AttributeGraphFAInformer.STATE_KIND_KEY,
                 FAStateKindFunction.OR,
                 FAStateKindFunction.OR,true);
 		stateAggregator.first(MappingUtils.KDP_REPRESENTOR);
 		stateAggregator.first(MappingUtils.KP_REPRESENTOR);
+		
+		UserInfoAggregator edgeAggregator = input.getUserInfoHandler().getEdgeAggregator();
 		edgeAggregator.first(AttributeGraphFAInformer.EDGE_LETTER_KEY);
 	}
 
@@ -69,8 +64,9 @@ public class DefaultInductionAlgoInput extends AbstractAlgoInput implements IInd
 	}
 
 	/** Returns input PTA. */
-	public IAdaptable getInput() {
-		return input;
+	@SuppressWarnings("unchecked")
+	public <L> ISample<L> getInput() {
+		return (ISample<L>) input;
 	}
 
 	/** Returns compatibility informer. */
@@ -121,24 +117,14 @@ public class DefaultInductionAlgoInput extends AbstractAlgoInput implements IInd
 		this.cThreshold = cThreshold;
 	}
 	
-	/** Returns state aggregator. */
-	public UserInfoAggregator getStateAggregator() {
-		return stateAggregator;
-	}
-	
 	/** Adds a gmatch state populator. */
 	public void setStatePopulator(GMatchAggregator populator) {
-		stateAggregator.addPopulator(populator);
-	}
-	
-	/** Returns edge aggregator. */
-	public UserInfoAggregator getEdgeAggregator() {
-		return edgeAggregator;
+		input.getUserInfoHandler().getVertexAggregator().addPopulator(populator);
 	}
 	
 	/** Adds a gmatch edge populator. */
 	public void setEdgePopulator(GMatchAggregator populator) {
-		edgeAggregator.addPopulator(populator);
+		input.getUserInfoHandler().getEdgeAggregator().addPopulator(populator);
 	}
 	
 }

@@ -1,10 +1,11 @@
 package be.uclouvain.jail.graph.utils;
 
+import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.IDirectedGraphWriter;
+import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
-import be.uclouvain.jail.uinfo.IUserInfoCreator;
-import be.uclouvain.jail.uinfo.IUserInfoRewriters;
-import be.uclouvain.jail.uinfo.UserInfoCopier;
+import be.uclouvain.jail.uinfo.IUserInfoHandler;
+import be.uclouvain.jail.uinfo.UserInfoHandler;
 
 /**
  * Provides a graph writer which acts as a modifier before actual writing.
@@ -16,87 +17,44 @@ import be.uclouvain.jail.uinfo.UserInfoCopier;
  * 
  * @author blambeau
  */
-public class DirectedGraphWriter<T> implements IDirectedGraphWriter,
-                                               IUserInfoRewriters {
+public class DirectedGraphWriter implements IDirectedGraphWriter {
 	
 	/** Graph to fill. */
 	private IDirectedGraphWriter writer;
 	
-	/** Graph info creator to use. */
-	private UserInfoCopier gInfoCopier;
-	
-	/** Vertex info creator to use. */
-	private UserInfoCopier vInfoCopier;
-	
-	/** Edge info creator to use. */
-	private UserInfoCopier eInfoCopier;
+	/** Handler to use. */
+	private IUserInfoHandler handler;
 	
 	/** Creates an algo output instance. */
-	public DirectedGraphWriter(IDirectedGraphWriter writer) {
+	public DirectedGraphWriter(IUserInfoHandler handler, IDirectedGraphWriter writer) {
 		this.writer = writer;
-		this.gInfoCopier = new UserInfoCopier();
-		this.vInfoCopier = new UserInfoCopier();
-		this.eInfoCopier = new UserInfoCopier();
+		this.handler = handler;
 	}
 
-	/** Returns vertex info creator. */
-	public UserInfoCopier getGraphCopier() {
-		return gInfoCopier;
+	/** Creates an algo output instance. */
+	public DirectedGraphWriter(IDirectedGraphWriter writer) {
+		this(new UserInfoHandler(),writer);
+	}
+
+	/** Creates an algo output instance. */
+	public DirectedGraphWriter(IUserInfoHandler handler) {
+		this(handler,new AdjacencyDirectedGraph());
+	}
+
+	/** Creates an algo output instance. */
+	public DirectedGraphWriter() {
+		this(new UserInfoHandler(), new AdjacencyDirectedGraph());
 	}
 	
-	/** Sets the graph copier. */
-	public void setGraphCopier(UserInfoCopier copier) {
-		this.gInfoCopier = copier;
+	/** Returns underlying graph, if any. */
+	public IDirectedGraph getGraph() {
+		return writer instanceof IDirectedGraph ?
+			   (IDirectedGraph) writer : null;
 	}
 	
-	/** Returns the graph rewriter to use. */
-	public IUserInfoCreator<IUserInfo> getGraphRewriter() {
-		return gInfoCopier;
-	}
-	
-	/** Rewrites a graph info. */
-	public IUserInfo rewriteGraphInfo(IUserInfo info) {
-		return gInfoCopier.create(info);
-	}
-	
-	/** Returns vertex info creator. */
-	public UserInfoCopier getVertexCopier() {
-		return vInfoCopier;
-	}
-	
-	/** Sets the vertex copier. */
-	public void setVertexCopier(UserInfoCopier copier) {
-		this.vInfoCopier = copier;
-	}
-	
-	/** Returns the vertex rewriter to use. */
-	public IUserInfoCreator<IUserInfo> getVertexRewriter() {
-		return vInfoCopier;
-	}
-	
-	/** Rewrites a vertex info. */
-	public IUserInfo rewriteVertexInfo(IUserInfo info) {
-		return vInfoCopier.create(info);
-	}
-	
-	/** Returns edge info creator. */
-	public UserInfoCopier getEdgeCopier() {
-		return eInfoCopier;
-	}
-	
-	/** Sets the edge copier. */
-	public void setEdgeCopier(UserInfoCopier copier) {
-		this.eInfoCopier = copier;
-	}
-	
-	/** Returns the edge rewriter to use. */
-	public IUserInfoCreator<IUserInfo> getEdgeRewriter() {
-		return eInfoCopier;
-	}
-	
-	/** Rewrites an edge info. */
-	public IUserInfo rewriteEdgeInfo(IUserInfo info) {
-		return eInfoCopier.create(info);
+	/** Checks if there is a graph. */
+	public boolean hasGraph() {
+		return writer instanceof IDirectedGraph;
 	}
 	
 	/** Returns graph info. */
@@ -106,8 +64,7 @@ public class DirectedGraphWriter<T> implements IDirectedGraphWriter,
 
 	/** Creates the graph info. */
 	public void setUserInfo(IUserInfo info) {
-		info = rewriteGraphInfo(info);
-		writer.setUserInfo(info.copy());
+		writer.setUserInfo(handler.graphCopy(info));
 	}
 	
 	/** Returns vertex info. */
@@ -117,8 +74,7 @@ public class DirectedGraphWriter<T> implements IDirectedGraphWriter,
 
 	/** Creates a vertex. */
 	public Object createVertex(IUserInfo info) {
-		info = rewriteVertexInfo(info);
-		return writer.createVertex(info);
+		return writer.createVertex(handler.vertexCopy(info));
 	}
 	
 	/** Returns an edge info. */
@@ -128,15 +84,14 @@ public class DirectedGraphWriter<T> implements IDirectedGraphWriter,
 
 	/** Creates an edge. */
 	public Object createEdge(Object source, Object target, IUserInfo info) {
-		info = rewriteEdgeInfo(info);
-		return writer.createEdge(source, target, info);
+		return writer.createEdge(source, target, handler.edgeCopy(info));
 	}
 
 	/** Adapts this writer to a specific class. */
 	public <S> Object adapt(Class<S> c) {
 		if (c.isAssignableFrom(getClass())) {
 			return this;
-		}
+		} 
 		return writer.adapt(c);
 	}
 	

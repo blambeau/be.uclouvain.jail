@@ -20,9 +20,10 @@ import be.uclouvain.jail.dialect.dot.DOTDirectedGraphPrintable;
 import be.uclouvain.jail.dialect.dot.DOTGraphDialect;
 import be.uclouvain.jail.dialect.dot.JDotty;
 import be.uclouvain.jail.graph.IDirectedGraph;
-import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.graph.utils.DirectedGraphWriter;
 import be.uclouvain.jail.uinfo.IUserInfo;
+import be.uclouvain.jail.uinfo.IUserInfoHandler;
+import be.uclouvain.jail.uinfo.UserInfoHandler;
 import be.uclouvain.jail.vm.JailReflectionToolkit;
 import be.uclouvain.jail.vm.JailVM;
 import be.uclouvain.jail.vm.JailVMException;
@@ -73,34 +74,34 @@ public class GraphToolkit extends JailReflectionToolkit implements IAdapter {
 	
 	/** Copies a graph. */
 	public IDirectedGraph copy(IDirectedGraph[] graphs, JailVMOptions options) throws JailVMException {
-		AdjacencyDirectedGraph copy = new AdjacencyDirectedGraph();
-		DirectedGraphWriter writer = new DirectedGraphWriter(copy);
-		writer.getVertexCopier().keepAll();
-		writer.getEdgeCopier().keepAll();
+		IUserInfoHandler handler = new UserInfoHandler(); 
+		DirectedGraphWriter writer = new DirectedGraphWriter(handler);
+		handler.getVertexCopier().keepAll();
+		handler.getEdgeCopier().keepAll();
 		
 		// add vertex populator
 		if (options.hasOption("vertex")) {
 			GMatchPopulator<IUserInfo> populator = options.getOptionValue("vertex",GMatchPopulator.class,null);
-			writer.getVertexCopier().addPopulator(populator);
+			handler.getVertexCopier().addPopulator(populator);
 		}
 		
 		// add state populator
 		if (options.hasOption("state")) {
 			System.err.println("Warning, using depreacated :state on graph copy.");
 			GMatchPopulator<IUserInfo> populator = options.getOptionValue("state",GMatchPopulator.class,null);
-			writer.getVertexCopier().addPopulator(populator);
+			handler.getVertexCopier().addPopulator(populator);
 		}
 		
 		// add edge populator
 		if (options.hasOption("edge")) {
 			GMatchPopulator<IUserInfo> populator = options.getOptionValue("edge",GMatchPopulator.class,null);
-			writer.getEdgeCopier().addPopulator(populator);
+			handler.getEdgeCopier().addPopulator(populator);
 		}
 		
 		for (IDirectedGraph graph: graphs) {
 			DirectedGraphCopier.copy(graph,writer);
 		}
-		return copy;
+		return writer.getGraph();
 	}
 	
 	/** Randomly generates a graph. */

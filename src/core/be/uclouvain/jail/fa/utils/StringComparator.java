@@ -4,7 +4,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 
 import be.uclouvain.jail.fa.IAlphabet;
-import be.uclouvain.jail.fa.IWord;
+import be.uclouvain.jail.fa.IString;
 
 /**
  * Provides a comparator for words.
@@ -12,18 +12,18 @@ import be.uclouvain.jail.fa.IWord;
  * @author blambeau
  * @param <L>
  */
-public class WordComparator<T> implements Comparator<IWord<T>> {
+public class StringComparator<T> implements Comparator<IString<T>> {
 
 	/** Alphabet. */
 	private IAlphabet<T> alphabet;
 	
 	/** Creates a comparator instance. */
-	public WordComparator(IAlphabet<T> alphabet) {
+	public StringComparator(IAlphabet<T> alphabet) {
 		this.alphabet = alphabet;
 	}
 	
 	/** Compares two words. */
-	public int compare(IWord<T> o1, IWord<T> o2) {
+	public int compare(IString<T> o1, IString<T> o2) {
 		Iterator<T> letters = o1.iterator();
 		Iterator<T> oletters = o2.iterator(); 
 		
@@ -47,7 +47,11 @@ public class WordComparator<T> implements Comparator<IWord<T>> {
 		// Other have letters yet?
 		// all previous letters were equal, then I'm smaller
 		// otherwise we are equal
-		return oletters.hasNext() ? -1 : 0;
+		if (oletters.hasNext()) {
+			return -1;
+		} else {
+			return new Boolean(o1.isPositive()).compareTo(o2.isPositive());
+		}
 	}
 
 }

@@ -12,16 +12,15 @@ import be.uclouvain.jail.algo.fa.compose.DefaultDFAComposerResult;
 import be.uclouvain.jail.algo.fa.determinize.DefaultNFADeterminizerInput;
 import be.uclouvain.jail.algo.fa.determinize.DefaultNFADeterminizerResult;
 import be.uclouvain.jail.algo.fa.determinize.NFADeterminizerAlgo;
-import be.uclouvain.jail.algo.fa.kernel.DFAKernelExtractorAlgo;
-import be.uclouvain.jail.algo.fa.kernel.DefaultDFAKernelExtractorInput;
-import be.uclouvain.jail.algo.fa.kernel.DefaultDFAKernelExtractorResult;
-import be.uclouvain.jail.algo.fa.kernel.IDFAKernelExtractorInput;
-import be.uclouvain.jail.algo.fa.kernel.IDFAKernelExtractorResult;
 import be.uclouvain.jail.algo.fa.minimize.DFAMinimizerAlgo;
 import be.uclouvain.jail.algo.fa.minimize.DefaultDFAMinimizerInput;
 import be.uclouvain.jail.algo.fa.minimize.DefaultDFAMinimizerResult;
+import be.uclouvain.jail.algo.fa.rand.DefaultRandomStringsInput;
+import be.uclouvain.jail.algo.fa.rand.DefaultRandomStringsResult;
+import be.uclouvain.jail.algo.fa.rand.IRandomStringsResult;
 import be.uclouvain.jail.algo.fa.rand.RandomDFAInput;
 import be.uclouvain.jail.algo.fa.rand.RandomDFAResult;
+import be.uclouvain.jail.algo.fa.rand.RandomStringsAlgo;
 import be.uclouvain.jail.algo.fa.tmoves.DefaultTauRemoverInput;
 import be.uclouvain.jail.algo.fa.tmoves.DefaultTauRemoverResult;
 import be.uclouvain.jail.algo.fa.tmoves.ITauInformer;
@@ -45,6 +44,7 @@ import be.uclouvain.jail.fa.impl.GraphNFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.utils.DirectedGraphWriter;
 import be.uclouvain.jail.uinfo.IUserInfo;
+import be.uclouvain.jail.uinfo.UserInfoHandler;
 import be.uclouvain.jail.vm.JailReflectionToolkit;
 import be.uclouvain.jail.vm.JailVM;
 import be.uclouvain.jail.vm.JailVMException;
@@ -167,36 +167,11 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 		return ret;
 	}
 
-	/** Extracts the kernel of a dfa. */
-	public IDFAKernelExtractorResult kernel(IDFA dfa, JailVMOptions options) throws JailVMException {
-		IDFAKernelExtractorInput input = new DefaultDFAKernelExtractorInput(dfa);
-		DefaultDFAKernelExtractorResult result = new DefaultDFAKernelExtractorResult();
-		result.getStateCopier().keepAll();
-		result.getEdgeCopier().keepAll();
-		
-		// add state populator
-		if (options.hasOption("state")) {
-			System.err.println("Warning, using depreacated :state on graph copy.");
-			GMatchPopulator<IUserInfo> populator = options.getOptionValue("state",GMatchPopulator.class,null);
-			result.getStateCopier().addPopulator(populator);
-		}
-		
-		// add edge populator
-		if (options.hasOption("edge")) {
-			GMatchPopulator<IUserInfo> populator = options.getOptionValue("edge",GMatchPopulator.class,null);
-			result.getEdgeCopier().addPopulator(populator);
-		}
-		
-		new DFAKernelExtractorAlgo().execute(input,result);
-		return result;
-	}
-	
 	/** Complements a DFA. */
 	public IDFA complement(IDFA dfa, JailVMOptions options, JailVM vm) throws JailVMException {
 		DefaultDFAComplementorInput input = new DefaultDFAComplementorInput(dfa);
-		DefaultDFAComplementorResult result = new DefaultDFAComplementorResult(vm.getUserInfoHelper());
-		result.getStateCopier().keepAll();
-		result.getEdgeCopier().keepAll();
+		DefaultDFAComplementorResult result = new DefaultDFAComplementorResult();
+		result.keepAll(false, true, true);
 		
 		String heuristic = options.getOptionValue("heuristic", String.class, "error");
 		if ("error".equals(heuristic)) {
@@ -213,12 +188,11 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 	}
 	
 	public IDFA uncomplement(IDFA dfa, JailVMOptions options) throws JailVMException {
-		IDFA copy = new GraphDFA();
-		DirectedGraphWriter writer = new DirectedGraphWriter(copy.getGraph());
-		writer.getVertexCopier().keepAll();
-		writer.getEdgeCopier().keepAll();
+		UserInfoHandler handler = new UserInfoHandler();
+		handler.keepAll(false, true, true);
+		DirectedGraphWriter writer = new DirectedGraphWriter(handler);
 		new FAUncomplementorAlgo().execute(dfa,writer);
-		return copy;
+		return (IDFA) writer.adapt(IDFA.class);
 	}
 	
 	/** Generates a random DFA. */
@@ -238,6 +212,16 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 		input.setOptions(options);
 		result.setOptions(options);
 		new RandomWalkAlgo().execute(input,result);
+		return result;
+	}
+	
+	/** Randomize strings. */
+	public IRandomStringsResult randstrings(JailVMOptions options, JailVM vm) throws JailVMException {
+		DefaultRandomStringsInput<Object> input = new DefaultRandomStringsInput<Object>(); 
+		DefaultRandomStringsResult<Object> result = new DefaultRandomStringsResult<Object>();
+		input.setOptions(options);
+		result.setOptions(options);
+		new RandomStringsAlgo().execute(input,result);
 		return result;
 	}
 	

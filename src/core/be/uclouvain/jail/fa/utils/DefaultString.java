@@ -6,22 +6,11 @@ import java.util.List;
 
 import net.chefbe.javautils.adapt.AdaptUtils;
 import net.chefbe.javautils.comparisons.HashCodeUtils;
-import be.uclouvain.jail.fa.FAStateKind;
 import be.uclouvain.jail.fa.IAlphabet;
 import be.uclouvain.jail.fa.IDFA;
-import be.uclouvain.jail.fa.IFlushableString;
-import be.uclouvain.jail.fa.INFA;
+import be.uclouvain.jail.fa.IFATrace;
 import be.uclouvain.jail.fa.IString;
-import be.uclouvain.jail.fa.IWord;
-import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
-import be.uclouvain.jail.fa.impl.GraphDFA;
-import be.uclouvain.jail.fa.impl.GraphNFA;
-import be.uclouvain.jail.graph.IDirectedGraph;
-import be.uclouvain.jail.graph.IDirectedGraphWriter;
-import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
-import be.uclouvain.jail.uinfo.IUserInfo;
-import be.uclouvain.jail.uinfo.IUserInfoHelper;
-import be.uclouvain.jail.uinfo.UserInfoHelper;
+import be.uclouvain.jail.fa.IWalkInfo;
 
 /**
  * Provides a base implementation for sample strings.
@@ -29,80 +18,101 @@ import be.uclouvain.jail.uinfo.UserInfoHelper;
  * @author blambeau
  * @param <L> type of the string letters.
  */
-public class DefaultString<L> implements IFlushableString<L> {
+public class DefaultString<T> implements IString<T> {
 
-	/** Positive string? */
-	private boolean positive;
+	/** Alphabet. */
+	private IAlphabet<T> alphabet;
 	
-	/** Underlying word. */
-	private IWord<L> word;
-
-	/** Creates a string with letters. */
-	public DefaultString(IAlphabet<L> alphabet, Iterable<L> letters, boolean positive) {
-		this.word = new DefaultWord<L>(alphabet, letters);
-		this.positive = positive;
+	/** List of letters. */
+	private List<T> letters;
+	
+	/** Is positive? */
+	private Boolean isPositive;
+	
+	/** Creates a word instance. */
+	public DefaultString(IAlphabet<T> alphabet, List<T> letters, boolean positive) {
+		this.alphabet = alphabet;
+		this.letters = letters;
+		this.isPositive = positive;
 	}
 	
-	/** Creates a string with letters. */
-	public DefaultString(IAlphabet<L> alphabet, L[] letters, boolean positive) {
-		this.word = new DefaultWord<L>(alphabet, letters);
-		this.positive = positive;
+	/** Creates a word instance. */
+	public DefaultString(IAlphabet<T> alphabet, T[] letters, boolean positive) {
+		this(alphabet,toList(letters),positive);
+	}
+	
+	/** Creates a word from iterable letters. */
+	public DefaultString(IAlphabet<T> alphabet, Iterable<T> letters, boolean positive) {
+		this(alphabet,toList(letters),positive);
+	}
+	
+	/** Builds a list from an iterable. */
+	private static final <X> List<X> toList(Iterable<X> it) {
+		List<X> list = new ArrayList<X>();
+		for (X x: it) { list.add(x); }
+		return list;
+	}
+
+	/** Builds a list from an iterable. */
+	private static final <X> List<X> toList(X[] it) {
+		List<X> list = new ArrayList<X>();
+		for (X x: it) { list.add(x); }
+		return list;
 	}
 	
 	/** Returns alphabet which generated this word. */
-	public IAlphabet<L> getAlphabet() {
-		return word.getAlphabet();
+	public IAlphabet<T> getAlphabet() {
+		return alphabet;
 	}
 	
-	/** Returns size of the string. */
+	/** Returns word size. */
 	public int size() {
-		return word.size();
+		return letters.size();
 	}
 	
-	/** Returns true if the string is negative. */
-	public boolean isNegative() {
-		return !positive;
+	/** Returns an iterator on letters. */
+	public Iterator<T> iterator() {
+		return letters.iterator();
 	}
 
-	/** Returns true if the string is positive. */
+	/** Is positive? */
 	public boolean isPositive() {
-		return positive;
+		return isPositive;
 	}
 
-	/** Returns an iterator on string letters. */
-	public Iterator<L> iterator() {
-		return word.iterator();
+	/** Creates a substring. */
+	public IString<T> subString(int start, int length) {
+		List<T> letters = new ArrayList<T>();
+		for (int i=start; i<start+length; i++) {
+			letters.add(this.letters.get(i));
+		}
+		return new DefaultString<T>(alphabet,letters,isPositive);
+	}
+
+	/** Walks a DFA. */
+	public IWalkInfo<T> walk(IDFA fa) {
+		return FAWalkUtils.stringWalk(fa, this);
+	}
+
+	/** Compares with another word. */
+	public int compareTo(IString<T> other) {
+		return alphabet.getStringComparator().compare(this, other);
 	}
 	
-	/** Compares with another string. */
-	public int compareTo(IString<L> other) {
-		int c = getAlphabet().getWordComparator().compare(this, other);
-
-		// if not equal let return c
-		if (c != 0) { return c; }
-		
-		// otherwise, positive strings are greater
-		// than negative ones
-		return new Boolean(positive).compareTo(other.isPositive());
-	}
-
 	/** Compares with another word. */
 	@SuppressWarnings("unchecked")
 	public int compareTo(Object who) {
 		if (who == this) { return 0; }
 		if (who instanceof IString == false) { return 1; }
-		try {
-			return compareTo((IString<L>)who);
-		} catch (ClassCastException ex) {
-			return 1;
-		}
+		try { return compareTo((IString<T>)who); } 
+		catch (ClassCastException ex) { return 1; }
 	}
-	
-	/** Returns an hash code. */
+
+	/** Computes the hash code. */
 	public int hashCode() {
 		int hash = HashCodeUtils.SEED;
-		hash = HashCodeUtils.hash(hash, word.hashCode());
-		hash = HashCodeUtils.hash(hash, positive);
+		hash = HashCodeUtils.hash(hash, letters.hashCode());
+		hash = HashCodeUtils.hash(hash, isPositive);
 		return hash;
 	}
 	
@@ -111,85 +121,34 @@ public class DefaultString<L> implements IFlushableString<L> {
 		if (who == this) { return true; }
 		if (who instanceof DefaultString) {
 			DefaultString other = (DefaultString) who;
-			return word.equals(other.word)
-			    && new Boolean(positive).equals(other.isPositive());
+			return letters.equals(other.letters) &&
+			       isPositive.equals(other.isPositive);
 		}
 		return compareTo(who) == 0;
 	}
 
-	
-
-	/** Factors a state info. */
-	private IUserInfo sInfo(boolean initial, boolean accepting, boolean error) {
-		IUserInfoHelper helper = UserInfoHelper.instance();
-		helper.addKeyValue(AttributeGraphFAInformer.STATE_INITIAL_KEY, initial);
-		helper.addKeyValue(AttributeGraphFAInformer.STATE_KIND_KEY, 
-				FAStateKind.fromBools(accepting,error));
-		return helper.install();
-	}
-	
-	/** Creates an edge info. */
-	private IUserInfo eInfo(L letter) {
-		IUserInfoHelper helper = UserInfoHelper.instance();
-		return helper.keyValue(AttributeGraphFAInformer.EDGE_LETTER_KEY, letter);
-	}
-	
-	/** Fills a NFA. */
-	public Object[] fill(IDirectedGraphWriter g) {
-		int size = size();
-
-		// create initial state
-		IUserInfo sInfo = sInfo(true,
-                               size==0 && positive,   // accepting if empty positive string
-                               size==0 && !positive); // error is empty negative string
-		Object current = g.createVertex(sInfo);
-		
-		// prepare result
-		List<Object> states = new ArrayList<Object>(size+1);
-		
-		// create next states
-		int i=1;
-		for (L letter: this) {
-			// add current to result
-			states.add(current);
-			
-			// create edge and state info
-			IUserInfo eInfo = eInfo(letter);
-			sInfo = sInfo(false, i==size && positive, i==size && !positive);
-			
-			// create next state and connect
-			Object next = g.createVertex(sInfo);
-			g.createEdge(current, next, eInfo);
-			
-			// current becomes next
-			current = next;
-			i++;
+	/** Returns a string representation. */
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(isPositive() ? "+ " : "- ");
+		int i=0;
+		for (T letter: this) {
+			if (i++ != 0) { sb.append(" "); }
+			sb.append(letter);
 		}
-		
-		return states.toArray();
+		return sb.toString();
 	}
-
-	/** Provides adaptations. */
-	public <T> Object adapt(Class<T> c) {
-		if (c.isAssignableFrom(getClass())) {
+	
+	/** Adapts this trace to some type. */
+	public <S> Object adapt(Class<S> c) {
+		if (c.isAssignableFrom(this.getClass())) {
 			return this;
 		}
-		 
-		if (IDirectedGraph.class.equals(c)) {
-			IDirectedGraph g = new AdjacencyDirectedGraph();
-			fill(g);
-			return g;
-		} else if (INFA.class.equals(c)) {
-			INFA nfa = new GraphNFA();
-			fill(nfa.getGraph());
-			return nfa;
-		} else if (IDFA.class.equals(c)) {
-			IDFA dfa = new GraphDFA();
-			fill(dfa.getGraph());
-			return dfa;
+		
+		if (IFATrace.class.equals(c)) {
+			return String2DFA.toTrace(this);
 		}
-		 
-		// allow external adapters to do their work
+		
 		return AdaptUtils.externalAdapt(this,c);
 	}
 
