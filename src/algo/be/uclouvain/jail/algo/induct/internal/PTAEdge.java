@@ -103,10 +103,10 @@ public class PTAEdge {
 
 	/** Starts a merge simulation of the target state with the target kernel
 	 * state marked in the work simulation. */
-	protected void simulate(InductionAlgo algo, Simulation work) throws Avoid {
+	protected void simulate(InductionAlgo algo, Simulation simu) throws Avoid {
 		assert (skState != null) : "Edge has been hooked.";
-		work.initialize();
-		target.prepare(algo, work, work.getTargetKState());
+		simu.initialize();
+		target.prepare(algo, simu, simu.getTargetKState());
 	}
 
 	/** Prepare merging with a target kernel edge. */

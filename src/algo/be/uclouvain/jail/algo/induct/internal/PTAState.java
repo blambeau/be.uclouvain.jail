@@ -71,6 +71,11 @@ public class PTAState {
 		return (PTAEdge) delta.get(letter);
 	}
 
+	/** Returns out edges. */
+	public Iterable<PTAEdge> outEdges() {
+		return delta.values();
+	}
+	
 	/** Returns attached values. */
 	protected IUserInfo getUserInfo() {
 		return values;
@@ -112,11 +117,6 @@ public class PTAState {
 	protected void prepare(InductionAlgo algo, Simulation simu, Object tkState) throws Avoid {
 		assert (tkState != null) : "Not null tkState.";
 		assert (tkState instanceof PTAState == false) : "Real tkState.";
-		/*
-		assert (MappingUtils.pRepresentor(algo, tkState) != null) : "tkState " + 
-			algo.getDFA().getGraph().getVerticesTotalOrder().indexOf(tkState) +
-		" has a representor.";
-		*/
 		
 		IDFA dfa = algo.getDFA();
 		Fringe fringe = algo.getFringe();

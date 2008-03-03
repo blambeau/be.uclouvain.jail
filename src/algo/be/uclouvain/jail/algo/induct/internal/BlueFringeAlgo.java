@@ -114,7 +114,7 @@ public final class BlueFringeAlgo extends InductionAlgo {
 						eval.simu.commit();
 						commited = true;
 						break;
-					} catch (Avoid avoid1) {}
+					} catch (Avoid avoid) {}
 				}
 
 			}

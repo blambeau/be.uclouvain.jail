@@ -38,8 +38,7 @@ public class Simulation {
 	/** Starting kernel state. */
 	private Object targetKState;
 
-	/** Kernel DFA version of the fringe edge 
-	 * (initial added edge). */
+	/** Kernel DFA version of the fringe edge (initial added edge). */
 	private Object kEdge;
 
 	/** Saved user info for rollbacked kEdge. */
