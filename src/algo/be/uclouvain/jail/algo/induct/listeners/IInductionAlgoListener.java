@@ -1,20 +1,28 @@
-package be.uclouvain.jail.algo.induct.internal;
+package be.uclouvain.jail.algo.induct.listeners;
+
+import be.uclouvain.jail.algo.induct.internal.InductionAlgo;
+import be.uclouvain.jail.algo.induct.internal.PTAEdge;
+import be.uclouvain.jail.algo.induct.internal.PTAState;
+import be.uclouvain.jail.algo.induct.internal.Simulation;
 
 /**
  * Provides listening facilities on induction algorithms.
  * 
  * @author blambeau
  */
-public interface IInductionAlgoSteps {
+public interface IInductionAlgoListener {
 
+	/** Initializes the listener. */
+	public void initialize(InductionAlgo algo);
+	
 	/** Consolidates an edge. */
 	public void consolidate(PTAEdge edge);
 
-	/** Consolidates a state. */
+	/** Consolidates an edge. */
 	public void consolidate(PTAState state);
 
 	/** Starts a try. */
-	public void startry(PTAEdge edge, Object kState);
+	public void startTry(PTAEdge edge, Object kState);
 	
 	/** Merges a victim with a target state. */
 	public void merge(PTAState victim, Object target);
@@ -35,9 +43,9 @@ public interface IInductionAlgoSteps {
 	public void gain(PTAState state, PTAEdge edge);
 	
 	/** Commits the try. */
-	public void commit(PTAEdge edge, Object kState);
+	public void commit(Simulation simu);
 
 	/** Rollbacks the try. */
-	public void rollback(PTAEdge edge, Object kState);
+	public void rollback(Simulation simu);
 
 }

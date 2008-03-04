@@ -1,5 +1,6 @@
 package be.uclouvain.jail.algo.induct.internal;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
@@ -17,6 +18,23 @@ import be.uclouvain.jail.uinfo.IUserInfo;
 /** Provides a state of the decorated PTA. */
 public class PTAState {
 
+	/** Mapping. */
+	private Map<Object, Object> mapping = new HashMap<Object,Object>();
+
+	/** Keeps a listener information. */
+	public void keep(Object key, Object value) {
+		this.mapping.put(key, value);
+	}
+
+	/** Retrieves a listener information. */
+	public Object retrieve(Object key) {
+		return this.mapping.get(key);
+	}
+	/** Keeps a listener information. */
+	public Object forget(Object key) {
+		return this.mapping.remove(key);
+	}
+	
 	/** Induction algorithm. */
 	private InductionAlgo algo;
 
@@ -77,7 +95,7 @@ public class PTAState {
 	}
 	
 	/** Returns attached values. */
-	protected IUserInfo getUserInfo() {
+	public IUserInfo getUserInfo() {
 		return values;
 	}
 	
@@ -94,7 +112,7 @@ public class PTAState {
 	}
 
 	/** Consolidates the state. */
-	protected Object consolidate(InductionAlgo algo) {
+	protected Object consolidate(Simulation simu) {
 		// create state in DFA
 		IDFA dfa = algo.getDFA();
 		IDirectedGraph dfag = dfa.getGraph();
@@ -114,7 +132,7 @@ public class PTAState {
 	}
 
 	/** Prepare merge with the target kernel state. */
-	protected void prepare(InductionAlgo algo, Simulation simu, Object tkState) throws Avoid {
+	protected void merge(Simulation simu, Object tkState) throws Avoid {
 		assert (tkState != null) : "Not null tkState.";
 		assert (tkState instanceof PTAState == false) : "Real tkState.";
 		
@@ -122,7 +140,7 @@ public class PTAState {
 		Fringe fringe = algo.getFringe();
 		
 		// merge me with the target kernel state (KStateMerge)
-		simu.addKStateMerge(this, tkState);
+		simu.merge(this, tkState);
 		
 		// check outgoing transitions
 		for (Object letter: delta.keySet()) {
@@ -133,7 +151,7 @@ public class PTAState {
 			
 			if (tkEdge != null) {
 				// merge edge when found, by delegation
-				ptaEdge.prepare(algo, simu, tkEdge);
+				ptaEdge.merge(simu, tkEdge);
 			} else {
 				// no such edge ...
 				
@@ -146,19 +164,19 @@ public class PTAState {
 				
 				if (fEdge != null) {
 					// edge found, merge it by delegation
-					ptaEdge.prepare(algo, simu, fEdge);
+					ptaEdge.merge(simu, fEdge);
 				} else {
 					// no edge at all, mark as a KStateGain
-					simu.addKStateGain(tkState, ptaEdge);
+					simu.gain(tkState, ptaEdge);
 				}
 			}
 		}
 	}
 
 	/** Prepate merge with another (white) state. */
-	protected void prepare(InductionAlgo algo, Simulation work, PTAState oState) throws Avoid {
+	protected void merge(Simulation work, PTAState oState) throws Avoid {
 		// merge me with the target state (OStateMerge)
-		work.addOStateMerge(this, oState);
+		work.merge(this, oState);
 		
 		// check outgoing transitions
 		for (Object letter: delta.keySet()) {
@@ -173,10 +191,10 @@ public class PTAState {
 			
 			if (oEdge != null) {
 				// edge found, merge it by delegation
-				edge.prepare(algo, work, oEdge);
+				edge.merge(work, oEdge);
 			} else {
 				// no edge at all, mark as a OStateGain
-				work.addOStateGain(oState, edge);
+				work.gain(oState, edge);
 			}
 		}
 

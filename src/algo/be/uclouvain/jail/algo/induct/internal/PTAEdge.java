@@ -1,6 +1,8 @@
 package be.uclouvain.jail.algo.induct.internal;
 
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import be.uclouvain.jail.algo.commons.Avoid;
 import be.uclouvain.jail.fa.IDFA;
@@ -10,6 +12,23 @@ import be.uclouvain.jail.uinfo.IUserInfo;
 /** Provides an edge of the decorated PTA. */
 public class PTAEdge {
 
+	/** Mapping. */
+	private Map<Object, Object> mapping = new HashMap<Object,Object>();
+
+	/** Keeps a listener information. */
+	public void keep(Object key, Object value) {
+		this.mapping.put(key, value);
+	}
+
+	/** Retrieves a listener information. */
+	public Object retrieve(Object key) {
+		return this.mapping.get(key);
+	}
+	/** Keeps a listener information. */
+	public Object forget(Object key) {
+		return this.mapping.remove(key);
+	}
+	
 	/** Attached values. */
 	private IUserInfo values;
 
@@ -61,7 +80,7 @@ public class PTAEdge {
 	}
 
 	/** Returns attached values. */
-	protected IUserInfo getUserInfo() {
+	public IUserInfo getUserInfo() {
 		return values;
 	}
 
@@ -83,58 +102,50 @@ public class PTAEdge {
 	}
 
 	/** Consolidates the edge. */
-	protected Object consolidate(InductionAlgo algo) {
+	protected Object consolidate(Simulation simu) {
 		assert (skState != null) : "Edge has been hooked.";
-		IDFA dfa = algo.getDFA();
+		IDFA dfa = simu.getKernelDFA();
 		IDirectedGraph dfag = dfa.getGraph();
 		
 		// consolidate target state
-		Object kTarget = target.consolidate(algo);
+		Object kTarget = simu.consolidate(target);
 		
 		// add this edge in the target DFA 
 		Object edge = dfag.createEdge(skState, kTarget, values);
 		
 		// remove from fringe
-		algo.getFringe().remove(skState, letter);
+		simu.getFringe().remove(skState, letter);
 		
 		// return created edge
 		return edge;
 	}
 
-	/** Starts a merge simulation of the target state with the target kernel
-	 * state marked in the work simulation. */
-	protected void simulate(InductionAlgo algo, Simulation simu) throws Avoid {
-		assert (skState != null) : "Edge has been hooked.";
-		simu.initialize();
-		target.prepare(algo, simu, simu.getTargetKState());
-	}
-
 	/** Prepare merging with a target kernel edge. */
-	protected void prepare(InductionAlgo algo, Simulation work, Object tkEdge) throws Avoid {
+	protected void merge(Simulation simu, Object tkEdge) throws Avoid {
 		assert (skState == null) : "Edge has not been hooked.";
 		assert (tkEdge instanceof PTAEdge == false) : "Real kernel edge.";
 		
 		// merge with kernel edge (KEdgeMerge)
-		work.addKEdgeMerge(this, tkEdge);
+		simu.merge(this, tkEdge);
 		
 		// find target state in the DFA
-		IDFA dfa = algo.getDFA();
+		IDFA dfa = simu.getKernelDFA();
 		Object tkState = dfa.getGraph().getEdgeTarget(tkEdge);
 		
 		// prepare merge of the PTA target and DFA target
-		target.prepare(algo, work, tkState);
+		target.merge(simu, tkState);
 	}
 
 	/** Prepare merging with a white PTA edge. */
-	protected void prepare(InductionAlgo algo, Simulation work, PTAEdge other) throws Avoid {
+	protected void merge(Simulation simu, PTAEdge other) throws Avoid {
 		assert (skState == null) : "Other edge has not been hooked.";
 		
 		// merge with other edge
-		work.addOEdgeMerge(this, other);
+		simu.merge(this, other);
 		
 		// prepare merge of targets
 		PTAState oState = other.target();
-		target.prepare(algo, work, oState);
+		target.merge(simu, oState);
 	}
 
 	/** Returns a string representation. */

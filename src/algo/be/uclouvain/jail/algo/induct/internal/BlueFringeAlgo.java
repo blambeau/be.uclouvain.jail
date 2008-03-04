@@ -5,6 +5,7 @@ import java.util.TreeSet;
 
 import be.uclouvain.jail.algo.commons.Avoid;
 import be.uclouvain.jail.algo.commons.Restart;
+import be.uclouvain.jail.algo.commons.Unable;
 import be.uclouvain.jail.algo.induct.open.IEvaluator;
 import be.uclouvain.jail.graph.IDirectedGraph;
 
@@ -76,8 +77,8 @@ public final class BlueFringeAlgo extends InductionAlgo {
 					if (isCompatible(kState, fEdge)) {
 						try {
 							// create new simulation
-							simu = new Simulation(this, fEdge, kState);
-							fEdge.simulate(this, simu);
+							simu = new Simulation(this);
+							simu.startTry(fEdge, kState);
 							
 							// evaluate simulation and keep result if required
 							int eval = evaluator.evaluate(simu);
@@ -96,8 +97,14 @@ public final class BlueFringeAlgo extends InductionAlgo {
 
 				// no evaluation -> edge consilidation and break
 				if (!hasEval) {
-					fEdge.consolidate(this);
-					break;
+					try {
+						simu = new Simulation(this);
+						simu.consolidate(fEdge);
+						simu.commit();
+						break;
+					} catch (Avoid ex) {
+						throw new Unable("Unexcpected avoid exception on consolidation.",ex);
+					}
 				}
 			}
 
@@ -114,7 +121,9 @@ public final class BlueFringeAlgo extends InductionAlgo {
 						eval.simu.commit();
 						commited = true;
 						break;
-					} catch (Avoid avoid) {}
+					} catch (Avoid avoid) {
+						throw new Unable("Unexcpected avoid exception on replay.",avoid);
+					}
 				}
 
 			}
@@ -122,7 +131,15 @@ public final class BlueFringeAlgo extends InductionAlgo {
 			// when no evaluation or all rejected by the oracle
 			if (hasEval && !commited) {
 				// consolidate first one ... a bit arbitrary actually
-				fringe.iterator().next().consolidate(this);
+				try {
+					PTAEdge fEdge = fringe.iterator().next(); 
+					simu = new Simulation(this);
+					simu.consolidate(fEdge);
+					simu.commit();
+					break;
+				} catch (Avoid ex) {
+					throw new Unable("Unexcpected avoid exception on consolidation.",ex);
+				}
 			}
 		}
 	}

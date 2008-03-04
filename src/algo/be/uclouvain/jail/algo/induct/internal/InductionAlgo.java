@@ -2,6 +2,8 @@ package be.uclouvain.jail.algo.induct.internal;
 
 import be.uclouvain.jail.algo.commons.Avoid;
 import be.uclouvain.jail.algo.commons.Restart;
+import be.uclouvain.jail.algo.induct.listeners.IInductionAlgoListener;
+import be.uclouvain.jail.algo.induct.listeners.InductionAlgoListeners;
 import be.uclouvain.jail.algo.induct.open.ICompatibility;
 import be.uclouvain.jail.algo.induct.open.IOracle;
 import be.uclouvain.jail.fa.IDFA;
@@ -29,10 +31,18 @@ public abstract class InductionAlgo {
 	/** Compatibility information (chain). */
 	protected ICompatibility compatibility;
 
+	/** Listener. */
+	protected InductionAlgoListeners listener = new InductionAlgoListeners();
+	
 	/** Creates an algorithm instance. */
 	public InductionAlgo() {
 	}
 
+	/** Adds a listener. */
+	public void addListener(IInductionAlgoListener l) {
+		listener.addListener(l);
+	}
+	
 	/** Executes the algorithm. */
 	public IDFA execute(IInductionAlgoInput info) throws Avoid {
 		this.input = info;
@@ -90,7 +100,9 @@ public abstract class InductionAlgo {
 		// creates the whole PTA decorator as a side effect)
 		Object ptaInitial = pta.getInitialState();
 		PTAState rootState = new PTAState(this, pta, ptaInitial, null);
-		rootState.consolidate(this);
+		Simulation simu = new Simulation(this);
+		simu.consolidate(rootState);
+		simu.commit();
 	}
 
 	/** Returns current solution. */

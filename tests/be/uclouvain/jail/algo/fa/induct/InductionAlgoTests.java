@@ -23,17 +23,6 @@ public class InductionAlgoTests extends TestCase {
 		assertTrue(new DFAEquiv(dfa1,dfa2).areEquivalent());
 	}
 
-	/*
-	JDotty jdotty = new JDotty();
-	jdotty.present(FAUtils.copyForDot(expected), null);
-	jdotty.present(FAUtils.copyForDot(result), null);
-
-	PrintWriter w = new PrintWriter(System.out);
-	new DOTGraphDialect().print(expected, w, null);
-	new DOTGraphDialect().print(result, w, null);
-	w.flush();
-	*/
-
 	/** Tests RPNI on Sample 3.2 from INRIA. */
 	public void testRPNIOnInriaSample3_2() throws Exception {
 		// load expected result and sample
@@ -94,7 +83,7 @@ public class InductionAlgoTests extends TestCase {
 	
 	/** Main method. */
 	public static void main(String[] args) throws Exception {
-		new InductionAlgoTests().testRPNIOnTrain();
+		new InductionAlgoTests().testRPNIOnInriaSample3_2();
 	}
 	
 }

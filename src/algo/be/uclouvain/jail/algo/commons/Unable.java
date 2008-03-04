@@ -20,4 +20,9 @@ public class Unable extends RuntimeException {
 		super(msg);
 	}
 
+	/** Creates an exception instance. */
+	public Unable(String arg0, Throwable arg1) {
+		super(arg0, arg1);
+	}
+
 }

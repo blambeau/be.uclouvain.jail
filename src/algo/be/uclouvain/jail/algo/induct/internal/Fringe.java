@@ -15,7 +15,7 @@ import be.uclouvain.jail.graph.utils.ITotalOrder;
  * <p>The fringe is basically a collection of edges. These edges are in
  * fact (kState,letter) pairs mapped to PTAEdge.</p> 
  */
-class Fringe implements Iterable<PTAEdge> {
+public class Fringe implements Iterable<PTAEdge> {
 
 	/** Induction algorithm. */
 	private InductionAlgo algo;

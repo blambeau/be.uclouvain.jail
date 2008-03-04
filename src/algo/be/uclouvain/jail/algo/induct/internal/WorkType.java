@@ -19,8 +19,17 @@ public enum WorkType {
 	KStateGain(4), 
 	
 	/** Other state gain. */
-	OStateGain(5);
+	OStateGain(5),
 
+	/** StartTry work. */
+	StartTry(6),
+	
+	/** Consolidate work. */
+	StateConsolidate(7),
+	
+	/** Consolidate work. */
+	EdgeConsolidate(8);
+	
 	/** Identifier of the work. */
 	private int id;
 

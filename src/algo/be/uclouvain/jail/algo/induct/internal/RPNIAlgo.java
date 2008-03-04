@@ -2,6 +2,7 @@ package be.uclouvain.jail.algo.induct.internal;
 
 import be.uclouvain.jail.algo.commons.Avoid;
 import be.uclouvain.jail.algo.commons.Restart;
+import be.uclouvain.jail.algo.commons.Unable;
 import be.uclouvain.jail.graph.IDirectedGraph;
 
 /** RPNI induction algorithm. */
@@ -31,8 +32,8 @@ public class RPNIAlgo extends InductionAlgo {
 				
 				// try merge
 				try {
-					simu = new Simulation(this, fEdge, kState);
-					fEdge.simulate(this, simu);
+					simu = new Simulation(this);
+					simu.startTry(fEdge,kState);
 					checkWithOracle(simu);
 					simu.commit();
 					
@@ -46,7 +47,13 @@ public class RPNIAlgo extends InductionAlgo {
 			
 			// consolidate fringe state when all incompatible
 			if (!found) {
-				fEdge.consolidate(this);
+				try {
+					simu = new Simulation(this);
+					simu.consolidate(fEdge);
+					simu.commit();
+				} catch (Avoid ex) {
+					throw new Unable("Unexcpected avoid exception on consolidation.",ex);
+				}
 			}
 		}
 	}

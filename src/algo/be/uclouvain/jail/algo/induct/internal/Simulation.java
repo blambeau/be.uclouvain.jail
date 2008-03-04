@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import be.uclouvain.jail.algo.commons.Avoid;
+import be.uclouvain.jail.algo.induct.listeners.IInductionAlgoListener;
 import be.uclouvain.jail.algo.induct.open.ISimuVisitor;
 import be.uclouvain.jail.algo.induct.utils.KStateGainD;
 import be.uclouvain.jail.algo.induct.utils.KStateMergeD;
@@ -14,7 +15,6 @@ import be.uclouvain.jail.algo.induct.utils.OStateMergeD;
 import be.uclouvain.jail.algo.induct.utils.WorkDecorator;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
-import be.uclouvain.jail.graph.utils.ITotalOrder;
 import be.uclouvain.jail.uinfo.IUserInfo;
 
 /** Encapsulates all steps to be done if a merge is selected. */
@@ -32,18 +32,6 @@ public class Simulation {
 	/** Commitable values handler. */
 	private CValuesHandler handler;
 
-	/** Starting fringe edge. */
-	private PTAEdge fringeEdge;
-
-	/** Starting kernel state. */
-	private Object targetKState;
-
-	/** Kernel DFA version of the fringe edge (initial added edge). */
-	private Object kEdge;
-
-	/** Saved user info for rollbacked kEdge. */
-	private IUserInfo kEdgeInfo;
-	
 	/** List of works in the simulation. */
 	private List<AbstractSubWork> subWorks;
 
@@ -56,6 +44,9 @@ public class Simulation {
 	/** Simulation has been commited ? */
 	private boolean commited;
 
+	/** Listener. */
+	protected IInductionAlgoListener listener;
+	
 	/** Helper to create works. */
 	abstract class AbstractSubWork implements IWork {
 
@@ -75,8 +66,143 @@ public class Simulation {
 		protected void commit() {
 		}
 
+		/** Rollbacks the work. */
+		protected void rollback() {
+		}
+
 	}
 
+	/** Work for initial merge choice. */
+	class StartTry extends AbstractSubWork {
+		
+		/** Initial PTA edge. */
+		private PTAEdge fEdge;
+		
+		/** Created kernel edge. */
+		private Object kEdge;
+		
+		/** Kernel edge info. */
+		private IUserInfo kEdgeInfo;
+		
+		/** Kernel state to go to. */
+		private Object kState;
+		
+		/** Creates a startTry work instance. */
+		public StartTry(PTAEdge fEdge, Object kState) {
+			this.fEdge = fEdge;
+			this.kState = kState;
+
+			// create the edge
+			kEdgeInfo = fEdge.getUserInfo();
+			ensureKEdge();
+		}
+		
+		/** Ensures creation of the kernel edge. */
+		private void ensureKEdge() {
+			if (kEdge == null) {
+				kEdge = dfag.createEdge(fEdge.getSourceKernelState(), kState, kEdgeInfo);
+				handler.updateKEdge(kEdge, kEdgeInfo);
+			}
+		}
+
+		/** Commits the work. */
+		public void commit() {
+			// check that the new pair does not appear on the fringe now
+			Object source = fEdge.getSourceKernelState();
+			Object letter = fEdge.letter();
+			SLPair pair = new SLPair(source, letter);
+			assert (!kStateGains.containsKey(pair)) : "Commited edge does not appear on new fringe.";
+			
+			// ensure that kernel edge is created
+			ensureKEdge();
+			
+			// remove pair from the fringe
+			algo.getFringe().remove(source, letter);
+		}
+		
+		/** Rollbacks the work. */
+		public void rollback() {
+			// remove initial created edge
+			// save last version of its info in kEdgeInfo
+			// for late commit which happens in blue-fringe efficient case
+			kEdgeInfo = handler.remKEdgeInfo(kEdge);
+			dfag.removeEdge(kEdge);
+			kEdge = null;
+		}
+		
+		/** Returns target kernel state. */
+		public Object target() {
+			return kState;
+		}
+
+		/** Returns the PTA edge. */
+		public Object victim() {
+			return fEdge;
+		}
+		
+		/** Throws UnsupportedException. */
+		public WorkDecorator decorate() {
+			throw new UnsupportedOperationException("StartTry work does not have a decorator yet.");
+		}
+
+	}
+	
+	/** Consolidation work. */
+	class StateConsolidate extends AbstractSubWork {
+		
+		/** Initial PTA state. */
+		private PTAState victim;
+		
+		/** Consolidates an edge. */
+		public StateConsolidate(PTAState victim) {
+			this.victim = victim;
+		}
+
+		/** Returns target kernel state. */
+		public Object target() {
+			return null;
+		}
+
+		/** Returns the PTA edge. */
+		public Object victim() {
+			return victim;
+		}
+		
+		/** Throws UnsupportedException. */
+		public WorkDecorator decorate() {
+			throw new UnsupportedOperationException("StartTry work does not have a decorator yet.");
+		}
+
+	}
+	
+	/** Consolidation work. */
+	class EdgeConsolidate extends AbstractSubWork {
+		
+		/** Initial PTA edge. */
+		private PTAEdge victim;
+		
+		/** Consolidates an edge. */
+		public EdgeConsolidate(PTAEdge edge) {
+			this.victim = edge;
+		}
+
+		/** Returns target kernel state. */
+		public Object target() {
+			return null;
+		}
+
+		/** Returns the PTA edge. */
+		public Object victim() {
+			return victim;
+		}
+		
+		/** Throws UnsupportedException. */
+		public WorkDecorator decorate() {
+			throw new UnsupportedOperationException("StartTry work does not have a decorator yet.");
+		}
+
+	}
+	
 	/** Merge of another state with a kernel one. */
 	class KStateMerge extends AbstractSubWork {
 
@@ -294,14 +420,13 @@ public class Simulation {
 	}
 
 	/** Creates a simulation instance with initial merge info. */
-	protected Simulation(InductionAlgo algo, PTAEdge edge, Object tkState) {
+	protected Simulation(InductionAlgo algo) {
 		// initialize instance variables
 		this.algo = algo;
 		this.commited = false;
 		this.dfa = algo.getDFA();
 		this.dfag = dfa.getGraph();
-		this.fringeEdge = edge;
-		this.targetKState = tkState;
+		this.listener = algo.listener;
 		
 		// decorate real values handler with commit support
 		handler = new CValuesHandler(algo, algo.getValuesHandler());
@@ -316,6 +441,11 @@ public class Simulation {
 	public InductionAlgo getRunningAlgo() {
 		return algo;
 	}
+	
+	/** Returns the fringe. */
+	public Fringe getFringe() {
+		return algo.getFringe();
+	}
 
 	/** Returns the kernel DFA (under construction). */
 	public IDFA getKernelDFA() {
@@ -327,59 +457,127 @@ public class Simulation {
 		return algo.getPTA();
 	}
 
-	/** Returns the target kernel state. */
-	public Object getTargetKState() {
-		return targetKState;
+	/** Starts a merge try. */
+	protected void startTry(PTAEdge fEdge, Object kState) {
+		// check
+		assert (subWorks.isEmpty()) : "No previous work.";
+
+		// create work
+		addSubWork(new StartTry(fEdge,kState));
+		
+		// let listener follow
+		listener.startTry(fEdge, kState);
+
+		// continue
+		fEdge.target().merge(Simulation.this,kState);
+	}
+	
+	/** Consolidates an edge. */
+	protected Object consolidate(PTAEdge fEdge) {
+		// check
+		assert (subWorks.isEmpty()) : "No previous work.";
+		
+		// create work
+		addSubWork(new EdgeConsolidate(fEdge));
+		
+		// let listener follow
+		listener.consolidate(fEdge);
+		
+		// continue
+		return fEdge.consolidate(this);
+	}
+	
+	/** Consolidates an edge. */
+	protected Object consolidate(PTAState state) {
+		// check
+		assert (subWorks.isEmpty()) : "No previous work.";
+		
+		// create work
+		addSubWork(new StateConsolidate(state));
+		
+		// let listener follow
+		listener.consolidate(state);
+		
+		// continue
+		return state.consolidate(this);
+	}
+	
+	/** Add a kernel state merge. */
+	protected void merge(PTAState state, Object tkState) throws Avoid {
+		// create work
+		addSubWork(new KStateMerge(state, tkState));
+		
+		// let listener follow
+		listener.merge(state, tkState);
 	}
 
-	/** Initializes the simulation. */
-	protected void initialize() {
-		Object letter = fringeEdge.letter();
-		Object skState = fringeEdge.getSourceKernelState();
+	/** Add a new kernel edge merge. */
+	protected void merge(PTAEdge edge, Object tkEdge) throws Avoid {
+		// create work
+		addSubWork(new KEdgeMerge(edge, tkEdge));
 		
-		// some checks
-		assert (skState != null) : "Edge has been hooked (fringe edge!).";
-		assert (algo.getFringe().fringeEdge(skState, letter) == fringeEdge) : "Works on a fringe edge.";
-		assert (dfa.getOutgoingEdge(skState, letter) == null) : "No such edge on the source kernel state.";
-		
-		if (kEdgeInfo == null) {
-			// kEdgeInfo is not null when work has been committed after a rollback
-			// otherwise, we take the real edge info on decorated PTA
-			kEdgeInfo = fringeEdge.getUserInfo(); 
-		}
+		// let listener follow
+		listener.merge(edge, tkEdge);
+	}
 
-		// connect source kernel state with target one
-		kEdge = dfag.createEdge(skState, targetKState, kEdgeInfo);
-		handler.updateKEdge(kEdge, kEdgeInfo);
+	/** Adds another edge merge. */
+	protected void merge(PTAEdge victim, PTAEdge target) throws Avoid {
+		// create work
+		addSubWork(new OEdgeMerge(victim, target));
+		
+		// let listener follow
+		listener.merge(victim, target);
+	}
+
+	/** Adds an other state merge. */
+	protected void merge(PTAState victim, PTAState target) throws Avoid {
+		// create work
+		addSubWork(new OStateMerge(victim, target));
+		
+		// let listener follow
+		listener.merge(victim, target);
+	}
+
+	/** Adds a kernel state gain. */
+	protected void gain(Object tkState, PTAEdge ptaEdge) throws Avoid {
+		// check
+		SLPair pair = new SLPair(tkState, ptaEdge.letter());
+		assert (!kStateGains.containsKey(pair)) : "Gain => not already gained.";
+
+		// create work
+		addSubWork(new KStateGain(tkState, ptaEdge));
+		kStateGains.put(pair, ptaEdge);
+		
+		// let listener follow
+		listener.gain(tkState, ptaEdge);
+	}
+
+	/** Adds another state gain. */
+	protected void gain(PTAState state, PTAEdge edge) {
+		// check
+		SLPair pair = new SLPair(state, edge.letter());
+		assert (!oStateGains.containsKey(pair)) : "Gain => not already gained.";
+
+		// create work
+		addSubWork(new OStateGain(state, edge));
+		oStateGains.put(pair, edge);
+		
+		// let listener follow
+		listener.gain(state, edge);
 	}
 
 	/** Commits the simulation. */
 	protected void commit() {
-		if (commited) {
-			throw new IllegalStateException("Already commited.");
-		}
-		if (kEdge == null) {
-			// happens when work has been rollbacked
-			// and commited later (efficient blue-fringe case) 
-			initialize();
-		}
-		
-		// check that the new pair does not appear on the fringe now
-		Object source = fringeEdge.getSourceKernelState();
-		Object letter = fringeEdge.letter();
-		SLPair pair = new SLPair(source, letter);
-		assert (!kStateGains.containsKey(pair)) : "Commited edge does not appear on new fringe.";
-		
-		// remove pair from the fringe
-		algo.getFringe().remove(source, letter);
+		assert (!commited) : "Already commited.";
 		
 		// commit all works
 		for (AbstractSubWork work : subWorks) {
 			work.commit();
 		}
 
-		// commit handler (flush all values)
-		handler.commit(false);
+		// commit handler
+		handler.commit();
+		listener.commit(this);
 		
 		// mark as commited
 		commited = true;
@@ -387,67 +585,21 @@ public class Simulation {
 
 	/** Rollbacks the simulation. */
 	protected void rollback() {
-		if (commited) {
-			throw new IllegalStateException("Cannot rollback a commited work.");
-		}
+		assert (!commited) : "Cannot rollback a commited work.";
 		
-		// remove initial created edge
-		// save last version of its info in kEdgeInfo
-		// for late commit which happens in blue-fringe efficient case
-		if (kEdge != null) {
-			kEdgeInfo = handler.remKEdgeInfo(kEdge);
-			dfag.removeEdge(kEdge);
-			kEdge = null;
+		// commit all works
+		for (AbstractSubWork work : subWorks) {
+			work.rollback();
 		}
+
+		// commit handler
+		handler.rollback();
+		listener.rollback(this);
 	}
 
 	/** Adds a subwork. */
 	private void addSubWork(AbstractSubWork subWork) {
 		subWorks.add(subWork);
-	}
-
-	/** Add a kernel state merge. */
-	protected void addKStateMerge(PTAState state, Object tkState) throws Avoid {
-		if (!algo.isCompatible(tkState, state)) {
-			throw new Avoid();
-		} else {
-			addSubWork(new KStateMerge(state, tkState));
-		}
-	}
-
-	/** Add a new kernel edge merge. */
-	protected void addKEdgeMerge(PTAEdge edge, Object tkEdge) throws Avoid {
-		addSubWork(new KEdgeMerge(edge, tkEdge));
-	}
-
-	/** Adds a kernel state gain. */
-	protected void addKStateGain(Object tkState, PTAEdge ptaEdge) throws Avoid {
-		SLPair pair = new SLPair(tkState, ptaEdge.letter());
-		assert (!kStateGains.containsKey(pair)) : "Gain => not already gained.";
-		addSubWork(new KStateGain(tkState, ptaEdge));
-		kStateGains.put(pair, ptaEdge);
-	}
-
-	/** Adds an other state merge. */
-	protected void addOStateMerge(PTAState victim, PTAState target) throws Avoid {
-		if (!algo.isCompatible(victim, target)) {
-			throw new Avoid();
-		} else {
-			addSubWork(new OStateMerge(victim, target));
-		}
-	}
-
-	/** Adds another edge merge. */
-	protected void addOEdgeMerge(PTAEdge victim, PTAEdge target) throws Avoid {
-		addSubWork(new OEdgeMerge(victim, target));
-	}
-
-	/** Adds another state gain. */
-	protected void addOStateGain(PTAState state, PTAEdge edge) {
-		SLPair pair = new SLPair(state, edge.letter());
-		assert (!oStateGains.containsKey(pair)) : "Gain => not already gained.";
-		addSubWork(new OStateGain(state, edge));
-		oStateGains.put(pair, edge);
 	}
 
 	/** Returns a kernel state gain. */
@@ -462,29 +614,26 @@ public class Simulation {
 		return (PTAEdge) oStateGains.get(pair);
 	}
 
+	/** Checks if the job is a real try. */
+	public boolean isRealTry() {
+		return WorkType.StartTry.equals(subWorks.get(0).type());
+	}
+
+	/** Returns the StartTry work. */
+	public IWork getStartTry() {
+		IWork work = subWorks.get(0);
+		if (WorkType.StartTry.equals(work.type())) {
+			return work;
+		} else {
+			return null;
+		}
+	}
+	
 	/** Accepts a visitor. */
 	public void accept(ISimuVisitor visitor) {
 		for (AbstractSubWork subWork: subWorks) { 
 			visitor.onWork(this, subWork);
 		}
-	}
-
-	/** Debugs the simulation. */
-	public String debug() {
-		final StringBuffer sb = new StringBuffer();
-		final ITotalOrder<Object> order = dfag.getVerticesTotalOrder();
-		sb.append("Simulation: edge is '")
-		  .append(" -> ").append(fringeEdge.letter()).append(" -> ").append(fringeEdge.target())
-		  .append("' on dfa '").append(order.indexOf(fringeEdge.getSourceKernelState()))
-		  .append(" -> ").append(order.indexOf(targetKState))
-		  .append("'\n");
-		
-		accept(new ISimuVisitor() {
-			public void onWork(Simulation simu, IWork work) {
-				sb.append("  ").append(WorkUtils.toString(work)).append("\n");
-			}
-		});
-		return sb.toString();
 	}
 
 }

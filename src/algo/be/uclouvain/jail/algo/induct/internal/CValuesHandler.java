@@ -114,7 +114,7 @@ final class CValuesHandler extends AbstractValuesHandler {
 	}
 	
 	/** Commits the computed values. */
-	public void commit(boolean clean) {
+	public void commit() {
 		// commit kState values
 		for (Object kState : kStateIUserInfo.keySet()) {
 			IUserInfo v = (IUserInfo) kStateIUserInfo.get(kState);
@@ -138,14 +138,9 @@ final class CValuesHandler extends AbstractValuesHandler {
 			IUserInfo v = (IUserInfo) oEdgeIUserInfo.get(oEdge);
 			parent.updateOEdge(oEdge, v);
 		}
-
-		// clean all if required
-		if (clean) {
-			kStateIUserInfo.clear();
-			kEdgeIUserInfo.clear();
-			oStateIUserInfo.clear();
-			oEdgeIUserInfo.clear();
-		}
 	}
+	
+	/** Rollbacks the changes. */
+	public void rollback() {}
 
 }
