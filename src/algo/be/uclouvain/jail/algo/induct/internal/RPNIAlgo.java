@@ -53,7 +53,7 @@ public class RPNIAlgo extends InductionAlgo {
 
 	/** Selects a fringe edge to use for merging. */
 	protected PTAEdge selectFringeEdge() {
-		return (PTAEdge) fringe.iterator().next();
+		return fringe.iterator().next();
 	}
 	
 }

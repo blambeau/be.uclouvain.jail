@@ -49,7 +49,7 @@ public final class BlueFringeAlgo extends InductionAlgo {
 	/** BlueFringe main loop. */
 	protected void mainLoop() throws Restart {
 		// work 
-		Simulation work = null;
+		Simulation simu = null;
 		
 		// current evaluations, order by preference. 
 		TreeSet<Evaluation> evaluations = new TreeSet<Evaluation>();
@@ -76,20 +76,20 @@ public final class BlueFringeAlgo extends InductionAlgo {
 					if (isCompatible(kState, fEdge)) {
 						try {
 							// create new simulation
-							work = new Simulation(this, fEdge, kState);
-							fEdge.simulate(this, work);
+							simu = new Simulation(this, fEdge, kState);
+							fEdge.simulate(this, simu);
 							
 							// evaluate simulation and keep result if required
-							int eval = evaluator.evaluate(work);
+							int eval = evaluator.evaluate(simu);
 							if (eval > cThreshold) {
-								evaluations.add(new Evaluation(work, eval));
+								evaluations.add(new Evaluation(simu, eval));
 								hasEval = true;
 							}
 							
 							// rollback work in all cases
-							work.rollback();
+							simu.rollback();
 						} catch (Avoid avoid) {
-							work.rollback();
+							simu.rollback();
 						}
 					}
 				}
@@ -122,8 +122,7 @@ public final class BlueFringeAlgo extends InductionAlgo {
 			// when no evaluation or all rejected by the oracle
 			if (hasEval && !commited) {
 				// consolidate first one ... a bit arbitrary actually
-				Simulation simu = ((Evaluation) evaluations.first()).simu;
-				simu.getFringeEdge().consolidate(this);
+				fringe.iterator().next().consolidate(this);
 			}
 		}
 	}

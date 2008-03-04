@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import be.uclouvain.jail.algo.fa.equiv.IDFAEquivOutput.CounterExampleKind;
+import be.uclouvain.jail.fa.FAStateKind;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.IFATrace;
 import be.uclouvain.jail.fa.utils.DefaultFATrace;
@@ -187,25 +188,27 @@ public class DFAEquivAlgo {
 			throw new GraphConstraintViolationException(null,"Not DFAs, multiple initial states");
 		}
 
-		// check accepting OK
-		boolean s1Accepting = tested.getStateKind(s1).isFlagAccepting();
-		boolean s2Accepting = reference.getStateKind(s2).isFlagAccepting();
-		if (s1Accepting != s2Accepting) {
-			if (s1Accepting) {
-				throw acceptedNonEquivException();
-			} else {
-				throw new NonEquivException(CounterExampleKind.REJECTED,getReferenceTrace(null));
+		// get state kinds
+		FAStateKind s1Kind = tested.getStateKind(s1);
+		FAStateKind s2Kind = reference.getStateKind(s2);
+		
+		if (s1Kind.equals(s2Kind)) {
+			// equals? OK
+			return;
+		} else {
+			// not equal? check path equivalent
+			boolean s1MayStop = FAStateKind.ACCEPTING.equals(s1Kind);
+			boolean s2MayStop = FAStateKind.ACCEPTING.equals(s2Kind);
+			if ((s1MayStop || s2MayStop) && !(s1MayStop && s2MayStop)) {
+				// one accepting but not both
+				throw new NonEquivException(CounterExampleKind.UNEXPLAINED,getReferenceTrace(null));
 			}
-		}
-
-		// check error OK
-		boolean s1Error = tested.getStateKind(s1).isFlagError();
-		boolean s2Error = reference.getStateKind(s2).isFlagError();
-		if (s1Error != s2Error) {
-			if (s1Error) {
-				throw new NonEquivException(CounterExampleKind.REJECTED,getReferenceTrace(null));
-			} else {
-				throw acceptedNonEquivException();
+			
+			boolean s1IsAvoid = FAStateKind.AVOID.equals(s1Kind);
+			boolean s2IsAvoid = FAStateKind.AVOID.equals(s2Kind);
+			if ((s1IsAvoid || s2IsAvoid) && !(s1IsAvoid && s2IsAvoid)) {
+				// one avoid, but not both
+				throw new NonEquivException(CounterExampleKind.UNEXPLAINED,getReferenceTrace(null));
 			}
 		}
 	}

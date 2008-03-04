@@ -5,13 +5,19 @@ import java.net.URL;
 
 import junit.framework.TestCase;
 import net.chefbe.autogram.ast2.parsing.ParseException;
+import be.uclouvain.jail.algo.fa.utils.FAUtils;
+import be.uclouvain.jail.dialect.jis.JISGraphDialect;
 import be.uclouvain.jail.dialect.seqp.SEQPGraphLoader;
 import be.uclouvain.jail.fa.FAStateKind;
+import be.uclouvain.jail.fa.IAlphabet;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.INFA;
+import be.uclouvain.jail.fa.ISample;
 import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.fa.impl.GraphDFA;
 import be.uclouvain.jail.fa.impl.GraphNFA;
+import be.uclouvain.jail.fa.utils.AutoAlphabet;
+import be.uclouvain.jail.fa.utils.DefaultSample;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
@@ -198,9 +204,58 @@ public final class JailTestUtils {
 		return loadSeqPGraph(HOP_DFA162);
 	}
 	
+	/** DFA of page 48 of INRIA. */
+	public static final String INRIA_DFA_3_1 = "Q0[@kind='ACCEPTING'] = a->Q0|b->Q1," 
+		                                     + "Q1[@kind='PASSAGE']   = a->Q1|b->Q0.";
+
+	/** Returns a INRIA_DFA_3_1 instance. */
+	public static IDFA INRIA_DFA_3_1() throws Exception {
+		return loadSeqPDFA(INRIA_DFA_3_1);
+	}
+
+	/** INRIA Sample 3.2 */
+	public static final String INRIA_SAMPLE_3_2 = "+\n"
+                                                + "+ a\n"
+                                                + "+ b b\n"
+                                                + "+ b b a\n"
+                                                + "+ b a a b\n"
+                                                + "+ b a a a b a\n"
+                                                + "- b\n"
+                                                + "- a b\n"
+                                                + "- a b a\n";
+	
+	/** Returns Sample 3.2. */
+	public static ISample<String> INRIA_SAMPLE_3_2() throws Exception {
+		return loadJISSample(INRIA_SAMPLE_3_2);
+	}
+	
+	/** Returns the train DFA. */
+	public static IDFA TRAIN_DFA() throws Exception {
+		return loadSeqPDFA(resource(JailTestUtils.class,"train_dfa.dot"));
+	}
+	
+	/** Returns a sample for the train. */
+	public static ISample<String> TRAIN_SAMPLE() throws Exception {
+		// create an all accepting sample
+		IAlphabet<String> alphabet = new AutoAlphabet<String>();
+		ISample<String> sample = new DefaultSample<String>(alphabet);
+		sample.getUserInfoHandler()
+		      .getVertexCopier()
+		      .addPopulator(FAUtils.getAllAcceptingPopulator());
+		
+		return loadJISSample(resource(JailTestUtils.class,"train_sample.jis"),sample);
+	}
+	
 	/** Finds a resource. */
 	public static URL resource(TestCase who, String where) {
 		URL url = who.getClass().getResource(where);
+		if (url == null) { throw new IllegalArgumentException("Unable to locate: " + where); }
+		return url;
+	}
+	
+	/** Finds a resource. */
+	public static URL resource(Class who, String where) {
+		URL url = who.getResource(where);
 		if (url == null) { throw new IllegalArgumentException("Unable to locate: " + where); }
 		return url;
 	}
@@ -218,6 +273,16 @@ public final class JailTestUtils {
 	/** Loads a SEQP NFA. */
 	public static INFA loadSeqPNFA(Object from) throws IOException, ParseException {
 		return new GraphNFA(SEQPGraphLoader.load(from));		
+	}
+	
+	/** Loads a JIS sample. */
+	public static ISample<String> loadJISSample(Object from) throws IOException, ParseException {
+		return new JISGraphDialect().parse(from);
+	}
+	
+	/** Loads a JIS sample. */
+	public static ISample<String> loadJISSample(Object from, ISample<String> sample) throws IOException, ParseException {
+		return new JISGraphDialect().parse(from,sample);
 	}
 	
 	/** Returns an array containing the NFAs as underlying graphs. */

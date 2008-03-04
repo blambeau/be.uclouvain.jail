@@ -32,14 +32,23 @@ public class JISGraphDialect extends AbstractGraphDialect {
 	}
 
 	/** Parses a JIS source. */
-	protected ISample<String> parse(Object source) throws IOException, ParseException {
+	public ISample<String> parse(Object source) throws IOException, ParseException {
+		// create target sample
+		IAlphabet<String> alphabet = new AutoAlphabet<String>();
+		DefaultSample<String> sample = new DefaultSample<String>(alphabet);
+
+		// delegate
+		return parse(source,sample);
+	}
+	
+	/** Parses an put strings inside an existing sample. */
+	public ISample<String> parse(Object source, ISample<String> sample) throws IOException, ParseException {
 		// get a reader 
 		ILocation loc = new BaseLocation(source);
 		BufferedReader br = new BufferedReader(loc.reader());
 
-		// create target graph
-		IAlphabet<String> alphabet = new AutoAlphabet<String>();
-		DefaultSample<String> sample = new DefaultSample<String>(alphabet);
+		// get the alphabet
+		IAlphabet<String> alphabet = sample.getAlphabet();
 		
 		// read all lines
 		String line = null;

@@ -327,11 +327,6 @@ public class Simulation {
 		return algo.getPTA();
 	}
 
-	/** Returns the initial fringe edge. */
-	public PTAEdge getFringeEdge() {
-		return fringeEdge;
-	}
-
 	/** Returns the target kernel state. */
 	public Object getTargetKState() {
 		return targetKState;

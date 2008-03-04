@@ -47,7 +47,7 @@ public class SEQPGraphLoader extends SEQPCallback<Object> {
 	private IUserInfo info;
 
 	/** Requesting dialect. */
-	private SEQPGraphDialect dialect;
+	//private SEQPGraphDialect dialect;
 	
 	/** Helper to use. */
 	private IUserInfoHelper helper;
@@ -57,7 +57,7 @@ public class SEQPGraphLoader extends SEQPCallback<Object> {
 			               SEQPGraphDialect dialect,
 			               JailVMOptions options) {
 		this.writer = writer;
-		this.dialect = dialect;
+		//this.dialect = dialect;
 		this.helper = UserInfoHelper.instance();
 		vertices = new HashMap<String, Object>();
 		this.infos = new HashMap<Object,IUserInfo>();

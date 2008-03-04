@@ -4,7 +4,9 @@ import net.chefbe.autogram.ast2.parsing.ParseException;
 import net.chefbe.javautils.robust.exceptions.CoreException;
 import be.uclouvain.jail.algo.graph.copy.DirectedGraphCopier;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchPopulator;
+import be.uclouvain.jail.fa.FAStateKind;
 import be.uclouvain.jail.fa.IFA;
+import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
 import be.uclouvain.jail.graph.utils.DirectedGraphWriter;
@@ -51,6 +53,23 @@ public class FAUtils {
 		} catch (ParseException ex) {
 			throw new CoreException("Unexpected exception ",ex);
 		}
+	}
+	
+	/** Returns a populator to set all states as accepting. */
+	public static IUserInfoPopulator<IUserInfo> getAllAcceptingPopulator() {
+		return new IUserInfoPopulator<IUserInfo>() {
+			public void populate(IUserInfo target, IUserInfo source) {
+				String attr = AttributeGraphFAInformer.STATE_KIND_KEY;
+				FAStateKind kind = (FAStateKind) source.getAttribute(attr);
+				if (FAStateKind.ERROR.equals(kind)) {
+					target.setAttribute(attr, FAStateKind.AVOID);
+				} else if (FAStateKind.PASSAGE.equals(kind)) {
+					target.setAttribute(attr, FAStateKind.ACCEPTING);
+				} else {
+					target.setAttribute(attr, kind);
+				}
+			}
+		};
 	}
 	
 	/** Returns a copy of a fa for dot presentation. */

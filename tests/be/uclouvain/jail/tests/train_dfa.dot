@@ -1,0 +1,5 @@
+SC[@kind='ACCEPTING'] = start->RC|open->SO|alarm->SA,
+RC[@kind='ACCEPTING'] = stop->SC|alarm->RA,
+SO[@kind='ACCEPTING'] = close->SC,
+SA[@kind='ACCEPTING'] = eopen->SO,
+RA[@kind='ACCEPTING'] = estop->SA.
