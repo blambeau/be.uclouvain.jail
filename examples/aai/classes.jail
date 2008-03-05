@@ -1,0 +1,25 @@
+(execute 'commons.jail');
+
+// generate a random DFA with aai tuning
+A = <§seqp Q0. §>;
+
+// generate random DFA
+G = (randdfa A :stateCount stateCount :alphabetSize 2 :accepting 1.0 :tolerance 0.01);
+
+// identify states
+G = (identify G);
+
+// mark class with 0.2 probability
+G = (copy G :vertex {@class -> when choose()<=0.5 then @index});
+
+// randomize strings
+H = (randstrings A :alphabetSize 2 :wordLength 10 :nbStrings nbStrings :labeller G);
+
+// prepare for dot
+H = (copy H :vertex {@label -> ''});
+H = (copy H :vertex {@label -> @class});
+
+
+(show (print G :format 'dot'));
+(show (print H :format 'dot'));
+

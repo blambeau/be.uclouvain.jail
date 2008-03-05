@@ -3,7 +3,7 @@ package be.uclouvain.jail.algo.induct.internal;
 import net.chefbe.javautils.comparisons.HashCodeUtils;
 
 /** State-and-Letter pair. */
-class SLPair {
+public class SLPair {
 
 	/** State. */
 	private Object state;

@@ -6,6 +6,7 @@ import java.net.URL;
 import junit.framework.TestCase;
 import net.chefbe.autogram.ast2.parsing.ParseException;
 import be.uclouvain.jail.algo.fa.utils.FAUtils;
+import be.uclouvain.jail.dialect.dot.DOTGraphDialect;
 import be.uclouvain.jail.dialect.jis.JISGraphDialect;
 import be.uclouvain.jail.dialect.seqp.SEQPGraphLoader;
 import be.uclouvain.jail.fa.FAStateKind;
@@ -258,6 +259,16 @@ public final class JailTestUtils {
 		URL url = who.getResource(where);
 		if (url == null) { throw new IllegalArgumentException("Unable to locate: " + where); }
 		return url;
+	}
+
+	/** Loads a dot graph. */
+	public static IDirectedGraph loadDotGraph(Object from) throws IOException, ParseException {
+		return (IDirectedGraph) new DOTGraphDialect().load(from,null);
+	}
+	
+	/** Loads a dot graph. */
+	public static IDFA loadDotDFA(Object from) throws IOException, ParseException {
+		return new GraphDFA(loadDotGraph(from));
 	}
 	
 	/** Loads a SEQP Graph. */
