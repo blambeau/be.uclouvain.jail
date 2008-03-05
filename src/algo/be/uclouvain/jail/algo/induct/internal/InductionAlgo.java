@@ -2,13 +2,14 @@ package be.uclouvain.jail.algo.induct.internal;
 
 import be.uclouvain.jail.algo.commons.Avoid;
 import be.uclouvain.jail.algo.commons.Restart;
-import be.uclouvain.jail.algo.induct.listeners.IInductionAlgoListener;
-import be.uclouvain.jail.algo.induct.listeners.InductionAlgoListeners;
-import be.uclouvain.jail.algo.induct.open.ICompatibility;
-import be.uclouvain.jail.algo.induct.open.IOracle;
+import be.uclouvain.jail.algo.induct.compatibility.ICompatibility;
+import be.uclouvain.jail.algo.induct.listeners.IInductionListener;
+import be.uclouvain.jail.algo.induct.listeners.InductionListeners;
+import be.uclouvain.jail.algo.induct.oracle.IOracle;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.constraints.PTAGraphConstraint;
 import be.uclouvain.jail.fa.impl.GraphDFA;
+import be.uclouvain.jail.vm.toolkits.GraphFacade;
 
 /** Base implementation of RPNI-like induction algorithms. */
 public abstract class InductionAlgo {
@@ -32,14 +33,14 @@ public abstract class InductionAlgo {
 	protected ICompatibility compatibility;
 
 	/** Listener. */
-	protected InductionAlgoListeners listener = new InductionAlgoListeners();
+	protected InductionListeners listener = new InductionListeners();
 	
 	/** Creates an algorithm instance. */
 	public InductionAlgo() {
 	}
 
 	/** Adds a listener. */
-	public void addListener(IInductionAlgoListener l) {
+	public void addListener(IInductionListener l) {
 		listener.addListener(l);
 	}
 	
@@ -72,6 +73,8 @@ public abstract class InductionAlgo {
 		
 		// create PTA
 		this.pta = (IDFA) input.getInput().adapt(IDFA.class);
+		String repAttr = input.getRepresentorAttr();
+		GraphFacade.identify(this.pta.getGraph(),repAttr,repAttr);
 		assert new PTAGraphConstraint().isRespectedBy(this.pta.getGraph()) : "Valid input PTA.";
 		
 		// create target DFA
@@ -125,6 +128,11 @@ public abstract class InductionAlgo {
 		return valuesHandler;
 	}
 
+	/** Returns the compatibility informer. */
+	public ICompatibility getCompatibility() {
+		return compatibility;
+	}
+	
 	/** Checks if two DFA states are compatible. */
 	protected boolean isCompatible(Object pta1, Object pta2) {
 		if (compatibility == null) { return true; }

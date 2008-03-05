@@ -11,9 +11,7 @@ import be.uclouvain.jail.algo.induct.utils.WorkDecorator;
  * a victim and a target, whose semantics depends on the kind of work.</p>
  * 
  * <p>Please note that this interface is not intended to be used directly. 
- * Decorators for each kind of work are provided in the utils package. 
- * Please always use {@link WorkUtils} to get help using works (i.e. 
- * creating instances of these decorators).</p>
+ * Decorators for each kind of work are provided in the utils package.</p>
  */
 public interface IWork {
 

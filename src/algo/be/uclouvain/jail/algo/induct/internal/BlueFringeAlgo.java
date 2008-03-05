@@ -6,7 +6,7 @@ import java.util.TreeSet;
 import be.uclouvain.jail.algo.commons.Avoid;
 import be.uclouvain.jail.algo.commons.Restart;
 import be.uclouvain.jail.algo.commons.Unable;
-import be.uclouvain.jail.algo.induct.open.IEvaluator;
+import be.uclouvain.jail.algo.induct.utils.IEvaluator;
 import be.uclouvain.jail.graph.IDirectedGraph;
 
 /** 

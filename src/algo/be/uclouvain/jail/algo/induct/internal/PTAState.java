@@ -1,13 +1,12 @@
 package be.uclouvain.jail.algo.induct.internal;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
 import be.uclouvain.jail.algo.commons.Avoid;
-import be.uclouvain.jail.algo.induct.open.IWalker;
+import be.uclouvain.jail.algo.induct.utils.IWalker;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.IFATrace;
 import be.uclouvain.jail.fa.utils.DefaultFATrace;
@@ -18,23 +17,6 @@ import be.uclouvain.jail.uinfo.IUserInfo;
 /** Provides a state of the decorated PTA. */
 public class PTAState {
 
-	/** Mapping. */
-	private Map<Object, Object> mapping = new HashMap<Object,Object>();
-
-	/** Keeps a listener information. */
-	public void keep(Object key, Object value) {
-		this.mapping.put(key, value);
-	}
-
-	/** Retrieves a listener information. */
-	public Object retrieve(Object key) {
-		return this.mapping.get(key);
-	}
-	/** Keeps a listener information. */
-	public Object forget(Object key) {
-		return this.mapping.remove(key);
-	}
-	
 	/** Induction algorithm. */
 	private InductionAlgo algo;
 
@@ -78,7 +60,7 @@ public class PTAState {
 	public Object representor() {
 		return representor;
 	}
-
+	
 	/** Returns outgoing letters. */
 	public Set<Object> letters() {
 		return delta.keySet();

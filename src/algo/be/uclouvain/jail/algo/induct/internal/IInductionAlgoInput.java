@@ -1,9 +1,9 @@
 package be.uclouvain.jail.algo.induct.internal;
 
 import be.uclouvain.jail.algo.commons.IAlgoInput;
-import be.uclouvain.jail.algo.induct.open.ICompatibility;
-import be.uclouvain.jail.algo.induct.open.IEvaluator;
-import be.uclouvain.jail.algo.induct.open.IOracle;
+import be.uclouvain.jail.algo.induct.compatibility.ICompatibility;
+import be.uclouvain.jail.algo.induct.oracle.IOracle;
+import be.uclouvain.jail.algo.induct.utils.IEvaluator;
 import be.uclouvain.jail.fa.ISample;
 
 /**
@@ -25,6 +25,9 @@ public interface IInductionAlgoInput extends IAlgoInput {
 	/** Returns evaluator. */
 	public IEvaluator getEvaluator();
 
+	/** Returns the representor attribute. */
+	public String getRepresentorAttr();
+	
 	/** Returns the consolidation threshold. */
 	public int getConsolidationThreshold();
 

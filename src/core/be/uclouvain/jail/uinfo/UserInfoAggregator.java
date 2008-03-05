@@ -7,7 +7,10 @@ import java.util.List;
 import be.uclouvain.jail.fa.functions.FAStateKindFunction;
 import be.uclouvain.jail.uinfo.functions.BoolAndFunction;
 import be.uclouvain.jail.uinfo.functions.BoolOrFunction;
+import be.uclouvain.jail.uinfo.functions.ConcatFunction;
 import be.uclouvain.jail.uinfo.functions.IAggregateFunction;
+import be.uclouvain.jail.uinfo.functions.MaxFunction;
+import be.uclouvain.jail.uinfo.functions.MinFunction;
 import be.uclouvain.jail.uinfo.functions.OnFirstPopulator;
 import be.uclouvain.jail.uinfo.functions.PickUpFunction;
 
@@ -90,6 +93,26 @@ public class UserInfoAggregator implements IUserInfoCreator<Collection<IUserInfo
 	/** Registers a first function. */
 	public void first(String attr) {
 		register(attr,new PickUpFunction());
+	}
+	
+	/** Registers a min function. */
+	public void min(String attr) {
+		register(attr,new MinFunction());
+	}
+	
+	/** Registers a max function. */
+	public void max(String attr) {
+		register(attr,new MaxFunction());
+	}
+	
+	/** Registers a concat function. */
+	public void concat(String source, String delimiter) {
+		register(source,new ConcatFunction(delimiter));
+	}
+	
+	/** Registers a concat function. */
+	public void concat(String source, String target, String delimiter) {
+		register(source,target,new ConcatFunction(delimiter));
 	}
 	
 	/** Factors a list function. */

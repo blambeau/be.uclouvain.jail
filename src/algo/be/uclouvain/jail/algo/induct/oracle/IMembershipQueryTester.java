@@ -1,6 +1,5 @@
-package be.uclouvain.jail.algo.induct.open;
+package be.uclouvain.jail.algo.induct.oracle;
 
-import be.uclouvain.jail.algo.induct.utils.MembershipQuery;
 
 /**
  * Send a query to the user.

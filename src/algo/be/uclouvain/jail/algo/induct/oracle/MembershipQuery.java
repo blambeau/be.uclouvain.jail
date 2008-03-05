@@ -1,4 +1,4 @@
-package be.uclouvain.jail.algo.induct.utils;
+package be.uclouvain.jail.algo.induct.oracle;
 
 import be.uclouvain.jail.fa.IFATrace;
 import be.uclouvain.jail.fa.ISample;

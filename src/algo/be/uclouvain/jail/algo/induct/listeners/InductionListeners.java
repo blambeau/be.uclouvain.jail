@@ -13,96 +13,103 @@ import be.uclouvain.jail.algo.induct.internal.Simulation;
  * 
  * @author blambeau
  */
-public class InductionAlgoListeners implements IInductionAlgoListener {
+public class InductionListeners implements IInductionListener {
 
 	/** Listeners. */
-	private List<IInductionAlgoListener> listeners = new ArrayList<IInductionAlgoListener>();
+	private List<IInductionListener> listeners = new ArrayList<IInductionListener>();
 	
 	/** Adds a listener. */
-	public void addListener(IInductionAlgoListener l) {
+	public void addListener(IInductionListener l) {
 		listeners.add(l);
 	}
 	
 	/** Initializes the listener. */
 	public void initialize(InductionAlgo algo) {
-		for (IInductionAlgoListener l: listeners) {
+		for (IInductionListener l: listeners) {
 			l.initialize(algo);
 		}
 	}
 	
+	/** On new step ... */
+	public void newStep(Simulation simu) {
+		for (IInductionListener l: listeners) {
+			l.newStep(simu);
+		}
+	}
+
 	/** Consolidates an edge. */
 	public void consolidate(PTAEdge edge) {
-		for (IInductionAlgoListener l: listeners) {
+		for (IInductionListener l: listeners) {
 			l.consolidate(edge);
 		}
 	}
 
 	/** Consolidates an edge. */
 	public void consolidate(PTAState state) {
-		for (IInductionAlgoListener l: listeners) {
+		for (IInductionListener l: listeners) {
 			l.consolidate(state);
 		}
 	}
 
 	/** Starts a try. */
 	public void startTry(PTAEdge edge, Object kState) {
-		for (IInductionAlgoListener l: listeners) {
+		for (IInductionListener l: listeners) {
 			l.startTry(edge, kState);
 		}
 	}
 	
 	/** Merges a victim with a target state. */
 	public void merge(PTAState victim, Object target) {
-		for (IInductionAlgoListener l: listeners) {
+		for (IInductionListener l: listeners) {
 			l.merge(victim, target);
 		}
 	}
 	
 	/** Merges a victim with a target state. */
 	public void merge(PTAState victim, PTAState target) {
-		for (IInductionAlgoListener l: listeners) {
+		for (IInductionListener l: listeners) {
 			l.merge(victim, target);
 		}
 	}
 	
 	/** Merges a victim with a target edge. */
 	public void merge(PTAEdge victim, Object target) {
-		for (IInductionAlgoListener l: listeners) {
+		for (IInductionListener l: listeners) {
 			l.merge(victim, target);
 		}
 	}
 	
 	/** Merges a victim with a target edge. */
 	public void merge(PTAEdge victim, PTAEdge target) {
-		for (IInductionAlgoListener l: listeners) {
+		for (IInductionListener l: listeners) {
 			l.merge(victim, target);
 		}
 	}
 	
 	/** A kernel state gains a letter. */
 	public void gain(Object kState, PTAEdge edge) {
-		for (IInductionAlgoListener l: listeners) {
+		for (IInductionListener l: listeners) {
 			l.gain(kState, edge);
 		}
 	}
 	
 	/** A PTA state gains a letter. */
 	public void gain(PTAState state, PTAEdge edge) {
-		for (IInductionAlgoListener l: listeners) {
+		for (IInductionListener l: listeners) {
 			l.gain(state, edge);
 		}
 	}
 	
 	/** Commits the try. */
 	public void commit(Simulation simu) {
-		for (IInductionAlgoListener l: listeners) {
+		for (IInductionListener l: listeners) {
 			l.commit(simu);
 		}
 	}
 
 	/** Rollbacks the try. */
 	public void rollback(Simulation simu) {
-		for (IInductionAlgoListener l: listeners) {
+		for (IInductionListener l: listeners) {
 			l.rollback(simu);
 		}
 	}

@@ -13,7 +13,7 @@ import be.uclouvain.jail.uinfo.IUserInfo;
  * the target DFA as well as the decoration PTA. Moreover, it provides
  * a facade on user aggregation functions with the merge methods.</p> 
  */
-interface IValuesHandler {
+public interface IValuesHandler {
 
 	/** Reads the values of a kernel state. */
 	public IUserInfo kStateUserInfo(Object s);

@@ -1,8 +1,6 @@
 package be.uclouvain.jail.algo.induct.internal;
 
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 
 import be.uclouvain.jail.algo.commons.Avoid;
 import be.uclouvain.jail.fa.IDFA;
@@ -12,23 +10,6 @@ import be.uclouvain.jail.uinfo.IUserInfo;
 /** Provides an edge of the decorated PTA. */
 public class PTAEdge {
 
-	/** Mapping. */
-	private Map<Object, Object> mapping = new HashMap<Object,Object>();
-
-	/** Keeps a listener information. */
-	public void keep(Object key, Object value) {
-		this.mapping.put(key, value);
-	}
-
-	/** Retrieves a listener information. */
-	public Object retrieve(Object key) {
-		return this.mapping.get(key);
-	}
-	/** Keeps a listener information. */
-	public Object forget(Object key) {
-		return this.mapping.remove(key);
-	}
-	
 	/** Attached values. */
 	private IUserInfo values;
 

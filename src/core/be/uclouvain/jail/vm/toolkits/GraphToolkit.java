@@ -8,6 +8,8 @@ import net.chefbe.javautils.adapt.IAdaptable;
 import net.chefbe.javautils.adapt.IAdapter;
 import be.uclouvain.jail.algo.graph.copy.DirectedGraphCopier;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchPopulator;
+import be.uclouvain.jail.algo.graph.decorate.DefaultIdentifyAlgoInput;
+import be.uclouvain.jail.algo.graph.decorate.IdentifyAlgo;
 import be.uclouvain.jail.algo.graph.rand.DefaultRandomGraphInput;
 import be.uclouvain.jail.algo.graph.rand.DefaultRandomGraphResult;
 import be.uclouvain.jail.algo.graph.rand.RandomGraphAlgo;
@@ -122,6 +124,14 @@ public class GraphToolkit extends JailReflectionToolkit implements IAdapter {
 		result.setOptions(options);
 		new RandomWalkAlgo().execute(input,result);
 		return result;
+	}
+	
+	/** Identifies states and edges of a graph. */
+	public IDirectedGraph identify(IDirectedGraph g, JailVMOptions options) throws JailVMException {
+		DefaultIdentifyAlgoInput input = new DefaultIdentifyAlgoInput(g);
+		input.setOptions(options);
+		new IdentifyAlgo().execute(input);
+		return g;
 	}
 	
 	/** Adapts who to the requested type. */

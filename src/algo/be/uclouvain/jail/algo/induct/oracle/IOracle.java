@@ -1,4 +1,4 @@
-package be.uclouvain.jail.algo.induct.open;
+package be.uclouvain.jail.algo.induct.oracle;
 
 import be.uclouvain.jail.algo.commons.Avoid;
 import be.uclouvain.jail.algo.commons.Restart;

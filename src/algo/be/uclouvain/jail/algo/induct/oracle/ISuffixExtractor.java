@@ -1,4 +1,4 @@
-package be.uclouvain.jail.algo.induct.open;
+package be.uclouvain.jail.algo.induct.oracle;
 
 import java.util.Iterator;
 

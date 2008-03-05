@@ -1,4 +1,4 @@
-package be.uclouvain.jail.algo.induct.utils;
+package be.uclouvain.jail.algo.induct.oracle;
 
 import java.util.Iterator;
 
@@ -7,9 +7,6 @@ import be.uclouvain.jail.algo.commons.Restart;
 import be.uclouvain.jail.algo.induct.internal.InductionAlgo;
 import be.uclouvain.jail.algo.induct.internal.PTAState;
 import be.uclouvain.jail.algo.induct.internal.Simulation;
-import be.uclouvain.jail.algo.induct.open.IMembershipQueryTester;
-import be.uclouvain.jail.algo.induct.open.IOracle;
-import be.uclouvain.jail.algo.induct.open.ISuffixExtractor;
 import be.uclouvain.jail.fa.IFATrace;
 import be.uclouvain.jail.fa.ISample;
 import be.uclouvain.jail.fa.IString;

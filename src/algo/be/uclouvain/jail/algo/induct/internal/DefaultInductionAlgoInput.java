@@ -1,12 +1,12 @@
 package be.uclouvain.jail.algo.induct.internal;
 
 import be.uclouvain.jail.algo.graph.copy.match.GMatchAggregator;
-import be.uclouvain.jail.algo.induct.open.ICompatibility;
-import be.uclouvain.jail.algo.induct.open.IEvaluator;
-import be.uclouvain.jail.algo.induct.open.IMembershipQueryTester;
-import be.uclouvain.jail.algo.induct.open.IOracle;
-import be.uclouvain.jail.algo.induct.utils.AbstractMembershipOracle;
+import be.uclouvain.jail.algo.induct.compatibility.ICompatibility;
+import be.uclouvain.jail.algo.induct.oracle.AbstractMembershipOracle;
+import be.uclouvain.jail.algo.induct.oracle.IMembershipQueryTester;
+import be.uclouvain.jail.algo.induct.oracle.IOracle;
 import be.uclouvain.jail.algo.induct.utils.ClassicEvaluator;
+import be.uclouvain.jail.algo.induct.utils.IEvaluator;
 import be.uclouvain.jail.algo.utils.AbstractAlgoInput;
 import be.uclouvain.jail.fa.ISample;
 import be.uclouvain.jail.fa.functions.FAStateKindFunction;
@@ -33,6 +33,9 @@ public class DefaultInductionAlgoInput extends AbstractAlgoInput implements IInd
 	/** Compatibility informer. */
 	private ICompatibility compatibility;
 
+	/** Representor attribute. */
+	private String repAttr = "representor";
+	
 	/** Creates a induction info. */
 	public DefaultInductionAlgoInput(ISample<?> input) {
 		this.input = input;
@@ -42,14 +45,14 @@ public class DefaultInductionAlgoInput extends AbstractAlgoInput implements IInd
 
 		UserInfoAggregator stateAggregator = input.getUserInfoHandler().getVertexAggregator();
 		stateAggregator.boolOr(AttributeGraphFAInformer.STATE_INITIAL_KEY);
-		stateAggregator.stateKind(AttributeGraphFAInformer.STATE_KIND_KEY,
-                FAStateKindFunction.OR,
-                FAStateKindFunction.OR,true);
+		stateAggregator.stateKind(AttributeGraphFAInformer.STATE_KIND_KEY,FAStateKindFunction.OR,FAStateKindFunction.OR,true);
+		stateAggregator.min(repAttr);
 		stateAggregator.first(MappingUtils.KDP_REPRESENTOR);
 		stateAggregator.first(MappingUtils.KP_REPRESENTOR);
 		
 		UserInfoAggregator edgeAggregator = input.getUserInfoHandler().getEdgeAggregator();
 		edgeAggregator.first(AttributeGraphFAInformer.EDGE_LETTER_KEY);
+		edgeAggregator.min(repAttr);
 	}
 
 	/** Sets options. */
@@ -74,7 +77,7 @@ public class DefaultInductionAlgoInput extends AbstractAlgoInput implements IInd
 		return compatibility;
 	}
 
-	/** Sets the compatibility informer. */
+	/** Adds a compatibility informer. */
 	public void setCompatibility(ICompatibility compatibility) {
 		this.compatibility = compatibility;
 	}
@@ -115,6 +118,16 @@ public class DefaultInductionAlgoInput extends AbstractAlgoInput implements IInd
 	/** Returns the consolidation threshold. */
 	public void setConsolidationThreshold(int cThreshold) {
 		this.cThreshold = cThreshold;
+	}
+	
+	/** Returns representor attribute. */
+	public String getRepresentorAttr() {
+		return repAttr;
+	}
+	
+	/** Sets representor attribute. */
+	public void setRepresentorAttr(String repAttr) {
+		this.repAttr = repAttr;
 	}
 	
 	/** Adds a gmatch state populator. */

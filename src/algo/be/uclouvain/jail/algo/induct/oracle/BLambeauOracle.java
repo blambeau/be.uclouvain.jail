@@ -1,4 +1,4 @@
-package be.uclouvain.jail.algo.induct.utils;
+package be.uclouvain.jail.algo.induct.oracle;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -10,6 +10,8 @@ import be.uclouvain.jail.algo.induct.internal.PTAEdge;
 import be.uclouvain.jail.algo.induct.internal.PTAState;
 import be.uclouvain.jail.algo.induct.internal.Simulation;
 import be.uclouvain.jail.algo.induct.internal.WorkType;
+import be.uclouvain.jail.algo.induct.utils.FilteredSimuVisitor;
+import be.uclouvain.jail.algo.induct.utils.IGainD;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.graph.utils.DefaultDirectedGraphPath;
 

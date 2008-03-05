@@ -10,10 +10,13 @@ import be.uclouvain.jail.algo.induct.internal.Simulation;
  * 
  * @author blambeau
  */
-public interface IInductionAlgoListener {
+public interface IInductionListener {
 
 	/** Initializes the listener. */
 	public void initialize(InductionAlgo algo);
+	
+	/** Fired when a new step begins. */
+	public void newStep(Simulation simu);
 	
 	/** Consolidates an edge. */
 	public void consolidate(PTAEdge edge);

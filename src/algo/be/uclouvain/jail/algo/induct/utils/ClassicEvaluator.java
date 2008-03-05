@@ -3,7 +3,6 @@ package be.uclouvain.jail.algo.induct.utils;
 import be.uclouvain.jail.algo.induct.internal.IWork;
 import be.uclouvain.jail.algo.induct.internal.Simulation;
 import be.uclouvain.jail.algo.induct.internal.WorkType;
-import be.uclouvain.jail.algo.induct.open.IEvaluator;
 
 /** Classical Blue-Fringe evaluator. 
  * 

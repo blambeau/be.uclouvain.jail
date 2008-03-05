@@ -1,4 +1,4 @@
-package be.uclouvain.jail.algo.induct.utils;
+package be.uclouvain.jail.algo.induct.oracle;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -7,8 +7,7 @@ import java.util.Stack;
 
 import be.uclouvain.jail.algo.induct.internal.PTAEdge;
 import be.uclouvain.jail.algo.induct.internal.PTAState;
-import be.uclouvain.jail.algo.induct.open.ISuffixExtractor;
-import be.uclouvain.jail.algo.induct.open.IWalker;
+import be.uclouvain.jail.algo.induct.utils.IWalker;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.IFATrace;
 import be.uclouvain.jail.fa.utils.DefaultFATrace;

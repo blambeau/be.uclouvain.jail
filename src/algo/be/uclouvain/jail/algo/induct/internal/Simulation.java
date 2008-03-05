@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import be.uclouvain.jail.algo.commons.Avoid;
-import be.uclouvain.jail.algo.induct.listeners.IInductionAlgoListener;
-import be.uclouvain.jail.algo.induct.open.ISimuVisitor;
+import be.uclouvain.jail.algo.induct.listeners.IInductionListener;
+import be.uclouvain.jail.algo.induct.utils.ISimuVisitor;
 import be.uclouvain.jail.algo.induct.utils.KStateGainD;
 import be.uclouvain.jail.algo.induct.utils.KStateMergeD;
 import be.uclouvain.jail.algo.induct.utils.OStateGainD;
@@ -45,7 +45,7 @@ public class Simulation {
 	private boolean commited;
 
 	/** Listener. */
-	protected IInductionAlgoListener listener;
+	protected IInductionListener listener;
 	
 	/** Helper to create works. */
 	abstract class AbstractSubWork implements IWork {
@@ -435,11 +435,18 @@ public class Simulation {
 		kStateGains = new HashMap<SLPair,Object>();
 		oStateGains = new HashMap<SLPair,Object>();
 		subWorks = new ArrayList<AbstractSubWork>();
+		
+		listener.newStep(this);
 	}
 
 	/** Returns the parent algorithm. */
 	public InductionAlgo getRunningAlgo() {
 		return algo;
+	}
+	
+	/** Returns the values handler. */
+	public IValuesHandler getValuesHandler() {
+		return handler;
 	}
 	
 	/** Returns the fringe. */

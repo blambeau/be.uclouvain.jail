@@ -1,4 +1,4 @@
-package be.uclouvain.jail.algo.induct.utils;
+package be.uclouvain.jail.algo.induct.oracle;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -6,7 +6,6 @@ import java.io.PrintWriter;
 import jline.ConsoleReader;
 import be.uclouvain.jail.Jail;
 import be.uclouvain.jail.algo.commons.Unable;
-import be.uclouvain.jail.algo.induct.open.IMembershipQueryTester;
 
 /**
  * Tests queries using the user, through the console.

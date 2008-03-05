@@ -12,6 +12,11 @@ public final class AggregateFunctionFactory {
 	/** Not intended to be implemented. */
 	private AggregateFunctionFactory() {}
 	
+	/** Factors a concat function. */
+	public static IAggregateFunction<?> concat() {
+		return new ConcatFunction();
+	}
+	
 	/** Factors a sum function. */
 	public static IAggregateFunction<?> sum() {
 		return new SumFunction();
