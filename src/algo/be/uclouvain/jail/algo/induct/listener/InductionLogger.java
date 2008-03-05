@@ -1,4 +1,4 @@
-package be.uclouvain.jail.algo.induct.listeners;
+package be.uclouvain.jail.algo.induct.listener;
 
 import be.uclouvain.jail.algo.induct.internal.PTAEdge;
 import be.uclouvain.jail.algo.induct.internal.PTAState;

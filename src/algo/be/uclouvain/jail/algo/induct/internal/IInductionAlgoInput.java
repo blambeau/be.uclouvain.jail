@@ -2,7 +2,9 @@ package be.uclouvain.jail.algo.induct.internal;
 
 import be.uclouvain.jail.algo.commons.IAlgoInput;
 import be.uclouvain.jail.algo.induct.compatibility.ICompatibility;
+import be.uclouvain.jail.algo.induct.listener.IInductionListener;
 import be.uclouvain.jail.algo.induct.oracle.IOracle;
+import be.uclouvain.jail.algo.induct.processor.IInductionProcessor;
 import be.uclouvain.jail.algo.induct.utils.IEvaluator;
 import be.uclouvain.jail.fa.ISample;
 
@@ -25,6 +27,15 @@ public interface IInductionAlgoInput extends IAlgoInput {
 	/** Returns evaluator. */
 	public IEvaluator getEvaluator();
 
+	/** Returns listener to use. */
+	public IInductionListener getListener();
+	
+	/** Returns pre-processor to use. */
+	public IInductionProcessor getPreProcessor();
+	
+	/** Returns listener to use. */
+	public IInductionProcessor getPostProcessor();
+	
 	/** Returns the representor attribute. */
 	public String getRepresentorAttr();
 	

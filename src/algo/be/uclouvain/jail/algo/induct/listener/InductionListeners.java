@@ -1,4 +1,4 @@
-package be.uclouvain.jail.algo.induct.listeners;
+package be.uclouvain.jail.algo.induct.listener;
 
 import java.util.ArrayList;
 import java.util.List;

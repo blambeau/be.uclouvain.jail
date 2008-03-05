@@ -1,4 +1,4 @@
-package be.uclouvain.jail.algo.induct.listeners;
+package be.uclouvain.jail.algo.induct.listener;
 
 import be.uclouvain.jail.algo.induct.internal.IValuesHandler;
 import be.uclouvain.jail.algo.induct.internal.InductionAlgo;

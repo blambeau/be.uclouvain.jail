@@ -1,9 +1,11 @@
 package be.uclouvain.jail.vm.toolkits;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import be.uclouvain.jail.algo.fa.uncomplement.FAUncomplementorAlgo;
 import be.uclouvain.jail.algo.fa.utils.FAUtils;
+import be.uclouvain.jail.dialect.dot.DOTGraphDialect;
 import be.uclouvain.jail.dialect.dot.JDotty;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.IFA;
@@ -19,6 +21,13 @@ public final class AutomatonFacade {
 	public static void show(IFA fa) throws IOException {
 		JDotty jdotty = new JDotty();
 		jdotty.present(FAUtils.copyForDot(fa),null);
+	}
+	
+	/** Debugs an automaton using dot. */
+	public static void debug(IFA fa) throws IOException {
+		PrintWriter w = new PrintWriter(System.out);
+		new DOTGraphDialect().print(fa.getGraph(), w, null);
+		w.flush();
 	}
 	
 	/** Uncomplements a DFA. */

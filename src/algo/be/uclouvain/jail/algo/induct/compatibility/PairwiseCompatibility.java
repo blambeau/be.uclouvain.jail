@@ -60,7 +60,7 @@ public class PairwiseCompatibility extends AbstractCompatibility {
 	/** Checks compatibility of two states. */
 	@Override
 	public boolean isCompatible(Object s, Object t) {
-		return incompatibles.contains(new StatePair(s,t));
+		return !incompatibles.contains(new StatePair(s,t));
 	}
 
 	/** Returns true. */

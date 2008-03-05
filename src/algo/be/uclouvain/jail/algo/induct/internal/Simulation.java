@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import be.uclouvain.jail.algo.commons.Avoid;
-import be.uclouvain.jail.algo.induct.listeners.IInductionListener;
+import be.uclouvain.jail.algo.induct.listener.IInductionListener;
 import be.uclouvain.jail.algo.induct.utils.ISimuVisitor;
 import be.uclouvain.jail.algo.induct.utils.KStateGainD;
 import be.uclouvain.jail.algo.induct.utils.KStateMergeD;
@@ -426,7 +426,7 @@ public class Simulation {
 		this.commited = false;
 		this.dfa = algo.getDFA();
 		this.dfag = dfa.getGraph();
-		this.listener = algo.listener;
+		this.listener = algo.getListener();
 		
 		// decorate real values handler with commit support
 		handler = new CValuesHandler(algo, algo.getValuesHandler());
@@ -436,7 +436,7 @@ public class Simulation {
 		oStateGains = new HashMap<SLPair,Object>();
 		subWorks = new ArrayList<AbstractSubWork>();
 		
-		listener.newStep(this);
+		if (listener != null) { listener.newStep(this); }
 	}
 
 	/** Returns the parent algorithm. */
@@ -473,7 +473,7 @@ public class Simulation {
 		addSubWork(new StartTry(fEdge,kState));
 		
 		// let listener follow
-		listener.startTry(fEdge, kState);
+		if (listener != null) { listener.startTry(fEdge, kState); }
 
 		// continue
 		fEdge.target().merge(Simulation.this,kState);
@@ -488,7 +488,7 @@ public class Simulation {
 		addSubWork(new EdgeConsolidate(fEdge));
 		
 		// let listener follow
-		listener.consolidate(fEdge);
+		if (listener != null) { listener.consolidate(fEdge); }
 		
 		// continue
 		return fEdge.consolidate(this);
@@ -503,7 +503,7 @@ public class Simulation {
 		addSubWork(new StateConsolidate(state));
 		
 		// let listener follow
-		listener.consolidate(state);
+		if (listener != null) { listener.consolidate(state); }
 		
 		// continue
 		return state.consolidate(this);
@@ -515,7 +515,7 @@ public class Simulation {
 		addSubWork(new KStateMerge(state, tkState));
 		
 		// let listener follow
-		listener.merge(state, tkState);
+		if (listener != null) { listener.merge(state, tkState); }
 	}
 
 	/** Add a new kernel edge merge. */
@@ -524,7 +524,7 @@ public class Simulation {
 		addSubWork(new KEdgeMerge(edge, tkEdge));
 		
 		// let listener follow
-		listener.merge(edge, tkEdge);
+		if (listener != null) { listener.merge(edge, tkEdge); }
 	}
 
 	/** Adds another edge merge. */
@@ -533,7 +533,7 @@ public class Simulation {
 		addSubWork(new OEdgeMerge(victim, target));
 		
 		// let listener follow
-		listener.merge(victim, target);
+		if (listener != null) { listener.merge(victim, target); }
 	}
 
 	/** Adds an other state merge. */
@@ -542,7 +542,7 @@ public class Simulation {
 		addSubWork(new OStateMerge(victim, target));
 		
 		// let listener follow
-		listener.merge(victim, target);
+		if (listener != null) { listener.merge(victim, target); }
 	}
 
 	/** Adds a kernel state gain. */
@@ -556,7 +556,7 @@ public class Simulation {
 		kStateGains.put(pair, ptaEdge);
 		
 		// let listener follow
-		listener.gain(tkState, ptaEdge);
+		if (listener != null) { listener.gain(tkState, ptaEdge); }
 	}
 
 	/** Adds another state gain. */
@@ -570,7 +570,7 @@ public class Simulation {
 		oStateGains.put(pair, edge);
 		
 		// let listener follow
-		listener.gain(state, edge);
+		if (listener != null) { listener.gain(state, edge); }
 	}
 
 	/** Commits the simulation. */
@@ -584,7 +584,7 @@ public class Simulation {
 
 		// commit handler
 		handler.commit();
-		listener.commit(this);
+		if (listener != null) { listener.commit(this); }
 		
 		// mark as commited
 		commited = true;
@@ -601,7 +601,7 @@ public class Simulation {
 
 		// commit handler
 		handler.rollback();
-		listener.rollback(this);
+		if (listener != null) { listener.rollback(this); }
 	}
 
 	/** Adds a subwork. */

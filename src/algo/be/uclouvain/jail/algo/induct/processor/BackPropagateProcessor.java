@@ -1,21 +1,24 @@
-package be.uclouvain.jail.algo.induct.compatibility;
+package be.uclouvain.jail.algo.induct.processor;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import be.uclouvain.jail.algo.induct.compatibility.ICompatibility;
 import be.uclouvain.jail.algo.induct.internal.InductionAlgo;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
+import be.uclouvain.jail.vm.toolkits.AutomatonFacade;
 
 /**
  * Listener that handles back propagation.
  * 
  * @author blambeau
  */
-public class BackPropagatePreprocessor {
+public class BackPropagateProcessor implements IInductionProcessor {
 
 	/** Algorithm. */
 	private InductionAlgo algo;
@@ -55,10 +58,14 @@ public class BackPropagatePreprocessor {
 	}
 	
 	/** Installs initial sets of incompatibilities. */
-	public void initialize(InductionAlgo algo) {
+	public void process(InductionAlgo algo) {
+		this.algo = algo;
 		this.compatibility = algo.getCompatibility();
 		this.pta = algo.getPTA();
 		this.ptag = pta.getGraph();
+
+		try { AutomatonFacade.debug(pta); }
+		catch (IOException ex) {}
 		
 		// check that compatibility is extensible
 		if (compatibility == null || !compatibility.isExtensible()) {
@@ -84,7 +91,6 @@ public class BackPropagatePreprocessor {
 					
 					// states are not compatible
 					if (!compatibility.isCompatible(iState, jState)) {
-						
 						// get source states
 						Object iSource = ptag.getEdgeSource(iEdge);
 						Object jSource = ptag.getEdgeSource(jEdge);
@@ -100,6 +106,12 @@ public class BackPropagatePreprocessor {
 		}
 	}
 
+	/** Debugs index of a pair. */
+	@SuppressWarnings("unused")
+	private String debugPair(Object s, Object t) {
+		return "(" + ptag.getVerticesTotalOrder().indexOf(s) + "," + ptag.getVerticesTotalOrder().indexOf(t) + ")";
+	}
+	
 	/** Returns incoming edge of a state. */
 	private Object inEdge(Object s) {
 		Collection<Object> inEdges = ptag.getIncomingEdges(s);

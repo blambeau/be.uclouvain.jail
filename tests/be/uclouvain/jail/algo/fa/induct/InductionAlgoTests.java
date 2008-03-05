@@ -4,10 +4,13 @@ import java.io.PrintWriter;
 
 import junit.framework.TestCase;
 import be.uclouvain.jail.algo.fa.equiv.DFAEquiv;
+import be.uclouvain.jail.algo.induct.compatibility.PairwiseCompatibility;
+import be.uclouvain.jail.algo.induct.compatibility.StateKindCompatibility;
 import be.uclouvain.jail.algo.induct.internal.BlueFringeAlgo;
 import be.uclouvain.jail.algo.induct.internal.DefaultInductionAlgoInput;
 import be.uclouvain.jail.algo.induct.internal.IInductionAlgoInput;
 import be.uclouvain.jail.algo.induct.internal.RPNIAlgo;
+import be.uclouvain.jail.algo.induct.processor.BackPropagateProcessor;
 import be.uclouvain.jail.dialect.dot.DOTGraphDialect;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.ISample;
@@ -97,9 +100,26 @@ public class InductionAlgoTests extends TestCase {
 		assertEquivalent(expected,result);
 	}
 	
+	/** Tests RPNI on Sample 3.2 from INRIA. */
+	public void testBackPropagationOnInriaSample3_2() throws Exception {
+		// load expected result and sample
+		IDFA expected = JailTestUtils.INRIA_DFA_3_1();
+		ISample<String> sample = JailTestUtils.INRIA_SAMPLE_3_2();
+
+		// execute RPNI
+		DefaultInductionAlgoInput input = new DefaultInductionAlgoInput(sample);
+		input.addCompatibility(new PairwiseCompatibility());
+		input.addCompatibility(new StateKindCompatibility());
+		input.addPreProcessor(new BackPropagateProcessor());
+		IDFA result = new RPNIAlgo().execute(input);
+
+		// assert equivalence
+		assertEquivalent(expected,result);
+	}
+	
 	/** Main method. */
 	public static void main(String[] args) throws Exception {
-		new InductionAlgoTests().testRPNIOnInriaSample3_2();
+		new InductionAlgoTests().testBackPropagationOnInriaSample3_2();
 	}
 	
 }

@@ -1,10 +1,15 @@
 package be.uclouvain.jail.algo.induct.internal;
 
 import be.uclouvain.jail.algo.graph.copy.match.GMatchAggregator;
+import be.uclouvain.jail.algo.induct.compatibility.Compatibilities;
 import be.uclouvain.jail.algo.induct.compatibility.ICompatibility;
+import be.uclouvain.jail.algo.induct.listener.IInductionListener;
+import be.uclouvain.jail.algo.induct.listener.InductionListeners;
 import be.uclouvain.jail.algo.induct.oracle.AbstractMembershipOracle;
 import be.uclouvain.jail.algo.induct.oracle.IMembershipQueryTester;
 import be.uclouvain.jail.algo.induct.oracle.IOracle;
+import be.uclouvain.jail.algo.induct.processor.IInductionProcessor;
+import be.uclouvain.jail.algo.induct.processor.InductionProcessors;
 import be.uclouvain.jail.algo.induct.utils.ClassicEvaluator;
 import be.uclouvain.jail.algo.induct.utils.IEvaluator;
 import be.uclouvain.jail.algo.utils.AbstractAlgoInput;
@@ -21,17 +26,26 @@ public class DefaultInductionAlgoInput extends AbstractAlgoInput implements IInd
 	/** Input sample. */
 	private ISample<?> input;
 
+	/** Compatibility informer (optional). */
+	private ICompatibility compatibility;
+
 	/** Oracle (optional). */
 	private IOracle oracle;
+
+	/** Listener (optional). */
+	private IInductionListener listener;
 
 	/** Merge evaluator (BlueFringe only) */ 
 	private IEvaluator evaluator;
 
+	/** Pre-processor to use. */
+	private IInductionProcessor preProcessor;
+	
+	/** Post-processor to use. */
+	private IInductionProcessor postProcessor;
+	
 	/** Consolidation threshold (BlueFringe only). */
 	private int cThreshold;
-
-	/** Compatibility informer. */
-	private ICompatibility compatibility;
 
 	/** Representor attribute. */
 	private String repAttr = "representor";
@@ -72,6 +86,63 @@ public class DefaultInductionAlgoInput extends AbstractAlgoInput implements IInd
 		return (ISample<L>) input;
 	}
 
+	/** Returns the induction listener to use. */
+	public IInductionListener getListener() {
+		return listener;
+	}
+	
+	/** Sets the induction listener. */
+	public void setInductionListener(IInductionListener listener) {
+		this.listener = listener;
+	}
+	
+	/** Adds an induction listener. */
+	public void addInductionListener(IInductionListener l) {
+		if (listener == null) { listener = new InductionListeners(); }
+		if (listener instanceof InductionListeners == false) {
+			throw new IllegalStateException("Unable to add listener on " + listener);
+		}
+		((InductionListeners)listener).addListener(l);
+	}
+	
+	/** Returns pre-processor to use. */
+	public IInductionProcessor getPreProcessor() {
+		return preProcessor;
+	}
+	
+	/** Sets the pre-processor. */
+	public void setPreProcessos(IInductionProcessor p) {
+		this.preProcessor = p;
+	}
+	
+	/** Adds a pre-processor. */
+	public void addPreProcessor(IInductionProcessor p) {
+		if (preProcessor == null) { preProcessor = new InductionProcessors(); }
+		if (preProcessor instanceof InductionProcessors == false) {
+			throw new IllegalStateException("Unable to add processor on " + preProcessor);
+		}
+		((InductionProcessors)preProcessor).addProcessor(p);
+	}
+	
+	/** Returns listener to use. */
+	public IInductionProcessor getPostProcessor() {
+		return postProcessor;
+	}
+	
+	/** Sets the post-processor. */
+	public void setPostProcessos(IInductionProcessor p) {
+		this.postProcessor = p;
+	}
+	
+	/** Adds a post-processor. */
+	public void addPostProcessor(IInductionProcessor p) {
+		if (postProcessor == null) { postProcessor = new InductionProcessors(); }
+		if (postProcessor instanceof InductionProcessors == false) {
+			throw new IllegalStateException("Unable to add processor on " + postProcessor);
+		}
+		((InductionProcessors)postProcessor).addProcessor(p);
+	}
+
 	/** Returns compatibility informer. */
 	public ICompatibility getCompatibility() {
 		return compatibility;
@@ -82,6 +153,15 @@ public class DefaultInductionAlgoInput extends AbstractAlgoInput implements IInd
 		this.compatibility = compatibility;
 	}
 
+	/** Adds an incompatibility layer. */
+	public void addCompatibility(ICompatibility c) {
+		if (compatibility == null) { compatibility = new Compatibilities(); } 
+		if (compatibility instanceof Compatibilities == false) {
+			throw new IllegalStateException("Unable to add incompatibility on " + compatibility);
+		}
+		((Compatibilities)compatibility).addCompatibility(c);
+	}
+	
 	/** Returns oracle. */
 	public IOracle getOracle() {
 		return oracle;
@@ -139,5 +219,5 @@ public class DefaultInductionAlgoInput extends AbstractAlgoInput implements IInd
 	public void setEdgePopulator(GMatchAggregator populator) {
 		input.getUserInfoHandler().getEdgeAggregator().addPopulator(populator);
 	}
-	
+
 }

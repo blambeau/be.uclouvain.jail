@@ -3,9 +3,9 @@ package be.uclouvain.jail.algo.induct.internal;
 import be.uclouvain.jail.algo.commons.Avoid;
 import be.uclouvain.jail.algo.commons.Restart;
 import be.uclouvain.jail.algo.induct.compatibility.ICompatibility;
-import be.uclouvain.jail.algo.induct.listeners.IInductionListener;
-import be.uclouvain.jail.algo.induct.listeners.InductionListeners;
+import be.uclouvain.jail.algo.induct.listener.IInductionListener;
 import be.uclouvain.jail.algo.induct.oracle.IOracle;
+import be.uclouvain.jail.algo.induct.processor.IInductionProcessor;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.constraints.PTAGraphConstraint;
 import be.uclouvain.jail.fa.impl.GraphDFA;
@@ -29,21 +29,19 @@ public abstract class InductionAlgo {
 	/** Values handler. */
 	protected IValuesHandler valuesHandler;
 
-	/** Compatibility information (chain). */
+	/** Compatibility information. */
 	protected ICompatibility compatibility;
 
+	/** Oracle to use. */
+	protected IOracle oracle;
+	
 	/** Listener. */
-	protected InductionListeners listener = new InductionListeners();
+	protected IInductionListener listener;
 	
 	/** Creates an algorithm instance. */
 	public InductionAlgo() {
 	}
 
-	/** Adds a listener. */
-	public void addListener(IInductionListener l) {
-		listener.addListener(l);
-	}
-	
 	/** Executes the algorithm. */
 	public IDFA execute(IInductionAlgoInput info) throws Avoid {
 		this.input = info;
@@ -65,12 +63,6 @@ public abstract class InductionAlgo {
 	
 	/** Initializes the algorithm. */
 	private void initialize() throws Avoid {
-		// initialize oracle if any
-		IOracle oracle = input.getOracle();
-		if (oracle != null) {
-			oracle.initialize(this);
-		}
-		
 		// create PTA
 		this.pta = (IDFA) input.getInput().adapt(IDFA.class);
 		String repAttr = input.getRepresentorAttr();
@@ -82,12 +74,21 @@ public abstract class InductionAlgo {
 		
 		// compute and initialize compatibility information
 		compatibility = input.getCompatibility();
-		if (compatibility != null) {
-			compatibility.initialize(this);
-		}
+		if (compatibility != null) { compatibility.initialize(this); }
+		
+		// initialize oracle if any
+		oracle = input.getOracle();
+		if (oracle != null) { oracle.initialize(this); }
+
+		listener = input.getListener();
+		if (listener != null) { listener.initialize(this); }
 		
 		// create a real values handler
 		valuesHandler = new RValuesHandler(this);
+		
+		// execute pre-processor
+		IInductionProcessor p = input.getPreProcessor();
+		if (p != null) { p.process(this); }
 		
 		// create initial situation: root is red, fringe updated
 		createInitialSituation();
@@ -99,10 +100,11 @@ public abstract class InductionAlgo {
 		// create fringe
 		fringe = new Fringe(this);
 
-		// consolidate pta initial state (creation of PTA rootState 
-		// creates the whole PTA decorator as a side effect)
+		// creates the PTA decorator
 		Object ptaInitial = pta.getInitialState();
 		PTAState rootState = new PTAState(this, pta, ptaInitial, null);
+		
+		// consolidate pta initial state
 		Simulation simu = new Simulation(this);
 		simu.consolidate(rootState);
 		simu.commit();
@@ -131,6 +133,16 @@ public abstract class InductionAlgo {
 	/** Returns the compatibility informer. */
 	public ICompatibility getCompatibility() {
 		return compatibility;
+	}
+	
+	/** Returns induction listener. */
+	public IInductionListener getListener() {
+		return listener;
+	}
+	
+	/** Returns induction listener. */
+	public IOracle getOracle() {
+		return oracle;
 	}
 	
 	/** Checks if two DFA states are compatible. */
@@ -162,7 +174,6 @@ public abstract class InductionAlgo {
 
 	/** Checks a simulation with the installed oracle. */
 	public void checkWithOracle(Simulation simu) throws Avoid, Restart {
-		IOracle oracle = input.getOracle();
 		if (oracle != null && !oracle.accept(simu)) {
 			throw new Avoid();
 		} else {
