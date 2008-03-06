@@ -1,5 +1,6 @@
 package be.uclouvain.jail.algo.fa.rand;
 
+import be.uclouvain.jail.algo.graph.copy.match.GMatchAggregator;
 import be.uclouvain.jail.algo.utils.AbstractAlgoResult;
 import be.uclouvain.jail.fa.FAStateKind;
 import be.uclouvain.jail.fa.IDFA;
@@ -8,7 +9,6 @@ import be.uclouvain.jail.fa.ISample;
 import be.uclouvain.jail.fa.IString;
 import be.uclouvain.jail.fa.IWalkInfo;
 import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
-import be.uclouvain.jail.fa.utils.DefaultSample;
 import be.uclouvain.jail.uinfo.IUserInfoHandler;
 import be.uclouvain.jail.uinfo.UserInfoCopier;
 
@@ -25,20 +25,21 @@ public class DefaultRandomStringsResult<L> extends AbstractAlgoResult implements
 	/** Optional DFA to use to create strings. */ 
 	private IDFA labeller;
 	
-	/** Creates a result with a default sample. */
-	public DefaultRandomStringsResult() {
-		this(null);
-	}
-	
 	/** Creates a result with a given sample to fill. */
 	public DefaultRandomStringsResult(ISample<L> sample) {
 		this.sample = sample;
 		IUserInfoHandler handler = super.getUserInfoHandler();
+
+		// keep all on states but mark initial as false
+		// and kind as passage
 		UserInfoCopier vertexCopier = handler.getVertexCopier();
 		vertexCopier.keepAll();
 		vertexCopier.addConstant(AttributeGraphFAInformer.STATE_INITIAL_KEY, false);
 		vertexCopier.addConstant(AttributeGraphFAInformer.STATE_KIND_KEY, FAStateKind.PASSAGE);
-		handler.getEdgeCopier().keepAll();
+		
+		// keep all on edges
+		UserInfoCopier edgeCopier = handler.getEdgeCopier();
+		edgeCopier.keepAll();
 	}
 
 	/** Installs the options. */
@@ -48,13 +49,20 @@ public class DefaultRandomStringsResult<L> extends AbstractAlgoResult implements
 		super.addOption("sample", false, ISample.class, null);
 		super.addOption("labeller", false, IDFA.class, null);
 		super.addOption("labeler", false, IDFA.class, null);
+		super.addOption("state", "statePopulator", false, GMatchAggregator.class, null);
+		super.addOption("edge", "edgePopulator", false, GMatchAggregator.class, null);
 	}
-
-	/** Sets sample to fill. */
-	public void setSample(ISample<L> sample) {
-		this.sample = sample;
+	
+	/** Adds a gmatch state populator. */
+	public void setStatePopulator(GMatchAggregator populator) {
+		sample.getUserInfoHandler().getVertexAggregator().addPopulator(populator);
 	}
-
+	
+	/** Adds a gmatch edge populator. */
+	public void setEdgePopulator(GMatchAggregator populator) {
+		sample.getUserInfoHandler().getEdgeAggregator().addPopulator(populator);
+	}
+	
 	/** Sets labeller to use. */
 	public void setLabeller(IDFA labeller) {
 		this.labeller = labeller;
@@ -67,9 +75,6 @@ public class DefaultRandomStringsResult<L> extends AbstractAlgoResult implements
 	
 	/** Fired when algo is started. */
 	public void started(IRandomStringsInput<L> input) {
-		if (sample == null) {
-			sample = new DefaultSample<L>(input.getAlphabet());
-		}
 	}
 	
 	/** Fired when algo is ended. */

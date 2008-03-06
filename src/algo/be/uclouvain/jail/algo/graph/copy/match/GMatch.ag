@@ -95,6 +95,7 @@ grammar GMatch as gm extends ActiveParser {
 	                                     | tor:<'=' u:symbol>
 	                                     ; [u:return]
 	<gm:bool_termexpr>                 ::= tor:<gm:attr_ref>
+	                                     | tor:<gm:function_call>
 	                                     | tor:<gm:bool_boolterm>
 	                                     | <'(' u:symbol> tor:<gm:bool_expr> <')' u:symbol>
 	                                     ; [u:return]

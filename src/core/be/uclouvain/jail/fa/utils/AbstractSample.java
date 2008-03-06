@@ -6,7 +6,6 @@ import be.uclouvain.jail.fa.functions.FAStateKindFunction;
 import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.uinfo.IUserInfoHandler;
 import be.uclouvain.jail.uinfo.UserInfoAggregator;
-import be.uclouvain.jail.uinfo.UserInfoCopier;
 import be.uclouvain.jail.uinfo.UserInfoHandler;
 
 /**
@@ -26,18 +25,11 @@ public abstract class AbstractSample<L> implements ISample<L> {
 	public AbstractSample(IAlphabet<L> alphabet) {
 		this.alphabet = alphabet;
 		this.userInfoHandler = new UserInfoHandler();
-		userInfoHandler.getVertexCopier().keepAll();
-		userInfoHandler.getEdgeCopier().keepAll();
 		
 		UserInfoAggregator stateAggregator = userInfoHandler.getVertexAggregator();
 		stateAggregator.boolOr(AttributeGraphFAInformer.STATE_INITIAL_KEY);
-		stateAggregator.stateKind(AttributeGraphFAInformer.STATE_KIND_KEY,
-                FAStateKindFunction.OR,
-                FAStateKindFunction.OR,true);
+		stateAggregator.stateKind(AttributeGraphFAInformer.STATE_KIND_KEY,FAStateKindFunction.OR,FAStateKindFunction.OR,true);
 
-		UserInfoCopier vertexCopier = userInfoHandler.getVertexCopier();
-		vertexCopier.addConstant(AttributeGraphFAInformer.STATE_INITIAL_KEY, false);
-		
 		UserInfoAggregator edgeAggregator = userInfoHandler.getEdgeAggregator();
 		edgeAggregator.first(AttributeGraphFAInformer.EDGE_LETTER_KEY);
 	}
@@ -46,7 +38,7 @@ public abstract class AbstractSample<L> implements ISample<L> {
 	public IUserInfoHandler getUserInfoHandler() {
 		return userInfoHandler;
 	}
-	
+
 	/** Returns the alphabet. */
 	public IAlphabet<L> getAlphabet() {
 		return alphabet;

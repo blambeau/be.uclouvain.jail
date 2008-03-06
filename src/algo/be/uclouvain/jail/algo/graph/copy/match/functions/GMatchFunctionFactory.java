@@ -31,6 +31,11 @@ public class GMatchFunctionFactory {
 		return new OnFirstFunction();
 	}
 	
+	/** Factors a concat function. */
+	public static IGMatchFunction<?> exists() {
+		return new ExistsFunction();
+	}
+	
 	/** Returns a function by name. */
 	public static IGMatchFunction<?> getGMatchFunction(String name) throws JailVMException {
 		try {

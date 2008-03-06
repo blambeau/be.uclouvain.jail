@@ -50,8 +50,7 @@ public class DefaultSample<L> extends AbstractSample<L> {
 
 	/** Handles size of the initial DFA. */
 	private int handleSize(IDFA dfa) {
-		return (dfa.getGraph().getVerticesTotalOrder().size() == 1) ?
-			   0 : -1;
+		return (dfa.getGraph().getVerticesTotalOrder().size() == 1) ? 0 : -1;
 	}
 	
 	/** Creates an empty DFA. */

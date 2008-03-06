@@ -111,12 +111,12 @@ public class DFAInjectionHelper {
 				} else {
 					// create new state
 					IUserInfo tVertexInfo = traceGraph.getVertexInfo(vertex);
-					IUserInfo dVertexInfo = handler.vertexCopy(tVertexInfo);
+					IUserInfo dVertexInfo = handler.vertexAggregate(tVertexInfo);
 					Object next = dfaGraph.createVertex(dVertexInfo);
 					
 					// create new edge
 					IUserInfo tEdgeInfo = traceGraph.getEdgeInfo(edge);
-					IUserInfo dEdgeInfo = handler.edgeCopy(tEdgeInfo);
+					IUserInfo dEdgeInfo = handler.edgeAggregate(tEdgeInfo);
 					dfaGraph.createEdge(current, next, dEdgeInfo);
 					
 					// update current to next

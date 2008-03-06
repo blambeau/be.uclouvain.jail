@@ -21,14 +21,17 @@ public class ForwardLabelProcessor {
 	public static class Input extends AbstractAlgoInput {
 		
 		/** Input PTA. */
-		private IDFA pta;
+		protected IDFA pta;
 		
 		/** Class attribute to use. */
-		private String sourceAttr;
+		protected String sourceAttr;
 		
 		/** Target attribute to install. */
-		private String targetAttr;
+		protected String targetAttr;
 
+		/** Unknown value. */
+		protected Object unknown;
+		
 		/** Creates an input with source and target attributes. */
 		public Input(IDFA pta, String sourceAttr, String targetAttr) {
 			assert (new PTAGraphConstraint().isRespectedBy(pta));
@@ -53,6 +56,7 @@ public class ForwardLabelProcessor {
 			super.installOptions();
 			super.addOption("source", "sourceAttr", false, String.class, "class");
 			super.addOption("target", "targetAttr", false, String.class, "label");
+			super.addOption("unknown", "unknown", false, Object.class, null);
 		}
 
 		/** Returns class attribute to use. */
@@ -74,14 +78,24 @@ public class ForwardLabelProcessor {
 		public void setTargetAttr(String indexAttr) {
 			this.targetAttr = indexAttr;
 		}
+
+		/** Returns unknown value. */
+		public Object getUnknown() {
+			return unknown;
+		}
+
+		/** Sets unknown value. */
+		public void setUnknown(Object unknown) {
+			this.unknown = unknown;
+		}
 		
 	}
 	
+	/** Algorithm input. */
+	private Input input;
+	
 	/** PTA graph. */
 	private IDirectedGraph ptag;
-	
-	/** Source and target attributes. */
-	private String classAttr, indexAttr;
 	
 	/** Next index. */
 	private int nextIndex;
@@ -98,22 +112,21 @@ public class ForwardLabelProcessor {
 	
 	/** Returns the class of a state. */
 	private Object getClassOf(Object state) {
-		return ptag.getVertexInfo(state).getAttribute(classAttr);
+		return ptag.getVertexInfo(state).getAttribute(input.sourceAttr);
 	}
 	
 	/** Returns the index of a state. */
 	private Integer getIndexOf(Object state) {
-		Integer index = (Integer) ptag.getVertexInfo(state).getAttribute(indexAttr);
+		Integer index = (Integer) ptag.getVertexInfo(state).getAttribute(input.targetAttr);
 		assert (index != null) : "Index has been set.";
 		return index;
 	}
 	
 	/** Processes an input. */
-	public void process(Input input) {
+	public void process(final Input input) {
 		// install options
+		this.input = input;
 		this.ptag = input.getPTA().getGraph();
-		this.classAttr = input.getSourceAttr();
-		this.indexAttr = input.getTargetAttr();
 		
 		// initialize data structures
 		nextIndex = 0;
@@ -127,10 +140,10 @@ public class ForwardLabelProcessor {
 			protected void onRoot(Object root) {
 				Object clazz = getClassOf(root);
 				int index = nextIndex++;
-				if (clazz != null) {
+				if (clazz != null && !clazz.equals(input.unknown)) {
 					indexes.put(clazz, index);
 				}
-				ptag.getUserInfoOf(root).setAttribute(indexAttr, index);
+				ptag.getUserInfoOf(root).setAttribute(input.targetAttr, index);
 			}
 			
 			/** When visiting a triple. */ 
@@ -143,7 +156,7 @@ public class ForwardLabelProcessor {
 				// next look at class
 				Integer nextByClass = null;
 				Object clazz = getClassOf(target);
-				if (clazz != null) {
+				if (clazz != null && !clazz.equals(input.unknown)) {
 					nextByClass = indexes.get(clazz);
 				}
 				
@@ -157,9 +170,9 @@ public class ForwardLabelProcessor {
 				if (next == null) { next = nextIndex++; }
 				
 				// install new index
-				ptag.getUserInfoOf(target).setAttribute(indexAttr, next);
+				ptag.getUserInfoOf(target).setAttribute(input.targetAttr, next);
 				rules.put(new SLPair(index, letter), next);
-				if (clazz != null) {
+				if (clazz != null && !clazz.equals(input.unknown)) {
 					indexes.put(clazz, next);
 				}
 			}

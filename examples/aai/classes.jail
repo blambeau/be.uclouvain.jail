@@ -7,18 +7,16 @@ A = <§seqp Q0. §>;
 G = (identify (randdfa A :stateCount stateCount :alphabetSize 2 :accepting 1.0 :tolerance 0.01));
 
 // mark class with 0.2 probability
-G = (copy G :vertex {@class -> when choose()<=0.5 then @index});
-G = (copy G :vertex {@label -> ''});
-G = (copy G :vertex {@label -> @class});
+G = (copy G :vertex {@class -> when choose()<=0.5 then @index else ''});
 
 // randomize strings
-H = (randstrings A :alphabetSize 2 :wordLength 10 :nbStrings nbStrings :labeller G);
-
-// prepare for dot
-H = (copy H :vertex {@label -> ''});
+H = (randstrings A :alphabetSize 2 :wordLength 10 :nbStrings nbStrings 
+		               :labeller G
+									 :state {@class -> when exists(@class) then @class else ''});
 H = (copy H :vertex {@label -> @class});
 
-I = (classify (copy H) :source 'class' :target 'label');
+I = (classify (copy H) :source 'class' :target 'class' :unknown '');
+I = (copy I :vertex {@label -> @class});
 
 (show (print G :format 'dot'));
 (show (print H :format 'dot'));

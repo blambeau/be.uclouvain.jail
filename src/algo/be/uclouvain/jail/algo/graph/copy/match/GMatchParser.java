@@ -692,6 +692,18 @@ public class GMatchParser extends ActiveParser {
 			}
 		}
 		_alt_c = pos.charAt();
+		if (((_alt_c >= 'A' && _alt_c <= 'Z') || (_alt_c >= 'a' && _alt_c <= 'z'))) {
+			try {
+				pos.save();
+				Object _tor = null;
+				_tor = gm.pFunctionCall(pos);
+				pos.commit();
+				return _tor;
+			} catch (ParseException ex) {
+				pos.rollback(ex);
+			}
+		}
+		_alt_c = pos.charAt();
 		if (((_alt_c == 'f') || (_alt_c == 't'))) {
 			try {
 				pos.save();

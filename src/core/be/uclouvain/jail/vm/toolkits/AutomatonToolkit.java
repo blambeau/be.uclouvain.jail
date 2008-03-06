@@ -35,12 +35,15 @@ import be.uclouvain.jail.algo.graph.walk.IRandomWalkResult;
 import be.uclouvain.jail.algo.graph.walk.RandomWalkAlgo;
 import be.uclouvain.jail.dialect.seqp.SEQPGraphDialect;
 import be.uclouvain.jail.fa.FAStateKind;
+import be.uclouvain.jail.fa.IAlphabet;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.IFA;
 import be.uclouvain.jail.fa.INFA;
+import be.uclouvain.jail.fa.ISample;
 import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.fa.impl.GraphDFA;
 import be.uclouvain.jail.fa.impl.GraphNFA;
+import be.uclouvain.jail.fa.utils.DefaultSample;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.utils.DirectedGraphWriter;
 import be.uclouvain.jail.uinfo.IUserInfo;
@@ -217,10 +220,19 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 	
 	/** Randomize strings. */
 	public IRandomStringsResult randstrings(JailVMOptions options, JailVM vm) throws JailVMException {
+		// create input and set options
 		DefaultRandomStringsInput<Object> input = new DefaultRandomStringsInput<Object>(); 
-		DefaultRandomStringsResult<Object> result = new DefaultRandomStringsResult<Object>();
 		input.setOptions(options);
+
+		// get alphabet, create sample 
+		IAlphabet<Object> alphabet = input.getAlphabet();
+		ISample<Object> sample = new DefaultSample<Object>(alphabet);
+		
+		// create algo result and set options
+		DefaultRandomStringsResult<Object> result = new DefaultRandomStringsResult<Object>(sample);
 		result.setOptions(options);
+		
+		// execute algorithm
 		new RandomStringsAlgo().execute(input,result);
 		return result;
 	}

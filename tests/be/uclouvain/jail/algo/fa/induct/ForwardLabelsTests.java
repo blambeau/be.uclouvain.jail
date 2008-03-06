@@ -30,7 +30,7 @@ public class ForwardLabelsTests extends TestCase {
 		if (inEdges.isEmpty()) { return null; }
 		
 		// only one incoming edge
-		assert (inEdges.size() == 0) : "Valid PTA.";
+		assert (inEdges.size() == 1) : "Valid PTA.";
 			
 		// return single incoming edge
 		return inEdges.iterator().next();

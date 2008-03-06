@@ -497,7 +497,7 @@ public class Simulation {
 	/** Consolidates an edge. */
 	protected Object consolidate(PTAState state) {
 		// check
-		assert (subWorks.isEmpty()) : "No previous work.";
+		//assert (subWorks.isEmpty()) : "No previous work.";
 		
 		// create work
 		addSubWork(new StateConsolidate(state));
