@@ -4,13 +4,12 @@
 A = <§seqp Q0. §>;
 
 // generate random DFA
-G = (randdfa A :stateCount stateCount :alphabetSize 2 :accepting 1.0 :tolerance 0.01);
-
-// identify states
-G = (identify G);
+G = (identify (randdfa A :stateCount stateCount :alphabetSize 2 :accepting 1.0 :tolerance 0.01));
 
 // mark class with 0.2 probability
 G = (copy G :vertex {@class -> when choose()<=0.5 then @index});
+G = (copy G :vertex {@label -> ''});
+G = (copy G :vertex {@label -> @class});
 
 // randomize strings
 H = (randstrings A :alphabetSize 2 :wordLength 10 :nbStrings nbStrings :labeller G);
@@ -19,7 +18,9 @@ H = (randstrings A :alphabetSize 2 :wordLength 10 :nbStrings nbStrings :labeller
 H = (copy H :vertex {@label -> ''});
 H = (copy H :vertex {@label -> @class});
 
+I = (classify (copy H) :source 'class' :target 'label');
 
 (show (print G :format 'dot'));
 (show (print H :format 'dot'));
+(show (print I :format 'dot'));
 

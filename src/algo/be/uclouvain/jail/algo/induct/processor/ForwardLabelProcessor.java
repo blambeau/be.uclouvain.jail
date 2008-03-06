@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import be.uclouvain.jail.algo.commons.Unable;
-import be.uclouvain.jail.algo.induct.internal.InductionAlgo;
 import be.uclouvain.jail.algo.induct.internal.SLPair;
+import be.uclouvain.jail.algo.utils.AbstractAlgoInput;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.constraints.PTAGraphConstraint;
 import be.uclouvain.jail.graph.IDirectedGraph;
@@ -15,13 +15,73 @@ import be.uclouvain.jail.graph.IDirectedGraph;
  * 
  * @author blambeau
  */
-public class ForwardLabelProcessor implements IInductionProcessor {
+public class ForwardLabelProcessor {
 
-	/** Class attribute to use. */
-	private String classAttr;
+	/** Input of the algorithm. */
+	public static class Input extends AbstractAlgoInput {
+		
+		/** Input PTA. */
+		private IDFA pta;
+		
+		/** Class attribute to use. */
+		private String sourceAttr;
+		
+		/** Target attribute to install. */
+		private String targetAttr;
+
+		/** Creates an input with source and target attributes. */
+		public Input(IDFA pta, String sourceAttr, String targetAttr) {
+			assert (new PTAGraphConstraint().isRespectedBy(pta));
+			this.pta = pta;
+			this.sourceAttr = sourceAttr;
+			this.targetAttr = targetAttr;
+		}
+
+		/** Creates an input with default attributes. */
+		public Input(IDFA pta) {
+			this(pta, "class", "label");
+		}
+		
+		/** Returns the PTA to labelize. */
+		public IDFA getPTA() {
+			return pta;
+		}
+
+		/** Installs options. */
+		@Override
+		protected void installOptions() {
+			super.installOptions();
+			super.addOption("source", "sourceAttr", false, String.class, "class");
+			super.addOption("target", "targetAttr", false, String.class, "label");
+		}
+
+		/** Returns class attribute to use. */
+		public String getSourceAttr() {
+			return sourceAttr;
+		}
+
+		/** Sets class attribute to use. */
+		public void setSourceAttr(String classAttr) {
+			this.sourceAttr = classAttr;
+		}
+
+		/** Returns index attribute to use. */
+		public String getTargetAttr() {
+			return targetAttr;
+		}
+
+		/** Sets index attribute to use. */
+		public void setTargetAttr(String indexAttr) {
+			this.targetAttr = indexAttr;
+		}
+		
+	}
 	
-	/** Target attribute to install. */
-	private String indexAttr;
+	/** PTA graph. */
+	private IDirectedGraph ptag;
+	
+	/** Source and target attributes. */
+	private String classAttr, indexAttr;
 	
 	/** Next index. */
 	private int nextIndex;
@@ -33,26 +93,82 @@ public class ForwardLabelProcessor implements IInductionProcessor {
 	private Map<SLPair, Integer> rules;
 	
 	/** Creates a processor instance. */
-	public ForwardLabelProcessor(String classAttr, String indexAttr) {
-		this.classAttr = classAttr;
-		this.indexAttr = indexAttr;
+	public ForwardLabelProcessor() {
 	}
 	
-	/** Process input PTA. */
-	public void process(InductionAlgo algo) {
-		process(algo.getPTA());
+	/** Returns the class of a state. */
+	private Object getClassOf(Object state) {
+		return ptag.getVertexInfo(state).getAttribute(classAttr);
 	}
 	
-	/** Process a PTA. */
-	public void process(IDFA pta) {
+	/** Returns the index of a state. */
+	private Integer getIndexOf(Object state) {
+		Integer index = (Integer) ptag.getVertexInfo(state).getAttribute(indexAttr);
+		assert (index != null) : "Index has been set.";
+		return index;
+	}
+	
+	/** Processes an input. */
+	public void process(Input input) {
+		// install options
+		this.ptag = input.getPTA().getGraph();
+		this.classAttr = input.getSourceAttr();
+		this.indexAttr = input.getTargetAttr();
+		
+		// initialize data structures
 		nextIndex = 0;
 		indexes = new HashMap<Object, Integer>();
 		rules = new HashMap<SLPair, Integer>();
-		new PTAWalk().walk(pta);
-	}
+		
+		// walk the PTA 
+		new PTADepthFirstWalk() {
+			
+			/** On root. */
+			protected void onRoot(Object root) {
+				Object clazz = getClassOf(root);
+				int index = nextIndex++;
+				if (clazz != null) {
+					indexes.put(clazz, index);
+				}
+				ptag.getUserInfoOf(root).setAttribute(indexAttr, index);
+			}
+			
+			/** When visiting a triple. */ 
+			protected void visiting(Object source, Object letter, Object target) {
+				Integer index = getIndexOf(source);
+				
+				// first look at rules
+				Integer nextByRule = rules.get(new SLPair(index,letter));
 
+				// next look at class
+				Integer nextByClass = null;
+				Object clazz = getClassOf(target);
+				if (clazz != null) {
+					nextByClass = indexes.get(clazz);
+				}
+				
+				// check no inconsistency
+				if (nextByRule != null && nextByClass != null && !nextByRule.equals(nextByClass)) {
+					throw new Unable("Inconsistency found!");
+				}
+				
+				// get next index
+				Integer next = nextByRule == null ? nextByClass : nextByRule;
+				if (next == null) { next = nextIndex++; }
+				
+				// install new index
+				ptag.getUserInfoOf(target).setAttribute(indexAttr, next);
+				rules.put(new SLPair(index, letter), next);
+				if (clazz != null) {
+					indexes.put(clazz, next);
+				}
+			}
+			
+		}.walk(input.getPTA());
+	}
+	
 	/** Walks a PTA. */
-	class PTAWalk {
+	static abstract class PTADepthFirstWalk {
 		
 		/** PTA. */
 		private IDFA pta;
@@ -62,10 +178,9 @@ public class ForwardLabelProcessor implements IInductionProcessor {
 		
 		/** Walks a PTA. */
 		public void walk(IDFA pta) {
+			assert (new PTAGraphConstraint().isRespectedBy(pta)) : "Valid input PTA.";
 			this.pta = pta;
 			this.ptag = pta.getGraph();
-			assert (new PTAGraphConstraint().isRespectedBy(ptag));
-
 			Object init = pta.getInitialState();
 			enter(null,null,init);
 		}
@@ -84,58 +199,11 @@ public class ForwardLabelProcessor implements IInductionProcessor {
 			}
 		}
 		
-		/** Returns the class of a state. */
-		protected Object getClassOf(Object state) {
-			return ptag.getVertexInfo(state).getAttribute(classAttr);
-		}
+		/** When visiting the root state. */
+		protected abstract void onRoot(Object root);
 		
-		/** Returns the index of a state. */
-		protected Integer getIndexOf(Object state) {
-			Integer index = (Integer) ptag.getVertexInfo(state).getAttribute(indexAttr);
-			assert (index != null) : "Index has been set.";
-			return index;
-		}
-		
-		/** On root. */
-		protected void onRoot(Object root) {
-			Object clazz = getClassOf(root);
-			int index = nextIndex++;
-			if (clazz != null) {
-				indexes.put(clazz, index);
-			}
-			ptag.getUserInfoOf(root).setAttribute(indexAttr, index);
-		}
-		
-		/** When visiting a triple. */ 
-		protected void visiting(Object source, Object letter, Object target) {
-			Integer index = getIndexOf(source);
-			
-			// first look at rules
-			Integer nextByRule = rules.get(new SLPair(index,letter));
-
-			// next look at class
-			Integer nextByClass = null;
-			Object clazz = getClassOf(target);
-			if (clazz != null) {
-				nextByClass = indexes.get(clazz);
-			}
-			
-			// check no inconsistency
-			if (nextByRule != null && nextByClass != null && !nextByRule.equals(nextByClass)) {
-				throw new Unable("Inconsistency found!");
-			}
-			
-			// get next index
-			Integer next = nextByRule == null ? nextByClass : nextByRule;
-			if (next == null) { next = nextIndex++; }
-			
-			// install new index
-			ptag.getUserInfoOf(target).setAttribute(indexAttr, next);
-			rules.put(new SLPair(index, letter), next);
-			if (clazz != null) {
-				indexes.put(clazz, next);
-			}
-		}
+		/** When visiting the target. */
+		protected abstract void visiting(Object source, Object letter, Object target);
 		
 	}
 	

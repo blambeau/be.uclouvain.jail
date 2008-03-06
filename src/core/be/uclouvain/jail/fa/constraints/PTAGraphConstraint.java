@@ -1,5 +1,6 @@
 package be.uclouvain.jail.fa.constraints;
 
+import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.fa.impl.IGraphFAInformer;
 import be.uclouvain.jail.graph.IDirectedGraph;
@@ -65,6 +66,11 @@ public class PTAGraphConstraint extends AbstractGraphConstraint {
 		}
 		
 		return true;
+	}
+	
+	/** Checks that the constraint is respected by a DFA. */
+	public boolean isRespectedBy(IDFA dfa) {
+		return isRespectedBy(dfa.getGraph());
 	}
 
 }

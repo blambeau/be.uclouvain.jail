@@ -10,6 +10,7 @@ import be.uclouvain.jail.algo.induct.oracle.BLambeauOracle;
 import be.uclouvain.jail.algo.induct.oracle.ConsoleQueryTester;
 import be.uclouvain.jail.algo.induct.oracle.IMembershipQueryTester;
 import be.uclouvain.jail.algo.induct.oracle.IOracle;
+import be.uclouvain.jail.algo.induct.processor.ForwardLabelProcessor;
 import be.uclouvain.jail.dialect.jis.JISGraphDialect;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.ISample;
@@ -78,6 +79,14 @@ public class InductionToolkit extends JailReflectionToolkit {
 		DefaultInductionAlgoInput input = new DefaultInductionAlgoInput(in);
 		input.setOptions(opt);
 		return new BlueFringeAlgo().execute(input);
+	}
+	
+	/** Classify a PTA. */
+	public IDFA classify(IDFA pta, JailVMOptions opt) throws JailVMException {
+		ForwardLabelProcessor.Input input = new ForwardLabelProcessor.Input(pta);
+		input.setOptions(opt);
+		new ForwardLabelProcessor().process(input);
+		return pta;
 	}
 	
 	/** Provides adaptations. */

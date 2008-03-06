@@ -94,7 +94,7 @@ public class ForwardLabelsTests extends TestCase {
 		IDFA pta = JailTestUtils.loadDotDFA(JailTestUtils.resource(getClass(), "pta_labels.dot"));
 		assertTrue(new PTAGraphConstraint().isRespectedBy(pta.getGraph()));
 		//AutomatonFacade.show(pta);
-		new ForwardLabelProcessor("class","label").process(pta);
+		new ForwardLabelProcessor().process(new ForwardLabelProcessor.Input(pta,"class","label"));
 		assertValidLabeling(pta);
 		//AutomatonFacade.show(pta);
 	}
