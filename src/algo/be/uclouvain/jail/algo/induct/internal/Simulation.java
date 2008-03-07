@@ -586,7 +586,7 @@ public class Simulation {
 	}
 
 	/** Rollbacks the simulation. */
-	protected void rollback() {
+	protected void rollback(boolean incompatibility) {
 		assert (!freezed) : "Not freezed.";
 		
 		// commit all works
@@ -596,7 +596,7 @@ public class Simulation {
 
 		// commit handler
 		handler.rollback();
-		if (listener != null) { listener.rollback(this); }
+		if (listener != null) { listener.rollback(this, incompatibility); }
 
 		// mark as freezed
 		freezed = true;

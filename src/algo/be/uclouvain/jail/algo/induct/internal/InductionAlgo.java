@@ -2,14 +2,14 @@ package be.uclouvain.jail.algo.induct.internal;
 
 import be.uclouvain.jail.algo.commons.Avoid;
 import be.uclouvain.jail.algo.commons.Restart;
+import be.uclouvain.jail.algo.induct.compatibility.Compatibilities;
 import be.uclouvain.jail.algo.induct.compatibility.ICompatibility;
+import be.uclouvain.jail.algo.induct.extension.IInductionAlgoExtension;
 import be.uclouvain.jail.algo.induct.listener.IInductionListener;
+import be.uclouvain.jail.algo.induct.listener.InductionListeners;
 import be.uclouvain.jail.algo.induct.oracle.IOracle;
-import be.uclouvain.jail.algo.induct.processor.IInductionProcessor;
 import be.uclouvain.jail.fa.IDFA;
-import be.uclouvain.jail.fa.constraints.PTAGraphConstraint;
 import be.uclouvain.jail.fa.impl.GraphDFA;
-import be.uclouvain.jail.vm.toolkits.GraphFacade;
 
 /** Base implementation of RPNI-like induction algorithms. */
 public abstract class InductionAlgo {
@@ -30,13 +30,13 @@ public abstract class InductionAlgo {
 	protected IValuesHandler valuesHandler;
 
 	/** Compatibility information. */
-	protected ICompatibility compatibility;
+	protected Compatibilities compatibility;
 
 	/** Oracle to use. */
 	protected IOracle oracle;
 	
 	/** Listener. */
-	protected IInductionListener listener;
+	protected InductionListeners listener;
 	
 	/** Creates an algorithm instance. */
 	public InductionAlgo() {
@@ -45,6 +45,13 @@ public abstract class InductionAlgo {
 	/** Executes the algorithm. */
 	public IDFA execute(IInductionAlgoInput info) throws Avoid {
 		this.input = info;
+
+		// install extension if any
+		IInductionAlgoExtension extension = input.getExtension();
+		if (extension != null) {
+			extension.install(this);
+		}
+		
 		do {
 			try {
 				initialize();
@@ -65,30 +72,22 @@ public abstract class InductionAlgo {
 	private void initialize() throws Avoid {
 		// create PTA
 		this.pta = (IDFA) input.getInput().adapt(IDFA.class);
-		String repAttr = input.getRepresentorAttr();
-		GraphFacade.identify(this.pta.getGraph(),repAttr,repAttr);
-		assert new PTAGraphConstraint().isRespectedBy(this.pta.getGraph()) : "Valid input PTA.";
-		
+
 		// create target DFA
 		this.dfa = new GraphDFA(pta.getAlphabet());
-		
-		// compute and initialize compatibility information
-		compatibility = input.getCompatibility();
-		if (compatibility != null) { compatibility.initialize(this); }
 		
 		// initialize oracle if any
 		oracle = input.getOracle();
 		if (oracle != null) { oracle.initialize(this); }
 
-		listener = input.getListener();
-		if (listener != null) { listener.initialize(this); }
-		
 		// create a real values handler
 		valuesHandler = new RValuesHandler(this);
 		
-		// execute pre-processor
-		IInductionProcessor p = input.getPreProcessor();
-		if (p != null) { p.process(this); }
+		// initialize extension if any
+		IInductionAlgoExtension extension = input.getExtension();
+		if (extension != null) {
+			extension.initialize(this);
+		}
 		
 		// create initial situation: root is red, fringe updated
 		createInitialSituation();
@@ -135,14 +134,35 @@ public abstract class InductionAlgo {
 		return compatibility;
 	}
 	
+	/** Adds an incompatibility layer. */
+	public void addCompatibility(ICompatibility...cs) {
+		if (this.compatibility == null) { this.compatibility = new Compatibilities(); }
+		for (ICompatibility c: cs) {
+			this.compatibility.addCompatibility(c);
+		}
+	}
+	
 	/** Returns induction listener. */
 	public IInductionListener getListener() {
 		return listener;
+	}
+
+	/** Adds a listener. */
+	public void addListener(IInductionListener...ls) {
+		if (this.listener == null) { this.listener = new InductionListeners(); }
+		for (IInductionListener l: ls) {
+			this.listener.addListener(l);
+		}
 	}
 	
 	/** Returns induction listener. */
 	public IOracle getOracle() {
 		return oracle;
+	}
+	
+	/** Debugs a pta state. */
+	public String d(Object ptaState) {
+		return pta.getGraph().getVertexInfo(ptaState).getAttribute("label").toString();
 	}
 	
 	/** Checks if two DFA states are compatible. */

@@ -1,6 +1,5 @@
 package be.uclouvain.jail.algo.induct.processor;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,7 +10,6 @@ import be.uclouvain.jail.algo.induct.compatibility.ICompatibility;
 import be.uclouvain.jail.algo.induct.internal.InductionAlgo;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
-import be.uclouvain.jail.vm.toolkits.AutomatonFacade;
 
 /**
  * Listener that handles back propagation.
@@ -64,9 +62,6 @@ public class BackPropagateProcessor implements IInductionProcessor {
 		this.pta = algo.getPTA();
 		this.ptag = pta.getGraph();
 
-		try { AutomatonFacade.debug(pta); }
-		catch (IOException ex) {}
-		
 		// check that compatibility is extensible
 		if (compatibility == null || !compatibility.isExtensible()) {
 			throw new IllegalStateException("Compatibility must be extensible.");

@@ -1,7 +1,6 @@
 package be.uclouvain.jail.algo.induct.listener;
 
 import be.uclouvain.jail.algo.induct.internal.IValuesHandler;
-import be.uclouvain.jail.algo.induct.internal.InductionAlgo;
 import be.uclouvain.jail.algo.induct.internal.PTAEdge;
 import be.uclouvain.jail.algo.induct.internal.PTAState;
 import be.uclouvain.jail.algo.induct.internal.Simulation;
@@ -15,6 +14,31 @@ public class InductionListenerHelper implements IInductionListener {
 	
 	/** Index attribute. */
 	private String indexAttr;
+	
+	/** Creates an helper instance. */
+	public InductionListenerHelper(String indexAttr) {
+		this.indexAttr = indexAttr;
+	}
+	
+	/** Returns an oState attribute. */
+	public Object oStateAttr(PTAState s, String attr) {
+		return handler.oStateUserInfo(s).getAttribute(attr);
+	}
+	
+	/** Returns an oEdge attribute. */
+	public Object oEdgeAttr(PTAEdge s, String attr) {
+		return handler.oEdgeUserInfo(s).getAttribute(attr);
+	}
+	
+	/** Returns an kState attribute. */
+	public Object kStateAttr(Object s, String attr) {
+		return handler.kStateUserInfo(s).getAttribute(attr);
+	}
+	
+	/** Returns an oState attribute. */
+	public Object kEdgeAttr(PTAState s, String attr) {
+		return handler.kEdgeUserInfo(s).getAttribute(attr);
+	}
 	
 	/** Returns the index of a PTA state. */
 	public int oStateIndex(PTAState s) {
@@ -47,11 +71,6 @@ public class InductionListenerHelper implements IInductionListener {
 		return (Integer) i;
 	}
 	
-	/** On initialization. */
-	public void initialize(InductionAlgo algo) {
-		this.indexAttr = algo.getInfo().getRepresentorAttr();
-	}
-
 	/** On a new step. */
 	public void newStep(Simulation simu) {
 		this.handler = simu.getValuesHandler();
@@ -95,10 +114,12 @@ public class InductionListenerHelper implements IInductionListener {
 
 	/** On try commit ... */
 	public void commit(Simulation simu) {
+		this.handler = null;
 	}
 
 	/** On try rollback ... */
-	public void rollback(Simulation simu) {
+	public void rollback(Simulation simu, boolean incompatibility) {
+		this.handler = null;
 	}
 
 }

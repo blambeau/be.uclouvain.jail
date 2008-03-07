@@ -15,6 +15,7 @@ public class StateKindCompatibility extends AbstractCompatibility {
 	/** Function used to compute compatibility. */
 	private FAStateKindFunction function;
 	
+	/** Creates a compatibility instance. */
 	public StateKindCompatibility() {
 		function = new FAStateKindFunction(FAStateKindFunction.OR,FAStateKindFunction.OR,true);
 	}

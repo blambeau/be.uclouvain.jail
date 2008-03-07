@@ -1,10 +1,8 @@
 package be.uclouvain.jail.algo.induct.internal;
 
 import be.uclouvain.jail.algo.commons.IAlgoInput;
-import be.uclouvain.jail.algo.induct.compatibility.ICompatibility;
-import be.uclouvain.jail.algo.induct.listener.IInductionListener;
+import be.uclouvain.jail.algo.induct.extension.IInductionAlgoExtension;
 import be.uclouvain.jail.algo.induct.oracle.IOracle;
-import be.uclouvain.jail.algo.induct.processor.IInductionProcessor;
 import be.uclouvain.jail.algo.induct.utils.IEvaluator;
 import be.uclouvain.jail.fa.ISample;
 
@@ -18,28 +16,22 @@ public interface IInductionAlgoInput extends IAlgoInput {
 	/** Returns input of the induction. */
 	public <L> ISample<L> getInput();
 
-	/** Returns compatibility. */
-	public ICompatibility getCompatibility();
-
 	/** Returns the oracle to use, if any. */
 	public IOracle getOracle();
 
 	/** Returns evaluator. */
 	public IEvaluator getEvaluator();
 
-	/** Returns listener to use. */
-	public IInductionListener getListener();
-	
-	/** Returns pre-processor to use. */
-	public IInductionProcessor getPreProcessor();
-	
-	/** Returns listener to use. */
-	public IInductionProcessor getPostProcessor();
-	
 	/** Returns the representor attribute. */
 	public String getRepresentorAttr();
+	
+	/** Returns unknown representor value. */
+	public Object getUnknown();
 	
 	/** Returns the consolidation threshold. */
 	public int getConsolidationThreshold();
 
+	/** Returns extension to install. */
+	public IInductionAlgoExtension getExtension();
+	
 }

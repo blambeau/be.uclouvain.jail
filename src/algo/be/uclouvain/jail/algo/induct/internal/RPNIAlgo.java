@@ -41,7 +41,7 @@ public class RPNIAlgo extends InductionAlgo {
 					found = true;
 					break;
 				} catch (Avoid avoid) {
-					simu.rollback();
+					simu.rollback(true);
 				}
 			}
 			

@@ -64,7 +64,6 @@ public final class BlueFringeAlgo extends InductionAlgo {
 		IEvaluator evaluator = input.getEvaluator();
 		int cThreshold = input.getConsolidationThreshold();
 		while (!fringe.isEmpty()) {
-			
 			// no evaluation at all
 			evaluations.clear();
 			boolean hasEval = false;
@@ -92,9 +91,9 @@ public final class BlueFringeAlgo extends InductionAlgo {
 							}
 							
 							// rollback work in all cases
-							simu.rollback();
+							simu.rollback(false);
 						} catch (Avoid avoid) {
-							simu.rollback();
+							simu.rollback(true);
 						}
 					}
 				}
@@ -134,7 +133,7 @@ public final class BlueFringeAlgo extends InductionAlgo {
 						commited = true;
 						break;
 					} catch (Avoid avoid) {
-						simu.rollback();
+						simu.rollback(true);
 					}
 				}
 

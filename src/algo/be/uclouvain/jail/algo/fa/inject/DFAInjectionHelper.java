@@ -38,12 +38,12 @@ public class DFAInjectionHelper {
 		Object last = trace.getLastState();
 		FAStateKind lastKind = trace.getFA().getStateKind(last);
 		if (s.isPositive() && !FAStateKind.ACCEPTING.equals(lastKind)) {
-			System.out.println("Positive string not ending with an ACCEPTING.");
+			//System.out.println("Positive string not ending with an ACCEPTING.");
 			return false;
 		}
 		if (!s.isPositive() && (FAStateKind.ACCEPTING.equals(lastKind)
 				            ||  FAStateKind.PASSAGE.equals(lastKind))) {
-			System.out.println("Negative string not ending with an ERROR/AVOID.");
+			//System.out.println("Negative string not ending with an ERROR/AVOID.");
 			return false;
 		}
 		return true;

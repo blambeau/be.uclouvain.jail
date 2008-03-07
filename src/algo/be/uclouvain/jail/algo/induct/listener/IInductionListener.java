@@ -1,6 +1,5 @@
 package be.uclouvain.jail.algo.induct.listener;
 
-import be.uclouvain.jail.algo.induct.internal.InductionAlgo;
 import be.uclouvain.jail.algo.induct.internal.PTAEdge;
 import be.uclouvain.jail.algo.induct.internal.PTAState;
 import be.uclouvain.jail.algo.induct.internal.Simulation;
@@ -12,9 +11,6 @@ import be.uclouvain.jail.algo.induct.internal.Simulation;
  */
 public interface IInductionListener {
 
-	/** Initializes the listener. */
-	public void initialize(InductionAlgo algo);
-	
 	/** Fired when a new step begins. */
 	public void newStep(Simulation simu);
 	
@@ -48,7 +44,8 @@ public interface IInductionListener {
 	/** Commits the try. */
 	public void commit(Simulation simu);
 
-	/** Rollbacks the try. */
-	public void rollback(Simulation simu);
+	/** Rollbacks the try. 
+	 * @param incompatibility TODO*/
+	public void rollback(Simulation simu, boolean incompatibility);
 
 }

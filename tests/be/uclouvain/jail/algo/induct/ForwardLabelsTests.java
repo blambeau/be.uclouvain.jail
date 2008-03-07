@@ -1,4 +1,4 @@
-package be.uclouvain.jail.algo.fa.induct;
+package be.uclouvain.jail.algo.induct;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,6 +9,7 @@ import java.util.TreeSet;
 import junit.framework.TestCase;
 import be.uclouvain.jail.algo.induct.internal.SLPair;
 import be.uclouvain.jail.algo.induct.processor.ForwardLabelProcessor;
+import be.uclouvain.jail.algo.induct.processor.ForwardLabelProcessor.Input;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.constraints.PTAGraphConstraint;
 import be.uclouvain.jail.graph.IDirectedGraph;
@@ -58,7 +59,7 @@ public class ForwardLabelsTests extends TestCase {
 			labels.add(label);
 
 			// Same label for same classes
-			if (clazz != null) {
+			if (clazz != null && !"".equals(clazz)) {
 				Integer clazzLabel = labelByClass.get(clazz);
 				if (clazzLabel != null) {
 					assertEquals("Same label for same class",label,clazzLabel);
@@ -93,10 +94,14 @@ public class ForwardLabelsTests extends TestCase {
 	public void testForwardPropagation() throws Exception {
 		IDFA pta = JailTestUtils.loadDotDFA(JailTestUtils.resource(getClass(), "pta_labels.dot"));
 		assertTrue(new PTAGraphConstraint().isRespectedBy(pta.getGraph()));
-		//AutomatonFacade.show(pta);
-		new ForwardLabelProcessor().process(new ForwardLabelProcessor.Input(pta,"class","label"));
+		//AutomatonFacade.debug(pta);
+		
+		Input input = new ForwardLabelProcessor.Input(pta,"class","label");
+		input.setUnknown("");
+		new ForwardLabelProcessor().process(input);
+		
+		//AutomatonFacade.debug(pta);
 		assertValidLabeling(pta);
-		//AutomatonFacade.show(pta);
 	}
 	
 	/** Main method. */

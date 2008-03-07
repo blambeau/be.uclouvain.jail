@@ -7,6 +7,8 @@ import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.fa.impl.GraphDFA;
 import be.uclouvain.jail.fa.utils.PTADepthFirst;
 import be.uclouvain.jail.graph.IDirectedGraph;
+import be.uclouvain.jail.graph.utils.ITotalOrder;
+import be.uclouvain.jail.tests.JailTestUtils;
 import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.uinfo.UserInfoHelper;
 
@@ -81,6 +83,22 @@ public class PTADepthFirstTest extends TestCase {
 		assertTrue(it.hasNext());
 		assertEquals(v3, it.next());
 		assertFalse(it.hasNext());
+	}
+	
+	/** Tests on PTA.dot. */
+	public void testOnComplexPTA() throws Exception {
+		IDFA dfa = JailTestUtils.loadDotDFA(JailTestUtils.resource(this, "pta.dot"));
+		ITotalOrder<Object> states = dfa.getGraph().getVerticesTotalOrder();
+		int i=0;
+
+		PTADepthFirst it = new PTADepthFirst(dfa);
+		while (it.hasNext()) {
+			Object state = it.next();
+			if (i==0) { 
+				assertEquals("0 state is the initial one",state,dfa.getInitialState());
+			}
+			assertEquals("States are in order.",i,states.indexOf(state));
+		}
 	}
 
 }

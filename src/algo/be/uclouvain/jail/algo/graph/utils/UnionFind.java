@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import net.chefbe.javautils.collections.iterable.IterableIterator;
+import be.uclouvain.jail.uinfo.functions.IAggregateFunction;
+
 /**
  * Provides a simple UnionFind data-structure.
  * 
@@ -61,18 +64,26 @@ public class UnionFind<T> {
 			return last;
 		}
 		
+		/** Sets the member attached to the node. */
+		public void setMember(T member) {
+			this.member = member;
+		}
+		
 		/** Sets the list head. */
 		public void setHead(UnionFindNode head) {
+			assert (head != this) : "Never put me as head.";
 			this.head = head;
 		}
 		
 		/** Sets next node in the list. */
 		public void setNext(UnionFindNode next) {
+			assert (next != this) : "Never put me as next.";
 			this.next = next;
 		}
 		
 		/** Sets next node in the list. */
 		public void setLast(UnionFindNode last) {
+			assert (last != this) : "Never put me as last.";
 			assert (head == null) : "Setting last on head only.";
 			this.last = last;
 		}
@@ -92,9 +103,9 @@ public class UnionFind<T> {
 		/** Restore list state. */
 		public void rollback() {
 			assert (lastB != null) : "Previously touched.";
-			head = headB;
-			next = nextB;
-			last = lastB;
+			head = headB; headB = null;
+			next = nextB; nextB = null;
+			last = lastB; lastB = null;
 		}
 		
 		/** Commits list state. */
@@ -126,10 +137,27 @@ public class UnionFind<T> {
 		}
 		this.size = i;
 	}
+	
+	/** Creates an empty union size with null members. */
+	public UnionFind(int size) {
+		// create structure
+		blocks = new ArrayList<UnionFindNode>(size);
+		
+		// install members
+		for (int i=0; i<size; i++) {
+			blocks.add(new UnionFindNode(null,i));
+		}
+		this.size = size;
+	}
 
 	/** Returns number of elements in the UnionFind. */
 	public int size() {
 		return size;
+	}
+	
+	/** Checks if two members are in the same block. */
+	public boolean inSameBlock(int i, int j) {
+		return findHead(i) == findHead(j);
 	}
 	
 	/** Finds head node. */
@@ -157,7 +185,6 @@ public class UnionFind<T> {
 			jHead = kHead;
 		}
 		
-		
 		UnionFindNode iHeadLast = iHead.last();
 		UnionFindNode jHeadLast = jHead.last();
 		
@@ -168,9 +195,16 @@ public class UnionFind<T> {
 			jHead.touch(transaction);
 		}
 		
+		assert (iHead != jHead) : "Not same heads.";
 		iHeadLast.setNext(jHead);
 		iHead.setLast(jHeadLast);
 		jHead.setHead(iHead);
+	}
+	
+	/** Sets member of i. */
+	public void setMember(int i, T member) {
+		UnionFindNode node = findHead(i);
+		node.setMember(member);
 	}
 	
 	/** Iterates the block of i-th element. */
@@ -222,6 +256,12 @@ public class UnionFind<T> {
 		fill(i,list);
 		return list;
 	}
+	
+	/** Merge composants of i-th block with an aggregate function. */
+	public T merge(int i, IAggregateFunction<T> f) {
+		T res = f.compute(new IterableIterator<T>(iterator(i)));
+		return res;
+	}
 
 	// ------------------------------------------------------- Transaction support
 	/** Current transaction. */
@@ -235,6 +275,7 @@ public class UnionFind<T> {
 	
 	/** Commits the transaction. */
 	public void commit() {
+		assert (transaction != null) : "Transaction previously started.";
 		for (UnionFindNode node: transaction) {
 			node.commit();
 		}
@@ -243,10 +284,28 @@ public class UnionFind<T> {
 	
 	/** Rollbacks the transaction. */
 	public void rollback() {
+		assert (transaction != null) : "Transaction previously started.";
 		for (UnionFindNode node: transaction) {
 			node.rollback();
 		}
 		transaction = null;
+	}
+	
+	/** Provides full debug information. */
+	public String debug() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("[");
+		for (int i=0; i<size; i++) {
+			if (i != 0) { sb.append(","); }
+			UnionFindNode n = blocks.get(i);
+			sb.append("(")
+			  .append(n.head == null ? i : n.head.id())
+			  .append(n.next == null ? "," : "," + n.next.id())
+			  .append(n.last == null ? "," : "," + n.last.id())
+			  .append(")");
+		}
+		sb.append("]");
+		return sb.toString();
 	}
 	
 	/** Returns a string representation. */

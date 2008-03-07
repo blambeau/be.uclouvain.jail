@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import be.uclouvain.jail.algo.commons.Unable;
+import be.uclouvain.jail.algo.induct.internal.InductionAlgo;
 import be.uclouvain.jail.algo.induct.internal.SLPair;
 import be.uclouvain.jail.algo.utils.AbstractAlgoInput;
 import be.uclouvain.jail.fa.IDFA;
@@ -15,8 +16,14 @@ import be.uclouvain.jail.graph.IDirectedGraph;
  * 
  * @author blambeau
  */
-public class ForwardLabelProcessor {
+public class ForwardLabelProcessor implements IInductionProcessor {
 
+	/** Source attribute to use by default. */
+	public static final String DEFAULT_SOURCE_ATTR = "ForwardLabelProcessorSourceAttr";
+	
+	/** Target attribute to use by default. */
+	public static final String DEFAULT_TARGET_ATTR = "ForwardLabelProcessorTargetAttr";
+	
 	/** Input of the algorithm. */
 	public static class Input extends AbstractAlgoInput {
 		
@@ -42,7 +49,7 @@ public class ForwardLabelProcessor {
 
 		/** Creates an input with default attributes. */
 		public Input(IDFA pta) {
-			this(pta, "class", "label");
+			this(pta, DEFAULT_SOURCE_ATTR, DEFAULT_TARGET_ATTR);
 		}
 		
 		/** Returns the PTA to labelize. */
@@ -54,8 +61,8 @@ public class ForwardLabelProcessor {
 		@Override
 		protected void installOptions() {
 			super.installOptions();
-			super.addOption("source", "sourceAttr", false, String.class, "class");
-			super.addOption("target", "targetAttr", false, String.class, "label");
+			super.addOption("source", "sourceAttr", false, String.class, DEFAULT_SOURCE_ATTR);
+			super.addOption("target", "targetAttr", false, String.class, DEFAULT_TARGET_ATTR);
 			super.addOption("unknown", "unknown", false, Object.class, null);
 		}
 
@@ -122,6 +129,18 @@ public class ForwardLabelProcessor {
 		return index;
 	}
 	
+	/** Process an induction algorithm. */
+	public void process(InductionAlgo algo) {
+		String repAttr = algo.getInfo().getRepresentorAttr();
+		assert (repAttr != null) : "Representor attribute has been set.";
+		Input input = new Input(
+				algo.getPTA(), 
+				repAttr,
+				DEFAULT_TARGET_ATTR);
+		input.setUnknown(algo.getInfo().getUnknown());
+		process(input);
+	}
+
 	/** Processes an input. */
 	public void process(final Input input) {
 		// install options

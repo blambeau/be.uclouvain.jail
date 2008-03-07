@@ -135,4 +135,26 @@ public class UnionFindTest extends TestCase {
 		assertValidSet(expected,f);
 	}
 	
+	/** Tests a blue-fringe UnionFind encoutered bug. */
+	public void testBlueFringeBug() {
+		// create expected result and tested union find
+		int size = 24;
+		BasicUnionFind expected = new BasicUnionFind(size);
+		UnionFind<Integer> f = createUnionFind(size);
+
+		// step 1
+		f.startTransaction(); expected.startTransaction();
+		union(f,expected,0,15);
+		f.rollback(); expected.rollback();
+		assertValidFind(expected,f); assertValidSet(expected,f);
+		
+		// step 2
+		f.startTransaction(); expected.startTransaction();
+		union(f,expected,2,15);
+		union(f,expected,3,16);
+		union(f,expected,2,17);
+		f.rollback(); expected.rollback();
+		assertValidFind(expected,f); assertValidSet(expected,f);
+	}
+	
 }

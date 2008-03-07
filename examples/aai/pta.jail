@@ -1,0 +1,11 @@
+(execute 'commons.jail');
+
+PTA = <§jis
+  + a
+	+ a a
+	+ a b
+	+ a a b
+	+ a a a
+	+ a b b
+§>;
+(show (print PTA :format 'dot'));

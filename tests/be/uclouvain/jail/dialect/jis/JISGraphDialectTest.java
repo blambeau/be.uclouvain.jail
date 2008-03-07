@@ -83,4 +83,8 @@ public class JISGraphDialectTest extends TestCase {
 		assertTrue(DFAEquiv.isEquivalentTo(pta, dfa));
 	}
 	
+	public static void main(String[] args) throws Exception {
+		new JISGraphDialectTest().testOnOnePositiveStringSample();
+	}
+	
 }

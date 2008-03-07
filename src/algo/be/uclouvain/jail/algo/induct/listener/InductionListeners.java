@@ -3,7 +3,6 @@ package be.uclouvain.jail.algo.induct.listener;
 import java.util.ArrayList;
 import java.util.List;
 
-import be.uclouvain.jail.algo.induct.internal.InductionAlgo;
 import be.uclouvain.jail.algo.induct.internal.PTAEdge;
 import be.uclouvain.jail.algo.induct.internal.PTAState;
 import be.uclouvain.jail.algo.induct.internal.Simulation;
@@ -21,13 +20,6 @@ public class InductionListeners implements IInductionListener {
 	/** Adds a listener. */
 	public void addListener(IInductionListener l) {
 		listeners.add(l);
-	}
-	
-	/** Initializes the listener. */
-	public void initialize(InductionAlgo algo) {
-		for (IInductionListener l: listeners) {
-			l.initialize(algo);
-		}
 	}
 	
 	/** On new step ... */
@@ -108,9 +100,9 @@ public class InductionListeners implements IInductionListener {
 	}
 
 	/** Rollbacks the try. */
-	public void rollback(Simulation simu) {
+	public void rollback(Simulation simu, boolean incompatibility) {
 		for (IInductionListener l: listeners) {
-			l.rollback(simu);
+			l.rollback(simu, incompatibility);
 		}
 	}
 

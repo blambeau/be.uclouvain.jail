@@ -1,19 +1,24 @@
 package be.uclouvain.jail.fa.utils;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.List;
+import java.util.Stack;
 
 import net.chefbe.javautils.adapt.AdaptUtils;
 import be.uclouvain.jail.algo.fa.inject.DFAInjectionHelper;
+import be.uclouvain.jail.algo.fa.walk.PTADepthFirstWalker;
+import be.uclouvain.jail.algo.fa.walk.PTADepthFirstWalker.IVisitor;
 import be.uclouvain.jail.fa.FAStateKind;
 import be.uclouvain.jail.fa.IAlphabet;
 import be.uclouvain.jail.fa.IDFA;
-import be.uclouvain.jail.fa.IFATrace;
 import be.uclouvain.jail.fa.IString;
 import be.uclouvain.jail.fa.IWalkInfo;
 import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.fa.impl.GraphDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
+import be.uclouvain.jail.graph.IDirectedGraphPath;
+import be.uclouvain.jail.graph.utils.DefaultDirectedGraphPath;
 import be.uclouvain.jail.uinfo.IUserInfoHelper;
 import be.uclouvain.jail.uinfo.UserInfoHelper;
 
@@ -74,70 +79,78 @@ public class DefaultSample<L> extends AbstractSample<L> {
 		return s.walk(dfa);
 	}
 
-	/** Returns a depth first instance. */
-	private PTADepthFirst depthFirst() {
-		return new PTADepthFirst(dfa);
-	}
-	
-	/** Checks if a state is the end of a string. */
-	private boolean isEndOfString(Object state) {
+	/** Checks if a state is marking the end of a state. */
+	public boolean isEndOfString(Object state) {
 		FAStateKind kind = dfa.getStateKind(state);
-		return !FAStateKind.PASSAGE.equals(kind); 
+		return !FAStateKind.PASSAGE.equals(kind);
 	}
 	
 	/** Returns number of strings. */
 	public int size() {
-		int size = 0;
-		PTADepthFirst depthFirst = depthFirst();
-		while (depthFirst.hasNext()) {
-			if (isEndOfString(depthFirst.next())) {
-				size++;
+		final int[] size = new int[]{0};
+		new PTADepthFirstWalker(this.dfa).execute(new IVisitor() {
+
+			/** When entering a state. */
+			public boolean entering(Object state, Object edge) {
+				if (isEndOfString(state)) {
+					size[0]++;
+				}
+				return true;
 			}
-		}
-		return size;
+			
+			/** When leaving a state. */
+			public boolean leaving(Object state, Object edge, boolean recurse) {
+				return false;
+			}
+		});
+		return size[0];
 	}
 
 	/** Returns an iterator on strings. */
 	public Iterator<IString<L>> iterator() {
-		return new Iterator<IString<L>>() {
+		final List<IString<L>> list = new ArrayList<IString<L>>();
+		new PTADepthFirstWalker(this.dfa).execute(new IVisitor() {
 			
-			/** Depth first visit. */
-			private PTADepthFirst depthFirst = depthFirst();
+			/** Directed graph. */
+			private IDirectedGraph ptag = dfa.getGraph();
 			
-			/** Next string to return. */
-			private IString<L> next = findNext();
+			/** Edge stack. */
+			private Stack<Object> edges = new Stack<Object>();
 			
-			/** Finds the next string. */
-			private IString<L> findNext() {
-				while (depthFirst.hasNext()) {
-					Object next = depthFirst.next();
-					if (isEndOfString(next)) {
-						IFATrace<L> trace = depthFirst.flushTrace();
-						return new FATraceString<L>(trace);
-					}
+			/** Flushes a string. */
+			private IString<L> flush() {
+				//System.out.println("Creating a string " + edges.size());
+				if (edges.isEmpty()) {
+					IDirectedGraphPath path = new DefaultDirectedGraphPath(ptag,dfa.getInitialState());
+					DefaultFATrace<L> trace = new DefaultFATrace<L>(dfa,path);
+					return new FATraceString<L>(trace);
+				} else {
+					List<Object> pathEdges = new ArrayList<Object>();
+					pathEdges.addAll(edges);
+					IDirectedGraphPath path = new DefaultDirectedGraphPath(ptag,pathEdges);
+					DefaultFATrace<L> trace = new DefaultFATrace<L>(dfa,path);
+					return new FATraceString<L>(trace);
 				}
-				return null;
 			}
 			
-			/** Has a next string? */
-			public boolean hasNext() {
-				return next != null;
-			}
-
-			/** Returns next string. */
-			public IString<L> next() {
-				if (!hasNext()) { throw new NoSuchElementException(); }
-				IString<L> toReturn  = next;
-				next = findNext();
-				return toReturn;
+			/** Push edge if not null. */
+			public boolean entering(Object state, Object edge) {
+				//System.out.println("Entering " + state + " by " + edge);
+				if (edge != null) { edges.push(edge); }
+				return true;
 			}
 			
-			/** Throws an exception. */
-			public void remove() {
-				throw new UnsupportedOperationException();
+			/** Flush if ok. */
+			public boolean leaving(Object state, Object edge, boolean recurse) {
+				if (isEndOfString(state)) {
+					list.add(flush());
+				}
+				if (edge != null) { edges.pop(); }
+				return false;
 			}
-
-		};
+			
+		});
+		return list.iterator();
 	}
 
 	/** Adds a sample string, by writing in the nfa. */
