@@ -240,10 +240,7 @@ public final class JailTestUtils {
 		// create an all accepting sample
 		IAlphabet<String> alphabet = new AutoAlphabet<String>();
 		ISample<String> sample = new DefaultSample<String>(alphabet);
-		sample.getUserInfoHandler()
-		      .getVertexCopier()
-		      .addPopulator(FAUtils.getAllAcceptingPopulator());
-		
+		sample.getUserInfoHandler().getVertexCopier().addPopulator(FAUtils.getAllAcceptingPopulator());
 		return loadJISSample(resource(JailTestUtils.class,"train_sample.jis"),sample);
 	}
 	

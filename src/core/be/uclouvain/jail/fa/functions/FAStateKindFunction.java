@@ -15,6 +15,8 @@ public class FAStateKindFunction extends AbstractAggregateFunction<FAStateKind> 
 	/** AND / OR flags. */
 	public static final int OR = 1;
 	public static final int AND = 2;
+	public static final int TRUE = 4;
+	public static final int FALSE = 8;
 	
 	/** Accepting operator. */
 	private int acceptingOp;
@@ -35,12 +37,20 @@ public class FAStateKindFunction extends AbstractAggregateFunction<FAStateKind> 
 
 	/** Computes the suppremum between two values. */
 	public FAStateKind supremum(FAStateKind k1, FAStateKind k2) {
-		boolean isAccepting = (acceptingOp == OR) ?
-				              k1.isFlagAccepting() || k2.isFlagAccepting() :
-				              k1.isFlagAccepting() && k2.isFlagAccepting();
-  		boolean isError = (errorOp == OR) ?
-			              k1.isFlagError() || k2.isFlagError() :
-			              k1.isFlagError() && k2.isFlagError();
+		boolean isAccepting = false;
+		boolean isError = false;
+		switch (acceptingOp) {
+			case TRUE: isAccepting = true; break;
+			case FALSE: isAccepting = false; break;
+			case OR: isAccepting = k1.isFlagAccepting() || k2.isFlagAccepting(); break; 
+			case AND: isAccepting = k1.isFlagAccepting() && k2.isFlagAccepting(); break;
+		}
+		switch (errorOp) {
+			case TRUE: isError = true; break;
+			case FALSE: isError = false; break;
+			case OR: isError = k1.isFlagError() || k2.isFlagError(); break; 
+			case AND: isError = k1.isFlagError() && k2.isFlagError(); break;
+		}
 	    return FAStateKind.fromBools(isAccepting, isError);
 	}
 
@@ -57,7 +67,9 @@ public class FAStateKindFunction extends AbstractAggregateFunction<FAStateKind> 
 
 	/** Returns FAStateKind.PASSAGE. */
 	protected FAStateKind onEmpty() {
-		return FAStateKind.PASSAGE;
+		boolean isAccepting = (acceptingOp == TRUE);
+		boolean isError = (errorOp == TRUE);
+		return FAStateKind.fromBools(isAccepting, isError);
 	}
 	
 }

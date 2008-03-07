@@ -21,4 +21,10 @@ I = (copy I :vertex {@label -> @class});
 (show (print G :format 'dot'));
 (show (print H :format 'dot'));
 (show (print I :format 'dot'));
+(show (rpni I :oracle 'blambeau' :querier 'console'));
 
+/*
+(show (bluefringe I));
+(show (rpni I :state {@label -> allsame(@label)}));
+(show (bluefringe I :state {@label -> allsame(@label)}));
+*/

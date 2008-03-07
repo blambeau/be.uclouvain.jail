@@ -42,7 +42,7 @@ public class Simulation {
 	private Map<SLPair,Object> oStateGains;
 
 	/** Simulation has been commited ? */
-	private boolean commited;
+	private boolean freezed;
 
 	/** Listener. */
 	protected IInductionListener listener;
@@ -81,9 +81,6 @@ public class Simulation {
 		/** Created kernel edge. */
 		private Object kEdge;
 		
-		/** Kernel edge info. */
-		private IUserInfo kEdgeInfo;
-		
 		/** Kernel state to go to. */
 		private Object kState;
 		
@@ -93,18 +90,11 @@ public class Simulation {
 			this.kState = kState;
 
 			// create the edge
-			kEdgeInfo = fEdge.getUserInfo();
-			ensureKEdge();
+			IUserInfo kEdgeInfo = fEdge.getUserInfo();
+			kEdge = dfag.createEdge(fEdge.getSourceKernelState(), kState, kEdgeInfo);
+			handler.updateKEdge(kEdge, kEdgeInfo);
 		}
 		
-		/** Ensures creation of the kernel edge. */
-		private void ensureKEdge() {
-			if (kEdge == null) {
-				kEdge = dfag.createEdge(fEdge.getSourceKernelState(), kState, kEdgeInfo);
-				handler.updateKEdge(kEdge, kEdgeInfo);
-			}
-		}
-
 		/** Commits the work. */
 		public void commit() {
 			// check that the new pair does not appear on the fringe now
@@ -112,9 +102,6 @@ public class Simulation {
 			Object letter = fEdge.letter();
 			SLPair pair = new SLPair(source, letter);
 			assert (!kStateGains.containsKey(pair)) : "Commited edge does not appear on new fringe.";
-			
-			// ensure that kernel edge is created
-			ensureKEdge();
 			
 			// remove pair from the fringe
 			algo.getFringe().remove(source, letter);
@@ -125,7 +112,6 @@ public class Simulation {
 			// remove initial created edge
 			// save last version of its info in kEdgeInfo
 			// for late commit which happens in blue-fringe efficient case
-			kEdgeInfo = handler.remKEdgeInfo(kEdge);
 			dfag.removeEdge(kEdge);
 			kEdge = null;
 		}
@@ -423,7 +409,7 @@ public class Simulation {
 	protected Simulation(InductionAlgo algo) {
 		// initialize instance variables
 		this.algo = algo;
-		this.commited = false;
+		this.freezed = false;
 		this.dfa = algo.getDFA();
 		this.dfag = dfa.getGraph();
 		this.listener = algo.getListener();
@@ -466,8 +452,7 @@ public class Simulation {
 
 	/** Starts a merge try. */
 	protected void startTry(PTAEdge fEdge, Object kState) {
-		// check
-		assert (subWorks.isEmpty()) : "No previous work.";
+		assert (!freezed && subWorks.isEmpty()) : "Not freezed and no previous work.";
 
 		// create work
 		addSubWork(new StartTry(fEdge,kState));
@@ -481,8 +466,7 @@ public class Simulation {
 	
 	/** Consolidates an edge. */
 	protected Object consolidate(PTAEdge fEdge) {
-		// check
-		assert (subWorks.isEmpty()) : "No previous work.";
+		assert (!freezed && subWorks.isEmpty()) : "Not freezed and no previous work.";
 		
 		// create work
 		addSubWork(new EdgeConsolidate(fEdge));
@@ -496,8 +480,7 @@ public class Simulation {
 	
 	/** Consolidates an edge. */
 	protected Object consolidate(PTAState state) {
-		// check
-		//assert (subWorks.isEmpty()) : "No previous work.";
+		assert (!freezed) : "Not freezed.";
 		
 		// create work
 		addSubWork(new StateConsolidate(state));
@@ -511,6 +494,8 @@ public class Simulation {
 	
 	/** Add a kernel state merge. */
 	protected void merge(PTAState state, Object tkState) throws Avoid {
+		assert (!freezed) : "Not freezed.";
+		
 		// create work
 		addSubWork(new KStateMerge(state, tkState));
 		
@@ -520,6 +505,8 @@ public class Simulation {
 
 	/** Add a new kernel edge merge. */
 	protected void merge(PTAEdge edge, Object tkEdge) throws Avoid {
+		assert (!freezed) : "Not freezed.";
+
 		// create work
 		addSubWork(new KEdgeMerge(edge, tkEdge));
 		
@@ -529,6 +516,8 @@ public class Simulation {
 
 	/** Adds another edge merge. */
 	protected void merge(PTAEdge victim, PTAEdge target) throws Avoid {
+		assert (!freezed) : "Not freezed.";
+
 		// create work
 		addSubWork(new OEdgeMerge(victim, target));
 		
@@ -538,6 +527,8 @@ public class Simulation {
 
 	/** Adds an other state merge. */
 	protected void merge(PTAState victim, PTAState target) throws Avoid {
+		assert (!freezed) : "Not freezed.";
+
 		// create work
 		addSubWork(new OStateMerge(victim, target));
 		
@@ -547,6 +538,8 @@ public class Simulation {
 
 	/** Adds a kernel state gain. */
 	protected void gain(Object tkState, PTAEdge ptaEdge) throws Avoid {
+		assert (!freezed) : "Not freezed.";
+
 		// check
 		SLPair pair = new SLPair(tkState, ptaEdge.letter());
 		assert (!kStateGains.containsKey(pair)) : "Gain => not already gained.";
@@ -561,6 +554,8 @@ public class Simulation {
 
 	/** Adds another state gain. */
 	protected void gain(PTAState state, PTAEdge edge) {
+		assert (!freezed) : "Not freezed.";
+
 		// check
 		SLPair pair = new SLPair(state, edge.letter());
 		assert (!oStateGains.containsKey(pair)) : "Gain => not already gained.";
@@ -575,7 +570,7 @@ public class Simulation {
 
 	/** Commits the simulation. */
 	protected void commit() {
-		assert (!commited) : "Already commited.";
+		assert (!freezed) : "Not freezed.";
 		
 		// commit all works
 		for (AbstractSubWork work : subWorks) {
@@ -586,13 +581,13 @@ public class Simulation {
 		handler.commit();
 		if (listener != null) { listener.commit(this); }
 		
-		// mark as commited
-		commited = true;
+		// mark as freezed
+		freezed = true;
 	}
 
 	/** Rollbacks the simulation. */
 	protected void rollback() {
-		assert (!commited) : "Cannot rollback a commited work.";
+		assert (!freezed) : "Not freezed.";
 		
 		// commit all works
 		for (AbstractSubWork work : subWorks) {
@@ -602,6 +597,9 @@ public class Simulation {
 		// commit handler
 		handler.rollback();
 		if (listener != null) { listener.rollback(this); }
+
+		// mark as freezed
+		freezed = true;
 	}
 
 	/** Adds a subwork. */

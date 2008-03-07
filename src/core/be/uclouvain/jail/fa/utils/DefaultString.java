@@ -144,11 +144,9 @@ public class DefaultString<T> implements IString<T> {
 		if (c.isAssignableFrom(this.getClass())) {
 			return this;
 		}
-		
 		if (IFATrace.class.equals(c)) {
 			return String2DFA.toTrace(this);
 		}
-		
 		return AdaptUtils.externalAdapt(this,c);
 	}
 

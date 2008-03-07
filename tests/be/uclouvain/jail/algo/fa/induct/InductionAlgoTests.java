@@ -30,6 +30,7 @@ public class InductionAlgoTests extends TestCase {
 	}
 
 	/** Debugs the DFA with dot. */
+	@SuppressWarnings("unused")
 	private void dotDebug(IDFA dfa) throws Exception {
 		PrintWriter w = new PrintWriter(System.out);
 		new DOTGraphDialect().print(dfa.getGraph(), w, null);
@@ -41,8 +42,6 @@ public class InductionAlgoTests extends TestCase {
 		// load expected result and sample
 		IDFA expected = JailTestUtils.INRIA_DFA_3_1();
 		ISample<String> sample = JailTestUtils.INRIA_SAMPLE_3_2();
-
-		AutomatonFacade.show((IDFA)sample.adapt(IDFA.class));
 		
 		// execute RPNI
 		IInductionAlgoInput input = new DefaultInductionAlgoInput(sample);
@@ -50,8 +49,6 @@ public class InductionAlgoTests extends TestCase {
 
 		// assert equivalence
 		assertEquivalent(expected,result);
-		
-		dotDebug(result);
 	}
 	
 	/** Tests BlueFringe on Sample 3.2 from INRIA. */
@@ -66,8 +63,6 @@ public class InductionAlgoTests extends TestCase {
 
 		// assert equivalence
 		assertEquivalent(expected,result);
-		
-		dotDebug(result);
 	}
 	
 	/** Tests RPNI on the train. */
@@ -80,6 +75,9 @@ public class InductionAlgoTests extends TestCase {
 		IInductionAlgoInput input = new DefaultInductionAlgoInput(sample);
 		IDFA result = new RPNIAlgo().execute(input);
 		result = AutomatonFacade.uncomplement(result);
+		
+		// assert equivalence
+		//AutomatonFacade.show((IDFA)sample.adapt(IDFA.class),expected,result);
 		
 		// assert equivalence
 		assertEquivalent(expected,result);
@@ -96,7 +94,6 @@ public class InductionAlgoTests extends TestCase {
 		IDFA result = new BlueFringeAlgo().execute(input);
 		result = AutomatonFacade.uncomplement(result);
 		
-		// assert equivalence
 		assertEquivalent(expected,result);
 	}
 	
@@ -119,7 +116,7 @@ public class InductionAlgoTests extends TestCase {
 	
 	/** Main method. */
 	public static void main(String[] args) throws Exception {
-		new InductionAlgoTests().testBackPropagationOnInriaSample3_2();
+		new InductionAlgoTests().testRPNIOnTrain();
 	}
 	
 }

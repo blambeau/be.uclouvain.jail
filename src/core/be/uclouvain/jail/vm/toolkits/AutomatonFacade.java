@@ -18,9 +18,11 @@ public final class AutomatonFacade {
 
 	/** Shows a FA using JDotty. 
 	 * @throws IOException */
-	public static void show(IFA fa) throws IOException {
+	public static void show(IFA...fas) throws IOException {
 		JDotty jdotty = new JDotty();
-		jdotty.present(FAUtils.copyForDot(fa),null);
+		for (IFA fa: fas) {
+			jdotty.present(FAUtils.copyForDot(fa),null);
+		}
 	}
 	
 	/** Debugs an automaton using dot. */

@@ -43,6 +43,8 @@ public class GMatchPopulator<T> implements IUserInfoPopulator<T> {
 	public void populate(IUserInfo target, final T source) {
 		try {
 			callback.launchOn(node, source, target);
+		} catch (RuntimeException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new IllegalStateException("Error while GMatch populating ...",e);
 		}

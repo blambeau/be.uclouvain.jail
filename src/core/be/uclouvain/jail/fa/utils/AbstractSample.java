@@ -26,9 +26,15 @@ public abstract class AbstractSample<L> implements ISample<L> {
 		this.alphabet = alphabet;
 		this.userInfoHandler = new UserInfoHandler();
 		
+		userInfoHandler.getVertexCopier().keepAll();
+		userInfoHandler.getEdgeCopier().keepAll();
+		
 		UserInfoAggregator stateAggregator = userInfoHandler.getVertexAggregator();
 		stateAggregator.boolOr(AttributeGraphFAInformer.STATE_INITIAL_KEY);
-		stateAggregator.stateKind(AttributeGraphFAInformer.STATE_KIND_KEY,FAStateKindFunction.OR,FAStateKindFunction.OR,true);
+		stateAggregator.stateKind(
+				AttributeGraphFAInformer.STATE_KIND_KEY,
+				FAStateKindFunction.OR,
+				FAStateKindFunction.OR,true);
 
 		UserInfoAggregator edgeAggregator = userInfoHandler.getEdgeAggregator();
 		edgeAggregator.first(AttributeGraphFAInformer.EDGE_LETTER_KEY);

@@ -23,15 +23,19 @@ public final class BlueFringeAlgo extends InductionAlgo {
 	/** Evaluation of a merge simulation. */ 
 	class Evaluation implements Comparable<Evaluation> {
 
-		/** Evaluated simulation. */
-		Simulation simu;
-
+		/** Fringe edge. */
+		protected PTAEdge fEdge;
+		
+		/** Target merge state. */
+		protected Object kState;
+		
 		/** Evaluation value. */ 
 		int evaluation;
 
 		/** Creates an evaluation instance. */
-		public Evaluation(Simulation work, int eval) {
-			simu = work;
+		public Evaluation(PTAEdge fEdge, Object kState, int eval) {
+			this.fEdge = fEdge;
+			this.kState = kState;
 			evaluation = eval;
 		}
 		
@@ -83,7 +87,7 @@ public final class BlueFringeAlgo extends InductionAlgo {
 							// evaluate simulation and keep result if required
 							int eval = evaluator.evaluate(simu);
 							if (eval > cThreshold) {
-								evaluations.add(new Evaluation(simu, eval));
+								evaluations.add(new Evaluation(fEdge, kState, eval));
 								hasEval = true;
 							}
 							
@@ -113,16 +117,24 @@ public final class BlueFringeAlgo extends InductionAlgo {
 			if (hasEval) {
 				// find the best ones in order an try them
 				for (Evaluation eval : evaluations) {
+					// replay simulation
 					try {
+						simu = new Simulation(this);
+						simu.startTry(eval.fEdge, eval.kState);
+					} catch (Avoid ex) {
+						throw new Unable("Unexcpected avoid exception on replay.",ex);
+					}
+					
+					try { 
 						// last chance to reject it
-						checkWithOracle(eval.simu);
+						checkWithOracle(simu);
 						
 						// all ok, take it as current merge
-						eval.simu.commit();
+						simu.commit();
 						commited = true;
 						break;
 					} catch (Avoid avoid) {
-						throw new Unable("Unexcpected avoid exception on replay.",avoid);
+						simu.rollback();
 					}
 				}
 

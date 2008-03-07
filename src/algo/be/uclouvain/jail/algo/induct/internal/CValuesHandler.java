@@ -106,13 +106,6 @@ final class CValuesHandler extends AbstractValuesHandler {
 		oEdgeIUserInfo.put(oEdge, values);
 	}
 
-	/** Removes and return the edge info of the rollbacked 
-	 * kEdge. */
-	public IUserInfo remKEdgeInfo(Object kEdge) {
-		assert correctKEdge(kEdge) : "Correct kEdge";
-		return kEdgeIUserInfo.remove(kEdge);
-	}
-	
 	/** Commits the computed values. */
 	public void commit() {
 		// commit kState values
