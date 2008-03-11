@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import be.uclouvain.jail.fa.functions.FAStateKindFunction;
+import be.uclouvain.jail.uinfo.functions.AllSameFunction;
 import be.uclouvain.jail.uinfo.functions.BoolAndFunction;
 import be.uclouvain.jail.uinfo.functions.BoolOrFunction;
 import be.uclouvain.jail.uinfo.functions.ConcatFunction;
@@ -88,6 +89,11 @@ public class UserInfoAggregator implements IUserInfoCreator<Collection<IUserInfo
 	/** Registers a Boolean-AND function for a given attribute. */ 
 	public void boolAnd(String attr) {
 		register(attr,new BoolAndFunction());
+	}
+	
+	/** Registers an allsame function. */
+	public void allsame(String attr) {
+		register(attr,new AllSameFunction());
 	}
 	
 	/** Registers a first function. */

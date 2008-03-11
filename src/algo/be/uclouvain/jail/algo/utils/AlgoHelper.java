@@ -85,7 +85,7 @@ public class AlgoHelper {
 			
 			// get value 
 			Object value = options.getOptionValue(info.optName, info.type, info.defValue);
-
+			
 			// affect it by reflection
 			try {
 				PropertyUtils.setProperty(helped,info.property,value);

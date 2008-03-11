@@ -10,11 +10,11 @@ import be.uclouvain.jail.fa.IString;
 import be.uclouvain.jail.fa.utils.IntegerAlphabet;
 
 /**
- * Provides a default implementation of {@link IRandomStringsInput}.
+ * Provides an implementation for Abadingo heuristic to string generation.
  * 
  * @author blambeau
  */
-public class DefaultRandomStringsInput<L> extends AbstractAlgoInput implements IRandomStringsInput<L> {
+public class AbadingoRandomStringsInput<L> extends AbstractAlgoInput implements IRandomStringsInput<L> {
 
 	/** Randomizer. */
 	private Random r = Jail.randomizer();
@@ -23,24 +23,18 @@ public class DefaultRandomStringsInput<L> extends AbstractAlgoInput implements I
 	private IAlphabet<L> alphabet;
 
 	/** Size of the words to generate. */
-	private int stringLength = 10;
-	
-	/** Probability to stop on the current word. */
-	private int stringStopProba = -1;
+	private int wordLength = 10;
 	
 	/** Number of words to generate. */
 	private int nbStrings = 100;
 	
-	/** Probability to stop the string generation. */
-	private int stopProba = -1;
-	
 	/** Creates a input instance. */
-	public DefaultRandomStringsInput(IAlphabet<L> alphabet) {
+	public AbadingoRandomStringsInput(IAlphabet<L> alphabet) {
 		this.alphabet = alphabet;
 	}
 
 	/** Creates an empty random words input. */
-	public DefaultRandomStringsInput() {
+	public AbadingoRandomStringsInput() {
 	}
 
 	/** Installs the options. */
@@ -50,9 +44,7 @@ public class DefaultRandomStringsInput<L> extends AbstractAlgoInput implements I
 		super.addOption("alphabet", false, IAlphabet.class, null);
 		super.addOption("alphabetSize", false, Integer.class, null);
 		super.addOption("nbStrings", false, Integer.class, null);
-		super.addOption("stringLength", false, Integer.class, null);
-		super.addOption("stopProba", false, Double.class, null);
-		super.addOption("stringStopProba", false, Double.class, null);
+		super.addOption("wordLength", false, Integer.class, null);
 	}
 
 	/** Returns the alphabet to use. */
@@ -79,45 +71,51 @@ public class DefaultRandomStringsInput<L> extends AbstractAlgoInput implements I
 		this.nbStrings = nbStrings;
 	}
 
-	/** Sets stop probability. */
-	public void setStopProba(int stopProba) {
-		this.stopProba = stopProba;
-	}
-
 	/** Sets length of words to generate. */
-	public void setWordLength(int wordLength) {
-		this.stringLength = wordLength;
-	}
-
-	/** Sets stop word probability. */
-	public void setStringStopProba(int stringStopProba) {
-		this.stringStopProba = stringStopProba;
+	public void setWordLength(int k) {
+		this.wordLength = k;
+		
+		// number of strings is 2^(k+1)-1
+		this.nbStringsOfKLength = Math.round(Math.pow(2,k+1)-1);
+		
+		// compute the log only once
+		this.logNbStringsOfKLength = log2(this.nbStringsOfKLength);
 	}
 
 	/** Returns stop predicate. */
 	public IPredicate<IRandomStringsResult<L>> getStopPredicate() {
 		return new IPredicate<IRandomStringsResult<L>>() {
 			public boolean evaluate(IRandomStringsResult<L> result) {
-				if (stopProba != -1) {
-					return r.nextDouble() <= stopProba;
-				} else {
-					return result.size() >= nbStrings;
-				}
+				return result.size() >= nbStrings;
 			}
 		};
 	}
 
+	/** Number of strings of k length. */
+	private long nbStringsOfKLength;
+	private double logNbStringsOfKLength;
+	private long nextLength = -1; 
+
+	/** Returns log(x;2), that is log in base 2. */
+	private static double log2(double x) {
+		return Math.log(x)/Math.log(2);
+	}
+	
 	/** Returns word stop predicate. */
 	public IPredicate<IString<L>> getStringStopPredicate() {
 		return new IPredicate<IString<L>>() {
 			public boolean evaluate(IString<L> word) {
-				if (stringStopProba != -1) {
-					return r.nextDouble() <= stringStopProba;
-				} else {
-					return word.size() >= stringLength;
+				if (nextLength == -1) {
+					double proba = r.nextDouble()/2;
+					assert (proba >= 0.0 && proba <= 0.5) : "Valid proba.";
+					nextLength = Math.round(log2(proba) + logNbStringsOfKLength);
+					assert (nextLength >= 0 && nextLength <= wordLength) : "Valid length " + nextLength + " according to formula.";
 				}
+				boolean stop = word.size() >= nextLength;
+				if (stop) { nextLength = -1; }
+				return stop;
 			}
 		};
 	}
-
+	
 }

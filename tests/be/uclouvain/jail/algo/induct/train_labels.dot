@@ -1,0 +1,33 @@
+digraph G {
+        graph [rankdir="LR"];
+        node [shape="circle"];
+        0 [isInitial="true" kind="ACCEPTING" label="0" class="0"];
+        1 [isInitial="false" kind="ACCEPTING" label="1" class="1"];
+        2 [isInitial="false" kind="ACCEPTING" label="6" class="6"];
+        3 [isInitial="false" kind="ACCEPTING" label="0" class="0"];
+        4 [isInitial="false" kind="ACCEPTING" label="2" class="2"];
+        5 [isInitial="false" kind="AVOID" label="5" class="5"];
+        6 [isInitial="false" kind="ACCEPTING" label="0" class="0"];
+        7 [isInitial="false" kind="ACCEPTING" label="3" class="3"];
+        8 [isInitial="false" kind="ACCEPTING" label="4" class="4"];
+        9 [isInitial="false" kind="ACCEPTING" label="7" class="7"];
+        10 [isInitial="false" kind="ACCEPTING" label="8" class="8"];
+        11 [isInitial="false" kind="ACCEPTING" label="0" class="0"];
+        12 [isInitial="false" kind="ACCEPTING" label="0" class="0"];
+        13 [isInitial="false" kind="AVOID" label="5" class="5"];
+        14 [isInitial="false" kind="AVOID" label="5" class="5"];
+        2 -> 3 [letter="close"];
+        1 -> 2 [letter="eopen"];
+        0 -> 1 [letter="alarm"];
+        4 -> 5 [letter="start"];
+        4 -> 6 [letter="close"];
+        0 -> 4 [letter="open"];
+        10 -> 11 [letter="close"];
+        9 -> 10 [letter="eopen"];
+        8 -> 9 [letter="estop"];
+        7 -> 8 [letter="alarm"];
+        7 -> 12 [letter="stop"];
+        7 -> 13 [letter="open"];
+        7 -> 14 [letter="close"];
+        0 -> 7 [letter="start"];
+}

@@ -100,8 +100,10 @@ public class DefaultWalkInfo<L> implements IWalkInfo<L> {
 		if (included.isAccepted() && !isFullyIncluded()) {
 			append(copy, FAStateKind.AVOID, handler);
 		} else if (included.isAccepted()) {
+			assert (isFullyIncluded()) : "Fully included in this case.";
 			change(copy, FAStateKind.ACCEPTING, handler);
 		} else if (included.isPassage()) {
+			assert (!included.isAccepted()) : "Included is not accepting";
 			change(copy, FAStateKind.ERROR, handler);
 		} else if (included.isError()) {
 			change(copy, FAStateKind.ERROR, handler);

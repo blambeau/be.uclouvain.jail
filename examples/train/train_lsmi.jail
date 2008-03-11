@@ -1,0 +1,43 @@
+(execute 'commons.jail');
+
+define (allaccepting <A>)
+       (copy (A) :vertex {@kind -> when @kind='ERROR' or @kind='AVOID' then 'AVOID'
+				                           else 'ACCEPTING'});
+
+TRAIN_NFA = <§seqp
+    Q0 = start->stop->Q0|
+		     open->close->Q0|
+				 start->alarm->estop->eopen->close->Q0|
+				 alarm->eopen->close->Q0|
+				 start->open->ERROR|
+				 open->start->ERROR|
+				 start->close->ERROR,
+	  ERROR[@kind='AVOID'].
+§>;
+
+TRAIN_DFA = (identify (determinize TRAIN_NFA));
+
+TRAIN_SAMPLE = <§jis
+    + open close
+		+ start stop
+		+ start alarm estop eopen close
+		+ alarm eopen close
+		- start open
+		- open start
+		- start close
+§>;
+TRAIN_PTA = (allaccepting (cast TRAIN_SAMPLE 'be.uclouvain.jail.fa.IDFA'));
+TRAIN_PTA = (compose TRAIN_DFA TRAIN_PTA
+		                 :state {@label -> @index, @class -> @index});
+
+
+(show TRAIN_NFA);
+(show TRAIN_DFA);
+(show TRAIN_PTA);
+
+(show (print (rpni (copy TRAIN_PTA) 
+							     :state {@class -> allsame(@class)}) 
+			 :format 'dot'));
+
+(print TRAIN_PTA :format 'dot');
+

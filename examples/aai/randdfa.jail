@@ -1,19 +1,13 @@
 (execute 'commons.jail');
 
-// identifies all states by incrementation
-define (identify <G>)
-	     (copy G :vertex {@id -> increment()});
-
 // generate a random DFA with aai tuning
 A = <§seqp Q0. §>;
-G = (randdfa A :stateCount stateCount :alphabetSize 2 :accepting 0.5 :tolerance 0.01);
-
-// identify the generated DFA
-G = (identify G);
-H = (copy G :vertex {@label -> when choose()<=0.3 then @id else ''});
+G = (randdfa A :stateCount stateCount 
+		           :alphabetSize 2 
+							 :accepting 0.5
+		           :tolerance 0.01 
+							 :depthControl true);
 
 // print it when done
-//(print G :format dialect);
-(show G);
-(show H);
+(show (print G :format 'dot'));
 

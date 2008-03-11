@@ -1,0 +1,18 @@
+// stateCount: number of states of the generated DFA
+// nbStrings:  number of strings in the generated sample
+(execute 'commons.jail');
+
+// generate a random DFA with aai tuning
+A = <§seqp Q0. §>;
+DFA = (randdfa A :stateCount stateCount :alphabetSize 2 :accepting 0.5 :tolerance 0.01);
+
+// generate a random sample
+SAMPLE = (abadingo A :alphabetSize 2 :wordLength wordLength :nbStrings nbStrings :labeller DFA);
+
+// Execute induction algorithms
+(show SAMPLE);
+(show (rpni SAMPLE));
+(show (bluefringe SAMPLE));
+
+
+

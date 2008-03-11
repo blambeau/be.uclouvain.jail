@@ -14,6 +14,9 @@ import be.uclouvain.jail.algo.commons.Avoid;
  */
 public class AllSameFunction<T> extends AbstractAggregateFunction<T> {
 
+	public AllSameFunction() {
+	}
+	
 	/** Checks the op1.equals(op2) and returns op1. */
 	@Override
 	public T compute(T op1, T op2) {

@@ -27,7 +27,7 @@ public abstract class GMatchPopulatorCallback<T> extends GMatchCallback<Object> 
 	protected IUserInfoHelper helper;
 	
 	/** Functions to use. */
-	private Map<String, IGMatchFunction> functions;
+	protected Map<String, IGMatchFunction> functions;
 	
 	/** Creates a callback instance. */
 	public GMatchPopulatorCallback(IUserInfoHelper helper) {
