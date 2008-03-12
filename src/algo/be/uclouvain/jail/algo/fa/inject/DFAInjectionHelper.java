@@ -51,18 +51,17 @@ public class DFAInjectionHelper {
 	
 	/** Injects a string. */
 	@SuppressWarnings("unchecked")
-	public <L> boolean inject(final IString<L> s) {
+	public <L> void inject(final IString<L> s) {
 		IFATrace<L> trace = (IFATrace<L>) s.adapt(IFATrace.class);
 		if (trace == null) {
 			throw new UnsupportedOperationException("String is expected to be adaptable to a trace");
 		}
 		assert correctTrace(s, trace) : "Trace is valid according to string.";
-		return inject(trace);
+		inject(trace);
 	}
 	
 	/** Injects a word inside a DFA. */
-	public <L> boolean inject(final IFATrace<L> trace) {
-		final boolean[] newCreated = new boolean[]{false};
+	public <L> void inject(final IFATrace<L> trace) {
 		final IFA traceFA = trace.getFA();
 		final IDirectedGraphPath tracePath = trace.getGraphPath();
 		final IDirectedGraph traceGraph = tracePath.getGraph();
@@ -121,13 +120,10 @@ public class DFAInjectionHelper {
 					
 					// update current to next
 					current = next;
-					newCreated[0] = true;
 				}
 			}
 			
 		});
-		
-		return newCreated[0];
 	}
 	
 }

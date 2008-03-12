@@ -17,13 +17,17 @@ public interface ISample<L> extends IAdaptable, Iterable<IString<L>> {
 	/** Returns the sample alphabet. */
 	public IAlphabet<L> getAlphabet();
 	
-	/** Walks a string inside the sample. */
-	public IWalkInfo walk(IString<L> s);
-	
 	/** Returns the size of the sample (number of strings). */
 	public int size();
 	
-	/** Adds a sample string. */
-	public void addString(IString<L> string);
+	/** Checks if the sample contains the given string. */
+	public boolean contains(IString<L> s);
+	
+	/** Walks a string inside the sample. */
+	public IWalkInfo walk(IString<L> s);
+	
+	/** Adds a sample string. 
+	 * Returns true if the string is a new one, false otherwise. */
+	public boolean addString(IString<L> string);
 
 }

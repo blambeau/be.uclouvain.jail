@@ -5,6 +5,7 @@ import net.chefbe.javautils.adapt.IAdapter;
 import be.uclouvain.jail.fa.FAStateKind;
 import be.uclouvain.jail.fa.IAlphabet;
 import be.uclouvain.jail.fa.IFA;
+import be.uclouvain.jail.fa.constraints.FAGraphConstraint;
 import be.uclouvain.jail.fa.utils.AutoAlphabet;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
@@ -35,6 +36,7 @@ public abstract class GraphFA implements IFA {
 	 * the informer provided.</p>
 	 */
 	public GraphFA(IDirectedGraph graph, IGraphFAInformer informer, IAlphabet alphabet) {
+		assert (new FAGraphConstraint(informer).isRespectedBy(graph)) : "Valid underlying graph.";
 		this.graph = graph;
 		this.informer = informer;
 		this.alphabet = alphabet;

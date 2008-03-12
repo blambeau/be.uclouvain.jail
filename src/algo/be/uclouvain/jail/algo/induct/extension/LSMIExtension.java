@@ -3,6 +3,7 @@ package be.uclouvain.jail.algo.induct.extension;
 import be.uclouvain.jail.algo.induct.compatibility.ClassBasedCompatibility;
 import be.uclouvain.jail.algo.induct.compatibility.StateKindCompatibility;
 import be.uclouvain.jail.algo.induct.internal.InductionAlgo;
+import be.uclouvain.jail.algo.induct.listener.InductionLogger;
 import be.uclouvain.jail.algo.induct.processor.BackPropagateProcessor;
 import be.uclouvain.jail.algo.induct.processor.ForwardLabelProcessor;
 import be.uclouvain.jail.graph.IDirectedGraph;
@@ -37,7 +38,7 @@ public class LSMIExtension implements IInductionAlgoExtension {
 		handler.getVertexAggregator().min("index");
 		
 		// add incompatibility tracker
-		algo.addListener(//new InductionLogger(), 
+		algo.addListener(new InductionLogger(), 
 				cbc.getTracker());
 	}
 

@@ -118,6 +118,8 @@ public class DOTDirectedGraphLoader {
 
 		/** Callback method for GRAPH_COMMONS nodes. */
 		public Object GRAPH_COMMONS(IASTNode node) throws Exception {
+			info = graph.getGraphInfo();
+			super.recurseOnChildren(node);
 			return null;
 		}
 

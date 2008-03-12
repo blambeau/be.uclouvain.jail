@@ -270,7 +270,7 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 	}
 
 	/** Adapts who to a DFA. */
-	private IDirectedGraph adaptToDirectedGraph(Object who) {
+	private static IDirectedGraph adaptToDirectedGraph(Object who) {
 		if (who instanceof INFA) {
 			return ((INFA)who).getGraph();
 		} else if (who instanceof IDFA) {
@@ -281,7 +281,7 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 	}
 	
 	/** Adapts who to a DFA. */
-	private IDFA adaptToDFA(Object who) {
+	private static IDFA adaptToDFA(Object who) {
 		if (who instanceof IDirectedGraph) {
 			return new GraphDFA((IDirectedGraph)who, new AttributeGraphFAInformer());
 		} else {
@@ -290,7 +290,7 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 	}
 	
 	/** Adapts who to a NFA. */
-	private INFA adaptToNFA(Object who) {
+	private static INFA adaptToNFA(Object who) {
 		if (who instanceof IDirectedGraph) {
 			return new GraphNFA((IDirectedGraph)who, new AttributeGraphFAInformer());
 		} else {

@@ -468,11 +468,11 @@ public class Simulation {
 	protected Object consolidate(PTAEdge fEdge) {
 		assert (!freezed && subWorks.isEmpty()) : "Not freezed and no previous work.";
 		
-		// create work
-		addSubWork(new EdgeConsolidate(fEdge));
-		
 		// let listener follow
 		if (listener != null) { listener.consolidate(fEdge); }
+		
+		// create work
+		addSubWork(new EdgeConsolidate(fEdge));
 		
 		// continue
 		return fEdge.consolidate(this);
@@ -482,11 +482,11 @@ public class Simulation {
 	protected Object consolidate(PTAState state) {
 		assert (!freezed) : "Not freezed.";
 		
-		// create work
-		addSubWork(new StateConsolidate(state));
-		
 		// let listener follow
 		if (listener != null) { listener.consolidate(state); }
+		
+		// create work
+		addSubWork(new StateConsolidate(state));
 		
 		// continue
 		return state.consolidate(this);
@@ -496,44 +496,44 @@ public class Simulation {
 	protected void merge(PTAState state, Object tkState) throws Avoid {
 		assert (!freezed) : "Not freezed.";
 		
-		// create work
-		addSubWork(new KStateMerge(state, tkState));
-		
 		// let listener follow
 		if (listener != null) { listener.merge(state, tkState); }
+
+		// create work
+		addSubWork(new KStateMerge(state, tkState));
 	}
 
 	/** Add a new kernel edge merge. */
 	protected void merge(PTAEdge edge, Object tkEdge) throws Avoid {
 		assert (!freezed) : "Not freezed.";
-
-		// create work
-		addSubWork(new KEdgeMerge(edge, tkEdge));
 		
 		// let listener follow
 		if (listener != null) { listener.merge(edge, tkEdge); }
+
+		// create work
+		addSubWork(new KEdgeMerge(edge, tkEdge));
 	}
 
 	/** Adds another edge merge. */
 	protected void merge(PTAEdge victim, PTAEdge target) throws Avoid {
 		assert (!freezed) : "Not freezed.";
-
-		// create work
-		addSubWork(new OEdgeMerge(victim, target));
 		
 		// let listener follow
 		if (listener != null) { listener.merge(victim, target); }
+
+		// create work
+		addSubWork(new OEdgeMerge(victim, target));
 	}
 
 	/** Adds an other state merge. */
 	protected void merge(PTAState victim, PTAState target) throws Avoid {
 		assert (!freezed) : "Not freezed.";
-
-		// create work
-		addSubWork(new OStateMerge(victim, target));
 		
 		// let listener follow
 		if (listener != null) { listener.merge(victim, target); }
+
+		// create work
+		addSubWork(new OStateMerge(victim, target));
 	}
 
 	/** Adds a kernel state gain. */
@@ -543,13 +543,13 @@ public class Simulation {
 		// check
 		SLPair pair = new SLPair(tkState, ptaEdge.letter());
 		assert (!kStateGains.containsKey(pair)) : "Gain => not already gained.";
+		
+		// let listener follow
+		if (listener != null) { listener.gain(tkState, ptaEdge); }
 
 		// create work
 		addSubWork(new KStateGain(tkState, ptaEdge));
 		kStateGains.put(pair, ptaEdge);
-		
-		// let listener follow
-		if (listener != null) { listener.gain(tkState, ptaEdge); }
 	}
 
 	/** Adds another state gain. */
@@ -559,18 +559,20 @@ public class Simulation {
 		// check
 		SLPair pair = new SLPair(state, edge.letter());
 		assert (!oStateGains.containsKey(pair)) : "Gain => not already gained.";
+		
+		// let listener follow
+		if (listener != null) { listener.gain(state, edge); }
 
 		// create work
 		addSubWork(new OStateGain(state, edge));
 		oStateGains.put(pair, edge);
-		
-		// let listener follow
-		if (listener != null) { listener.gain(state, edge); }
 	}
 
 	/** Commits the simulation. */
 	protected void commit() {
 		assert (!freezed) : "Not freezed.";
+		
+		if (listener != null) { listener.commit(this); }
 		
 		// commit all works
 		for (AbstractSubWork work : subWorks) {
@@ -579,7 +581,6 @@ public class Simulation {
 
 		// commit handler
 		handler.commit();
-		if (listener != null) { listener.commit(this); }
 		
 		// mark as freezed
 		freezed = true;
@@ -589,14 +590,15 @@ public class Simulation {
 	protected void rollback(boolean incompatibility) {
 		assert (!freezed) : "Not freezed.";
 		
-		// commit all works
+		if (listener != null) { listener.rollback(this, incompatibility); }
+		
+		// rollback all works
 		for (AbstractSubWork work : subWorks) {
 			work.rollback();
 		}
 
 		// commit handler
 		handler.rollback();
-		if (listener != null) { listener.rollback(this, incompatibility); }
 
 		// mark as freezed
 		freezed = true;

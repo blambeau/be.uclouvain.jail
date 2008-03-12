@@ -135,12 +135,19 @@ public class ClassBasedCompatibility extends AbstractCompatibility {
 		return isDisjoint(iSet,jSet);
 	}
 	
-	/** Returns true by default. */
+	/** Checks if two states are compatible. */
+	public boolean isCompatible(int i, int j) {
+		if (i == j || ufds.inSameBlock(i,j)) { return true; }
+		Set<Integer> iSet = ufds.merge(Math.min(i, j), mergeFunction);
+		return !iSet.contains(Math.max(i,j));
+	}
+	
+	/** Checks if two states are compatible. */
 	public boolean isCompatible(Object s, Object t) {
 		int i = extractPTAClass(s);
 		int j = extractPTAClass(t);
 		if (ufds.inSameBlock(i,j)) { return true; }
-		return isDisjoint(i,j);
+		return isCompatible(i,j);
 	}
 
 	/** Returns true. */
@@ -151,6 +158,7 @@ public class ClassBasedCompatibility extends AbstractCompatibility {
 	/** Marks two classes as incompatible. */
 	public void markAsIncompatible(int i, int j) {
 		assert (i != j) : "Label never incompatible with itself.";
+		System.out.println("Mark as incompatible (" + i + "," + j + ")");
 		Set<Integer> inc = findIncompatibilities(Math.min(i, j), true);
 		inc.add(Math.max(i,j));
 	}
@@ -160,6 +168,7 @@ public class ClassBasedCompatibility extends AbstractCompatibility {
 		int i = extractPTAClass(s);
 		int j = extractPTAClass(t);
 		markAsIncompatible(i,j);
+		assert (!isCompatible(s,t)) : "s and t are now incompatible";
 	}
 
 	/** Tracks incompatibilities. */
@@ -217,6 +226,10 @@ public class ClassBasedCompatibility extends AbstractCompatibility {
 
 		/** Merges two states. */
 		protected void merge(int i, int j) {
+			if (!isCompatible(i,j)) {
+				throw new Avoid();
+			}
+			System.out.println("\t\tMerging " + i + " " + j + " :: " + isCompatible(i,j));
 			ufds.union(i,j);
 		}
 		

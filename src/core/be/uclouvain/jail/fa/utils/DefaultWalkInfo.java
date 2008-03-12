@@ -1,6 +1,7 @@
 package be.uclouvain.jail.fa.utils;
 
 import be.uclouvain.jail.fa.FAStateKind;
+import be.uclouvain.jail.fa.IFA;
 import be.uclouvain.jail.fa.IFATrace;
 import be.uclouvain.jail.fa.IString;
 import be.uclouvain.jail.fa.IWalkInfo;
@@ -66,7 +67,9 @@ public class DefaultWalkInfo<L> implements IWalkInfo<L> {
 	private void append(IFATrace<L> copy, FAStateKind kind, IUserInfoHandler handler) {
 		assert (excluded.size() != 0) : "Excluded is not empty on append.";
 		IUserInfoHelper helper = new UserInfoHelper();
-		IDirectedGraph graph = copy.getFA().getGraph();
+		IFA fa = copy.getFA();
+		assert (fa != null) : "Valid underlying FA.";
+		IDirectedGraph graph = fa.getGraph();
 		
 		// create new last state
 		helper.addKeyValue(AttributeGraphFAInformer.STATE_INITIAL_KEY, false);
@@ -89,6 +92,7 @@ public class DefaultWalkInfo<L> implements IWalkInfo<L> {
 	
 	/** Changes the last state of the trace. */
 	private void change(IFATrace<L> copy, FAStateKind kind, IUserInfoHandler handler) {
+		assert (copy.getFA() != null) : "Undelying FA is not null.";
 		IDirectedGraph graph = copy.getFA().getGraph();
 		Object last = copy.getLastState();
 		IUserInfo info = graph.getVertexInfo(last);
@@ -120,6 +124,7 @@ public class DefaultWalkInfo<L> implements IWalkInfo<L> {
 		// initialize a writer with handler and copy accepted
 		DirectedGraphWriter writer = new DirectedGraphWriter(handler);
 		IFATrace<L> copy = included.flush(writer);
+		assert (copy != null) : "Copy is not null.";
 		return normalize(copy, handler);
 	}
 	

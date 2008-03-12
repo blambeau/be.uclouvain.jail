@@ -35,5 +35,10 @@ public class DFAQueryable extends AbstractQueryable<IDFA> {
 		}
 		return depth;
 	}
+	
+	/** Returns number of states. */
+	public int getStateCount() {
+		return queried.getGraph().getVerticesTotalOrder().size();
+	}
 		
 }

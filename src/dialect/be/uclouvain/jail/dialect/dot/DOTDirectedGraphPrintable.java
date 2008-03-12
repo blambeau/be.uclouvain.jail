@@ -100,16 +100,34 @@ public class DOTDirectedGraphPrintable extends AbstractPrintable implements
 		}
 	}
 
+	/** Encodes a user info. */
+	protected String encode(IUserInfo info) {
+		StringBuffer sb = new StringBuffer();
+		int i=0;
+		for (String key: info.getKeys()) {
+			Object value = info.getAttribute(key);
+			if (value != null) {
+				if (i++ != 0) { sb.append(" "); }
+				sb.append(key)
+				  .append("=")
+				  .append("\"")
+				  .append(normalize(value))
+				  .append("\"");
+			}
+		}
+		return sb.toString();
+	}
+	
 	/** Returns a string containing the main dot graph attributes. */
 	protected String graphAttributes() {
+		String attrs = "";
 		Object rankdir = graph.getUserInfo().getAttribute("dot.rankdir");
-		if (rankdir != null) {
-			return "rankdir=\"" + rankdir.toString() + "\"";
-		} else {
-			return Jail.getStringProperty(
+		if (rankdir == null) {
+			attrs += Jail.getStringProperty(
 					"DirectedGraphPrintable.dot.graph.attributes",
 					"rankdir=\"LR\"");
 		}
+		return attrs + " " + encode(graph.getGraphInfo());
 	}
 
 	/** Returns a String containing the main dot node attributes. */
@@ -121,32 +139,12 @@ public class DOTDirectedGraphPrintable extends AbstractPrintable implements
 
 	/** Returns a string containing the dot attributes to set to a vertex. */
 	protected String stateAttributes(Object vertex) {
-		String s = "";
-		int i = 0;
-		IUserInfo info = graph.getVertexInfo(vertex);
-		for (String key : info.getKeys()) {
-			if (i++ != 0) {
-				s += " ";
-			}
-			Object value = info.getAttribute(key);
-			s += key + "=\"" + normalize(value) + "\"";
-		}
-		return s;
+		return encode(graph.getVertexInfo(vertex));
 	}
 
 	/** Returns a String containing the dot attributes to set to an edge. */
 	protected String edgeAttributes(Object edge) {
-		String s = "";
-		int i = 0;
-		IUserInfo info = graph.getEdgeInfo(edge);
-		for (String key : info.getKeys()) {
-			if (i++ != 0) {
-				s += " ";
-			}
-			Object value = info.getAttribute(key);
-			s += key + "=\"" + normalize(value) + "\"";
-		}
-		return s;
+		return encode(graph.getEdgeInfo(edge));
 	}
 
 	/** Adapts this object to type c. */

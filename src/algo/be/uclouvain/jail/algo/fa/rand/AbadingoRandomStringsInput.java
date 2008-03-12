@@ -3,6 +3,7 @@ package be.uclouvain.jail.algo.fa.rand;
 import java.util.Random;
 
 import be.uclouvain.jail.Jail;
+import be.uclouvain.jail.algo.commons.Unable;
 import be.uclouvain.jail.algo.utils.AbstractAlgoInput;
 import be.uclouvain.jail.common.IPredicate;
 import be.uclouvain.jail.fa.IAlphabet;
@@ -22,6 +23,9 @@ public class AbadingoRandomStringsInput<L> extends AbstractAlgoInput implements 
 	/** Alphabet to use. */
 	private IAlphabet<L> alphabet;
 
+	/** Maximal try before failure. */
+	private int maxTry = 100;
+	
 	/** Size of the words to generate. */
 	private int wordLength = 10;
 	
@@ -82,11 +86,30 @@ public class AbadingoRandomStringsInput<L> extends AbstractAlgoInput implements 
 		this.logNbStringsOfKLength = log2(this.nbStringsOfKLength);
 	}
 
+	/** Max try. */
+	public void setMaxTry(int maxTry) {
+		this.maxTry = maxTry;
+	}
+	
 	/** Returns stop predicate. */
 	public IPredicate<IRandomStringsResult<L>> getStopPredicate() {
 		return new IPredicate<IRandomStringsResult<L>>() {
+
+			/** Number of tries at this step. */
+			private int nbTry;
+			
+			/** Last size. */
+			private int lastSize = -1;
+			
 			public boolean evaluate(IRandomStringsResult<L> result) {
-				return result.size() >= nbStrings;
+				int size = result.size();
+				boolean ok = (lastSize == -1 || size != lastSize);
+				if (!ok) {
+					nbTry++;
+					if (nbTry > maxTry) { throw new Unable(); }
+				} 
+				lastSize = size;
+				return size >= nbStrings;
 			}
 		};
 	}
@@ -109,7 +132,8 @@ public class AbadingoRandomStringsInput<L> extends AbstractAlgoInput implements 
 					double proba = r.nextDouble()/2;
 					assert (proba >= 0.0 && proba <= 0.5) : "Valid proba.";
 					nextLength = Math.round(log2(proba) + logNbStringsOfKLength);
-					assert (nextLength >= 0 && nextLength <= wordLength) : "Valid length " + nextLength + " according to formula.";
+					if (nextLength < 0) { nextLength = 0; }
+					else if (nextLength > wordLength) { nextLength = wordLength; }
 				}
 				boolean stop = word.size() >= nextLength;
 				if (stop) { nextLength = -1; }

@@ -33,6 +33,7 @@ public class DefaultFATrace<T> implements IFATrace<T> {
 	
 	/** Creates a trace instance. */
 	public DefaultFATrace(IFA dfa, IDirectedGraphPath path) {
+		assert (dfa != null) : "Underlying FA is not null.";
 		this.fa = dfa;
 		this.path = path;
 	}
@@ -142,6 +143,7 @@ public class DefaultFATrace<T> implements IFATrace<T> {
 	public IFATrace<T> flush(IDirectedGraphWriter writer) {
 		IDirectedGraphPath copy = path.flush(writer);
 		IFA fa = (IFA) writer.adapt(IFA.class);
+		assert (fa != null) : "Writer " + writer + " is able to convert to a FA.";
 		return new DefaultFATrace<T>(fa,copy);
 	}
 
