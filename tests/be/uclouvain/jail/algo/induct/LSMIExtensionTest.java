@@ -7,6 +7,7 @@ import be.uclouvain.jail.fa.ISample;
 import be.uclouvain.jail.fa.utils.DefaultSample;
 import be.uclouvain.jail.tests.JailTestUtils;
 import be.uclouvain.jail.vm.toolkits.AutomatonFacade;
+import be.uclouvain.jail.vm.toolkits.InductionFacade;
 
 /** 
  * Tests the LSMI extension.
@@ -28,6 +29,13 @@ public class LSMIExtensionTest extends InductionAlgoTests {
 		IDFA pta = JailTestUtils.loadDotDFA(JailTestUtils.resource(getClass(), "pta_labels_20080312_bug.dot"));
 		ISample<Object> sample = new DefaultSample<Object>(pta);
 		testRPNI(sample,null);
+	}
+
+	/** Tests on the 20080312 bug. */
+	public void testRPNIOn20080315Bug() throws Exception {
+		IDFA pta = JailTestUtils.loadDotDFA(JailTestUtils.resource(getClass(), "pta_labels_20080315_bug.dot"));
+		ISample<Object> sample = new DefaultSample<Object>(pta);
+		testRPNI(InductionFacade.copy(sample),null);
 	}
 	
 	/** Tests on the 20080313 bug. */
@@ -120,7 +128,7 @@ public class LSMIExtensionTest extends InductionAlgoTests {
 	
 	/** Main method. */
 	public static void main(String[] args) throws Exception {
-		new LSMIExtensionTest().testRPNIOn20080313BugWithAllSame();
+		new LSMIExtensionTest().testRPNIOn20080315Bug();
 	}
 	
 }

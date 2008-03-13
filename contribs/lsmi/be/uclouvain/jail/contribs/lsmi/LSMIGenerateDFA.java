@@ -33,7 +33,7 @@ public class LSMIGenerateDFA {
 	/** Generates a DFA of a given size. */
 	private IDFA generate(int size, double tolerance) {
 		RandomDFAInput input = new RandomDFAInput();
-		input.setAccepting(0.5);
+		input.setAccepting(1.0);
 		input.setStateCount(size);
 		input.setAlphabetSize(2);
 		input.setDepthControl(true);

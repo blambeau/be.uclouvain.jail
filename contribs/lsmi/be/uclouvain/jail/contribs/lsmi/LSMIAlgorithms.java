@@ -10,7 +10,6 @@ import be.uclouvain.jail.Jail;
 import be.uclouvain.jail.algo.commons.Unable;
 import be.uclouvain.jail.algo.fa.walk.PTADepthFirstWalker;
 import be.uclouvain.jail.algo.fa.walk.PTADepthFirstWalker.IVisitor;
-import be.uclouvain.jail.algo.graph.copy.DirectedGraphCopier;
 import be.uclouvain.jail.algo.induct.extension.LSMIExtension;
 import be.uclouvain.jail.algo.induct.internal.BlueFringeAlgo;
 import be.uclouvain.jail.algo.induct.internal.DefaultInductionAlgoInput;
@@ -19,12 +18,10 @@ import be.uclouvain.jail.algo.induct.internal.RPNIAlgo;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.ISample;
 import be.uclouvain.jail.fa.impl.GraphDFA;
+import be.uclouvain.jail.fa.utils.DefaultSample;
 import be.uclouvain.jail.graph.IDirectedGraph;
-import be.uclouvain.jail.graph.utils.DirectedGraphWriter;
 import be.uclouvain.jail.uinfo.IUserInfo;
-import be.uclouvain.jail.uinfo.IUserInfoHandler;
 import be.uclouvain.jail.uinfo.IUserInfoPopulator;
-import be.uclouvain.jail.uinfo.UserInfoHandler;
 import be.uclouvain.jail.vm.toolkits.AutomatonFacade;
 import be.uclouvain.jail.vm.toolkits.GraphFacade;
 import be.uclouvain.jail.vm.toolkits.InductionFacade;
@@ -43,15 +40,15 @@ public class LSMIAlgorithms {
 	private LSMIDatabase db;
 	
 	/** Sample proportions. */
-	private double[] sprops = new double[]{0.1};
-	//private double[] sprops = new double[]{0.03, 0.0625, 0.125, 0.25, 0.5, 1.0};
+	//private double[] sprops = new double[]{0.1};
+	private double[] sprops = new double[]{0.03, 0.0625, 0.125, 0.25, 0.5, 1.0};
 	
 	/** Labelong proportions. */
-	//private double[] lprops = new double[]{0.0625, 0.125, 0.25, 0.50, 1.0};
-	private double[] lprops = new double[]{0.50};
+	private double[] lprops = new double[]{0.0625, 0.125, 0.25, 0.50, 1.0};
+	//private double[] lprops = new double[]{0.50};
 	
 	/** Number of sample spliting to made. */
-	private int number = 1;
+	private int number = 10;
 	
 	/** Creates a DFA generator based on a folder. */
 	public LSMIAlgorithms(File folder) {
@@ -98,20 +95,29 @@ public class LSMIAlgorithms {
 		return result;
 	}
 	
+	/** Copies a sample. */
+	private ISample<String> allaccept(ISample<String> s) {
+		IDFA dfa = (IDFA) s.adapt(IDFA.class);
+		return new DefaultSample<String>(AutomatonFacade.allaccepting(dfa));
+	}
+	
 	/** Tests RPNI algorithm on a sample, with known target. */
-	public IDFA rpni(ISample<?> sample, double sprop, int slid) {
+	public IDFA rpni(ISample<String> sample, double sprop, int slid) {
+		sample = allaccept(sample);
 		IInductionAlgoInput input = new DefaultInductionAlgoInput(sample);
 		return rpni(input, sprop, 0.0, slid, 0);
 	}
 	
 	/** Tests BlueFringe algorithm. */
-	public IDFA bluefringe(ISample<?> sample, double sprop, int llid) {
+	public IDFA bluefringe(ISample<String> sample, double sprop, int llid) {
+		sample = allaccept(sample);
 		IInductionAlgoInput input = new DefaultInductionAlgoInput(sample);
 		return bluefringe(input,sprop,0.0,llid,0);
 	}
 	
 	/** Tests RPNI with LSMI extension. */
 	private IDFA rpnilsmi(ISample<String> sample, double sprop, double lprop, int slid, int llid) {
+		sample = allaccept(sample);
 		DefaultInductionAlgoInput input = new DefaultInductionAlgoInput(sample);
 		input.setRepresentorAttr("class");
 		input.setUnknown(null);
@@ -128,11 +134,19 @@ public class LSMIAlgorithms {
 
 	/** Tests blue-fringe with LSMI extension. */
 	private IDFA bluefringelsmi(ISample<String> sample, double sprop, double lprop, int slid, int llid) {
+		sample = allaccept(sample);
 		DefaultInductionAlgoInput input = new DefaultInductionAlgoInput(sample);
 		input.setRepresentorAttr("class");
 		input.setUnknown("");
 		input.setExtension(new LSMIExtension());
-		return bluefringe(input, sprop, lprop, slid, llid);
+		try {
+			return bluefringe(input, sprop, lprop, slid, llid);
+		} catch (Unable ex) {
+			try {
+				AutomatonFacade.debug((IDFA)sample.adapt(IDFA.class));
+			} catch (IOException e) {}
+			throw ex;
+		}
 	}
 
 	/** Executes the algorithms on a sample. */
@@ -195,38 +209,24 @@ public class LSMIAlgorithms {
 	/** Randomly labelizes a DFA. */
 	private IDFA labelize(IDFA target, final double lprop) {
 		IDirectedGraph g = target.getGraph();
-		
-		// create a writer
-		IUserInfoHandler handler = new UserInfoHandler(); 
-		DirectedGraphWriter writer = new DirectedGraphWriter(handler);
-		handler.getVertexCopier().keepAll();
-		handler.getEdgeCopier().keepAll();
-		handler.getVertexCopier().addPopulator(new IUserInfoPopulator<IUserInfo>() {
+		IDirectedGraph copy = GraphFacade.copy(g,new IUserInfoPopulator<IUserInfo>() {
 			public void populate(IUserInfo target, IUserInfo source) {
 				if (r.nextDouble() <= lprop) {
 					target.setAttribute("class", source.getAttribute("id"));
 				}
 			}
-		});
-
-		// copy the graph
-		DirectedGraphCopier.copy(g, writer);
-		
-		// return a new labeled DFA
-		return new GraphDFA(writer.getGraph());
+		},null);
+		return new GraphDFA(copy);
 	}
 
 	/** Labelizes a sample. */
 	private ISample<String> labelize(ISample<String> chosen, final IDFA target) {
-		// PTA underlying sample
-		final IDFA pta = (IDFA) chosen.adapt(IDFA.class);
+		// Copy PTA underlying sample
+		IDFA pta2 = (IDFA) chosen.adapt(IDFA.class);
+		final IDFA pta = AutomatonFacade.copy(pta2, null, null);
+		
 		final IDirectedGraph ptag = pta.getGraph();
 		final IDirectedGraph targetg = target.getGraph();
-		
-		// first, remove all labels from the PTA
-		for (Object state: ptag.getVertices()) {
-			ptag.getVertexInfo(state).removeAttribute("class");
-		}
 		
 		// make a depth first walk and decorate
 		new PTADepthFirstWalker(pta).execute(new IVisitor() {
@@ -278,7 +278,7 @@ public class LSMIAlgorithms {
 			
 		});
 		
-		return chosen;
+		return new DefaultSample<String>(pta);
 	}
 
 	/** Execute all algorithms. */

@@ -226,10 +226,8 @@ public class ClassBasedCompatibility extends AbstractCompatibility {
 
 		/** Merges two states. */
 		protected void merge(int i, int j) {
-			if (!isCompatible(i,j)) {
-				throw new Avoid();
-			}
-			System.out.println("\t\tMerging " + i + " " + j + " :: " + isCompatible(i,j));
+			if (!isCompatible(i,j)) { throw new Avoid(); }
+			//System.out.println("\t\tMerging " + i + " " + j + " :: " + isCompatible(i,j));
 			ufds.union(i,j);
 		}
 		

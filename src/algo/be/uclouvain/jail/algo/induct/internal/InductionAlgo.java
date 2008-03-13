@@ -10,6 +10,7 @@ import be.uclouvain.jail.algo.induct.listener.InductionListeners;
 import be.uclouvain.jail.algo.induct.oracle.IOracle;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.impl.GraphDFA;
+import be.uclouvain.jail.graph.IDirectedGraph;
 
 /** Base implementation of RPNI-like induction algorithms. */
 public abstract class InductionAlgo {
@@ -59,8 +60,18 @@ public abstract class InductionAlgo {
 			} catch (Restart restart) {
 				continue;
 			}
-			return dfa;
+			return clean(dfa);
 		} while (true);
+	}
+	
+	/** Cleans a DFA. */
+	private IDFA clean(IDFA dfa) {
+		IDirectedGraph g = dfa.getGraph();
+		for (Object vertex: g.getVertices()) {
+			g.getUserInfoOf(vertex).removeAttribute(MappingUtils.KDP_REPRESENTOR);
+			g.getUserInfoOf(vertex).removeAttribute(MappingUtils.KP_REPRESENTOR);
+		}
+		return dfa;
 	}
 
 	/** Returns the input info. */
