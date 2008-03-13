@@ -7,7 +7,6 @@ import be.uclouvain.jail.algo.induct.internal.DefaultInductionAlgoInput;
 import be.uclouvain.jail.algo.induct.internal.IInductionAlgoInput;
 import be.uclouvain.jail.algo.induct.internal.RPNIAlgo;
 import be.uclouvain.jail.fa.IDFA;
-import be.uclouvain.jail.fa.IFATrace;
 import be.uclouvain.jail.fa.ISample;
 import be.uclouvain.jail.fa.IString;
 import be.uclouvain.jail.fa.IWalkInfo;
@@ -31,12 +30,9 @@ public class InductionAlgoTests extends TestCase {
 	public void assertValidResult(ISample<?> sample, IDFA result) {
 		for (IString<?> s: sample) {
 			IWalkInfo info = s.walk(result);
-			if (s.isPositive()) {
-				assertTrue("Positive string " + s + " is fully included.",info.isFullyIncluded());
-			} else if (info.isFullyIncluded()) {
-				IFATrace<?> trace = info.getIncludedPart();
-				assertFalse("Trace is not accepting.",trace.isAccepted());
-			}
+			boolean accepted = info.isFullyIncluded() && info.getIncludedPart().isAccepted();
+			boolean positive = s.isPositive();
+			assertEquals("Accepted iif positive",accepted,positive);
 		}
 	}
 

@@ -78,7 +78,7 @@ public class PTAEdge {
 	}
 
 	/** Returns source kernel state. */
-	protected Object getSourceKernelState() {
+	public Object getSourceKernelState() {
 		return skState;
 	}
 
@@ -93,9 +93,6 @@ public class PTAEdge {
 		
 		// add this edge in the target DFA 
 		Object edge = dfag.createEdge(skState, kTarget, values);
-		
-		// remove from fringe
-		simu.getFringe().remove(skState, letter);
 		
 		// return created edge
 		return edge;

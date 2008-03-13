@@ -100,7 +100,7 @@ public class ForwardLabelProcessor implements IInductionProcessor {
 	
 	/** Algorithm input. */
 	private Input input;
-	
+
 	/** PTA graph. */
 	private IDirectedGraph ptag;
 	
@@ -167,10 +167,10 @@ public class ForwardLabelProcessor implements IInductionProcessor {
 			
 			/** When visiting a triple. */ 
 			protected void visiting(Object source, Object letter, Object target) {
-				Integer index = getIndexOf(source);
+				Integer sourceIndex = getIndexOf(source);
 				
 				// first look at rules
-				Integer nextByRule = rules.get(new SLPair(index,letter));
+				Integer nextByRule = rules.get(new SLPair(sourceIndex,letter));
 
 				// next look at class
 				Integer nextByClass = null;
@@ -185,14 +185,14 @@ public class ForwardLabelProcessor implements IInductionProcessor {
 				}
 				
 				// get next index
-				Integer next = nextByRule == null ? nextByClass : nextByRule;
-				if (next == null) { next = nextIndex++; }
+				Integer targetIndex = nextByRule == null ? nextByClass : nextByRule;
+				if (targetIndex == null) { targetIndex = nextIndex++; }
 				
 				// install new index
-				ptag.getUserInfoOf(target).setAttribute(input.targetAttr, next);
-				rules.put(new SLPair(index, letter), next);
+				ptag.getUserInfoOf(target).setAttribute(input.targetAttr, targetIndex);
+				rules.put(new SLPair(sourceIndex, letter), targetIndex);
 				if (clazz != null && !clazz.equals(input.unknown)) {
-					indexes.put(clazz, next);
+					indexes.put(clazz, targetIndex);
 				}
 			}
 			

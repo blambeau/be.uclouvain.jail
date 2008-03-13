@@ -27,6 +27,7 @@ public class LSMIExtensionTest extends InductionAlgoTests {
 	/** Tests on the 20080312 bug. */
 	public void testRPNIOn20080312Bug() throws Exception {
 		IDFA pta = JailTestUtils.loadDotDFA(JailTestUtils.resource(getClass(), "pta_labels_20080312_bug.dot"));
+		AutomatonFacade.show(pta);
 		ISample<Object> sample = new DefaultSample<Object>(pta);
 		testRPNI(sample,null);
 	}
@@ -35,18 +36,16 @@ public class LSMIExtensionTest extends InductionAlgoTests {
 	public void testRPNIOn20080315Bug() throws Exception {
 		IDFA pta = JailTestUtils.loadDotDFA(JailTestUtils.resource(getClass(), "pta_labels_20080315_bug.dot"));
 		ISample<Object> sample = new DefaultSample<Object>(pta);
-		testRPNI(InductionFacade.copy(sample),null);
+		IDFA result = testRPNI(InductionFacade.copy(sample),null);
 	}
 	
 	/** Tests on the 20080313 bug. */
-	/*
 	public void testRPNIOn20080313Bug() throws Exception {
 		IDFA pta = JailTestUtils.loadDotDFA(JailTestUtils.resource(getClass(), "pta_labels_20080313_bug.dot"));
 		AutomatonFacade.show(pta);
 		ISample<Object> sample = new DefaultSample<Object>(pta);
 		testRPNI(sample,null);
 	}
-	*/
 
 	public void testRPNIOn20080313BugWithAllSame() throws Exception {
 		IDFA pta = JailTestUtils.loadDotDFA(JailTestUtils.resource(getClass(), "pta_labels_20080313_bug.dot"));
@@ -56,12 +55,11 @@ public class LSMIExtensionTest extends InductionAlgoTests {
 		DefaultInductionAlgoInput input = new DefaultInductionAlgoInput(sample);
 		input.getInput().getUserInfoHandler().getVertexAggregator().allsame("class");
 		
-		IDFA result = testRPNI(sample,null,input);
-
-		AutomatonFacade.show(pta, result);
+		testRPNI(sample,null,input);
 	}
 	
 	
+	/** Tests RPNI on the train example. */
 	@Override
 	public void testRPNIOnTrain() throws Exception {
 		IDFA pta = JailTestUtils.loadDotDFA(JailTestUtils.resource(getClass(), "train_labels.dot"));
@@ -79,8 +77,14 @@ public class LSMIExtensionTest extends InductionAlgoTests {
 		input.getInput().getUserInfoHandler().getVertexAggregator().allsame("class");
 		
 		testRPNI(sample,null,input);
-		//IDFA result = testRPNI(sample,null,input);
-		//AutomatonFacade.show(pta,result);
+	}
+
+	/** Tests BlueFringe on the train. */
+	@Override
+	public void testBlueFringeOnTrain() throws Exception {
+		IDFA pta = JailTestUtils.loadDotDFA(JailTestUtils.resource(getClass(), "train_labels.dot"));
+		ISample<Object> sample = new DefaultSample<Object>(pta);
+		testBlueFringe(sample,null);
 	}
 
 	/** Tests BlueFringe with an allsame constraint. */
@@ -93,12 +97,6 @@ public class LSMIExtensionTest extends InductionAlgoTests {
 		input.getInput().getUserInfoHandler().getVertexAggregator().allsame("class");
 		
 		testBlueFringe(sample,null,input);
-		//IDFA result = testRPNI(sample,null,input);
-		//AutomatonFacade.show(pta,result);
-	}
-
-	@Override
-	public void testBlueFringeOnTrain() throws Exception {
 	}
 
 	/** Tests RPNI algorithm on a sample, with known target. */
@@ -128,7 +126,7 @@ public class LSMIExtensionTest extends InductionAlgoTests {
 	
 	/** Main method. */
 	public static void main(String[] args) throws Exception {
-		new LSMIExtensionTest().testRPNIOn20080315Bug();
+		new LSMIExtensionTest().testRPNIOn20080313Bug();
 	}
 	
 }

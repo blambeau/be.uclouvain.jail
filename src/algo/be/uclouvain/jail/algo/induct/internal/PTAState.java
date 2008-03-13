@@ -104,11 +104,6 @@ public class PTAState {
 		MappingUtils.updSRepresentor(algo, state, representor());
 		MappingUtils.updPRepresentor(algo, state, this);
 		
-		// update fringe
-		for (PTAEdge edge : delta.values()) {
-			algo.getFringe().add(state, edge);
-		}
-		
 		// return created state
 		return state;
 	}
@@ -155,7 +150,7 @@ public class PTAState {
 		}
 	}
 
-	/** Prepate merge with another (white) state. */
+	/** Prepare merge with another (white) state. */
 	protected void merge(Simulation work, PTAState oState) throws Avoid {
 		// merge me with the target state (OStateMerge)
 		work.merge(this, oState);

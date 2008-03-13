@@ -166,6 +166,20 @@ public class UnionFind<T> {
 		return blocks.get(i).head();
 	}
 	
+	/** Returns the index of the representor of i. */
+	public int findi(int i) {
+		return findHead(i).id;
+	}
+	
+	/** Finds representors of a set of i. */
+	public Set<Integer> findi(Set<Integer> s) {
+		Set<Integer> t = new HashSet<Integer>();
+		for (Integer i: s) {
+			t.add(findi(i));
+		}
+		return t;
+	}
+	
 	/** Finds representor of a block. */
 	public T find(int i) {
 		return findHead(i).member;

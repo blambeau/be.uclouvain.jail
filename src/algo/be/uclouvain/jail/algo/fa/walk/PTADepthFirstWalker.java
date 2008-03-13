@@ -14,10 +14,25 @@ public class PTADepthFirstWalker {
 	public static interface IVisitor {
 
 		/** Fired when a state is entered. */
-		boolean entering(Object state, Object edge);
+		public boolean entering(Object state, Object edge);
 
 		/** Fired when a state is leaved. */
-		boolean leaving(Object state, Object edge, boolean recurse);
+		public boolean leaving(Object state, Object edge, boolean recurse);
+		
+	}
+	
+	/** Provides a visitor adapter. */
+	public static class VisitorAdapter implements IVisitor {
+		
+		/** Fired when a state is entered. */
+		public boolean entering(Object state, Object edge) {
+			return true;
+		}
+
+		/** Fired when a state is leaved. */
+		public boolean leaving(Object state, Object edge, boolean recurse) {
+			return false;
+		}
 		
 	}
 	

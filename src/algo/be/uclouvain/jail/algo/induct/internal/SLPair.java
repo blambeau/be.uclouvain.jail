@@ -52,4 +52,7 @@ public class SLPair {
 		return hash;
 	}
 	
+	public String toString() {
+		return "(" + state + "," + letter + ")";
+	}
 }

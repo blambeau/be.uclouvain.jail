@@ -12,6 +12,7 @@ import be.uclouvain.jail.algo.induct.utils.KStateGainD;
 import be.uclouvain.jail.algo.induct.utils.KStateMergeD;
 import be.uclouvain.jail.algo.induct.utils.OStateGainD;
 import be.uclouvain.jail.algo.induct.utils.OStateMergeD;
+import be.uclouvain.jail.algo.induct.utils.StartTryD;
 import be.uclouvain.jail.algo.induct.utils.WorkDecorator;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
@@ -128,7 +129,7 @@ public class Simulation {
 		
 		/** Throws UnsupportedException. */
 		public WorkDecorator decorate() {
-			throw new UnsupportedOperationException("StartTry work does not have a decorator yet.");
+			return new StartTryD(this);
 		}
 
 	}
@@ -139,6 +140,9 @@ public class Simulation {
 		/** Initial PTA state. */
 		private PTAState victim;
 		
+		/** Target state in the DFA. */
+		private Object target;
+		
 		/** Consolidates an edge. */
 		public StateConsolidate(PTAState victim) {
 			this.victim = victim;
@@ -146,12 +150,20 @@ public class Simulation {
 
 		/** Returns target kernel state. */
 		public Object target() {
-			return null;
+			return target;
 		}
 
 		/** Returns the PTA edge. */
 		public Object victim() {
 			return victim;
+		}
+		
+		/** Commits the work. */
+		public void commit() {
+			// update fringe
+			for (PTAEdge edge : victim.outEdges()) {
+				getFringe().add(target, edge);
+			}
 		}
 		
 		/** Throws UnsupportedException. */
@@ -181,6 +193,13 @@ public class Simulation {
 		public Object victim() {
 			return victim;
 		}
+
+		/** Commits the work. */
+		public void commit() {
+			// remove from fringe
+			getFringe().remove(victim.getSourceKernelState(), victim.letter());
+		}
+		
 		
 		/** Throws UnsupportedException. */
 		public WorkDecorator decorate() {
@@ -486,21 +505,41 @@ public class Simulation {
 		if (listener != null) { listener.consolidate(state); }
 		
 		// create work
-		addSubWork(new StateConsolidate(state));
+		StateConsolidate sc = new StateConsolidate(state);
+		addSubWork(sc);
 		
 		// continue
-		return state.consolidate(this);
+		Object target = state.consolidate(this);
+		sc.target = target;
+		return target;
 	}
 	
 	/** Add a kernel state merge. */
 	protected void merge(PTAState state, Object tkState) throws Avoid {
 		assert (!freezed) : "Not freezed.";
+		if (!algo.isCompatible(tkState, state)) {
+			throw new Avoid();
+		}
 		
 		// let listener follow
 		if (listener != null) { listener.merge(state, tkState); }
 
 		// create work
 		addSubWork(new KStateMerge(state, tkState));
+	}
+
+	/** Adds an other state merge. */
+	protected void merge(PTAState victim, PTAState target) throws Avoid {
+		assert (!freezed) : "Not freezed.";
+		if (!algo.isCompatible(victim, target)) {
+			throw new Avoid();
+		}
+		
+		// let listener follow
+		if (listener != null) { listener.merge(victim, target); }
+
+		// create work
+		addSubWork(new OStateMerge(victim, target));
 	}
 
 	/** Add a new kernel edge merge. */
@@ -523,17 +562,6 @@ public class Simulation {
 
 		// create work
 		addSubWork(new OEdgeMerge(victim, target));
-	}
-
-	/** Adds an other state merge. */
-	protected void merge(PTAState victim, PTAState target) throws Avoid {
-		assert (!freezed) : "Not freezed.";
-		
-		// let listener follow
-		if (listener != null) { listener.merge(victim, target); }
-
-		// create work
-		addSubWork(new OStateMerge(victim, target));
 	}
 
 	/** Adds a kernel state gain. */
