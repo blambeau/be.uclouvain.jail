@@ -48,7 +48,7 @@ public class LSMIAlgorithms {
 	//private double[] lprops = new double[]{0.50};
 	
 	/** Number of sample spliting to made. */
-	private int number = 10;
+	private int number = 5;
 	
 	/** Creates a DFA generator based on a folder. */
 	public LSMIAlgorithms(File folder) {

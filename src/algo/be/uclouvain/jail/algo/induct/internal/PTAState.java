@@ -177,6 +177,16 @@ public class PTAState {
 
 	}
 
+	/** Returns incoming edge. */
+	public PTAEdge inEdge() {
+		return parent;
+	}
+	
+	/** Returns incoming letter. */
+	public Object inLetter() {
+		return inEdge().letter();
+	}
+	
 	/** Returns the short prefix of the state. */
 	public <T> IFATrace<T> getShortPrefix() {
 		IDFA pta = getRunningAlgo().getPTA();

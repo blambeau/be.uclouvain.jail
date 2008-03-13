@@ -27,8 +27,8 @@ public class LSMIExtensionTest extends InductionAlgoTests {
 	/** Tests on the 20080312 bug. */
 	public void testRPNIOn20080312Bug() throws Exception {
 		IDFA pta = JailTestUtils.loadDotDFA(JailTestUtils.resource(getClass(), "pta_labels_20080312_bug.dot"));
-		AutomatonFacade.show(pta);
 		ISample<Object> sample = new DefaultSample<Object>(pta);
+		AutomatonFacade.show(pta);
 		testRPNI(sample,null);
 	}
 
@@ -36,14 +36,15 @@ public class LSMIExtensionTest extends InductionAlgoTests {
 	public void testRPNIOn20080315Bug() throws Exception {
 		IDFA pta = JailTestUtils.loadDotDFA(JailTestUtils.resource(getClass(), "pta_labels_20080315_bug.dot"));
 		ISample<Object> sample = new DefaultSample<Object>(pta);
-		IDFA result = testRPNI(InductionFacade.copy(sample),null);
+		AutomatonFacade.show(pta);
+		testRPNI(InductionFacade.copy(sample),null);
 	}
 	
 	/** Tests on the 20080313 bug. */
 	public void testRPNIOn20080313Bug() throws Exception {
 		IDFA pta = JailTestUtils.loadDotDFA(JailTestUtils.resource(getClass(), "pta_labels_20080313_bug.dot"));
-		AutomatonFacade.show(pta);
 		ISample<Object> sample = new DefaultSample<Object>(pta);
+		AutomatonFacade.show(pta);
 		testRPNI(sample,null);
 	}
 
@@ -126,7 +127,9 @@ public class LSMIExtensionTest extends InductionAlgoTests {
 	
 	/** Main method. */
 	public static void main(String[] args) throws Exception {
-		new LSMIExtensionTest().testRPNIOn20080313Bug();
+		//new LSMIExtensionTest().testRPNIOn20080312Bug();
+		new LSMIExtensionTest().testRPNIOn20080315Bug();
+		//new LSMIExtensionTest().testRPNIOn20080312Bug();
 	}
 	
 }

@@ -3,9 +3,8 @@ package be.uclouvain.jail.algo.induct.extension;
 import be.uclouvain.jail.algo.induct.compatibility.ClassBasedCompatibility;
 import be.uclouvain.jail.algo.induct.compatibility.StateKindCompatibility;
 import be.uclouvain.jail.algo.induct.internal.InductionAlgo;
-import be.uclouvain.jail.algo.induct.listener.InductionLogger;
-import be.uclouvain.jail.algo.induct.processor.BackPropagateProcessor;
 import be.uclouvain.jail.algo.induct.processor.ForwardLabelProcessor;
+import be.uclouvain.jail.algo.induct.processor.LabelBackPropagateProcessor;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.uinfo.IUserInfoHandler;
@@ -38,7 +37,7 @@ public class LSMIExtension implements IInductionAlgoExtension {
 		handler.getVertexAggregator().min("index");
 		
 		// add incompatibility tracker
-		algo.addListener(new InductionLogger(), 
+		algo.addListener(//new InductionLogger(), 
 				cbc.getTracker());
 	}
 
@@ -56,7 +55,7 @@ public class LSMIExtension implements IInductionAlgoExtension {
 		cbc.initialize(algo);
 
 		// Back propagates incompatibilities
-		new BackPropagateProcessor().process(algo);
+		new LabelBackPropagateProcessor(ForwardLabelProcessor.DEFAULT_TARGET_ATTR).process(algo);
 	}
 
 	/** Labelize the graph. */

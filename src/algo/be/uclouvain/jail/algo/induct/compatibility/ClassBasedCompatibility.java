@@ -149,7 +149,7 @@ public class ClassBasedCompatibility extends AbstractCompatibility {
 	/** Marks two classes as incompatible. */
 	private void markAsIncompatible(int i, int j) {
 		assert (i != j) : "Label never incompatible with itself.";
-		System.out.println("Mark as incompatible (" + i + "," + j + ")");
+		//wSystem.out.println("Mark as incompatible (" + i + "," + j + ")");
 		findIncompatibilities(i, true).add(j);
 		findIncompatibilities(j, true).add(i);
 	}
@@ -182,11 +182,6 @@ public class ClassBasedCompatibility extends AbstractCompatibility {
 			this.consolidated = new HashSet<Integer>();
 			this.reverse = new HashMap<SLPair,Set<Integer>>();
 			buildReverse(algo);
-			
-			// 
-			for (SLPair pair: reverse.keySet()) {
-				System.out.println(pair + " -> " + reverse.get(pair));
-			}
 		}
 		
 		/** Computes reverse delta. */
@@ -276,19 +271,19 @@ public class ClassBasedCompatibility extends AbstractCompatibility {
 			// find target index
 			Integer targetIndex = ufds.findi(kStateIndex(work.getTargetState()));
 			
-			System.out.println(targetIndex + " <- " + letter + " " + skStateIndex);
+			//System.out.println(targetIndex + " <- " + letter + " " + skStateIndex);
 			
 			// take incompatibilities of target
 			Set<Integer> targetInc = incompatibilities(targetIndex);
 			
-			System.out.println("Incompatibilities of " + targetIndex + " -> " + targetInc);
+			//System.out.println("Incompatibilities of " + targetIndex + " -> " + targetInc);
 			
 			// compute transitive closure of the back incompatibilities
 			Set<Integer> rDelta = rDelta(targetInc, letter);
 			Set<Integer> rInc = ufds.findi(rDelta);
 			
-			System.out.println("Reverse delta -> " + rDelta);
-			System.out.println("Reverse incompatibilities -> " + rInc);
+			//System.out.println("Reverse delta -> " + rDelta);
+			//System.out.println("Reverse incompatibilities -> " + rInc);
 			
 			// check that skState is not in the incompatibilities
 			if (rInc.contains(skStateIndex)) {
@@ -296,7 +291,7 @@ public class ClassBasedCompatibility extends AbstractCompatibility {
 			}
 			
 			// commit transaction on UnionFind
-			ufds.commit(); 
+			ufds.commit();
 		}
 
 		/** On try rollback ... */
