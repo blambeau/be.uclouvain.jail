@@ -162,6 +162,17 @@ public class ClassBasedCompatibility extends AbstractCompatibility {
 		assert (!isCompatible(s,t)) : "s and t are now incompatible";
 	}
 
+	/** Returns a string rep. */
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		for (int i=0; i<ufds.size(); i++) {
+			if (i!=0) { sb.append("\n"); }
+			sb.append(i + ":")
+		      .append(ufds.find(i));
+		}
+		return sb.toString();
+	}
+	
 	/** Tracks incompatibilities. */
 	public class IncompatibilityTracker extends InductionListenerHelper {
 		
