@@ -7,16 +7,20 @@ import java.util.Random;
 import java.util.Stack;
 
 import be.uclouvain.jail.Jail;
-import be.uclouvain.jail.algo.commons.Unable;
 import be.uclouvain.jail.algo.fa.walk.PTADepthFirstWalker;
 import be.uclouvain.jail.algo.fa.walk.PTADepthFirstWalker.IVisitor;
-import be.uclouvain.jail.algo.induct.extension.LSMIExtension;
 import be.uclouvain.jail.algo.induct.internal.BlueFringeAlgo;
 import be.uclouvain.jail.algo.induct.internal.DefaultInductionAlgoInput;
 import be.uclouvain.jail.algo.induct.internal.IInductionAlgoInput;
 import be.uclouvain.jail.algo.induct.internal.RPNIAlgo;
+import be.uclouvain.jail.algo.induct.processor.ForwardLabelProcessor;
+import be.uclouvain.jail.algo.lsm.LSMAlgo;
+import be.uclouvain.jail.algo.lsm.LSMAlgoInput;
+import be.uclouvain.jail.algo.lsm.LSMAlgoResult;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.ISample;
+import be.uclouvain.jail.fa.IString;
+import be.uclouvain.jail.fa.IWalkInfo;
 import be.uclouvain.jail.fa.impl.GraphDFA;
 import be.uclouvain.jail.fa.utils.DefaultSample;
 import be.uclouvain.jail.graph.IDirectedGraph;
@@ -40,19 +44,31 @@ public class LSMIAlgorithms {
 	private LSMIDatabase db;
 	
 	/** Sample proportions. */
-	//private double[] sprops = new double[]{0.1};
 	private double[] sprops = new double[]{0.03, 0.0625, 0.125, 0.25, 0.5, 1.0};
 	
-	/** Labelong proportions. */
-	private double[] lprops = new double[]{0.0625, 0.125, 0.25, 0.50, 1.0};
-	//private double[] lprops = new double[]{0.50};
+	/** Labeling proportions. */
+	private double[] lprops = new double[]{0.05, 0.10, 0.20};
 	
 	/** Number of sample spliting to made. */
-	private int number = 5;
+	private int number = 2;
 	
 	/** Creates a DFA generator based on a folder. */
 	public LSMIAlgorithms(File folder) {
 		this.db = new LSMIDatabase(folder);
+	}
+
+	/** Checks that a result is valid according to a sample. */
+	public void assertValidResult(String algo, ISample<?> sample, IDFA result) {
+		try {
+			for (IString<?> s: sample) {
+				IWalkInfo<?> info = s.walk(result);
+				boolean accepted = info.isFullyIncluded() && info.getIncludedPart().isAccepted();
+				boolean positive = s.isPositive();
+				assert (accepted == positive) : "Valid only when accepted iif positive";
+			}
+		} catch (AssertionError e) {
+			db.addFailure(algo, sample);
+		}
 	}
 	
 	/** Tests an induction algorithm. */
@@ -64,7 +80,8 @@ public class LSMIAlgorithms {
 		
 		// uncomplement
 		result = AutomatonFacade.uncomplement(result);
-
+		assertValidResult("rpni",input.getInput(),result);
+		
 		// set attributes
 		db.setAttribute(result,"INDUCT_algo","rpni");
 		db.setAttribute(result, "INDUCT_sprop", sprop);
@@ -84,6 +101,7 @@ public class LSMIAlgorithms {
 
 		// uncomplement
 		result = AutomatonFacade.uncomplement(result);
+		assertValidResult("rpni",input.getInput(),result);
 
 		// set attributes
 		db.setAttribute(result,"INDUCT_algo","blue-fringe");
@@ -93,6 +111,44 @@ public class LSMIAlgorithms {
 		db.setAttribute(result, "INDUCT_llid", llid);
 		db.setAttribute(result, "INDUCT_time", t2-t1);
 		return result;
+	}
+	
+	/** Tests RPNI with LSMI extension. */
+	private IDFA lsm(ISample<String> sample, double sprop, double lprop, int slid, int llid) {
+		sample = allaccept(sample);
+		IDFA pta = (IDFA) sample.adapt(IDFA.class);
+		IDFA source = mergeAllSame(pta);
+		
+		LSMAlgoInput input = new LSMAlgoInput(source);
+		LSMAlgoResult result = new LSMAlgoResult();
+
+		// execute and log time
+		long t1 = System.currentTimeMillis();
+		new LSMAlgo().execute(input,result);
+		long t2 = System.currentTimeMillis();
+		
+		IDFA target = result.resultDFA();
+		target = AutomatonFacade.uncomplement(target);
+		
+		assertValidResult("rpni",sample,target);
+		
+		// set attributes
+		db.setAttribute(target,"INDUCT_algo","lsm");
+		db.setAttribute(target, "INDUCT_sprop", sprop);
+		db.setAttribute(target, "INDUCT_slid", slid);
+		db.setAttribute(target, "INDUCT_lprop", lprop);
+		db.setAttribute(target, "INDUCT_llid", llid);
+		db.setAttribute(target, "INDUCT_time", t2-t1);
+		return target;
+	}
+
+	/** Merge all same states. */
+	public IDFA mergeAllSame(IDFA source) {
+		LSMAlgoInput input = new LSMAlgoInput(source);
+		LSMAlgoResult result = new LSMAlgoResult();
+		result.getUserInfoHandler().getVertexAggregator().allsame("toallsame");
+		new LSMAlgo().execute(input,result);
+		return result.resultDFA();
 	}
 	
 	/** Copies a sample. */
@@ -115,43 +171,12 @@ public class LSMIAlgorithms {
 		return bluefringe(input,sprop,0.0,llid,0);
 	}
 	
-	/** Tests RPNI with LSMI extension. */
-	private IDFA rpnilsmi(ISample<String> sample, double sprop, double lprop, int slid, int llid) {
-		sample = allaccept(sample);
-		DefaultInductionAlgoInput input = new DefaultInductionAlgoInput(sample);
-		input.setRepresentorAttr("class");
-		input.setUnknown(null);
-		input.setExtension(new LSMIExtension());
-		try {
-			return rpni(input, sprop, lprop, slid, llid);
-		} catch (Unable ex) {
-			try {
-				AutomatonFacade.debug((IDFA)sample.adapt(IDFA.class));
-			} catch (IOException e) {}
-			throw ex;
-		}
-	}
-
-	/** Tests blue-fringe with LSMI extension. */
-	private IDFA bluefringelsmi(ISample<String> sample, double sprop, double lprop, int slid, int llid) {
-		sample = allaccept(sample);
-		DefaultInductionAlgoInput input = new DefaultInductionAlgoInput(sample);
-		input.setRepresentorAttr("class");
-		input.setUnknown("");
-		input.setExtension(new LSMIExtension());
-		try {
-			return bluefringe(input, sprop, lprop, slid, llid);
-		} catch (Unable ex) {
-			try {
-				AutomatonFacade.debug((IDFA)sample.adapt(IDFA.class));
-			} catch (IOException e) {}
-			throw ex;
-		}
-	}
-
 	/** Executes the algorithms on a sample. */
 	private void execute(IDFA target, ISample<String> sample) throws IOException {
 		GraphFacade.identify(target.getGraph(),"id",null);
+		
+		long total = (sprops.length*number)*(2+(lprops.length*number));
+		long count = 1;
 		
 		// for each proportion
 		for (double sprop: sprops) {
@@ -161,17 +186,21 @@ public class LSMIAlgorithms {
 				ISample<String> chosen = InductionFacade.choose(sample,sprop);
 
 				// execute rpni
-				{
-					System.out.println("Classic RPNI on " + db.toString(target) + " with prop " + sprop + ":" + i);
+				try {
+					System.out.println((count++) + "/" + total + ": classic RPNI on " + db.toString(target) + " with prop " + sprop + ":" + i);
 					IDFA result = rpni(chosen,sprop,i);
 					db.addResult(target, sample, result);
+				} catch (Exception ex) {
+					db.addFailure("rpni", chosen);
 				}
 				
 				// execute blue fringe
-				{
-					System.out.println("Classic BlueFringe on " + db.toString(target) + " with prop " + sprop + ":" + i);
+				try {
+					System.out.println((count++) + "/" + total + ": classic BlueFringe on " + db.toString(target) + " with prop " + sprop + ":" + i);
 					IDFA result = bluefringe(chosen,sprop, i);
 					db.addResult(target, sample, result);
+				} catch (Exception ex) {
+					db.addFailure("blue-fringe", chosen);
 				}
 				
 				// for each labeling propotion
@@ -181,25 +210,22 @@ public class LSMIAlgorithms {
 						// labelize the DFA and the sample
 						IDFA lTarget = labelize(target, lprop);
 						ISample<String> lSample = labelize(chosen, lTarget);
-						//AutomatonFacade.show(lTarget, (IDFA) chosen.adapt(IDFA.class), (IDFA) lSample.adapt(IDFA.class));
+						
+						//AutomatonFacade.debug(lTarget, (IDFA)lSample.adapt(IDFA.class));
 						
 						// execute rpni with lsmi extension
 						{
-							System.out.println("LSMIed RPNI on " + db.toString(target) 
+							System.out.println((count++) + "/" + total + ": lSMIed RPNI on " + db.toString(target) 
 									         + " with props " + sprop + "/" + lprop 
 									         + ":" + i + "/" + j);
-							IDFA result = rpnilsmi(lSample,sprop,lprop,i,j);
-							db.addResult(target, sample, result);
+							try {
+								IDFA result = lsm(lSample,sprop,lprop,i,j);
+								db.addResult(target, sample, result);
+							} catch (Exception ex) {
+								db.addFailure("lsm",lSample);
+							}
 						}
 						
-						// execute blue fringe with lsmi extension
-						{
-							System.out.println("LSMIed BlueFringe on " + db.toString(target) 
-							                 + " with props " + sprop + "/" + lprop 
-							                 + ":" + i + "/" + j);
-							IDFA result = bluefringelsmi(lSample,sprop,lprop,i,j);
-							db.addResult(target, sample, result);
-						}
 					}
 				}
 			}
@@ -278,6 +304,8 @@ public class LSMIAlgorithms {
 			
 		});
 		
+		ForwardLabelProcessor.Input input = new ForwardLabelProcessor.Input(pta, "class", "toallsame");
+		new ForwardLabelProcessor().process(input);
 		return new DefaultSample<String>(pta);
 	}
 

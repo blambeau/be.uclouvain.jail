@@ -2,6 +2,9 @@ package be.uclouvain.jail.algo.lsm;
 
 import junit.framework.TestCase;
 import be.uclouvain.jail.algo.fa.equiv.DFAEquiv;
+import be.uclouvain.jail.algo.fa.rand.RandomDFAInput;
+import be.uclouvain.jail.algo.fa.rand.RandomDFAResult;
+import be.uclouvain.jail.algo.graph.rand.RandomGraphAlgo;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.ISample;
 import be.uclouvain.jail.fa.IString;
@@ -81,6 +84,31 @@ public class LSMTests extends TestCase {
 		IDFA pta = JailTestUtils.loadDotDFA(JailTestUtils.resource(getClass(), "pta_labels.dot"));
 		ISample<Object> sample = new DefaultSample<Object>(pta);
 		testLSM(sample,null);
+	}
+	
+	/** Tests LSM on random DFAs. */
+	public void testLSMOnRandomDFAs() throws Exception {
+		int[] sizes = new int[]{10,20,32};
+		int number = 20;
+		long total = number*sizes.length;
+		long count = 0;
+		for (int i=0; i<number; i++) {
+			for (int size: sizes) {
+				System.out.println("Executing " + (count++) + "/" + total);
+				RandomDFAInput input = new RandomDFAInput();
+				input.setAccepting(1.0);
+				input.setStateCount(size);
+				input.setAlphabetSize(2);
+				input.setDepthControl(true);
+				input.setMaxTry(1000);
+				input.setTolerance(0.01);
+				RandomDFAResult result = new RandomDFAResult();
+				new RandomGraphAlgo().execute(input,result);
+				IDFA dfa = (IDFA) result.adapt(IDFA.class);
+				
+				testLSM(dfa,null);
+			}
+		}
 	}
 	
 }

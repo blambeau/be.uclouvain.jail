@@ -17,10 +17,10 @@ public class LSMIGenerateDFA {
 
 	/** DFA sizes. */
 	private int[] sizes = new int[]{32};
-	private double[] tolerances = new double[]{0.01, 0.01, 0.05, 0.05};
+	private double[] tolerances = new double[]{0.01};
 	
 	/** Number of DFAs of each size. */
-	private int number = 10;
+	private int number = 5;
 
 	/** Database to use. */
 	private LSMIDatabase db;

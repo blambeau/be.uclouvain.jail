@@ -31,9 +31,11 @@ public final class AutomatonFacade {
 	}
 	
 	/** Debugs an automaton using dot. */
-	public static void debug(IFA fa) throws IOException {
+	public static void debug(IFA...fas) throws IOException {
 		PrintWriter w = new PrintWriter(System.out);
-		new DOTGraphDialect().print(fa.getGraph(), w, null);
+		for (IFA fa: fas) {
+			new DOTGraphDialect().print(fa.getGraph(), w, null);
+		}
 		w.flush();
 	}
 	

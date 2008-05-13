@@ -123,7 +123,17 @@ public class LSMIDatabase {
 		});
 	}
 
-
+	/** Returns sample/test pairs for a given DFA. */
+	public Iterator<IDFA> getSampleDFAs(IDFA dfa) {
+		final int size = Integer.parseInt(getAttribute(dfa,"DFA_size").toString());
+		final int loid = Integer.parseInt(getAttribute(dfa,"DFA_lid").toString());
+		return new DFAIterator(new FilenameFilter() {
+			public boolean accept(File arg0, String arg1) {
+				return arg1.startsWith("sample_" + size + "_" + loid);
+			}
+		});
+	}
+	
 	/** Adds a DFA in the database. */
 	public void addDFA(IDFA dfa, int size, int number) throws IOException {
 		// mark DFA
@@ -175,6 +185,18 @@ public class LSMIDatabase {
 		save(testPTA,fileName);
 	}
 
+	/** Adds a failure. */
+	public void addFailure(String algo, ISample<?> sample) {
+		try {
+			Object failure_id = System.currentTimeMillis();
+			String fileName = "failure_" + algo + "_" + failure_id + ".dot"; 
+			save((IDFA)sample.adapt(IDFA.class),fileName);
+			System.out.println("Failure added for " + algo + " :: " + fileName);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/** Adds a result in the database. */
 	public void addResult(IDFA target, ISample<String> sample, IDFA result) throws IOException {
 		Object dfa_id = getAttribute(target,"DFA_id");
@@ -205,10 +227,11 @@ public class LSMIDatabase {
 
 	/** Computes the score of a dfa according to a test sample. */
 	private double score(IDFA dfa, ISample<String> sample) {
-		long size = sample.size();
+		long size = 0;
 		long ok = 0;
 		for (IString<String> s: sample) {
-			IWalkInfo info = s.walk(dfa);
+			size++;
+			IWalkInfo<String> info = s.walk(dfa);
 			boolean accepted = info.isFullyIncluded()
 			                && info.getIncludedPart().isAccepted();
 			boolean positive = s.isPositive();
