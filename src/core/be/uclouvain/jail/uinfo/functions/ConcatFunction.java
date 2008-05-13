@@ -5,7 +5,7 @@ package be.uclouvain.jail.uinfo.functions;
  * 
  * @author blambeau
  */
-public class ConcatFunction extends AbstractAggregateFunction {
+public class ConcatFunction extends AbstractAggregateFunction<String> {
 
 	/** Delimiter to use. */
 	private String delimiter = ", ";
@@ -22,7 +22,7 @@ public class ConcatFunction extends AbstractAggregateFunction {
 	
 	/** Computes the concatenation. */
 	@Override
-	public Object compute(Object op1, Object op2) {
+	public String compute(String op1, String op2) {
 		String s1 = op1 == null ? "" : op1.toString();
 		String s2 = op2 == null ? "" : op2.toString();
 		String res =  "".equals(s1) || "".equals(s2) ? s1.concat(s2) : s1.concat(delimiter).concat(s2);
@@ -31,7 +31,7 @@ public class ConcatFunction extends AbstractAggregateFunction {
 
 	/** Returns an empty string. */
 	@Override
-	protected Object onEmpty() {
+	protected String onEmpty() {
 		return "";
 	}
 

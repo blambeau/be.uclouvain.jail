@@ -67,4 +67,9 @@ public class UserInfoCapable {
 		info.removeAttribute(key);
 	}
 	
+	/** Returns a string. */
+	public String toString() {
+		return Integer.toString(id);
+	}
+	
 }

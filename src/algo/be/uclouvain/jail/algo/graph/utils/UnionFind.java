@@ -160,6 +160,12 @@ public class UnionFind<T> {
 		return findHead(i) == findHead(j);
 	}
 	
+	/** Checks if an element is master in its block. */
+	public boolean isMaster(int i) {
+		assert (i<size) : "Correct index.";
+		return findHead(i).id() == i;
+	}
+	
 	/** Finds head node. */
 	protected UnionFindNode findHead(int i) {
 		assert (i<size) : "Correct index.";

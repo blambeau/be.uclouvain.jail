@@ -104,6 +104,11 @@ public class GraphMemberGroup implements IGraphMemberGroup {
 		return group.hashCode();
 	}
 	
+	/** Shows the group as a string. */
+	public String toString() {
+		return group.toString();
+	}
+	
 	/** Checks equality with another group. */
 	public boolean equals(Object o) {
 		if (o == this) { return true; }

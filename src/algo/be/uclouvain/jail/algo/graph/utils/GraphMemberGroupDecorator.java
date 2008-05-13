@@ -72,6 +72,11 @@ public abstract class GraphMemberGroupDecorator implements IGraphMemberGroup {
 	public int hashCode() {
 		return group.hashCode();
 	}
+	
+	/** Shows as a string. */
+	public String toString() {
+		return group.toString();
+	}
 
 	/** Checks equality. */
 	public boolean equals(Object o) {

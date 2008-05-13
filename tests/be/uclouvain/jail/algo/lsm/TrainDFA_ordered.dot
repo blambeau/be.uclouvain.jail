@@ -1,0 +1,20 @@
+digraph G {
+        graph [rankdir="LR"];
+        node [shape="circle"];
+        0 [isInitial="true" kind="ACCEPTING" label="STOPPED"];
+        3 [isInitial="false" kind="ACCEPTING" label=""];
+        2 [isInitial="false" kind="ACCEPTING" label="OPENED"];
+        1 [isInitial="false" kind="ACCEPTING" label="STARTED"];
+        5 [isInitial="false" kind="ACCEPTING" label=""];
+        4 [isInitial="false" kind="ACCEPTING" label=""];
+        0 -> 1 [letter="start"];
+        3 -> 2 [letter="eopen"];
+        0 -> 3 [letter="alarm"];
+        0 -> 2 [letter="open"];
+        1 -> 0 [letter="stop"];
+        4 -> 2 [letter="eopen"];
+        5 -> 4 [letter="stop"];
+        1 -> 5 [letter="alarm"];
+        2 -> 0 [letter="close"];
+}
+		
