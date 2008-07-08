@@ -6,6 +6,7 @@ import java.util.Map;
 
 import be.uclouvain.jail.algo.fa.utils.FAEdgeGroup;
 import be.uclouvain.jail.algo.fa.utils.FAStateGroup;
+import be.uclouvain.jail.algo.graph.copy.match.GMatchAggregator;
 import be.uclouvain.jail.algo.graph.utils.UnionFind;
 import be.uclouvain.jail.algo.utils.AbstractAlgoResult;
 import be.uclouvain.jail.fa.IDFA;
@@ -40,6 +41,23 @@ public class LSMAlgoResult extends AbstractAlgoResult {
 		
 		UserInfoAggregator edgeAggregator = getUserInfoHandler().getEdgeAggregator();
 		edgeAggregator.first(AttributeGraphFAInformer.EDGE_LETTER_KEY);
+	}
+
+	@Override
+	protected void installOptions() {
+		super.installOptions();
+		super.addOption("state", "statePopulator", false, GMatchAggregator.class, null);
+		super.addOption("edge", "edgePopulator", false, GMatchAggregator.class, null);
+	}
+
+	/** Adds a gmatch state populator. */
+	public void setStatePopulator(GMatchAggregator populator) {
+		getUserInfoHandler().getVertexAggregator().addPopulator(populator);
+	}
+	
+	/** Adds a gmatch edge populator. */
+	public void setEdgePopulator(GMatchAggregator populator) {
+		getUserInfoHandler().getEdgeAggregator().addPopulator(populator);
 	}
 
 	/** Algorithm started event. */

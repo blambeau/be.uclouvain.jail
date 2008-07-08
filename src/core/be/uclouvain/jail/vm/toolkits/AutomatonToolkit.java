@@ -41,6 +41,8 @@ import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.IFA;
 import be.uclouvain.jail.fa.INFA;
 import be.uclouvain.jail.fa.ISample;
+import be.uclouvain.jail.fa.IString;
+import be.uclouvain.jail.fa.IWalkInfo;
 import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.fa.impl.GraphDFA;
 import be.uclouvain.jail.fa.impl.GraphNFA;
@@ -255,6 +257,23 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 		// execute algorithm
 		new RandomStringsAlgo().execute(input,result);
 		return result;
+	}
+	
+	public IDFA score(IDFA dfa, ISample<?> sample) throws JailVMException {
+		long size = 0;
+		long ok = 0;
+		for (IString<?> s: sample) {
+			size++;
+			IWalkInfo<?> info = s.walk(dfa);
+			boolean accepted = info.isFullyIncluded()
+			                && info.getIncludedPart().isAccepted();
+			boolean positive = s.isPositive();
+			if (accepted == positive) {
+				ok++;
+			}
+		}
+		System.out.println("Score: " + ((double)ok)/((double)size));
+		return dfa;
 	}
 	
 	/** Adapts an object. */
