@@ -2,7 +2,8 @@
     <description>Builder for Jail</description>
     
     <!-- set global properties for this build -->
-    <property name="src" location="src" />
+    <property name="src" location="src"/>
+    <property name="icgi" location="contribs" />
     <property name="build" location="bin" />
     <property name="dist" location="dist" />
     <property name="lib" location="../_libs"/>
@@ -25,8 +26,18 @@
                 </fileset>
             </classpath>
         </javac>
+        <javac debug="true" srcdir="${icgi}" destdir="${build}" encoding="UTF-8">
+            <classpath>
+                <fileset dir="${lib}">
+                    <include name="**/*.jar"/>
+                </fileset>
+            </classpath>
+        </javac>
     	<copy todir="${build}">
     		<fileset dir="${src}">
+    			<exclude name="**/*.java"/>
+    		</fileset>
+    		<fileset dir="${icgi}">
     			<exclude name="**/*.java"/>
     		</fileset>
     	</copy>

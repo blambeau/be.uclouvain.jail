@@ -27,7 +27,7 @@ import be.uclouvain.jail.vm.toolkits.InductionFacade;
 public class LSMIGenerateSample {
 
 	/** Number of samples of each size. */
-	private int number = 5;
+	private int number = 10;
 
 	/** Database to use. */
 	private LSMIDatabase db;

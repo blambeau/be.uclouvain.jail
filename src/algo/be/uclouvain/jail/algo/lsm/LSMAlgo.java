@@ -166,9 +166,12 @@ public class LSMAlgo {
 		
 	}
 	
-	JDotty jdotty = new JDotty();
+	JDotty jdotty;
 	/** Shows an intermediate result. */
 	public void show() {
+		if (jdotty == null) {
+			jdotty = new JDotty();
+		}
 		try {
 			jdotty.present(FAUtils.copyForDot(result.resultDFA()),null);
 		} catch (IOException e) {

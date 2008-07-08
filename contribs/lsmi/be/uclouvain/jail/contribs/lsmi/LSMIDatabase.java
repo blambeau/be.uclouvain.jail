@@ -186,12 +186,13 @@ public class LSMIDatabase {
 	}
 
 	/** Adds a failure. */
-	public void addFailure(String algo, ISample<?> sample) {
+	public void addFailure(String algo, ISample<?> sample, Throwable ex) {
 		try {
 			Object failure_id = System.currentTimeMillis();
 			String fileName = "failure_" + algo + "_" + failure_id + ".dot"; 
 			save((IDFA)sample.adapt(IDFA.class),fileName);
 			System.out.println("Failure added for " + algo + " :: " + fileName);
+			ex.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

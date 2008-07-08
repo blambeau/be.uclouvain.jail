@@ -47,37 +47,37 @@ public class AbstractAlgoResult implements IAlgoResult, IAdaptable {
 
 	/** Marks some keep all on copiers. */
 	public void keepAll(boolean onGraph, boolean onVertex, boolean onEdge) {
-		userInfoHandler.keepAll(onGraph,onVertex,onEdge);
+		getUserInfoHandler().keepAll(onGraph,onVertex,onEdge);
 	}
 	
 	/** Adds a graph populator. */
 	public void addGraphPopulator(IUserInfoPopulator<IUserInfo> p) {
-		userInfoHandler.getGraphCopier().addPopulator(p);
+		getUserInfoHandler().getGraphCopier().addPopulator(p);
 	}
 	
 	/** Adds a vertex populator. */
 	public void addVertexPopulator(IUserInfoPopulator<IUserInfo> p) {
-		userInfoHandler.getVertexCopier().addPopulator(p);
+		getUserInfoHandler().getVertexCopier().addPopulator(p);
 	}
 	
 	/** Adds an edge populator. */
 	public void addEdgePopulator(IUserInfoPopulator<IUserInfo> p) {
-		userInfoHandler.getEdgeCopier().addPopulator(p);
+		getUserInfoHandler().getEdgeCopier().addPopulator(p);
 	}
 	
 	/** Adds a graph aggregator. */
 	public void addGraphAggregator(IUserInfoPopulator<Collection<IUserInfo>> p) {
-		userInfoHandler.getGraphAggregator().addPopulator(p);
+		getUserInfoHandler().getGraphAggregator().addPopulator(p);
 	}
 	
 	/** Adds a vertex aggregator. */
 	public void addVertexAggregator(IUserInfoPopulator<Collection<IUserInfo>> p) {
-		userInfoHandler.getVertexAggregator().addPopulator(p);
+		getUserInfoHandler().getVertexAggregator().addPopulator(p);
 	}
 	
 	/** Adds an edge aggregator. */
 	public void addEdgeAggregator(IUserInfoPopulator<Collection<IUserInfo>> p) {
-		userInfoHandler.getEdgeAggregator().addPopulator(p);
+		getUserInfoHandler().getEdgeAggregator().addPopulator(p);
 	}
 	
 	/** Factors a writer on a graph. */

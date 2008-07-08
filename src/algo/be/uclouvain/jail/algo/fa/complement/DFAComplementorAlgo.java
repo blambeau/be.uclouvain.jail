@@ -3,6 +3,7 @@ package be.uclouvain.jail.algo.fa.complement;
 import java.util.Set;
 import java.util.TreeSet;
 
+import net.chefbe.javautils.collections.arrays.ArrayUtils;
 import be.uclouvain.jail.fa.IAlphabet;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
@@ -33,6 +34,9 @@ public class DFAComplementorAlgo {
 				result.copyEdge(edge);
 				letters.add(letter);
 			}
+			
+			System.out.println("On state " + state + " " + letters + " " + 
+					ArrayUtils.toString(alphabet.getLetters().getTotalOrder(),","));
 			
 			// add missing letters
 			Set<Object> missing = new TreeSet<Object>();
