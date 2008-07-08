@@ -35,7 +35,7 @@ public class DefaultDFAComposerResult implements IDFAComposerResult {
 		stateAggregator.boolAnd(AttributeGraphFAInformer.STATE_INITIAL_KEY);
 		stateAggregator.stateKind(AttributeGraphFAInformer.STATE_KIND_KEY,
 				                  FAStateKindFunction.AND,
-				                  FAStateKindFunction.OR,true);
+				                  FAStateKindFunction.OR,false);
 		edgeAggregator.first(AttributeGraphFAInformer.EDGE_LETTER_KEY);
 	}
 

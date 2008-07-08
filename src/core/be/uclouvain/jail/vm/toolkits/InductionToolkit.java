@@ -11,6 +11,9 @@ import be.uclouvain.jail.algo.induct.oracle.ConsoleQueryTester;
 import be.uclouvain.jail.algo.induct.oracle.IMembershipQueryTester;
 import be.uclouvain.jail.algo.induct.oracle.IOracle;
 import be.uclouvain.jail.algo.induct.processor.ForwardLabelProcessor;
+import be.uclouvain.jail.algo.lsm.LSMAlgo;
+import be.uclouvain.jail.algo.lsm.LSMAlgoInput;
+import be.uclouvain.jail.algo.lsm.LSMAlgoResult;
 import be.uclouvain.jail.dialect.jis.JISGraphDialect;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.ISample;
@@ -79,6 +82,19 @@ public class InductionToolkit extends JailReflectionToolkit {
 		DefaultInductionAlgoInput input = new DefaultInductionAlgoInput(in);
 		input.setOptions(opt);
 		return new BlueFringeAlgo().execute(input);
+	}
+	
+	public IDFA asm(IDFA in, JailVMOptions opt) throws JailVMException {
+		// prepare algorithm
+		LSMAlgoInput input = new LSMAlgoInput(in);
+		LSMAlgoResult result = new LSMAlgoResult();
+		result.setOptions(opt);
+		
+		// execute ASM
+		new LSMAlgo().execute(input,result);
+		
+		// return result
+		return result.resultDFA();
 	}
 	
 	/** Classify a PTA. */

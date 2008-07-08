@@ -1,0 +1,53 @@
+/** Automaton dot command. */
+define (adot <A>) 
+       (copy (A)
+             :vertex {@shape -> when @kind='ACCEPTING' then 'doublecircle'
+                                when @kind='AVOID' then 'doublecircle'
+                                else 'circle',
+                      @style -> 'filled',
+                      @fillcolor -> when @isInitial=true and 
+                                        (@kind='ERROR' or @kind='AVOID') then 'brown'
+                                    when @isInitial=true then 'green'
+                                    when @kind='ERROR' then 'red'
+                                    when @kind='AVOID' then 'red'
+                                    else 'white',
+                      @label     -> @label}
+		     :edge  {@label -> @letter});
+
+/** JDotty for automaton dot. */
+define (show <A>)
+       (jdotty (adot (A)));
+
+/** All accepting states. */
+define (allaccept <A>)
+       (copy (A) :vertex {@kind -> when @kind='PASSAGE' then 'ACCEPTING'
+				                           when @kind='ERROR' then 'AVOID'
+				                           else @kind}
+	   );
+
+/** Doors. */
+DOORS = <§seqp 
+    C[@closed=true] = open->O,
+    O[@closed=false] = close->C.
+§>;
+
+/** Speed. */
+SPEED = <§seqp
+	STOPPED[@speed='stopped'] = start->LOW,
+	LOW[@speed='low'] = high->HIGH|stop->STOPPED,
+	HIGH[@speed='high'] = low->LOW.
+§>;
+
+MOVING = <§seqp
+	STOPPED[@moving=false] = start->MOVING,
+	MOVING[@moving=true]   = stop->STOPPED.
+§>;
+
+/** Station sensor. */
+SENSOR = <§seqp
+	AT[@station='at'] = leaving->FAR,
+	FAR[@station='far'] = approaching->APP,
+	APP[@station='app'] = atstation->AT.
+§>;
+       
+	   
