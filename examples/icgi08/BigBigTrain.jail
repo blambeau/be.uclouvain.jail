@@ -9,7 +9,7 @@ TRAIN = <§seqp
 	Q4[@ss='Q4'] = start->Q3|open->Q19,
 	Q5[@ss='Q5'] = low->Q3|approaching->Q6|alarm->Q14|leaving->Q19,
 	Q6[@ss='Q6'] = low->Q7|alarm->Q18,
-	Q7[@ss='Q7'] = stop->Q8|atstation->Q1|alarm->Q15|high->Q6,
+	Q7[@ss='Q7'] = stop->Q8|atstation->Q1|alarm->Q15|high->Q19,
 	Q8[@ss='Q8'] = start->Q7,
 	Q9[@ss='Q9'] = open->Q2|high->Q19,
 	Q10[@ss='Q10'] = stop->Q9,
