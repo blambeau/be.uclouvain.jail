@@ -16,11 +16,11 @@ import be.uclouvain.jail.fa.IDFA;
 public class LSMIGenerateDFA {
 
 	/** DFA sizes. */
-	private int[] sizes = new int[]{32};
-	private double[] tolerances = new double[]{0.01};
+	private int[] sizes = new int[]{32,64};
+	private double[] tolerances = new double[]{0.01,0.02};
 	
 	/** Number of DFAs of each size. */
-	private int number = 5;
+	private int number = 1;
 
 	/** Database to use. */
 	private LSMIDatabase db;

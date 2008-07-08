@@ -89,6 +89,7 @@ public class DefaultDFAComplementorResult extends AbstractAlgoResult implements 
 
 	/** When some letters are missing. */
 	public void onMissing(Object state, Set<Object> missing) {
+		System.out.println("On missing from " + state + " " + missing);
 		Object source = ensure(state);
 		Object target = null;
 		switch (input.getHeuristic()) {

@@ -47,10 +47,10 @@ public class LSMIAlgorithms {
 	private double[] sprops = new double[]{0.03, 0.0625, 0.125, 0.25, 0.5, 1.0};
 	
 	/** Labeling proportions. */
-	private double[] lprops = new double[]{0.05, 0.10, 0.20};
+	private double[] lprops = new double[]{0.0, 0.05, 0.10, 0.20, 1.0};
 	
 	/** Number of sample spliting to made. */
-	private int number = 2;
+	private int number = 1;
 	
 	/** Creates a DFA generator based on a folder. */
 	public LSMIAlgorithms(File folder) {
@@ -67,7 +67,7 @@ public class LSMIAlgorithms {
 				assert (accepted == positive) : "Valid only when accepted iif positive";
 			}
 		} catch (AssertionError e) {
-			db.addFailure(algo, sample);
+			db.addFailure(algo, sample, e);
 		}
 	}
 	
@@ -101,7 +101,7 @@ public class LSMIAlgorithms {
 
 		// uncomplement
 		result = AutomatonFacade.uncomplement(result);
-		assertValidResult("rpni",input.getInput(),result);
+		assertValidResult("bluefringe",input.getInput(),result);
 
 		// set attributes
 		db.setAttribute(result,"INDUCT_algo","blue-fringe");
@@ -130,7 +130,7 @@ public class LSMIAlgorithms {
 		IDFA target = result.resultDFA();
 		target = AutomatonFacade.uncomplement(target);
 		
-		assertValidResult("rpni",sample,target);
+		assertValidResult("lsm",sample,target);
 		
 		// set attributes
 		db.setAttribute(target,"INDUCT_algo","lsm");
@@ -191,7 +191,7 @@ public class LSMIAlgorithms {
 					IDFA result = rpni(chosen,sprop,i);
 					db.addResult(target, sample, result);
 				} catch (Exception ex) {
-					db.addFailure("rpni", chosen);
+					db.addFailure("rpni", chosen, ex);
 				}
 				
 				// execute blue fringe
@@ -200,7 +200,7 @@ public class LSMIAlgorithms {
 					IDFA result = bluefringe(chosen,sprop, i);
 					db.addResult(target, sample, result);
 				} catch (Exception ex) {
-					db.addFailure("blue-fringe", chosen);
+					db.addFailure("blue-fringe", chosen, ex);
 				}
 				
 				// for each labeling propotion
@@ -222,7 +222,9 @@ public class LSMIAlgorithms {
 								IDFA result = lsm(lSample,sprop,lprop,i,j);
 								db.addResult(target, sample, result);
 							} catch (Exception ex) {
-								db.addFailure("lsm",lSample);
+								db.addFailure("lsm",lSample, ex);
+							}  catch (AssertionError ex) {
+								db.addFailure("lsm",lSample, ex);
 							}
 						}
 						
