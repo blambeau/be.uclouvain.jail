@@ -9,6 +9,9 @@ import be.uclouvain.jail.algo.fa.complement.DefaultDFAComplementorResult;
 import be.uclouvain.jail.algo.fa.compose.DFAComposerAlgo;
 import be.uclouvain.jail.algo.fa.compose.DefaultDFAComposerInput;
 import be.uclouvain.jail.algo.fa.compose.DefaultDFAComposerResult;
+import be.uclouvain.jail.algo.fa.decorate.DFADecorationAlgo;
+import be.uclouvain.jail.algo.fa.decorate.DefaultDFADecorationInput;
+import be.uclouvain.jail.algo.fa.decorate.FollowDFADecorationResult;
 import be.uclouvain.jail.algo.fa.determinize.DefaultNFADeterminizerInput;
 import be.uclouvain.jail.algo.fa.determinize.DefaultNFADeterminizerResult;
 import be.uclouvain.jail.algo.fa.determinize.NFADeterminizerAlgo;
@@ -193,12 +196,26 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 		return (IDFA) result.adapt(IDFA.class);
 	}
 	
+	/** Uncomplements a DFA. */
 	public IDFA uncomplement(IDFA dfa, JailVMOptions options) throws JailVMException {
 		UserInfoHandler handler = new UserInfoHandler();
 		handler.keepAll(false, true, true);
 		DirectedGraphWriter writer = new DirectedGraphWriter(handler);
 		new FAUncomplementorAlgo().execute(dfa,writer);
 		return (IDFA) writer.adapt(IDFA.class);
+	}
+	
+	/** Decorates a DFA with followers. */
+	public IDFA decorate(IDFA dfa, IDFA[] followers, JailVMOptions options) throws JailVMException {
+		DefaultDFADecorationInput input = new DefaultDFADecorationInput(dfa);
+		FollowDFADecorationResult result = new FollowDFADecorationResult(followers);
+		
+		input.setOptions(options);
+		result.setOptions(options);
+		
+		DFADecorationAlgo algo = new DFADecorationAlgo();
+		algo.execute(input, result);
+		return dfa;
 	}
 	
 	/** Generates a random DFA. */

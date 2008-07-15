@@ -14,8 +14,11 @@ DOORS = <§seqp
 §>;
 
 /* Decorates the TRAIN. */
-DECORATED = (compose (RUNNING) (DOORS) (TRAIN) 
-                 :state {@label -> concat(@running,'\n',@closed)});
+DECORATED = (decorate TRAIN RUNNING DOORS 
+		                  :state {@closed -> @closed,
+											        @running -> @running}
+			      );
+
 
 /* Show all. */
 (show (TRAIN));

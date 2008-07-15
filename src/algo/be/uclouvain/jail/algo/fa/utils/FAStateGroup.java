@@ -33,6 +33,11 @@ public class FAStateGroup extends GraphMemberGroupDecorator {
 		this.fa = fa;
 	}
 	
+	/** Returns the underlying automaton. */
+	public IFA getFA() {
+		return fa;
+	}
+	
 	/** Adds a state in the group. */
 	public void addState(Object state) {
 		group.addMember(state);

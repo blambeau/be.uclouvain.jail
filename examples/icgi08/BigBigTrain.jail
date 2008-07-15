@@ -35,6 +35,7 @@ PTA = (allaccept <§jis
 + start leaving high alarm low stop open close
 + start leaving high approaching low alarm stop open close 
 + start leaving high approaching alarm low low stop open close 
++ start leaving approaching atstation stop
 - start open
 - start leaving high low stop open
 - start leaving stop start approaching high
@@ -66,9 +67,10 @@ define (forasm <A>)
 RPNI = (copy DEC_PTA);
 BLUEFRINGE = (copy DEC_PTA);
 ASM1 = (forasm (copy MM_PTA :vertex {@source -> when @ss='Q0' then @ss else @index}));
-ASM2 = (forasm (copy MM_PTA :vertex {@source -> when @ss='Q0' or @ss='Q3' then @ss else @index}));
-ASM3 = (forasm (copy MM_PTA :vertex {@source -> when @ss='Q0' or @ss='Q3' or @ss='Q7' then @ss else @index}));
-ASM4 = (forasm (copy MM_PTA :vertex {@source -> @ss}));
+ASM2 = (forasm (copy MM_PTA :vertex {@source -> when @ss='Q0' or @ss='Q3' or @ss='Q7' then @ss else @index}));
+ASM3 = (forasm (copy MM_PTA :vertex {@source -> when @ss='Q0' or @ss='Q3' or @ss='Q7' or @ss='Q2' or @ss='Q1' or @ss='Q8' then @ss else @index}));
+ASM4 = (forasm (copy MM_PTA :vertex {@source -> when @ss='Q0' or @ss='Q3' or @ss='Q7' or @ss='Q2' or @ss='Q1' or @ss='Q8' or @ss='Q9' or @ss='Q15' then @ss else @index}));
+ASM5 = (forasm (copy MM_PTA :vertex {@source -> @ss}));
 
 RPNIED      = (uncomplement (rpni       RPNI       :state {@closed -> allsame(@closed)}));
 BLUEFRINGED = (uncomplement (bluefringe BLUEFRINGE :state {@closed -> allsame(@closed)}));
@@ -76,6 +78,7 @@ ASMED1      = (uncomplement (asm        ASM1       :state {@closed -> allsame(@c
 ASMED2      = (uncomplement (asm        ASM2       :state {@closed -> allsame(@closed)}));
 ASMED3      = (uncomplement (asm        ASM3       :state {@closed -> allsame(@closed)}));
 ASMED4      = (uncomplement (asm        ASM4       :state {@closed -> allsame(@closed)}));
+ASMED5      = (uncomplement (asm        ASM5       :state {@closed -> allsame(@closed)}));
 
 (score RPNIED TESTSAMPLE);
 (score BLUEFRINGED TESTSAMPLE);
@@ -83,14 +86,14 @@ ASMED4      = (uncomplement (asm        ASM4       :state {@closed -> allsame(@c
 (score ASMED2 TESTSAMPLE);
 (score ASMED3 TESTSAMPLE);
 (score ASMED4 TESTSAMPLE);
+(score ASMED5 TESTSAMPLE);
 
-
-
-/**
-RPNIED      Score: 0.5319148936170213
-BLUEFRINGED Score: 0.8085106382978723
-ASMED1      Score: 0.5319148936170213
-ASMED2      Score: 0.6382978723404256
-ASMED3      Score: 0.5957446808510638
-ASMED4      Score: 0.9148936170212766
+/*
+RPNI       score : 0.5476190476190477
+BlueFringe score : 0.8333333333333334
+ASM1       score : 0.5476190476190477
+ASM2       score : 0.7142857142857143
+ASM3       score : 0.7142857142857143
+ASM4       score : 0.8809523809523809
+ASM5       score : 0.9047619047619048
 */
