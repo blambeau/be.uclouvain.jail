@@ -1,7 +1,6 @@
 package be.uclouvain.jail.algo.fa.decorate;
 
 import java.util.HashSet;
-import java.util.TreeSet;
 
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;

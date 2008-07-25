@@ -7,6 +7,7 @@ import be.uclouvain.jail.algo.graph.copy.DirectedGraphCopier;
 import be.uclouvain.jail.algo.graph.decorate.DefaultIdentifyAlgoInput;
 import be.uclouvain.jail.algo.graph.decorate.IdentifyAlgo;
 import be.uclouvain.jail.dialect.dot.DOTGraphDialect;
+import be.uclouvain.jail.dialect.dot.JDotty;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.utils.DirectedGraphWriter;
 import be.uclouvain.jail.uinfo.IUserInfo;
@@ -21,6 +22,15 @@ import be.uclouvain.jail.uinfo.UserInfoHandler;
  */
 public final class GraphFacade {
 
+	/** Shows a FA using JDotty. 
+	 * @throws IOException */
+	public static void show(IDirectedGraph...gs) throws IOException {
+		JDotty jdotty = new JDotty();
+		for (IDirectedGraph g: gs) {
+			jdotty.present(g,null);
+		}
+	}
+	
 	/** Debugs an automaton using dot. */
 	public static void debug(IDirectedGraph g) throws IOException {
 		PrintWriter w = new PrintWriter(System.out);

@@ -268,6 +268,11 @@ public final class JailTestUtils {
 		return new GraphDFA(loadDotGraph(from));
 	}
 	
+	/** Loads a dot graph. */
+	public static INFA loadDotNFA(Object from) throws IOException, ParseException {
+		return new GraphNFA(loadDotGraph(from));
+	}
+	
 	/** Loads a SEQP Graph. */
 	public static IDirectedGraph loadSeqPGraph(Object from) throws IOException, ParseException {
 		return SEQPGraphLoader.load(from);		

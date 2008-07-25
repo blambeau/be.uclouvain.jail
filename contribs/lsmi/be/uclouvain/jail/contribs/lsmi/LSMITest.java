@@ -5,7 +5,6 @@ import java.util.Stack;
 
 import net.chefbe.javautils.adapt.AdaptUtils;
 import net.chefbe.javautils.adapt.IAdapter;
-
 import be.uclouvain.jail.Jail;
 import be.uclouvain.jail.algo.fa.rand.AbadingoRandomStringsInput;
 import be.uclouvain.jail.algo.fa.rand.DefaultRandomStringsResult;

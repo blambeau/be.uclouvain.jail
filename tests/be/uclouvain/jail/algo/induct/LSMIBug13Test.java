@@ -1,5 +1,6 @@
 package be.uclouvain.jail.algo.induct;
 
+import junit.framework.TestCase;
 import be.uclouvain.jail.algo.induct.extension.LSMIExtension;
 import be.uclouvain.jail.algo.induct.internal.DefaultInductionAlgoInput;
 import be.uclouvain.jail.algo.induct.internal.IInductionAlgoInput;
@@ -11,7 +12,6 @@ import be.uclouvain.jail.fa.IWalkInfo;
 import be.uclouvain.jail.fa.utils.DefaultSample;
 import be.uclouvain.jail.tests.JailTestUtils;
 import be.uclouvain.jail.vm.toolkits.AutomatonFacade;
-import junit.framework.TestCase;
 
 /**
  * Tests the BUG 13 on LSMI.

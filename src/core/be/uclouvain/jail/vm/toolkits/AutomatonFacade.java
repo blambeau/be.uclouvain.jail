@@ -3,6 +3,9 @@ package be.uclouvain.jail.vm.toolkits;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import be.uclouvain.jail.algo.fa.determinize.DefaultNFADeterminizerInput;
+import be.uclouvain.jail.algo.fa.determinize.DefaultNFADeterminizerResult;
+import be.uclouvain.jail.algo.fa.determinize.NFADeterminizerAlgo;
 import be.uclouvain.jail.algo.fa.uncomplement.FAUncomplementorAlgo;
 import be.uclouvain.jail.algo.fa.utils.FAUtils;
 import be.uclouvain.jail.dialect.dot.DOTGraphDialect;
@@ -10,6 +13,7 @@ import be.uclouvain.jail.dialect.dot.JDotty;
 import be.uclouvain.jail.fa.FAStateKind;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.IFA;
+import be.uclouvain.jail.fa.INFA;
 import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.fa.impl.GraphDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
@@ -76,6 +80,14 @@ public final class AutomatonFacade {
 		},null);
 		return new GraphDFA(copy);
 		
+	}
+
+	/** Determinizes a DFA. */
+	public static IDFA determinize(INFA nfa) {
+		DefaultNFADeterminizerInput input = new DefaultNFADeterminizerInput(nfa);
+		DefaultNFADeterminizerResult result = new DefaultNFADeterminizerResult();
+		new NFADeterminizerAlgo().execute(input,result);
+		return (IDFA) result.adapt(IDFA.class);
 	}
 	
 }

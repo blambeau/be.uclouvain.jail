@@ -43,6 +43,7 @@ public class LSMAlgoResult extends AbstractAlgoResult {
 		edgeAggregator.first(AttributeGraphFAInformer.EDGE_LETTER_KEY);
 	}
 
+	/** Installs the options. */
 	@Override
 	protected void installOptions() {
 		super.installOptions();
