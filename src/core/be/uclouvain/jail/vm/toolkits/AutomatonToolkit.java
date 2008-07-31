@@ -130,8 +130,8 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 		
 		// install algorithm
 		final String tauF = tau;
-		ITauInformer informer = new ITauInformer() {
-			public boolean isEpsilon(Object letter) {
+		ITauInformer<String> informer = new ITauInformer<String>() {
+			public boolean isEpsilon(String letter) {
 				return tauF.equals(letter);
 			}
 		}; 

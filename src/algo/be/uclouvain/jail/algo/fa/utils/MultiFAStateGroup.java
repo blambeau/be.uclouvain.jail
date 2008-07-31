@@ -111,8 +111,8 @@ public class MultiFAStateGroup extends AbstractMultiGroup {
 			IDFA dfa = (IDFA) fa;
 			Object edge = dfa.getOutgoingEdge(state, letter);
 
-			// edge not found but in alphabet ? avoid it !
-			if (edge == null && knows) throw new Avoid();
+			// edge not found but in alphabet ? avoid it !b
+			if (edge == null && knows) throw new Avoid(this);
 
 			return new Object[]{edge};
 		} else if (fa instanceof INFA) {
@@ -120,7 +120,7 @@ public class MultiFAStateGroup extends AbstractMultiGroup {
 			Object[] edges = nfa.getOutgoingEdges(state, letter).toArray();
 			
 			// edges not found but in alphabet ? avoid it
-			if (edges.length == 0 && knows) throw new Avoid();
+			if (edges.length == 0 && knows) throw new Avoid(this);
 			return edges.length == 0 ? new Object[]{null} : edges;
 		} else {
 			throw new IllegalStateException("Not a DFA nor a NFA");

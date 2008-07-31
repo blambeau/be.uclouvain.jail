@@ -58,6 +58,11 @@ public class GraphNFA extends GraphFA implements INFA {
 		this(graph,new AttributeGraphFAInformer());
 	}
 	
+	/** Creates a DFA instance with specific graph and alphabet. */
+	public GraphNFA(IDirectedGraph g, IAlphabet alphabet) {
+		this(g, new AttributeGraphFAInformer(), alphabet);
+	}
+
 	/** Creates a NFA instance on top of an existing graph, with a specific
 	 * informer. */
 	public GraphNFA(IDirectedGraph graph, IGraphFAInformer informer) {

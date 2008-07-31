@@ -52,6 +52,11 @@ public class GraphDFA extends GraphFA implements IDFA {
 			 alphabet);
 	}
 	
+	/** Creates a DFA instance with specific graph and alphabet. */
+	public GraphDFA(IDirectedGraph g, IAlphabet<Object> alphabet) {
+		this(g, new AttributeGraphFAInformer(), alphabet);
+	}
+
 	/** Creates a DFA instance on top of an existing graph, with a specific informer. */
 	public GraphDFA(IDirectedGraph graph, IGraphFAInformer informer) {
 		super(graph,informer);

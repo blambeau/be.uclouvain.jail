@@ -36,7 +36,7 @@ public class DefaultFAComposerResult extends AbstractAlgoResult implements IFACo
 		UserInfoAggregator stateAggregator = getUserInfoHandler().getVertexAggregator();
 		stateAggregator.boolAnd(AttributeGraphFAInformer.STATE_INITIAL_KEY);
 		stateAggregator.stateKind(AttributeGraphFAInformer.STATE_KIND_KEY,
-				FAStateKindFunction.AND,FAStateKindFunction.OR, false);
+				FAStateKindFunction.AND, FAStateKindFunction.OR, false);
 		
 		UserInfoAggregator edgeAggregator = getUserInfoHandler().getEdgeAggregator();
 		edgeAggregator.allsame(AttributeGraphFAInformer.EDGE_LETTER_KEY);

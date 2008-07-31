@@ -2,7 +2,7 @@ package be.uclouvain.jail.algo.fa.uncomplement;
 
 import be.uclouvain.jail.algo.graph.copy.DirectedGraphCopier;
 import be.uclouvain.jail.fa.FAStateKind;
-import be.uclouvain.jail.fa.IDFA;
+import be.uclouvain.jail.fa.IFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.IDirectedGraphWriter;
 
@@ -14,14 +14,14 @@ import be.uclouvain.jail.graph.IDirectedGraphWriter;
 public class FAUncomplementorAlgo extends DirectedGraphCopier {
 
 	/** Input dfa. */
-	private IDFA dfa;
+	private IFA dfa;
 	
 	/** Creates an algo instance. */
 	public FAUncomplementorAlgo() {
 	}
 	
 	/** Execute the uncompletion. */
-	public void execute(IDFA dfa, IDirectedGraphWriter writer) {
+	public void execute(IFA dfa, IDirectedGraphWriter writer) {
 		this.dfa = dfa;
 		super.execute(dfa.getGraph(), writer);
 	}

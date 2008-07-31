@@ -136,4 +136,9 @@ public class AutoAlphabet<T> implements IAlphabet<T> {
 		}
 	}
 	
+	/** Returns a string representation. */
+	public String toString() {
+		return "AutoAlphabet" + this.letters;
+	}
+
 }

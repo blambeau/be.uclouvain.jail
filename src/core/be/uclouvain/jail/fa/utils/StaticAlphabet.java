@@ -18,6 +18,14 @@ public class StaticAlphabet<L extends Comparable<L>> implements IAlphabet<L> {
 	private TreeSet<L> letters;
 	
 	/** Creates an alphabet instance. */
+	public StaticAlphabet(Iterable<L> ls) {
+		this.letters = new TreeSet<L>();
+		for (L l: ls) {
+			letters.add(l);
+		}
+	}
+	
+	/** Creates an alphabet instance. */
 	public StaticAlphabet(L...ls) {
 		this.letters = new TreeSet<L>();
 		for (L l: ls) {

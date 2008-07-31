@@ -24,14 +24,14 @@ public class AllSameFunction<T> extends AbstractAggregateFunction<T> {
 		if (op1 != null && op1.equals(op2)) {
 			return op1;
 		} else {
-			throw new Avoid();
+			throw new Avoid(this);
 		}
 	}
 
 	/** Throws an Avoid exception. */
 	@Override
 	protected T onEmpty() {
-		throw new Avoid();
+		throw new Avoid(this + "on empty");
 	}
 
 }

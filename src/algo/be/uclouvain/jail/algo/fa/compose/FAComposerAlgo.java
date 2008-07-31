@@ -86,6 +86,8 @@ public class FAComposerAlgo implements IMultiFAGroupInformer {
 
 	/** Explores a single group. */
 	private void explore(MultiFAStateGroup source) {
+		//System.out.println("Exploring " + source);
+		
 		// mark as explored
 		markAsExplored(source);
 		
@@ -108,9 +110,15 @@ public class FAComposerAlgo implements IMultiFAGroupInformer {
 						markAsToExplore(target);
 					}
 					
-					markAsReached(source, edge, target);
+					try {
+						markAsReached(source, edge, target);
+					} catch (Avoid ex) {
+						//System.out.println("Synchronization failed on " + letter + " due to |" + ex.getMessage() + "|");
+					}
 				}
-			} catch (Avoid ex) {}
+			} catch (Avoid ex) {
+				//System.out.println("Synchronization failed on " + letter + " due to |" + ex.getMessage() + "|");
+			}
 		}
 	}
 	

@@ -18,4 +18,9 @@ public final class Avoid extends RuntimeException {
 	public Avoid() {
 	}
 	
+	/** Avoid with someone telling it. */
+	public Avoid(Object who) {
+		super("Avoid by " + who);
+	}
+	
 }
