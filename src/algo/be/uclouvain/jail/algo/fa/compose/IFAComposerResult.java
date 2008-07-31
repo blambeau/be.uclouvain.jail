@@ -17,9 +17,6 @@ public interface IFAComposerResult extends IAlgoResult {
 	/** Fired when algorithm ends. */
 	public void ended();
 	
-	/** Creates a state. */
-	public void stateFound(MultiFAStateGroup state);
-	
 	/** Creates an edge. */
 	public void stateReached(MultiFAStateGroup source, MultiFAEdgeGroup edge, MultiFAStateGroup target);
 	

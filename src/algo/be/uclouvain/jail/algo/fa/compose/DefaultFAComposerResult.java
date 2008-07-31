@@ -72,8 +72,8 @@ public class DefaultFAComposerResult extends AbstractAlgoResult implements IFACo
 	}
 	
 	/** Fired when a new state is found. */
-	public void stateFound(MultiFAStateGroup state) {
-		assert (!vertices.containsKey(state)) : "State not yet found.";
+	public void ensure(MultiFAStateGroup state) {
+		if (vertices.containsKey(state)) return;
 		IUserInfo info = super.getUserInfoHandler().vertexAggregate(state.getUserInfos());
 		Object vertex = g.createVertex(info);
 		vertices.put(state, vertex);
@@ -81,9 +81,8 @@ public class DefaultFAComposerResult extends AbstractAlgoResult implements IFACo
 
 	/** Fired when a state is reached. */
 	public void stateReached(MultiFAStateGroup source, MultiFAEdgeGroup edge, MultiFAStateGroup target) {
-		assert (vertices.containsKey(source)) : "Source already found.";
-		assert (vertices.containsKey(target)) : "Target already found.";
 		IUserInfo info = super.getUserInfoHandler().edgeAggregate(edge.getUserInfos());
+		ensure(source); ensure(target);
 		g.createEdge(vertices.get(source), vertices.get(target), info);
 	}
 

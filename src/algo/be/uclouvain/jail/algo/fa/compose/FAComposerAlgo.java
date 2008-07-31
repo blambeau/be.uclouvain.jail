@@ -69,7 +69,6 @@ public class FAComposerAlgo implements IMultiFAGroupInformer {
 	/** Marks a state has to be explored. */
 	private void markAsToExplore(MultiFAStateGroup group) {
 		assert (!isExplored(group)) : "Group not explored yet";
-		result.stateFound(group);
 		toExplore.add(group);
 	}
 
@@ -86,7 +85,7 @@ public class FAComposerAlgo implements IMultiFAGroupInformer {
 
 	/** Explores a single group. */
 	private void explore(MultiFAStateGroup source) {
-		//System.out.println("Exploring " + source);
+		System.out.println("Exploring " + source);
 		
 		// mark as explored
 		markAsExplored(source);
@@ -104,20 +103,20 @@ public class FAComposerAlgo implements IMultiFAGroupInformer {
 					
 					// find target state group
 					MultiFAStateGroup target = edge.getTargetStateGroup(source);
-
-					// mark it as to be explored
-					if (!isExplored(target) && !toExplore.contains(target)) {
-						markAsToExplore(target);
-					}
+					boolean toBeMarked = !isExplored(target) && !toExplore.contains(target);
 					
 					try {
 						markAsReached(source, edge, target);
+						if (toBeMarked) {
+							markAsToExplore(target);
+							toBeMarked = false;
+						}
 					} catch (Avoid ex) {
-						//System.out.println("Synchronization failed on " + letter + " due to |" + ex.getMessage() + "|");
+						System.out.println("Synchronization failed on " + letter + " due to |" + ex.getMessage() + "|");
 					}
 				}
 			} catch (Avoid ex) {
-				//System.out.println("Synchronization failed on " + letter + " due to |" + ex.getMessage() + "|");
+				System.out.println("Synchronization failed on " + letter + " due to |" + ex.getMessage() + "|");
 			}
 		}
 	}
