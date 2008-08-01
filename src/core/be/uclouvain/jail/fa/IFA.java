@@ -25,16 +25,25 @@ public interface IFA extends IAdaptable {
 	
 	/** Retruns underlying graph. */
 	public IDirectedGraph getGraph();
+
+	/** Returns states of the automaton. */
+	public Iterable<Object> getStates();
+	
+	/** Returns edges of the automaton. */
+	public Iterable<Object> getEdges();
+	
+	/** Returns an iterable of initial states. */
+	public Iterable<Object> getInitialStates();
 	
 	/** Checks if a state is the initial state. */
 	public boolean isInitial(Object s);
 
 	/** Returns state kind (accepting/error). */
 	public FAStateKind getStateKind(Object s);
-	
+
 	/** Returns an edge letter. */
 	public Object getEdgeLetter(Object s);
-	
+
 	/** Returns outgoing letters of a state. */
 	public Collection<Object> getIncomingLetters(Object s);
 	

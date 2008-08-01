@@ -72,6 +72,16 @@ public abstract class GraphFA implements IFA {
 		return graph;
 	}
 	
+	/** Returns edges of the automaton. */
+	public Iterable<Object> getEdges() {
+		return graph.getEdges();
+	}
+
+	/** Returns states of the automaton. */
+	public Iterable<Object> getStates() {
+		return graph.getVertices();
+	}
+
 	/** Extracts the initial flag from a UserInfo */
 	public boolean isInitial(IUserInfo s) {
 		return informer.isInitial(s);

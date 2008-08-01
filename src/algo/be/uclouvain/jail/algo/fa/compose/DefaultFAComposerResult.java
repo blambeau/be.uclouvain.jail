@@ -50,6 +50,16 @@ public class DefaultFAComposerResult extends AbstractAlgoResult implements IFACo
 		super.addOption("edge", "edgeAggregator", false, GMatchAggregator.class, null);
 	}
 
+	/** Returns state aggregator. */
+	public UserInfoAggregator getStateAggregator() {
+		return getUserInfoHandler().getVertexAggregator();
+	}
+	
+	/** Returns edge aggregator. */
+	public UserInfoAggregator getEdgeAggregator() {
+		return getUserInfoHandler().getEdgeAggregator();
+	}
+	
 	/** Adds a gmatch state populator. */
 	public void setStateAggregator(GMatchAggregator populator) {
 		getUserInfoHandler().getVertexAggregator().addPopulator(populator);

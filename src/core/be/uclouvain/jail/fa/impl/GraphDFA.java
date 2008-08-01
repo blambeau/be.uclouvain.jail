@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.chefbe.javautils.collections.singleton.SingletonIterable;
+import be.uclouvain.jail.fa.FAStateKind;
 import be.uclouvain.jail.fa.IAlphabet;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.utils.AutoAlphabet;
@@ -53,7 +55,7 @@ public class GraphDFA extends GraphFA implements IDFA {
 	}
 	
 	/** Creates a DFA instance with specific graph and alphabet. */
-	public GraphDFA(IDirectedGraph g, IAlphabet<Object> alphabet) {
+	public GraphDFA(IDirectedGraph g, IAlphabet alphabet) {
 		this(g, new AttributeGraphFAInformer(), alphabet);
 	}
 
@@ -80,6 +82,11 @@ public class GraphDFA extends GraphFA implements IDFA {
 		throw new GraphConstraintViolationException(null,"No initial state");
 	}
 	
+	/** Returns initial states. */
+	public Iterable<Object> getInitialStates() {
+		return new SingletonIterable<Object>(getInitialState());
+	}
+
 	/** Returns the outgoing edge of s labeled by the given letter, null
 	 * if no such edge. */
 	public Object getOutgoingEdge(Object s, Object letter) {
