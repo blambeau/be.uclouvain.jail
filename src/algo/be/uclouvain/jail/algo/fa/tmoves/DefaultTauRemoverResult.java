@@ -8,6 +8,7 @@ import be.uclouvain.jail.algo.fa.utils.FAEdgeGroup;
 import be.uclouvain.jail.algo.fa.utils.FAStateGroup;
 import be.uclouvain.jail.fa.IFA;
 import be.uclouvain.jail.fa.INFA;
+import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.fa.impl.GraphNFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
@@ -47,7 +48,7 @@ public class DefaultTauRemoverResult implements ITauRemoverResult {
 		stateCopier = new UserInfoCopier();
 		stateCopier.keepAll();
 		edgeAggregator = new UserInfoAggregator();
-		edgeAggregator.first("letter");
+		edgeAggregator.first(AttributeGraphFAInformer.EDGE_LETTER_KEY);
 	}
 
 	/** Returns the state copier. */
@@ -112,5 +113,13 @@ public class DefaultTauRemoverResult implements ITauRemoverResult {
 		
 		return AdaptUtils.externalAdapt(this,c);
 	}
+	
+	/*
+	public static void main(String[] args) {
+		int i=10, j=3, k = 0;
+		k = i/j;
+		System.out.println(k);
+	}
+	*/
 
 }

@@ -13,6 +13,6 @@ public interface ITauRemoverInput {
 	public IFA getFA();
 
 	/** Returns the tau-transition informer. */
-	public ITauInformer getTauInformer();
+	public <L> ITauInformer<L> getTauInformer();
 	
 }

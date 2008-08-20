@@ -27,7 +27,7 @@ public class DefaultTauRemoverInput implements ITauRemoverInput {
 	}
 
 	/** Returns tau informer. */
-	public ITauInformer getTauInformer() {
+	public <L> ITauInformer<L> getTauInformer() {
 		return informer;
 	}
 

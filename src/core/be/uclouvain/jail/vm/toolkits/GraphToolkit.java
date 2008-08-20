@@ -82,6 +82,12 @@ public class GraphToolkit extends JailReflectionToolkit implements IAdapter {
 		handler.getEdgeCopier().keepAll();
 		
 		// add vertex populator
+		if (options.hasOption("graph")) {
+			GMatchPopulator<IUserInfo> populator = options.getOptionValue("graph",GMatchPopulator.class,null);
+			handler.getGraphCopier().addPopulator(populator);
+		}
+		
+		// add vertex populator
 		if (options.hasOption("vertex")) {
 			GMatchPopulator<IUserInfo> populator = options.getOptionValue("vertex",GMatchPopulator.class,null);
 			handler.getVertexCopier().addPopulator(populator);

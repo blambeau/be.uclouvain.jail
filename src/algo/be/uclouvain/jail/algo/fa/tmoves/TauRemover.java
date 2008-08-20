@@ -20,7 +20,7 @@ public class TauRemover {
 	private boolean executed = false;
 	
 	/** Creates a determinizer instance for a NFA. */
-	public TauRemover(IFA fa, ITauInformer informer) {
+	public <L> TauRemover(IFA fa, ITauInformer<L> informer) {
 		input = new DefaultTauRemoverInput(fa,informer);
 		result = new DefaultTauRemoverResult();
 	}

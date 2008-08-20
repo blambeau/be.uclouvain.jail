@@ -122,6 +122,7 @@ public class DOTDirectedGraphPrintable extends AbstractPrintable implements
 	protected String graphAttributes() {
 		String attrs = "";
 		Object rankdir = graph.getUserInfo().getAttribute("dot.rankdir");
+		if (rankdir == null) rankdir = graph.getUserInfo().getAttribute("rankdir");
 		if (rankdir == null) {
 			attrs += Jail.getStringProperty(
 					"DirectedGraphPrintable.dot.graph.attributes",
