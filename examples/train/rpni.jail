@@ -3,10 +3,10 @@
 
 define (allaccept <A>)
        (copy (A) :vertex {@kind -> when @kind='PASSAGE' then 'ACCEPTING'
-				                           when @kind='ERROR' then 'AVOID'
-				                           else @kind}
-		   );
+		                           when @kind='ERROR' then 'AVOID'
+		                           else @kind});
 
+// train target, that we will try to learn
 TRAIN = (allaccept <§seqp
    SC[@kind='ACCEPTING'] = start->RC|open->SO|alarm->SA,
 	 RC[@kind='ACCEPTING'] = stop->SC|alarm->RA,

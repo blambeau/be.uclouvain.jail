@@ -23,3 +23,70 @@ define native (copy <G> :vertex? <S> :edge? <E>) returns <G'>;
  *                   example).
  */
 define native (jdotty <G...>) returns <G[0]>;
+
+/**
+ * Identifies nodes and/or edges of a graph by numbering them.
+ *
+ * In contrast with many algorithms in jail, this one UPDATES the graph passed as
+ * first argument. In other words, this operator returns the graph itself, not a copy. 
+ * 
+ * <G>             + (IDirectedGraph) graph whose nodes/edges must be identified.
+ * <V>             + (String) attribute name for vertex identification (default 'index').
+ * <E>             + (String) attribute name for edge identification (default 'index').
+ *
+ */
+define native (identify <G> :vertexAttr? <V> :edgeAttr? <E>) returns <G>;
+
+/**
+ * Randomly generates a graph.
+ *
+ * The generation algorithm is failry simple: it first generates <V> states, then
+ * it connects randomly choosen states by creating paths inside the graph until the
+ * the number of edges is reached.
+ *
+ * You can also use the java API of this algorithm to install other predicates to 
+ * accept/reject generated graph, or use another criteria to stop creating vertices
+ * and edges.  
+ *
+ * Well, due to a bug in jail parser, you're expected to pass a variable as first
+ * argument of this operator. Indeed, the following expression for example does not 
+ * work (randgraph :stateCount 20), raising a ParseException. 
+ * Use (randgraph G :stateCount 20), with any expression/variable as G. For example,
+ * the following works: (randgraph <§jis §> :stateCount 20). This bug will be fixed in
+ * a future version of Jail.
+ *
+ * <V>             + (Integer) number of vertices to generate (default 10).
+ * <E>             + (Integer) number of edges to generate (default 25).
+ * <M>             + (Integer) maximal tries before failure (default 100).
+ * <C>             + (Boolean) filter the graph to be connex (default false)?
+ * <VP>            + (<gm:match_do>) matching rules to populate vertices.
+ * <EP>            + (<gm:match_do>) matching rules to populate edges.
+ * <G>             + (IDirectedGraph) graph respecting constraints.
+ * 
+ */
+define native (randgraph :vertexCount? <V> :edgeCount? <E> :maxTry? <M>
+                         :connex? <C> :vertex <VP> :edge <EP>) returns <G>;
+                         
+/**
+ * Randomly walks a graph, generating a collection of walks.
+ *
+ * Options <P> and <WSP> are mutually exclusive, as well as <L> and <PSP>.
+ *
+ * Result is IDirectedGraph adaptable. When used, this feature returns a graph with a 
+ * connected component for each walk.
+ *
+ * <G>             + (IDirectedGraph) directed graph to walk.
+ * <R>             + (Boolean) choose a root randomly (default true)?
+ *                 + when false, the first vertex in the vertices collection is choosen
+ *                   as the random root.
+ * <P>             + Number of paths to generate (default 100).
+ * <WSP>           + Probability to stop generating path (default -1).
+ * <L>             + Length of the paths to generate (default 10).
+ * <PSP>           + Probability to stop in the current walk (default -1).
+ * <V>             + (<gm:match_do>) matching rules to populate vertices.
+ * <E>             + (<gm:match_do>) matching rules to populate edges.
+ * <S>             + (IRandomWalkResult) collection of random walks.
+ */
+define native (randwalk <G> :chooseRoot? <R> :pathCount? <P> :walkStopProba? <WSP>
+                            :pathLength? <L> :pathStopProba <PSP>
+                            :vertex? <V> :edge? <E>) returns <S>;

@@ -75,4 +75,21 @@ public class MembershipQuery<T> {
 		this.answer = answer;
 	}
 	
+	/** Returns a string representation. */
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		int i=0;
+		for (T t: getIncludedPart()) {
+			if (i++ != 0) sb.append(" ");
+			sb.append(t);
+		}
+		if (i++ != 0) sb.append(" ");
+		sb.append("#");
+		for (T t: getExcludedString()) {
+			if (i++ != 0) sb.append(" ");
+			sb.append(t);
+		}
+		return sb.toString();
+	}
+	
 }

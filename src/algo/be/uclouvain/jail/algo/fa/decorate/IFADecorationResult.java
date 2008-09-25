@@ -1,14 +1,14 @@
 package be.uclouvain.jail.algo.fa.decorate;
 
 /**
- * Result abstraction of {@link DFADecorationAlgo}.
+ * Result abstraction of {@link FADecorationAlgo}.
  * 
  * @author blambeau
  */
-public interface IDFADecorationResult {
+public interface IFADecorationResult {
 
 	/** Fired when the algorithm starts. */
-	public void started(IDFADecorationInput input);
+	public void started(IFADecorationInput input);
 
 	/** Fired when the algorithm stops. */
 	public void ended();

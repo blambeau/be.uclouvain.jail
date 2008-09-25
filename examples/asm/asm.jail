@@ -1,0 +1,22 @@
+(execute 'commons.jail');
+
+// ab+ positive language
+APOS = <§seqp
+    Q0[@kind='PASSAGE'   @label="Q0"] = a->Q1|b->Q3,
+		Q1[@kind='PASSAGE'   @label="Q1"] = b->Q2|a->Q3,
+		Q2[@kind='ACCEPTING' @label="Q2"] = b->Q2|a->Q3,
+		Q3[@kind='PASSAGE'   @label="Q3"] = a->Q3|b->Q3.
+§>;
+
+// a negative language
+ANEG = <§seqp
+    Q0[@kind='PASSAGE'   @label='Q0'] = a->Q1|b->Q2,
+		Q1[@kind='ACCEPTING' @label='Q1'] = a->Q2|b->Q2,
+		Q2[@kind='PASSAGE'   @label='Q2'] = a->Q2|b->Q2.
+§>;
+
+C = (compose APOS ANEG :state {@label -> concat(@label)});
+
+(show APOS);
+(show ANEG);
+(show C);

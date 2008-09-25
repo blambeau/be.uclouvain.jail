@@ -1,10 +1,8 @@
 package be.uclouvain.jail.algo.fa.compose;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import net.chefbe.javautils.collections.arrays.ArrayUtils;
 import net.chefbe.javautils.collections.arrays.ArrayUtils.IArrayExploder;
@@ -28,12 +26,6 @@ public class FAComposerAlgo implements IMultiFAGroupInformer {
 
 	/** Result. */
 	private IFAComposerResult result;
-	
-	/** Explored states. */
-	private Set<MultiFAStateGroup> explored;
-	
-	/** States to explore. */
-	private Set<MultiFAStateGroup> toExplore;
 	
 	/** Returns i-th FA. */
 	public IFA getFA(int i) {
@@ -61,34 +53,12 @@ public class FAComposerAlgo implements IMultiFAGroupInformer {
 		return inits;
 	}
 	
-	/** Checks if a state has already been explored. */
-	private boolean isExplored(MultiFAStateGroup group) {
-		return explored.contains(group);
-	}
-	
-	/** Marks a state has to be explored. */
-	private void markAsToExplore(MultiFAStateGroup group) {
-		assert (!isExplored(group)) : "Group not explored yet";
-		toExplore.add(group);
-	}
-
-	/** Marks a state has explored. */ 
-	private void markAsExplored(MultiFAStateGroup group) {
-		assert (!toExplore.contains(group)) : "Group is not to be explored.";
-		explored.add(group);
-	}
-
-	/** Mark target as reached from source, using edge. */
-	private void markAsReached(MultiFAStateGroup source, MultiFAEdgeGroup edge, MultiFAStateGroup target) {
-		result.stateReached(source, edge, target);
-	}
-
 	/** Explores a single group. */
 	private void explore(MultiFAStateGroup source) {
-		//System.out.println("Exploring " + source);
+		assert !result.isExplored(source) : "States never explored twice.";
 		
-		// mark as explored
-		markAsExplored(source);
+		// let result know that source has been pushed
+		result.exploring(source);
 		
 		// all outgoing letters
 		Iterator<Object> letters = source.getOutgoingLetters();
@@ -103,22 +73,20 @@ public class FAComposerAlgo implements IMultiFAGroupInformer {
 					
 					// find target state group
 					MultiFAStateGroup target = edge.getTargetStateGroup(source);
-					boolean toBeMarked = !isExplored(target) && !toExplore.contains(target);
-					
+
 					try {
-						markAsReached(source, edge, target);
-						if (toBeMarked) {
-							markAsToExplore(target);
-							toBeMarked = false;
+						// reach it (may throw Avoid)
+						if (result.reached(source, edge, target)) {
+							explore(target);
 						}
-					} catch (Avoid ex) {
-						//System.out.println("Synchronization failed on " + letter + " due to |" + ex.getMessage() + "|");
-					}
+					} catch (Avoid ex) {}
 				}
 			} catch (Avoid ex) {
 				//System.out.println("Synchronization failed on " + letter + " due to |" + ex.getMessage() + "|");
 			}
 		}
+		
+		result.endexplore(source);
 	}
 	
 	/** Execute algorithm. */
@@ -127,28 +95,16 @@ public class FAComposerAlgo implements IMultiFAGroupInformer {
 		
 		this.fas = input.getFAs();
 		this.result = result;
-		this.toExplore = new HashSet<MultiFAStateGroup>();
-		this.explored = new HashSet<MultiFAStateGroup>();
 		
+		// explore each initial state
 		final IMultiFAGroupInformer informer = this;
 		Object[][] inits = getInitStates();
-
-		// put initial states in toExplore
 		ArrayUtils.explode(inits, new IArrayExploder() {
 			public void group(Object[] group) {
-				markAsToExplore(new MultiFAStateGroup(group, informer));
+				explore(new MultiFAStateGroup(group, informer));
 			}
 		});
 		
-		// explore until no more
-		while (!toExplore.isEmpty()) {
-			MultiFAStateGroup group = toExplore.iterator().next();
-			toExplore.remove(group);
-			explore(group);
-		}
-		
-		this.toExplore = null;
-		this.explored = null;
 		result.ended();
 	}
 

@@ -13,7 +13,7 @@ import be.uclouvain.jail.uinfo.IUserInfo;
  * 
  * @author blambeau
  */
-public class FollowDFADecorationResult extends AbstractDFADecorationResult {
+public class FollowFADecorationResult extends AbstractFADecorationResult {
 
 	/** Decoration attribute. */
 	private static final String DECORATION_ATTR = "FollowDFADecorationResult.groups";
@@ -22,7 +22,7 @@ public class FollowDFADecorationResult extends AbstractDFADecorationResult {
 	private IDFA[] dfas;
 
 	/** Creates a result instance. */
-	public FollowDFADecorationResult(IDFA[] dfas) {
+	public FollowFADecorationResult(IDFA[] dfas) {
 		this.dfas = dfas;
 	}
 

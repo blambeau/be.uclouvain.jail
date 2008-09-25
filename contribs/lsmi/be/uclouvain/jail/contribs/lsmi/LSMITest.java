@@ -81,7 +81,7 @@ public class LSMITest {
 	private static IDFA dfa(int size) {
 		RandomDFAInput input = new RandomDFAInput();
 		input.setAccepting(1.0);
-		input.setStateCount(size);
+		input.setVertexCount(size);
 		input.setAlphabetSize(2);
 		input.setDepthControl(true);
 		input.setMaxTry(1000);

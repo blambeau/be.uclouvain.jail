@@ -1,15 +1,19 @@
 package be.uclouvain.jail.algo.fa.tmoves;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import net.chefbe.javautils.adapt.AdaptUtils;
 import be.uclouvain.jail.algo.fa.utils.FAEdgeGroup;
 import be.uclouvain.jail.algo.fa.utils.FAStateGroup;
+import be.uclouvain.jail.fa.IAlphabet;
 import be.uclouvain.jail.fa.IFA;
 import be.uclouvain.jail.fa.INFA;
 import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.fa.impl.GraphNFA;
+import be.uclouvain.jail.fa.utils.StaticAlphabet;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.uinfo.UserInfoAggregator;
@@ -65,7 +69,14 @@ public class DefaultTauRemoverResult implements ITauRemoverResult {
 	public void started(ITauRemoverInput input) {
 		this.source = input.getFA();
 		if (result == null) {
-			result = new GraphNFA(source.getAlphabet());
+			IAlphabet<Object> old = source.getAlphabet();
+			Set<Object> letters = new HashSet<Object>();
+			for (Object l: old) {
+				if (!input.getTauInformer().isEpsilon(l)) {
+					letters.add(l);
+				}
+			}
+			result = new GraphNFA(new StaticAlphabet(letters));
 		}
 	}
 
@@ -114,12 +125,4 @@ public class DefaultTauRemoverResult implements ITauRemoverResult {
 		return AdaptUtils.externalAdapt(this,c);
 	}
 	
-	/*
-	public static void main(String[] args) {
-		int i=10, j=3, k = 0;
-		k = i/j;
-		System.out.println(k);
-	}
-	*/
-
 }

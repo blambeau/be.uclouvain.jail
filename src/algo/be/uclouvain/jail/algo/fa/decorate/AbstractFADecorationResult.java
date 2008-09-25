@@ -1,24 +1,24 @@
 package be.uclouvain.jail.algo.fa.decorate;
 
 import be.uclouvain.jail.algo.utils.AbstractAlgoResult;
-import be.uclouvain.jail.fa.IDFA;
+import be.uclouvain.jail.fa.IFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
 
 /**
- * Default implementation of {@link IDFADecorationResult}.
+ * Default implementation of {@link IFADecorationResult}.
  * 
  * @author blambeau
  */
-public abstract class AbstractDFADecorationResult extends AbstractAlgoResult implements IDFADecorationResult {
+public abstract class AbstractFADecorationResult extends AbstractAlgoResult implements IFADecorationResult {
 
 	/** Source DFA. */
-	protected IDFA source;
+	protected IFA source;
 	
 	/** Underlying graph. */
 	protected IDirectedGraph graph;
 	
 	/** Fired when the algorithm starts. */
-	public void started(IDFADecorationInput input) {
+	public void started(IFADecorationInput input) {
 		this.source = input.getSource();
 		this.graph = source.getGraph();
 	}

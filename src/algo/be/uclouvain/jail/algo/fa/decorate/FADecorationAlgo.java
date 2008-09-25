@@ -2,7 +2,7 @@ package be.uclouvain.jail.algo.fa.decorate;
 
 import java.util.HashSet;
 
-import be.uclouvain.jail.fa.IDFA;
+import be.uclouvain.jail.fa.IFA;
 import be.uclouvain.jail.graph.IDirectedGraph;
 
 /**
@@ -10,16 +10,16 @@ import be.uclouvain.jail.graph.IDirectedGraph;
  * 
  * @author blambeau
  */
-public class DFADecorationAlgo {
+public class FADecorationAlgo {
 
 	/** States to be explored. */
 	private HashSet<Object> toExplore;
 	
 	/** Result companion. */
-	private IDFADecorationResult result;
+	private IFADecorationResult result;
 	
 	/** DFA to decorate. */
-	private IDFA dfa;
+	private IFA dfa;
 	
 	/** Underlying graph. */
 	private IDirectedGraph g;
@@ -62,7 +62,7 @@ public class DFADecorationAlgo {
 	}
 	
 	/** Executes the algorithm. */
-	public void execute(IDFADecorationInput input, IDFADecorationResult result) {
+	public void execute(IFADecorationInput input, IFADecorationResult result) {
 		// initialize instance variables
 		this.result = result;
 		this.toExplore = new HashSet<Object>();

@@ -1,0 +1,6 @@
++ start stop start
++ start alarm estop eopen close start
++ open close start alarm estop eopen
++ start stop alarm eopen
+- start eopen
+- start alarm eopen

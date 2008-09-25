@@ -1,0 +1,6 @@
+(execute 'commons.jail');
+
+CP = <§seqp
+    INIT = consultation->CONSULTATION,
+		CONSULTATION = endoscopy->histology->INIT|evaluation->INIT|staff->END.
+§>;

@@ -99,7 +99,7 @@ public class RandomDFAInput extends DefaultRandomGraphInput {
 				
 				// check tolerance if set
 				if (tolerance != -1.0) {
-					double wish = stateCount;
+					double wish = vertexCount;
 					double actual = graph.getVerticesTotalOrder().size();
 					double diff = Math.abs(wish-actual)/wish;
 					if (diff >= tolerance) { 
@@ -112,7 +112,7 @@ public class RandomDFAInput extends DefaultRandomGraphInput {
 					IDFA dfa = new GraphDFA(graph);
 					DFAQueryable queried = new DFAQueryable(dfa);
 					int depth = queried.getDepth();
-					long expected = Math.round((2*Math.log(stateCount)/Math.log(2)) - 2);
+					long expected = Math.round((2*Math.log(vertexCount)/Math.log(2)) - 2);
 					if (depth != expected) {
 						return false;
 					}
@@ -129,7 +129,7 @@ public class RandomDFAInput extends DefaultRandomGraphInput {
 		return new AbstractGraphPredicate() {
 			public boolean evaluate(IDirectedGraph graph) {
 				return graph.getVerticesTotalOrder().size() == 
-				   new Double(stateCount*stateMultFactor).intValue();
+				   new Double(vertexCount*stateMultFactor).intValue();
 			}
 		};
 	}
@@ -139,7 +139,7 @@ public class RandomDFAInput extends DefaultRandomGraphInput {
 		return new AbstractGraphPredicate() {
 			public boolean evaluate(IDirectedGraph g) {
 				// actual state count
-				int st = new Double(stateCount*stateMultFactor).intValue();
+				int st = new Double(vertexCount*stateMultFactor).intValue();
 				// alphabet size
 				int as = alphabet.getLetters().size();
 				// maximal out degree

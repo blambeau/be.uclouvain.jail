@@ -9,6 +9,9 @@ public enum DFAComplementorHeuristic {
 
 	/** Complements by adding an error state. */
 	ERROR_STATE,
+
+	/** Complements by adding a sink state. */
+	SINK_STATE,
 	
 	/** Complements on same state. */
 	SAME_STATE;

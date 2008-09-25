@@ -1,5 +1,6 @@
 package be.uclouvain.jail.vm;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -24,6 +25,10 @@ public class JailVMTest extends TestCase {
 	public void testJailExecution(URL what) throws Exception {
 		current = what;
 		JailVM vm = new JailVM(new IJailVMEnvironment() {
+
+			public String resolvePath(String path) {
+				return new File(path).getAbsolutePath();
+			}
 
 			/** Throws an AssertionError. */
 			public void handleError(Throwable t) {

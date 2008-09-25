@@ -1,0 +1,34 @@
+(execute 'commons.jail');
+
+TRAIN = <§seqp
+    Q1 = running->stop->Q1|notrunning->start->Q1.
+§>;
+
+RUNNING = (minimize (determinize (tmoves <§seqp
+    Q0 = tau->Q1|tau->Q2,
+		Q1 = start->Q2|stop->Q1|notrunning->Q1,
+		Q2 = stop->Q1|start->Q2|running->Q2.
+§> :tau 'tau')));
+
+SYSTEM = (compose TRAIN RUNNING);
+
+REAL = (minimize (determinize (tmoves 
+			 (copy SYSTEM :edge {@letter -> when @letter='running' or @letter='notrunning' then 'tau'
+				                              else @letter})
+			 :tau 'tau')));
+
+(show TRAIN);
+(show RUNNING);
+(show SYSTEM);
+(show REAL);
+
+
+SIMPLE = <§seqp
+    Q1 = start->stop->Q1.
+§>;
+(show SIMPLE);
+
+COMPLEX = (copy SIMPLE :vertex {@isInitial -> true});
+(show COMPLEX);
+
+(show (minimize (determinize COMPLEX)));

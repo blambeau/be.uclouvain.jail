@@ -111,6 +111,7 @@ public class Jail implements IJailVMEnvironment {
 		// create the virtual machine
 		JailVM vm = new JailVM(this);
 
+		// affect the variables passed on command line
 		for (int i=0; i<args.length; i++) {
 			String arg = args[i];
 			if (arg.startsWith("--")) {
@@ -140,7 +141,7 @@ public class Jail implements IJailVMEnvironment {
         }
         
         // executes jailFile if any
-        if (jailFile != null) {
+        if (jailFile != null && !"".equals(jailFile.trim())) {
         	try {
 				vm.execute(new File(jailFile));
 			} catch (JailVMException e) {
@@ -199,6 +200,11 @@ public class Jail implements IJailVMEnvironment {
 		out.flush();
 	}
 	
+	/** Resolves the path according to execution dir. */
+	public String resolvePath(String path) {
+		return new File(path).getAbsolutePath();
+	}
+
 	/** Starts the Jail VM on a file. */
 	public static void main(String[] args) throws Exception {
 		try {

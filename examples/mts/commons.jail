@@ -1,0 +1,26 @@
+/** Automaton dot command. */
+define (adot <A>) 
+       (copy (A)
+             :vertex {@shape -> when @kind='ACCEPTING' then 'doublecircle'
+                                when @kind='AVOID' then 'doublecircle'
+                                else 'circle',
+                      @style -> 'filled',
+                      @fillcolor -> when @isInitial=true and 
+                                        (@kind='ERROR' or @kind='AVOID') then 'brown'
+                                    when @isInitial=true then 'green'
+                                    when @kind='ERROR' then 'red'
+                                    when @kind='AVOID' then 'red'
+                                    else 'white',
+                      @label     -> @label}
+		     :edge  {@label -> @letter});
+
+/** JDotty for automaton dot. */
+define (show <A>)
+       (jdotty (adot (A)));
+
+/** All accepting states. */
+define (allaccept <A>)
+       (copy (A) :vertex {@kind -> when @kind='PASSAGE' then 'ACCEPTING'
+		                           when @kind='ERROR' then 'AVOID'
+		                           else @kind});
+

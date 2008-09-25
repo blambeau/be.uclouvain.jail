@@ -54,19 +54,20 @@ public class JailCoreToolkit extends JailReflectionToolkit {
 	
 	/** Ensures a file instance. */
 	private File ensureFileAccess(String path, String mode, boolean create) throws JailVMException {
+		if (path == null) { 
+			throw new JailVMException(JailVMException.ERROR_TYPE.FILE_ACCESS_ERROR,null,"Unable to ensure file access on null path."); 
+		}
 		// find file
 		File f = new File(path);
 		if (!f.exists()) {
 			if (!create) {
 				throw new JailVMException(ERROR_TYPE.FILE_ACCESS_ERROR,null,"Unable to find file: " + path);
-			} else if (f.canWrite()) {
+			} else {
 				try {
 					f.createNewFile();
 				} catch (IOException ex) {
 					throw new JailVMException(ERROR_TYPE.FILE_ACCESS_ERROR,null,"Unable to create file: " + path,ex);
 				}
-			} else {
-				throw new JailVMException(ERROR_TYPE.FILE_ACCESS_ERROR,null,"Unable to create file: " + path);
 			}
 		} else if (!f.canRead()) {
 			throw new JailVMException(ERROR_TYPE.FILE_ACCESS_ERROR,null,"Unable to read file: " + path);
@@ -86,8 +87,20 @@ public class JailCoreToolkit extends JailReflectionToolkit {
 	
 	/** Executes jail commands in a file. */
 	public void execute(String path, JailVM vm) throws JailVMException {
-		path = vm.resolvePath(path);
-		File f = ensureFileAccess(path,"r",false);
+		// check PRE
+		if (path == null) { 
+			throw new JailVMException(JailVMException.ERROR_TYPE.FILE_ACCESS_ERROR,null,"Unable to ensure file access on null path."); 
+		}
+
+		// ask the virtual machine to resolve the path
+		String rpath = vm.resolvePath(path);
+
+		// not successfull ? throw an exception
+		if (rpath == null) { 
+			throw new JailVMException(JailVMException.ERROR_TYPE.FILE_ACCESS_ERROR,null,"Unable to resolve file on read access: " + path); 
+		}
+
+		File f = ensureFileAccess(rpath,"r",false);
 		vm.execute(f);
 	}
 	

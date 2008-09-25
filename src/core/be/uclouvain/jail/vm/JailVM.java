@@ -62,16 +62,22 @@ public class JailVM implements IJailVMScope {
 	/** Creates a VM instance. */
 	public JailVM(IJailVMEnvironment env) {
 		this.env = env;
+
+		// set global VM variables
 		memory = new JailVMMapScope();
 		sources = new Stack<Object>();
 		toolkits = new ListOrderedMap<String,IJailVMToolkit>();
 		core = new JailCoreToolkit();
 		uInfoHelper = UserInfoHelper.instance();
+
+		// push environment on sources
+		sources.push(env);
+		
+		// register toolkits
 		registerToolkit("jail",core);
 		registerToolkit("fa",new AutomatonToolkit());
 		registerToolkit("graph",new GraphToolkit());
 		registerToolkit("jind",new InductionToolkit());
-		//registerToolkit("isis",new IsisToolkit());
 	}
 	
 	/** Creates a virtual machine with default environment. */
@@ -96,15 +102,21 @@ public class JailVM implements IJailVMScope {
 	
 	/** Resolves a relative path, through currently executed source. */
 	public String resolvePath(String path) throws JailVMException {
+		// should never happen, as context directory is always on sources
 		if (sources.isEmpty()) {
-			throw new JailVMException(JailVMException.ERROR_TYPE.INTERNAL_ERROR,
-					null,"Unexpected empty execution stack.");
+			throw new JailVMException(JailVMException.ERROR_TYPE.INTERNAL_ERROR, null,"Unexpected empty execution stack.");
 		}
+
+		// get the top executing source
 		Object current = sources.peek();
+
+		// resolve local path when a File
 		if (current instanceof File) {
 			File f = (File) current;
 			return new File(f.getParentFile(),path).getAbsolutePath();
-		} else if (current instanceof URL) {
+		} 
+		// when an URL
+		else if (current instanceof URL) {
 			URL url = (URL) current;
 			try {
 				return url.toURI().resolve(path).toURL().getFile();
@@ -114,13 +126,22 @@ public class JailVM implements IJailVMScope {
 				throw new JailVMException(JailVMException.ERROR_TYPE.INTERNAL_ERROR,null,e);
 			}
 		}
+		// when the environment
+		else if (current instanceof IJailVMEnvironment) {
+			return ((IJailVMEnvironment)current).resolvePath(path);
+		}
+
+		// not resolved ... maybe an exception should be better ?
+		// TODO: decide POST contract here !
 		return null;
 	}
 	
 	/** Executes some commands taken on some source. */
-	public void execute(Object source) throws JailVMException {
+	public synchronized void execute(Object source) throws JailVMException {
 		try {
-			sources.push(source);
+			if (source instanceof File || source instanceof URL) {
+				sources.push(source);
+			}
 			
 			// create location and pos
 			ILocation loc = new BaseLocation(source);
@@ -145,7 +166,9 @@ public class JailVM implements IJailVMScope {
 				handleError(e);
 			}
 			
-			sources.pop();
+			if (source instanceof File || source instanceof URL) {
+				sources.pop();
+			}
 		} catch (IOException ex) {
 			handleError(new JailVMException(ERROR_TYPE.INTERNAL_ERROR,null,"Unable to read input jail commands.",ex));
 		} catch (ParseException ex) {
@@ -226,7 +249,9 @@ public class JailVM implements IJailVMScope {
 					if (signature == null) {
 						signature = c.getName() + " [no signature available]";
 					}
-					sb.append("  + ").append(signature).append("\n");
+					sb.append("  + ").append(signature.replaceAll("\n", " ")
+							                          .replaceAll("\t", " ")
+							                          .replaceAll("\\s+", " ")).append("\n");
 				}
 			}
 			env.printConsole(sb.toString(), LEVEL.USER);

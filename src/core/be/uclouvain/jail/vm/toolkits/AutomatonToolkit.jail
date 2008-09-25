@@ -100,4 +100,31 @@ define native (randdfa :stateCount? <S> :maxOutDegree <M>
                        :stateMultFactor? <F> :tolerance? <T>
                        :minimize? <M> :determinize? <D>
                        :maxTry <Y>);
+
+/**
+ * Decorates an automaton <A> by jointly visiting other automata <B...> and using
+ * state attribute propagators provided by <S>.
+ *
+ * This useful command implements a fix-point algorithm that can be used to decorate 
+ * an automaton, in the spirit (but with a more general setup) of the decoration algorithm
+ * proposed in our IEEE paper (Damas & al., Generating Annotated Behavioral Models,
+ * Special Issue on Scenarios and State-Machines, 2003).
+ *
+ * This command UPDATES and returns <A>, not a copy. 
+ *
+ * <A>            + (IFA) automaton to decorate.
+ * <B...>         + (IFA) automaton followers, providing automaton encoding of the attributes
+ *                        to install.
+ * <S>            + (<gm:match_do>) matching rules to use for the states.
+ *                + matching rules are expected to be simple attribute copiers (from a follower
+ *                  to A, like @moving -> @moving, or lattice based functions on attributes. 
+ */
+define native (decorate <A> <B...> :state? <S>) returns <A>;
                        
+/**
+ * Removes AVOID states of an automataon.
+ *
+ * <A>            + (IDFA) DFA to uncomplement.
+ * <A'>           + (IDFA) copy of <A> without any AVOID state.
+ */
+define native (uncomplement <A>) returns <A'>;

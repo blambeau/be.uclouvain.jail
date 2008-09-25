@@ -3,6 +3,7 @@ package be.uclouvain.jail.algo.fa.compose;
 import java.util.HashMap;
 import java.util.Map;
 
+import be.uclouvain.jail.algo.commons.Avoid;
 import be.uclouvain.jail.algo.fa.utils.MultiFAEdgeGroup;
 import be.uclouvain.jail.algo.fa.utils.MultiFAStateGroup;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchAggregator;
@@ -25,6 +26,9 @@ import be.uclouvain.jail.uinfo.UserInfoAggregator;
  */
 public class DefaultFAComposerResult extends AbstractAlgoResult implements IFAComposerResult {
 
+	/** Explored flag. */
+	private static final String EXPLORED = "DefaultFAComposerResult.EXPLORED";
+	
 	/** Graph reached. */
 	private IDirectedGraph g;
 	
@@ -82,20 +86,72 @@ public class DefaultFAComposerResult extends AbstractAlgoResult implements IFACo
 	}
 	
 	/** Fired when a new state is found. */
-	public void ensure(MultiFAStateGroup state) {
-		if (vertices.containsKey(state)) return;
-		IUserInfo info = super.getUserInfoHandler().vertexAggregate(state.getUserInfos());
-		Object vertex = g.createVertex(info);
-		vertices.put(state, vertex);
+	public Object ensure(MultiFAStateGroup state) {
+		Object vertex = vertices.get(state);
+		IUserInfo info = null;
+
+		// create vertex if required
+		if (vertex != null) { 
+			info = g.getVertexInfo(vertex); 
+		} else {
+			info = super.getUserInfoHandler().vertexAggregate(state.getUserInfos());
+			info.setAttribute(EXPLORED, false);
+			vertex = g.createVertex(info);
+			vertices.put(state, vertex);
+		}
+		
+		return vertex;
 	}
 
-	/** Fired when a state is reached. */
-	public void stateReached(MultiFAStateGroup source, MultiFAEdgeGroup edge, MultiFAStateGroup target) {
+	/** Returns true if this state has already been explored by 
+	 * the algorithm, false otherwise. */
+	public boolean isExplored(MultiFAStateGroup source) {
+		Object vertex = vertices.get(source);
+		if (vertex == null) { return false; }
+		Boolean explored = (Boolean) g.getVertexInfo(vertex).getAttribute(EXPLORED);
+		return explored == null ? false : explored.booleanValue();
+	}
+
+	/** Fired when a state is explored for the first time. */
+	public void exploring(MultiFAStateGroup source) {
+		Object vertex = ensure(source);
+		g.getVertexInfo(vertex).setAttribute(EXPLORED, true);
+	}
+
+	/** 
+	 * Fired when the target state is reached from source through an edge. 
+	 * 
+	 * <p>Source state has always been explored (exploring method has been previously called).
+	 * Target state may be already explored but not necesserally.</p>  
+	 * 
+	 * <p>This method may throw an Avoid exception to let the algorithm know that the
+	 * target state is in fact unreachable due to edge specific informations.</p>
+	 * 
+	 * <p>This method is expected to return !isExplored(target), that is, a boolean indicating
+	 * if the target state must be further explored or not.</p> 
+	 */
+	public boolean reached(MultiFAStateGroup source, MultiFAEdgeGroup edge, MultiFAStateGroup target) throws Avoid {
+		// aggregate edge (Avoid may be thrown by user functions)
 		IUserInfo info = super.getUserInfoHandler().edgeAggregate(edge.getUserInfos());
-		ensure(source); ensure(target);
-		g.createEdge(vertices.get(source), vertices.get(target), info);
+		
+		// ensure source and target states
+		Object s = ensure(source); 
+		Object t = ensure(target);
+		
+		// create edge between them
+		g.createEdge(s, t, info);
+		
+		// explore target if not done yet  
+		return !isExplored(target);
 	}
 
+	/** 
+	 * Fired when a state has been entirely explored.
+	 */
+	public void endexplore(MultiFAStateGroup source) {
+	}
+	
+	
 	/** Adapts to another type. */
 	@Override
 	public <T> Object adapt(Class<T> c) {

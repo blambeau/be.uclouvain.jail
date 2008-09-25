@@ -47,5 +47,8 @@ public interface IJailVMEnvironment {
 
 	/** Handles an error. */
 	public void handleError(Throwable t);
+
+	/** Resolves a local path. */
+	public String resolvePath(String path);
 	
 }

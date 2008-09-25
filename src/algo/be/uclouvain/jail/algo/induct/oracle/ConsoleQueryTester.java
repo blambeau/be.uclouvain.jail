@@ -21,7 +21,7 @@ public class ConsoleQueryTester implements IMembershipQueryTester {
 			ConsoleReader reader = Jail.instance().getConsoleReader();
 
 			// writes the query
-			writer.append("Accept query? ")
+			writer.append("Accept query (yes, no, stop) ?\n")
 			      .append(query.toString())
 			      .append("\n")
 			      .flush();

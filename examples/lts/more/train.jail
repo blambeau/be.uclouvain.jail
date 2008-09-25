@@ -1,0 +1,44 @@
+(execute 'commons.jail');
+
+TRAIN = <§seqp 
+	STOPPED=start->STARTED|alarm->eopen->OPENED|open->OPENED,
+	STARTED=stop->STOPPED|alarm->stop->eopen->OPENED,
+	OPENED=close->STOPPED.
+§>;
+
+MOVING = <§seqp
+    Q2[@isInitial=true @isMoving='S'] = start->Q1|stop->Q2,
+    Q1[@isInitial=false @isMoving='M'] = stop->Q2|start->Q1.
+§>;
+
+DECORATED = (compose TRAIN MOVING :state {@label -> @isMoving});
+
+
+UNDTRAIN = (copy TRAIN :vertex {@isInitial -> when @label='STOPPED' then true
+			                                        when @label='STARTED' then true
+																							when @label='OPENED' then true
+																				      else false});
+FULLTRAIN = (determinize UNDTRAIN);
+FULLMOVING = <§seqp
+    Q0[@isMoving='' @label=''] = start->Q1|stop->Q2,
+		Q1[@isMoving='M' @label='M'] = start->Q1|stop->Q2,
+		Q2[@isMoving='^M' @label='^M'] = stop->Q2|start->Q1.
+§>;
+FULLCLOSED = <§seqp
+    Q0[@isClosed='' @label=''] = open->Q1|close->Q2,
+		Q1[@isClosed='C' @label='C'] = open->Q1|close->Q2,
+		Q2[@isClosed='^C' @label='^C'] = close->Q2|open->Q1.
+§>;
+FULLDECORATED = (compose FULLTRAIN FULLMOVING FULLCLOSED
+		             :state {@label -> concat(@isMoving,' ',@isClosed)});
+
+(show TRAIN);
+(show MOVING);
+(show DECORATED);
+
+(show UNDTRAIN);
+
+(show FULLTRAIN);
+(show FULLMOVING);
+(show FULLCLOSED);
+(show FULLDECORATED);

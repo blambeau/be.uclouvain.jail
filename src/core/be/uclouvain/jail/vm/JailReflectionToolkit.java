@@ -75,7 +75,8 @@ public abstract class JailReflectionToolkit extends AbstractJailToolkit {
 			
 			// bypass adapt method
 			if ("adapt".equals(m.getName())
-			  ||"install".equals(m.getName())) {
+			  ||"install".equals(m.getName())
+			  || "toString".equals(m.getName())) {
 				continue;
 			}
 			

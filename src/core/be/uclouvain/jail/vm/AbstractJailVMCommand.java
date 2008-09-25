@@ -63,10 +63,12 @@ public abstract class AbstractJailVMCommand implements IJailVMCommand {
 	/** Extracts an exception. */
 	protected JailVMException extractException(Exception e) {
 		if (e instanceof JailVMException) {
+			((JailVMException)e).setCommand(this);				
 			return (JailVMException) e;
 		}
 		Throwable cause = e.getCause();
 		if (cause instanceof JailVMException) {
+			((JailVMException)cause).setCommand(this);				
 			return (JailVMException) cause;
 		} else {
 			return new JailVMException(ERROR_TYPE.INTERNAL_ERROR,this,e);

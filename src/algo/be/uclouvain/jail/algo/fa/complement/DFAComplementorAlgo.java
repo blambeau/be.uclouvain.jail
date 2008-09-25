@@ -35,9 +35,10 @@ public class DFAComplementorAlgo {
 				letters.add(letter);
 			}
 			
+			/*
 			System.out.println("On state " + state + " " + letters + " " + 
 					ArrayUtils.toString(alphabet.getLetters().getTotalOrder(),","));
-			
+			*/
 			// add missing letters
 			Set<Object> missing = new TreeSet<Object>();
 			for (Object letter: alphabet) {

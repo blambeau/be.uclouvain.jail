@@ -34,7 +34,7 @@ public class LSMIGenerateDFA {
 	private IDFA generate(int size, double tolerance) {
 		RandomDFAInput input = new RandomDFAInput();
 		input.setAccepting(1.0);
-		input.setStateCount(size);
+		input.setVertexCount(size);
 		input.setAlphabetSize(2);
 		input.setDepthControl(true);
 		input.setMaxTry(1000);

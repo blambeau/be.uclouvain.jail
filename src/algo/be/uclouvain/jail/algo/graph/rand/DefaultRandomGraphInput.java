@@ -13,7 +13,7 @@ import be.uclouvain.jail.graph.constraints.AbstractGraphPredicate;
 public class DefaultRandomGraphInput extends AbstractAlgoInput implements IRandomGraphInput {
 
 	/** Number of states generated/to generate. */
-	protected int stateCount=10;
+	protected int vertexCount=10;
 	
 	/** Number of edges generated/to generate. */
 	protected int edgeCount=25;
@@ -28,14 +28,14 @@ public class DefaultRandomGraphInput extends AbstractAlgoInput implements IRando
 	@Override
 	protected void installOptions() {
 		super.installOptions();
-		super.addOption("stateCount", false, Integer.class, null);
+		super.addOption("vertexCount", false, Integer.class, null);
 		super.addOption("edgeCount", false, Integer.class, null);
 		super.addOption("maxTry", false, Integer.class, null);
 	}
 
 	/** Sets state count. */
-	public void setStateCount(int stateCount) {
-		this.stateCount = stateCount;
+	public void setVertexCount(int stateCount) {
+		this.vertexCount = stateCount;
 	}
 	
 	/** Sets edge count. */
@@ -61,7 +61,7 @@ public class DefaultRandomGraphInput extends AbstractAlgoInput implements IRando
 	public IGraphPredicate getVertexStopPredicate() {
 		return new AbstractGraphPredicate() {
 			public boolean evaluate(IDirectedGraph graph) {
-				return graph.getVerticesTotalOrder().size() == stateCount;
+				return graph.getVerticesTotalOrder().size() == vertexCount;
 			}
 		};
 	}

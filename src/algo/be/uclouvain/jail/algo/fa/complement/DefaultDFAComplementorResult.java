@@ -83,17 +83,22 @@ public class DefaultDFAComplementorResult extends AbstractAlgoResult implements 
 	protected Object findError() {
 		if (errorState == null) {
 			errorState = result.createVertex(createErrorStateInfo());
+			if (input.getHeuristic().equals(DFAComplementorHeuristic.SINK_STATE)) {
+				for (Object l: inputDFA.getAlphabet()) {
+					result.createEdge(errorState, errorState, createMissingEdgeInfo(l));
+				}
+			}
 		}
 		return errorState;
 	}
 
 	/** When some letters are missing. */
 	public void onMissing(Object state, Set<Object> missing) {
-		System.out.println("On missing from " + state + " " + missing);
 		Object source = ensure(state);
 		Object target = null;
 		switch (input.getHeuristic()) {
 			case ERROR_STATE:
+			case SINK_STATE:
 				target = findError();
 				break;
 			case SAME_STATE:
@@ -114,8 +119,16 @@ public class DefaultDFAComplementorResult extends AbstractAlgoResult implements 
 
 	/** Creates a user info for the error state. */
 	protected IUserInfo createErrorStateInfo() {
+		FAStateKind kind = FAStateKind.AVOID;
+		switch (input.getHeuristic()) {
+			case ERROR_STATE:
+				kind = FAStateKind.AVOID;
+				break;
+			case SINK_STATE:
+				kind = FAStateKind.PASSAGE;
+		}
 		helper.addKeyValue(AttributeGraphFAInformer.STATE_INITIAL_KEY, false);
-		helper.addKeyValue(AttributeGraphFAInformer.STATE_KIND_KEY, FAStateKind.AVOID);
+		helper.addKeyValue(AttributeGraphFAInformer.STATE_KIND_KEY, kind);
 		return helper.install();
 	}
 

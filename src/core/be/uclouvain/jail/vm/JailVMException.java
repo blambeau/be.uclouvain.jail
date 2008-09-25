@@ -123,7 +123,9 @@ public class JailVMException extends Exception {
 			case PARSE_ERROR:
 				return "Parse error: " + super.getCause().getMessage();
 			case INTERNAL_ERROR:
-				return "Fatal error on command " + command.getName() + " (please excuse): " + super.getMessage();
+				return "Fatal error on command " + 
+				       (command == null ? "" : command.getName()) + 
+				       " : " + super.getMessage();
 		}
 		return super.getMessage();
 	}

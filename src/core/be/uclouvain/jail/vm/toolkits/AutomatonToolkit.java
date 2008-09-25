@@ -9,9 +9,9 @@ import be.uclouvain.jail.algo.fa.complement.DefaultDFAComplementorResult;
 import be.uclouvain.jail.algo.fa.compose.DFAComposerAlgo;
 import be.uclouvain.jail.algo.fa.compose.DefaultDFAComposerInput;
 import be.uclouvain.jail.algo.fa.compose.DefaultDFAComposerResult;
-import be.uclouvain.jail.algo.fa.decorate.DFADecorationAlgo;
-import be.uclouvain.jail.algo.fa.decorate.DefaultDFADecorationInput;
-import be.uclouvain.jail.algo.fa.decorate.FollowDFADecorationResult;
+import be.uclouvain.jail.algo.fa.decorate.FADecorationAlgo;
+import be.uclouvain.jail.algo.fa.decorate.DefaultFADecorationInput;
+import be.uclouvain.jail.algo.fa.decorate.FollowFADecorationResult;
 import be.uclouvain.jail.algo.fa.determinize.DefaultNFADeterminizerInput;
 import be.uclouvain.jail.algo.fa.determinize.DefaultNFADeterminizerResult;
 import be.uclouvain.jail.algo.fa.determinize.NFADeterminizerAlgo;
@@ -187,6 +187,8 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 			input.setHeuristic(DFAComplementorHeuristic.ERROR_STATE);
 		} else if ("same".equals(heuristic)) {
 			input.setHeuristic(DFAComplementorHeuristic.SAME_STATE);
+		} else if ("sink".equals(heuristic)) {
+			input.setHeuristic(DFAComplementorHeuristic.SINK_STATE);
 		} else {
 			throw new JailVMException(JailVMException.ERROR_TYPE.BAD_COMMAND_USAGE,null,
 					"Unknown completion heuristic: " + heuristic);
@@ -207,13 +209,11 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 	
 	/** Decorates a DFA with followers. */
 	public IDFA decorate(IDFA dfa, IDFA[] followers, JailVMOptions options) throws JailVMException {
-		DefaultDFADecorationInput input = new DefaultDFADecorationInput(dfa);
-		FollowDFADecorationResult result = new FollowDFADecorationResult(followers);
-		
+		DefaultFADecorationInput input = new DefaultFADecorationInput(dfa);
+		FollowFADecorationResult result = new FollowFADecorationResult(followers);
 		input.setOptions(options);
 		result.setOptions(options);
-		
-		DFADecorationAlgo algo = new DFADecorationAlgo();
+		FADecorationAlgo algo = new FADecorationAlgo();
 		algo.execute(input, result);
 		return dfa;
 	}
@@ -226,71 +226,6 @@ public class AutomatonToolkit extends JailReflectionToolkit implements IAdapter 
 		result.setOptions(options);
 		new RandomGraphAlgo().execute(input,result);
 		return (IDFA) result.adapt(IDFA.class);
-	}
-	
-	/** Generates a random DFA. */
-	public IRandomWalkResult randsample(IDFA dfa, JailVMOptions options, JailVM vm) throws JailVMException {
-		DFARandomWalkInput input = new DFARandomWalkInput(dfa);
-		DFARandomWalkResult result = new DFARandomWalkResult();
-		input.setOptions(options);
-		result.setOptions(options);
-		new RandomWalkAlgo().execute(input,result);
-		return result;
-	}
-	
-	/** Randomize strings. */
-	public IRandomStringsResult randstrings(JailVMOptions options, JailVM vm) throws JailVMException {
-		// create input and set options
-		DefaultRandomStringsInput<Object> input = new DefaultRandomStringsInput<Object>(); 
-		input.setOptions(options);
-
-		// get alphabet, create sample 
-		IAlphabet<Object> alphabet = input.getAlphabet();
-		ISample<Object> sample = new DefaultSample<Object>(alphabet);
-		
-		// create algo result and set options
-		DefaultRandomStringsResult<Object> result = new DefaultRandomStringsResult<Object>(sample);
-		result.setOptions(options);
-		
-		// execute algorithm
-		new RandomStringsAlgo().execute(input,result);
-		return result;
-	}
-
-	/** Randomize strings. */
-	public IRandomStringsResult abadingo(JailVMOptions options, JailVM vm) throws JailVMException {
-		// create input and set options
-		AbadingoRandomStringsInput<Object> input = new AbadingoRandomStringsInput<Object>(); 
-		input.setOptions(options);
-
-		// get alphabet, create sample 
-		IAlphabet<Object> alphabet = input.getAlphabet();
-		ISample<Object> sample = new DefaultSample<Object>(alphabet);
-		
-		// create algo result and set options
-		DefaultRandomStringsResult<Object> result = new DefaultRandomStringsResult<Object>(sample);
-		result.setOptions(options);
-		
-		// execute algorithm
-		new RandomStringsAlgo().execute(input,result);
-		return result;
-	}
-	
-	public IDFA score(IDFA dfa, ISample<?> sample) throws JailVMException {
-		long size = 0;
-		long ok = 0;
-		for (IString<?> s: sample) {
-			size++;
-			IWalkInfo<?> info = s.walk(dfa);
-			boolean accepted = info.isFullyIncluded()
-			                && info.getIncludedPart().isAccepted();
-			boolean positive = s.isPositive();
-			if (accepted == positive) {
-				ok++;
-			}
-		}
-		System.out.println("Score: " + ((double)ok)/((double)size));
-		return dfa;
 	}
 	
 	/** Adapts an object. */

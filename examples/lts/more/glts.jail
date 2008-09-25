@@ -1,0 +1,53 @@
+(execute 'commons.jail');
+
+PATHWAY = <§seqp
+    Q1 = consult->Q2,
+		Q2 = k->Q3|notk->Q4,
+		Q3 = e->Q5|note->Q6,
+		Q4 = endo->histo->Q1,
+		Q5 = staff->Q7,
+		Q6 = eval->Q1.
+§>;
+
+KFluent = (tmoves <§seqp
+    Q0[@label="K?"] = tau->Q1|tau->Q2,
+    Q1[@label="!K"] = endo->Q2|notk->Q1,
+		Q2[@label="K"]  = endo->Q2|k->Q2. 
+§> :tau 'tau' :state {@label -> @label});
+
+EFluent = (tmoves <§seqp
+    Q0[@label="E?"] = tau->Q1|tau->Q2,
+    Q1[@label="!E"] = eval->Q2|note->Q1,
+		Q2[@label="E"]  = eval->Q2|e->Q2. 
+§> :tau 'tau' :state {@label -> @label});
+
+LTS = (minimize (determinize (tmoves
+			    (copy (compose PATHWAY KFluent EFluent)
+			          :edge {@letter -> when @letter='k' then 'tau'
+						                      when @letter='notk' then 'tau'
+									    				 	  when @letter='e' then 'tau'
+											    		 	  when @letter='note' then 'tau'
+													    	  else @letter})
+					:tau 'tau'))
+);
+
+(show PATHWAY);
+(show KFluent);
+(show EFluent);
+(show LTS);
+
+GLTS = <§seqp 
+    Q1 = consult->Q2,
+		Q2 = k->e->staff->Q3|k->note->eval->Q4|notk->endo->Q5,
+		Q4 = consult->staff->Q3,
+		Q5 = histo->consult->Q6,
+		Q6 = note->eval->Q4|e->staff->Q3.
+§>;
+(show GLTS);
+(show (minimize (determinize GLTS)));
+(show (minimize (determinize 
+	    (copy GLTS :edge {@letter -> when @letter='k' or @letter='notk' or
+			                                  @letter='e' or @letter='note' then 'tau'
+																	 else @letter}
+			)))
+);

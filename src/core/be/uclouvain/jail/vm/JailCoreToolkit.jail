@@ -48,11 +48,23 @@ define native (load <path> :format? <format>) returns object;
 define native (print <G...> :format <format>) returns <G[0]>;
 
 /**
- * Returns a graph (actually a tree) which presents all possible
- * adaptations of <A>.
+ * Returns a graph which presents all possible adaptations of <A>.
  *
  * <A>             + (Object) any expression that returns a typed result.
  * <G>             + (IDirectedGraph) directed graph representing adaptation
  *                   tree of <A>
  */
 define native (adaptations <A>) returns <G>;
+
+/**
+ * Cast the value <A> to a specific java type <T>.
+ *
+ * An error message is displayed if <A> is not <T> adaptable (see adaptability
+ * documentation).
+ *
+ * <A>             + (Object) any expression that returns a typed result.
+ * <T>             + (String) a fully java type qualified name (package + class/interface).
+ * <A'>            + (<T>) value <A> converted to type <T> if possible, null otherwise. 
+ *
+ */
+define native (cast <A> <T>) returns <A'>;

@@ -97,7 +97,7 @@ public class LSMTests extends TestCase {
 				System.out.println("Executing " + (count++) + "/" + total);
 				RandomDFAInput input = new RandomDFAInput();
 				input.setAccepting(1.0);
-				input.setStateCount(size);
+				input.setVertexCount(size);
 				input.setAlphabetSize(2);
 				input.setDepthControl(true);
 				input.setMaxTry(1000);

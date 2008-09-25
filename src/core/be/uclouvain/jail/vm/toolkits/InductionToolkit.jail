@@ -1,0 +1,89 @@
+/**
+ * Regular Positive and Negative Induction algorithm, with QSM interactive feature
+ * as an option.
+ *
+ * This command implements RPNI algorithm proposed by Oncina and Garcia 
+ * (Oncina & Garcia, Regular Positive and Negative Induction, 1992).
+ *
+ * This implementation does not take an explicit negative sample as input. It
+ * expects the input sample/PTA to be augmented with negative information encoded
+ * inside states. An automaton constraint is installed which handles state kind, 
+ * to avoid merging AVOID and ACCEPTING states. Additional constraints may be added 
+ * using state and edge aggregators.  
+ *
+ * The QSM interactive feature is also available through :oracle and :querier 
+ * options. See our IEEE/FSE/QSM papers for details (Dupont & al., The QSM induction
+ * algorithm and its applications to Requirements Engineering, AAI 2006). When using
+ * oracle, the querier option is mandatory, an vice-versa.
+ *
+ * Recognized oracles are:
+ *      ^blambeau Oracle by Bernard Lambeau, just of variant of the oracle presented
+ *                in the papers, which uses different short prefixes.
+ *
+ * Recognized querier are:
+ *      ^console  Submits queries on the console for acceptation. yes/no/stop answers
+ *                are expected from the user. In this version of jail, user does not 
+ *                have the ability to indicate the rejected suffix. The algorithm is
+ *                this never restarted; the input sample is not updated.
+ *      (IDFA)    Any IDFA adaptable object may be used as an oracle. In this case, the
+ *                algorithm is fully automatic, rejected suffixes are computed, input 
+ *                sample automaticaly updated, and algorithm restarted accordingly.    
+ *
+ * <I>         + (ISample) sample adaptable (or PTA) input. An augmented sample/PTA
+ *                is expected as input (at least information about negative strings 
+ *                through ERROR and/or AVOID states).
+ * <S>         + (<gm:match_do>) matching rules to apply on states.
+ * <E>         + (<gm:match_do>) matching rules to apply on edges.
+ * <O>         + (String) oracle to use (default none).
+ * <Q>         + (String) querier to use to submit queries (default none).
+ */
+define native (rpni <I> :state? <S> :edge? <E> :oracle? <O> :querier? <Q>) returns <O>; 
+
+/**
+ * Implements the Blue-Fringe state pair selection strategy on top of RPNI, with QSM 
+ * interactive feature as an option.
+ *
+ * Please read the documentation of rpni (\help rpni), as all informations provided there
+ * are relevant for bluefringe as well.
+ *
+ * The only additional option controls the consolidation of states, as usual with this 
+ * algorithm (see our IEEE paper for details). By default, consolidation threshold is set
+ * to 0 and has no effect on the algorithm.
+ * 
+ * <I>         + (ISample) sample adaptable (or PTA) input. An augmented sample/PTA
+ *                is expected as input (at least information about negative strings 
+ *                through ERROR and/or AVOID states).
+ * <T>         + (Integer) consolidation threshold (default 0).
+ * <S>         + (<gm:match_do>) matching rules to apply on states.
+ * <E>         + (<gm:match_do>) matching rules to apply on edges.
+ * <O>         + (String) oracle to use (default none).
+ * <Q>         + (String) querier to use to submit queries (default none).
+ */
+define native (bluefringe <I> :threshold? <T> :state? <S> :edge? <E> :oracle? <O> :querier? <Q>) returns <O>;
+
+/**
+ * Automaton State Merging algorithm.
+ *
+ * This command implements MSM/ASM/ASM* algorithms as proposed in our ICSE08 paper 
+ * (Lambeau & al, State-Merging Algorithms Using Mandatory Merge Constraints, 
+ * ICSE 2008).
+ *
+ * This is actually an implementation of the ASM algorithm. MSM and ASM* can be 
+ * easily simulated using a composition of Jail commands:
+ *    (msm  <PTA>) being (asm (rpni A :state {@attr -> allsame(@attr)}))
+ *    (asm* <P> <N>) being (asm (compose P N))    
+ *  
+ * ASM is simply a version of the RPNI induction algorithm, but is not restricted
+ * to use a Sample or a PTA as input. It returns the language generalization as a 
+ * structure which is IDFA adaptable.
+ *
+ * A with the rpni and bluefringe commands, the negative sample is expected to be 
+ * encoded by using an augmented input sample as well as constraints installed as 
+ * states and edges aggregators. 
+ *
+ * <S>              + (IDFA) any DFA encoding positive/negative sample.
+ * <SA>             + (<gm:match_do>) matching rules to apply on states.
+ * <EA>             + (<gm:match_do>) matching rules to apply on edges.
+ * <D>              + (LSMAlgoResult) result of the algorithm, being IDFA adaptable.
+ */
+define native (asm <S> :state? <SA> :edge? <EA>) returns <D>;
