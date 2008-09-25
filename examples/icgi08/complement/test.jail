@@ -1,0 +1,14 @@
+(execute '../commons.jail');
+
+PLUS = (load 'PLUS.dot');
+MINUS = (load 'MINUS.dot');
+SPLUS = (load 'SPLUS.dot');
+SMINUS = (load 'SMINUS.dot');
+
+(show PLUS);
+(show MINUS);
+(show (compose PLUS MINUS));
+
+(show SPLUS);
+(show SMINUS);
+(show (compose SPLUS SMINUS));

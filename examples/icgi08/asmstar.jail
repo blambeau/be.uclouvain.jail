@@ -1,0 +1,8 @@
+SAMPLE = <§seqp
+    Q0 = start->stop->Q0|open->close->Q0.
+§>;
+
+NEGSAMPLE = <§jis
+- start open
+- open start
+§>;

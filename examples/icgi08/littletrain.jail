@@ -1,0 +1,56 @@
+/** Train itself. */
+TRAIN = <§seqp 
+	Q0=start->Q1|alarm->eopen->Q2|open->Q2,
+	Q1=stop->Q0|alarm->stop->eopen->Q2,
+	Q2=close->Q0.
+§>;
+
+/** fluent DoorsClosed = <close, {open,eopen}> initially true */
+DOORS = <§seqp 
+    CLOSED[@closed=true]  = open->OPENED|eopen->OPENED,
+    OPENED[@closed=false] = close->CLOSED.
+§>;
+
+/** fluent Moving = <start, {stop, estop}> initially false */
+MOVING = <§seqp
+	STOPPED[@moving=false] = start->MOVING,
+	MOVING[@moving=true]   = stop->STOPPED|estop->STOPPED.
+§>;
+
+/** Decorated train. */
+DECORATED_TRAIN = (decorate (copy TRAIN) DOORS MOVING 
+                            :state {@moving -> @moving, 
+                                    @closed -> @closed,
+                                    @label -> concat('M:',@moving,'\n','C:',@closed)}
+                  );
+
+/** Some Train sample. */
+SAMPLE = (allaccept <§jis
++ start stop start stop
++ start stop open close start
++ start alarm estop eopen close start
++ alarm eopen
+- start open
+- start alarm eopen
+§>);
+
+/** Decorated sample. */
+DECORATED_SAMPLE = (decorate (copy SAMPLE) DOORS MOVING
+                            :state {@moving -> @moving, 
+                                    @closed -> @closed,
+                                    @label -> concat('M:',@moving,'\n','C:',@closed)}
+                    );
+
+/** Show results with RPNI, with and without fluent informations. */
+RPNIED = (rpni SAMPLE);
+CONSTRAINED_RPNIED = (rpni DECORATED_SAMPLE :state {@moving -> allsame(@moving),
+                                                    @closed -> allsame(@closed)}
+                     );
+
+/** Show results with Blue-Fringe heuristics, with and without fluent informations. */
+BLUEFRINGED = (bluefringe SAMPLE :threshold 1);
+CONSTRAINED_BLUEFRINGED = (bluefringe DECORATED_SAMPLE :threshold 1 
+                                                       :state {@moving -> allsame(@moving),
+                                                               @closed -> allsame(@closed)}
+                          );
+

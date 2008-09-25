@@ -1,0 +1,9 @@
+digraph G {
+	graph [rankdir="LR"];
+	node [shape="circle"];
+	0 [isInitial="true" kind="ACCEPTING"];
+	1 [isInitial="false" kind="ACCEPTING"];
+	3 [isInitial="false" kind="ACCEPTING"];
+	0 -> 1 [letter="start"];
+	1 -> 3 [letter="stop"];
+}
