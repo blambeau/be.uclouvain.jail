@@ -5,9 +5,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.chefbe.javautils.collections.singleton.SingletonIterable;
-import be.uclouvain.jail.fa.FAStateKind;
 import be.uclouvain.jail.fa.IAlphabet;
 import be.uclouvain.jail.fa.IDFA;
+import be.uclouvain.jail.fa.constraints.DFAGraphConstraint;
 import be.uclouvain.jail.fa.utils.AutoAlphabet;
 import be.uclouvain.jail.graph.GraphConstraintViolationException;
 import be.uclouvain.jail.graph.IDirectedGraph;
@@ -62,16 +62,28 @@ public class GraphDFA extends GraphFA implements IDFA {
 	/** Creates a DFA instance on top of an existing graph, with a specific informer. */
 	public GraphDFA(IDirectedGraph graph, IGraphFAInformer informer) {
 		super(graph,informer);
+		checkGraph(graph);
 	}
 	
 	/** Creates a DFA instance on top of an existing graph. */
 	public GraphDFA(IDirectedGraph graph) {
 		super(graph,new AttributeGraphFAInformer());
+		checkGraph(graph);
 	}
 	
 	/** Creates a DFA instance with specific graph informer and alphabet. */
 	public GraphDFA(IDirectedGraph graph, IGraphFAInformer informer, IAlphabet alphabet) {
 		super(graph,informer,alphabet);
+		checkGraph(graph);
+	}
+	
+	/** Checks that a graph is a DFA. */
+	private void checkGraph(IDirectedGraph g) {
+		if (g.getVerticesTotalOrder().size()>0) {
+			if (!new DFAGraphConstraint().isRespectedBy(g)) {
+				throw new IllegalArgumentException("Graph does not respected DFA structure.");
+			}
+		}
 	}
 	
 	/** Returns the initialState. */

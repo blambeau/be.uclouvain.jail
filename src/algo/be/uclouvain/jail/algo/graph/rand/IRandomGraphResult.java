@@ -1,7 +1,5 @@
 package be.uclouvain.jail.algo.graph.rand;
 
-import java.util.Random;
-
 import net.chefbe.javautils.adapt.IAdaptable;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.uinfo.IUserInfo;
@@ -19,12 +17,11 @@ public interface IRandomGraphResult extends IAdaptable {
 	/** Creates an empty graph result. */
 	public IDirectedGraph factorGraph();
 
-	/** Creates a state information. 
-	 * @param graph TODO*/
-	public IUserInfo createVertexInfo(IDirectedGraph graph, Random r);
+	/** Creates a state information. */
+	public IUserInfo createVertexInfo(IDirectedGraph graph);
 	
 	/** Creates an edge information. */
-	public IUserInfo createEdgeInfo(IDirectedGraph graph, Object source, Object target, Random r);
+	public IUserInfo createEdgeInfo(IDirectedGraph graph, Object source, Object target);
 	
 	/** Cleans a directed graph before acceptation. */
 	public IDirectedGraph clean(IDirectedGraph g);
@@ -34,5 +31,11 @@ public interface IRandomGraphResult extends IAdaptable {
 
 	/** Let the output know that the algorithm failed. */
 	public void failed();
+
+	/** Picks up a source state. */
+	public Object pickUpSource(IDirectedGraph graph);
+
+	/** Picks up a target state. */
+	public Object pickUpTarget(IDirectedGraph graph, Object source);
 	
 }

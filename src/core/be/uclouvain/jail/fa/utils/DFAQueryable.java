@@ -1,5 +1,8 @@
 package be.uclouvain.jail.fa.utils;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import be.uclouvain.jail.algo.graph.shortest.dsp.DSPAlgo;
 import be.uclouvain.jail.algo.graph.shortest.dsp.DefaultDSPInput;
 import be.uclouvain.jail.algo.graph.shortest.dsp.DefaultDSPOutput;
@@ -39,6 +42,32 @@ public class DFAQueryable extends AbstractQueryable<IDFA> {
 	/** Returns number of states. */
 	public int getStateCount() {
 		return queried.getGraph().getVerticesTotalOrder().size();
+	}
+
+	/** Returns number of states. */
+	public int getEdgeCount() {
+		return queried.getGraph().getEdgesTotalOrder().size();
+	}
+
+	/** Returns alphabet size. */
+	public int getAlphabetSize() {
+		return queried.getAlphabet().getLetters().size();
+	}
+
+	/** Returns alphabet size. */
+	public int getActualAlphabetSize() {
+		Set<Object> letters = new HashSet<Object>();
+		for (Object edge: queried.getEdges()) {
+			letters.add(queried.getEdgeLetter(edge));
+		}
+		return letters.size();
+	}
+
+	/** Returns average out degree of states. */
+	public double getAverageOutDegree() {
+		double edges = getEdgeCount();
+		double states = getStateCount();
+		return (edges/states)/2;
 	}
 		
 }

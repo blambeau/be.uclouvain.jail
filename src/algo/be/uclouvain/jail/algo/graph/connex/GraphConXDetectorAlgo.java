@@ -37,7 +37,7 @@ public class GraphConXDetectorAlgo {
 	}
 	
 	/** Explores a state. */
-	private void explore(Object vertex) {
+	private void explore(IGraphConXDetectorInput input, Object vertex) {
 		assert (!isExplored(vertex)) : "not yet explored";
 		
 		// mark it
@@ -47,15 +47,17 @@ public class GraphConXDetectorAlgo {
 		for (Object edge: graph.getOutgoingEdges(vertex)) {
 			Object target = graph.getEdgeTarget(edge);
 			if (!isExplored(target)) {
-				explore(target);
+				explore(input, target);
 			}
 		}
 
 		// explore each incoming edge
-		for (Object edge: graph.getIncomingEdges(vertex)) {
-			Object target = graph.getEdgeSource(edge);
-			if (!isExplored(target)) {
-				explore(target);
+		if (!input.outgoingOnly()) {
+			for (Object edge: graph.getIncomingEdges(vertex)) {
+				Object target = graph.getEdgeSource(edge);
+				if (!isExplored(target)) {
+					explore(input, target);
+				}
 			}
 		}
 	}
@@ -78,7 +80,7 @@ public class GraphConXDetectorAlgo {
 			}
 			
 			// explore state
-			explore(vertex);
+			explore(input, vertex);
 			
 			// next partition
 			current++;

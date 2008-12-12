@@ -1,7 +1,5 @@
 package be.uclouvain.jail.algo.graph.rand;
 
-import java.util.Random;
-
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.IGraphPredicate;
 import be.uclouvain.jail.graph.utils.ITotalOrder;
@@ -9,9 +7,6 @@ import be.uclouvain.jail.uinfo.IUserInfo;
 
 /** Randomly generates a graph. */
 public class RandomGraphAlgo {
-
-	/** Randomizer. */
-	private Random r;
 
 	/** Input information. */
 	private IRandomGraphInput input;
@@ -30,7 +25,7 @@ public class RandomGraphAlgo {
 	private void createVertices() {
 		IGraphPredicate stop = input.getVertexStopPredicate();
 		do {
-			graph.createVertex(output.createVertexInfo(graph, r));
+			graph.createVertex(output.createVertexInfo(graph));
 		} while (!stop.evaluate(graph));
 	}
 
@@ -40,19 +35,19 @@ public class RandomGraphAlgo {
 		int vCount = vertices.size();
 		if (vCount == 0) { return; }
 		
-		Object cur = vertices.getElementAt(0);
 		IGraphPredicate stop = input.getEdgeStopPredicate();
 		do {
+			// flit source state
+			Object source = output.pickUpSource(graph);
+			
 			// flip target state
-			int sindex = r.nextInt(vCount);
-			Object target = vertices.getElementAt(sindex);
+			Object target = output.pickUpTarget(graph, source);
 			
 			// connect
-			IUserInfo edgeInfo = output.createEdgeInfo(graph, cur, target, r);
+			IUserInfo edgeInfo = output.createEdgeInfo(graph, source, target);
 			if (edgeInfo != null) {
-				graph.createEdge(cur, target, edgeInfo);
+				graph.createEdge(source, target, edgeInfo);
 			}
-			cur = target;
 		} while (!stop.evaluate(graph));
 	}
 	
@@ -61,7 +56,6 @@ public class RandomGraphAlgo {
 		// initialization
 		this.input = input;
 		this.output = output;
-		this.r = new Random(System.currentTimeMillis());
 
 		// Let output known that the algo has started
 		output.started(input);

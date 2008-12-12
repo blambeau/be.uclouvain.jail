@@ -83,6 +83,11 @@ public class DefaultDFAMergingResult implements IGraphMergingResult {
 		}
 		return dfaStates.get(state);
 	}
+
+	/** Creates a state. */
+	public void createState(GraphVertexGroup vertex) {
+		ensure(vertex);
+	}
 	
 	/** Creates an edge between source and target. */
 	public void createEdge(GraphVertexGroup sources, GraphVertexGroup targets, GraphEdgeGroup edges) {

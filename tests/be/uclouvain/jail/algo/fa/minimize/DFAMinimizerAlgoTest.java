@@ -47,6 +47,21 @@ public class DFAMinimizerAlgoTest extends TestCase {
 		new DFAMinimizer(dfa).getMinimalDFA();
 	}
 	
+	
+	/** Tests that bugs 0001 does not reappear. */
+	public void testMinimizerOnInitialStateOnly() throws Exception {
+		// load graph and check it's a DFA
+		IDirectedGraph graph = JailTestUtils.EMPTY_GRAPH();
+		assertTrue(new DFAGraphConstraint().isRespectedBy(graph));
+		
+		// create DFA
+		expected = new GraphDFA(graph);
+		
+		// minimize it
+		dfa = new DFAMinimizer(expected).getMinimalDFA();
+		assertTrue(new DFAEquiv(expected, dfa).areEquivalent());
+	}
+	
 	/** Tests tau remover on identity. */
 	public void testMinimizerOnExpected() throws Exception {
 		DFAMinimizer minimizer = new DFAMinimizer(expected);
@@ -74,6 +89,10 @@ public class DFAMinimizerAlgoTest extends TestCase {
 		// check DFA
 		IDFA equiv = minimizer.getMinimalDFA();
 		assertTrue(new DFAEquiv(expected,equiv).areEquivalent());
+	}
+	
+	public static void main(String[] args) throws Exception {
+		new DFAMinimizerAlgoTest().testMinimizerOnInitialStateOnly();
 	}
 	
 }

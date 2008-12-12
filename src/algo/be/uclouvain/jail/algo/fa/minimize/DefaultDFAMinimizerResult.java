@@ -1,5 +1,8 @@
 package be.uclouvain.jail.algo.fa.minimize;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import net.chefbe.javautils.adapt.AdaptUtils;
 import be.uclouvain.jail.algo.fa.merge.DefaultDFAMergingResult;
 import be.uclouvain.jail.algo.fa.utils.FAEdgeLetterPartitionner;
@@ -46,6 +49,7 @@ public class DefaultDFAMinimizerResult implements IDFAMinimizerResult {
 
 	/** Algorithm ended event. */
 	public void ended(IGraphPartition partition) {
+		assert partition.size()>0: "At least one block.";
 		for (IGraphMemberGroup group: partition) {
 			if (group.size()==0) {
 				throw new AssertionError("Does not generate empty groups.");
@@ -55,7 +59,7 @@ public class DefaultDFAMinimizerResult implements IDFAMinimizerResult {
 	}
 
 	/** Returns equivalent minimal DFA. */
-	private IDFA getMinimalDFA() {
+	public IDFA getMinimalDFA() {
 		IDFA dfa = new GraphDFA(input.getDFA().getAlphabet());
 		merging.setDFA(dfa);
 		new GraphMergingAlgo().execute(new IGraphMergingInput() {
@@ -76,9 +80,34 @@ public class DefaultDFAMinimizerResult implements IDFAMinimizerResult {
 			}
 			
 		}, merging);
+		assert (dfa.getGraph().getVerticesTotalOrder().size()>0) : "At least initial state kept.";
+		
+		if (input.connex()) {
+			Set<Object> reachable = new HashSet<Object>();
+			IDirectedGraph graph = dfa.getGraph();
+			Object init = dfa.getInitialState();
+			dfs(graph, init, reachable);
+			for (Object vertex: graph.getVerticesTotalOrder().getTotalOrder()) {
+				if (!reachable.contains(vertex)) {
+					graph.removeVertex(vertex);
+				}
+			}
+		}
+		
 		return dfa;
 	}
 
+	/** Do a depth-first search. */
+	private void dfs(IDirectedGraph g, Object vertex, Set<Object> reachable) {
+		reachable.add(vertex);
+		for (Object edge: g.getOutgoingEdges(vertex)) {
+			Object target = g.getEdgeTarget(edge);
+			if (!reachable.contains(target)) {
+				dfs(g, target, reachable);
+			}
+		}
+	}
+	
 	/** Adapts to some types. */
 	public <T> Object adapt(Class<T> c) {
 		if (c.isAssignableFrom(getClass())) {

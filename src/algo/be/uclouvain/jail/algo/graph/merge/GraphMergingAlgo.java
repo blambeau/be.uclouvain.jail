@@ -31,6 +31,7 @@ public class GraphMergingAlgo {
 		final IGraphPartition vertices = getVertices(graph,vPart);
 		
 		// for each vertex
+		assert (vertices.size()>0) : "Vertices present.";
 		for (IGraphMemberGroup vertexDef: vertices) {
 			GraphVertexGroup vertex = new GraphVertexGroup(vertexDef);
 			if (vertex.size()==0) {
@@ -39,7 +40,10 @@ public class GraphMergingAlgo {
 			
 			// take outgoing edges
 			GraphEdgeGroup outEdges = vertex.getOutgoingEdges();
-			if (outEdges.size()==0) { continue; }
+			if (outEdges.size()==0) {
+				result.createState(vertex);
+				continue; 
+			}
 			GraphPartition outEdgesP = new GraphPartition(graph,outEdges);
 			
 			// refine according to reached group

@@ -17,6 +17,10 @@ public class DefaultGraphConXDetectorResult implements IGraphConXDetectorResult 
 	public void ended(IGraphPartition partition) {
 		this.partition = partition;
 	}
+	
+	public IGraphPartition getPartition() {
+		return partition;
+	}
 
 	/** Adaptation. */
 	public <T> Object adapt(Class<T> c) {

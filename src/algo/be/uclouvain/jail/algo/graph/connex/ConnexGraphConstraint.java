@@ -14,10 +14,21 @@ import be.uclouvain.jail.graph.constraints.AbstractGraphConstraint;
  */
 public class ConnexGraphConstraint extends AbstractGraphConstraint {
 
+	/** Outgoing only? */
+	private boolean outgoingOnly = false;
+	
+	public ConnexGraphConstraint() {
+	}
+
+	public ConnexGraphConstraint(boolean outgoingOnly) {
+		this.outgoingOnly = outgoingOnly;
+	}
+
 	/** Checks if a graph is connex. */
 	public boolean isRespectedBy(IDirectedGraph graph) {
 		final boolean[] connex = new boolean[1];
 		DefaultGraphConXDetectorInput input = new DefaultGraphConXDetectorInput(graph);
+		input.setOutgoingOnly(outgoingOnly);
 		new GraphConXDetectorAlgo().execute(input, new IGraphConXDetectorResult() {
 
 			/** Checks that only one composant exists. */

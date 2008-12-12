@@ -53,13 +53,16 @@ public class DFAMinimizerAlgo {
 	
 	/** Executes algorithm. */
 	public void execute(IDFAMinimizerInput input, IDFAMinimizerResult result) {
+		result.started(input);
+		
 		// initialization
 		this.dfa = input.getDFA();
 		IDirectedGraph graph = dfa.getGraph();
 		this.toExplore = new HashSet<FAStateGroup>();
 		this.blocks = new GraphPartition(graph,graph.getVertices());
 		this.blocks.refine(input.getInitPartitionner());
-		
+
+		assert (this.blocks.size()>0) : "At least one block in initial partition";
 		/* adds the initial blocks to toExplore */
 		for (IGraphMemberGroup group: blocks) {
 			if (group.size()==0) {
@@ -67,7 +70,8 @@ public class DFAMinimizerAlgo {
 			}
 			toExplore.add(new FAStateGroup(dfa,group));
 		}
-		result.started(input);
+		
+		assert (!toExplore.isEmpty()) : "At least one block to refine."; 
 		
 		/* while there is a block to explore */
 		while (!toExplore.isEmpty()) {

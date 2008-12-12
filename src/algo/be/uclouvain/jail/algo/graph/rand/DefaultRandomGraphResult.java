@@ -3,6 +3,7 @@ package be.uclouvain.jail.algo.graph.rand;
 import java.util.Random;
 
 import net.chefbe.javautils.adapt.AdaptUtils;
+import be.uclouvain.jail.Jail;
 import be.uclouvain.jail.algo.commons.Unable;
 import be.uclouvain.jail.algo.graph.connex.GraphConXDetector;
 import be.uclouvain.jail.algo.graph.copy.match.GMatchPopulator;
@@ -11,6 +12,7 @@ import be.uclouvain.jail.algo.graph.utils.IGraphPartition;
 import be.uclouvain.jail.algo.utils.AbstractAlgoResult;
 import be.uclouvain.jail.graph.IDirectedGraph;
 import be.uclouvain.jail.graph.adjacency.AdjacencyDirectedGraph;
+import be.uclouvain.jail.graph.utils.ITotalOrder;
 import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.uinfo.UserInfoRandomizer;
 
@@ -21,6 +23,9 @@ import be.uclouvain.jail.uinfo.UserInfoRandomizer;
  */
 public class DefaultRandomGraphResult extends AbstractAlgoResult implements IRandomGraphResult {
 
+	/** Random generator. */
+	protected Random randomizer = Jail.randomizer();
+	
 	/** Resulting graph. */
 	protected IDirectedGraph g;
 	
@@ -82,22 +87,22 @@ public class DefaultRandomGraphResult extends AbstractAlgoResult implements IRan
 		return new AdjacencyDirectedGraph();
 	}
 
-	/** Creates a random vertex info. */
-	public IUserInfo createVertexInfo(IDirectedGraph graph, Random r) {
-		return vertexRandomizer.create(r);
+	/** {@inheritDoc} */
+	public IUserInfo createVertexInfo(IDirectedGraph graph) {
+		return vertexRandomizer.create(randomizer);
 	}
 	
-	/** Creates a random edge info. */
-	public IUserInfo createEdgeInfo(IDirectedGraph graph, Object source, Object target, Random r) {
-		return edgeRandomizer.create(r);
+	/** {@inheritDoc} */
+	public IUserInfo createEdgeInfo(IDirectedGraph graph, Object source, Object target) {
+		return edgeRandomizer.create(randomizer);
 	}
 
-	/** Throws an UnsupportedOperationException. */
+	/** {@inheritDoc} */
 	public void failed() {
 		throw new Unable("Failed to generate random graph");
 	}
 
-	/** Cleans a directed graph before acceptation. */
+	/** {@inheritDoc} */
 	public IDirectedGraph clean(IDirectedGraph g) {
 		if (connex) {
 			// compute connex composants
@@ -125,11 +130,23 @@ public class DefaultRandomGraphResult extends AbstractAlgoResult implements IRan
 		return g;
 	}
 	
-	/** Marks the output graph as g. */ 
+	/** {@inheritDoc} */
 	public void success(IDirectedGraph g) {
 		this.g = g;
 	}
 
+	/** Picks up a source state. */
+	public Object pickUpSource(IDirectedGraph graph) {
+		ITotalOrder<Object> vertices = graph.getVerticesTotalOrder();
+		return vertices.getElementAt(randomizer.nextInt(vertices.size()));
+	}
+
+	/** Picks up a target state. */
+	public Object pickUpTarget(IDirectedGraph graph, Object source) {
+		ITotalOrder<Object> vertices = graph.getVerticesTotalOrder();
+		return vertices.getElementAt(randomizer.nextInt(vertices.size()));
+	}
+	
 	/** Sets the resulting directed graph. */
 	protected void setDirectedGraph(IDirectedGraph g) {
 		this.g = g;

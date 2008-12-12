@@ -35,7 +35,7 @@ import be.uclouvain.jail.uinfo.IUserInfo;
 public class DFAGraphConstraint extends AbstractGraphConstraint {
 
 	/** Informer to use. */
-	private IGraphFAInformer informer;
+	protected IGraphFAInformer informer;
 	
 	/** Creates a constraint with a user-defined informer. */
 	public DFAGraphConstraint(IGraphFAInformer informer) {
