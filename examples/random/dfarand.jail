@@ -1,5 +1,5 @@
 (execute 'commons.jail');
 
 A = <§seqp Q0. §>;
-G = (randdfa (A) :stateCount 20 :alphabetSize 2 :accepting 0.9);
+G = (randdfa A :stateCount 20 :alphabetSize 2 :accepting 0.9);
 (show (G));

@@ -11,7 +11,9 @@
     <!-- initialization target -->
     <target name="init">
         <!-- Create the time stamp -->
-        <tstamp />
+        <tstamp>
+		      <format property="touch.time" pattern="MM/dd/yyyy hh:mm aa" offset="-5" unit="hour"/>
+        </tstamp>
         <!-- Create the build directory structure used by compile -->
         <mkdir dir="${build}" />
     </target>
@@ -34,12 +36,15 @@
             </classpath>
         </javac>
     	<copy todir="${build}">
-    		<fileset dir="${src}">
-    			<exclude name="**/*.java"/>
-    		</fileset>
-    		<fileset dir="${icgi}">
-    			<exclude name="**/*.java"/>
-    		</fileset>
+    		<fileset dir="${src}"/>
+    	</copy>
+    	<copy todir="${build}">
+    		<fileset dir="${src}/core/be/uclouvain/jail/vm">
+				  <include name="*.jail"/>
+				</fileset>
+    		<fileset dir="${src}/core/be/uclouvain/jail/vm/toolkits">
+				  <include name="*.jail"/>
+				</fileset>
     	</copy>
     </target>
 	

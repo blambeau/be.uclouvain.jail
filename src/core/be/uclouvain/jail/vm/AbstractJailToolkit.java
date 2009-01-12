@@ -73,9 +73,9 @@ public abstract class AbstractJailToolkit implements IJailVMToolkit, IAdapter {
 	protected void ensureDocumentation() {
 		Class c = getClass();
 		String name = c.getSimpleName();
-		URL url = c.getResource(name + ".jail");
+		URL url = ClassLoader.getSystemClassLoader().getResource(name + ".jail");
 		if (url == null) {
-			//System.err.println("Warning: no documentation found for " + name);
+			System.err.println("Warning: no documentation found for " + name + ".jail");
 		} else {
 			try {
 				// create parser and parse

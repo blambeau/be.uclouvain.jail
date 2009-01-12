@@ -52,7 +52,7 @@ public class RandomDFAInput extends DefaultRandomGraphInput {
 		super.addOption("tolerance", false, Double.class, null);
 		super.addOption("alphabetSize", false, Integer.class, null);
 		super.addOption("depthControl", false, Boolean.class, null);
-		super.addOption("noDeadlock", true, Boolean.class, null);
+		super.addOption("noDeadlock", false, Boolean.class, null);
 	}
 
 	/** Sets state count multiplication factor. */
