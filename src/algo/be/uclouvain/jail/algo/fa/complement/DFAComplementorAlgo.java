@@ -3,7 +3,6 @@ package be.uclouvain.jail.algo.fa.complement;
 import java.util.Set;
 import java.util.TreeSet;
 
-import net.chefbe.javautils.collections.arrays.ArrayUtils;
 import be.uclouvain.jail.fa.IAlphabet;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.graph.IDirectedGraph;

@@ -85,7 +85,7 @@ public class DFAGraphConstraint extends AbstractGraphConstraint {
 			}
 		}
 		
-		return true;
+		return initCount==1;
 	}
 
 }

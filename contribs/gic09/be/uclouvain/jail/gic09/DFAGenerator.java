@@ -35,7 +35,7 @@ public class DFAGenerator {
 		input.setAlphabetSize(alph);
 		input.setMaxOutDegree(alph*prop);
 		input.setDepthControl(false);
-		input.setNoDeadLock(false);
+		input.setNoDeadlock(false);
 		input.setTolerance(-1.0);
 		input.setStateMultFactor(1.0);
 		input.setMaxTry(100);
@@ -93,10 +93,10 @@ public class DFAGenerator {
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
-		Integer[] sizes = {32, 64, 128, 256, 512};
-		Integer[] alphs = {2, 10, 25, 50, 100};
+		Integer[] sizes = {32};
+		Integer[] alphs = {2};
 		Double[]  props = {1.0};
-		Integer[] times = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+		Integer[] times = {1};
 		Object[][] dimensions = new Object[][]{ sizes, alphs, props, times };
 
 		File f = new File("/home/blambeau/gic09_dfagen.txt");

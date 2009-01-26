@@ -1,14 +1,12 @@
 package be.uclouvain.jail.vm.toolkits;
 
 import net.chefbe.javautils.adapt.IAdapter;
-import be.uclouvain.jail.algo.fa.rand.AbadingoRandomStringsInput;
 import be.uclouvain.jail.algo.fa.rand.DefaultRandomStringsInput;
 import be.uclouvain.jail.algo.fa.rand.DefaultRandomStringsResult;
 import be.uclouvain.jail.algo.fa.rand.IRandomStringsResult;
 import be.uclouvain.jail.algo.fa.rand.RandomStringsAlgo;
 import be.uclouvain.jail.algo.fa.walk.DFARandomWalkInput;
 import be.uclouvain.jail.algo.fa.walk.DFARandomWalkResult;
-import be.uclouvain.jail.algo.graph.walk.IRandomWalkResult;
 import be.uclouvain.jail.algo.graph.walk.RandomWalkAlgo;
 import be.uclouvain.jail.algo.induct.internal.BlueFringeAlgo;
 import be.uclouvain.jail.algo.induct.internal.DefaultInductionAlgoInput;
@@ -159,13 +157,14 @@ public class InductionToolkit extends JailReflectionToolkit {
 	*/
 	
 	/** Generates a random DFA. */
-	public IRandomWalkResult randsample(IDFA dfa, JailVMOptions options, JailVM vm) throws JailVMException {
+	public ISample randsample(IDFA dfa, JailVMOptions options, JailVM vm) throws JailVMException {
 		DFARandomWalkInput input = new DFARandomWalkInput(dfa);
 		DFARandomWalkResult result = new DFARandomWalkResult();
 		input.setOptions(options);
 		result.setOptions(options);
 		new RandomWalkAlgo().execute(input,result);
-		return result;
+		ISample sample = (ISample) result.adapt(ISample.class);
+		return sample;
 	}
 	
 	/** Randomize strings. */

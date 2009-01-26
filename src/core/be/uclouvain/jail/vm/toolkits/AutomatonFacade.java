@@ -14,18 +14,26 @@ import be.uclouvain.jail.algo.fa.determinize.NFADeterminizerAlgo;
 import be.uclouvain.jail.algo.fa.minimize.DFAMinimizerAlgo;
 import be.uclouvain.jail.algo.fa.minimize.DefaultDFAMinimizerInput;
 import be.uclouvain.jail.algo.fa.minimize.DefaultDFAMinimizerResult;
+import be.uclouvain.jail.algo.fa.rand.RandomDFAInput;
+import be.uclouvain.jail.algo.fa.rand.RandomDFAResult;
 import be.uclouvain.jail.algo.fa.tmoves.DefaultTauRemoverInput;
 import be.uclouvain.jail.algo.fa.tmoves.DefaultTauRemoverResult;
 import be.uclouvain.jail.algo.fa.tmoves.ITauInformer;
 import be.uclouvain.jail.algo.fa.tmoves.TauRemoverAlgo;
 import be.uclouvain.jail.algo.fa.uncomplement.FAUncomplementorAlgo;
 import be.uclouvain.jail.algo.fa.utils.FAUtils;
+import be.uclouvain.jail.algo.fa.walk.DFARandomWalkInput;
+import be.uclouvain.jail.algo.fa.walk.DFARandomWalkResult;
+import be.uclouvain.jail.algo.graph.rand.RandomGraphAlgo;
+import be.uclouvain.jail.algo.graph.walk.RandomWalkAlgo;
+import be.uclouvain.jail.dialect.adl.ADLGraphDialect;
 import be.uclouvain.jail.dialect.dot.DOTGraphDialect;
 import be.uclouvain.jail.dialect.dot.JDotty;
 import be.uclouvain.jail.fa.FAStateKind;
 import be.uclouvain.jail.fa.IDFA;
 import be.uclouvain.jail.fa.IFA;
 import be.uclouvain.jail.fa.INFA;
+import be.uclouvain.jail.fa.ISample;
 import be.uclouvain.jail.fa.impl.AttributeGraphFAInformer;
 import be.uclouvain.jail.fa.impl.GraphDFA;
 import be.uclouvain.jail.fa.impl.GraphNFA;
@@ -34,6 +42,7 @@ import be.uclouvain.jail.graph.utils.DirectedGraphWriter;
 import be.uclouvain.jail.uinfo.IUserInfo;
 import be.uclouvain.jail.uinfo.IUserInfoPopulator;
 import be.uclouvain.jail.uinfo.UserInfoHandler;
+import be.uclouvain.jail.vm.JailVMException;
 
 /** Provides an facade for using algorithms. */
 public final class AutomatonFacade {
@@ -134,6 +143,31 @@ public final class AutomatonFacade {
 		IFAComposerResult result = new DefaultFAComposerResult();
 		new FAComposerAlgo().execute(input,result);
 		return result;
+	}
+	
+	/** Generates a random DFA. */
+	public static IDFA randdfa() throws JailVMException {
+		RandomDFAInput input = new RandomDFAInput();
+		input.setStateCount(32);
+		RandomDFAResult result = new RandomDFAResult();
+		new RandomGraphAlgo().execute(input,result);
+		return (IDFA) result.adapt(IDFA.class);
+	}
+	
+	/** Generates a random DFA. */
+	public static ISample<String> randsample(IDFA dfa) throws JailVMException {
+		DFARandomWalkInput input = new DFARandomWalkInput(dfa);
+		DFARandomWalkResult result = new DFARandomWalkResult();
+		new RandomWalkAlgo().execute(input,result);
+		return (ISample<String>) result.adapt(ISample.class);
+	}
+
+	public static void main(String[] args) throws Exception {
+		IDFA dfa = AutomatonFacade.randdfa();
+		ISample<String> s = AutomatonFacade.randsample(dfa);
+		System.out.println(s.size());
+		new ADLGraphDialect().print(dfa, new PrintWriter(System.out),null);
+		new ADLGraphDialect().print(s, new PrintWriter(System.out),null);
 	}
 	
 }

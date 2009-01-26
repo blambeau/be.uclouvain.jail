@@ -1,0 +1,24 @@
+(execute 'commons.jail');
+
+// generate a random DFA with aai tuning
+A = <§seqp Q0. §>;
+G = (randdfa A :stateCount 32
+		           :alphabetSize 2 
+							 :accepting 0.5
+							 :maxTry 1000
+							 :tolerance 0.2
+							 :noDeadlock false
+							 :depthControl true);
+S = (randsample G);
+T = (randsample G);
+(show G);
+(save G "randdfa.adl");
+(save S "randsample.adl");
+(save T "testsample.adl");
+
+RPNIED = (rpni S);
+(save RPNIED "rpnied.adl");
+
+// print it when done
+//(show (print G :format 'dot'));
+

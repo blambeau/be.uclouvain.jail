@@ -31,13 +31,13 @@ public class RandomDFAInput extends DefaultRandomGraphInput {
 	protected double maxOutDegree = 4;
 	
 	/** Tolerance on stateCount. */
-	protected double tolerance = 0.1;
+	protected double tolerance = 0.5;
 	
 	/** Make a depth control? */
 	protected boolean depthControl = false;
 	
 	/** No deadlock ? */
-	protected boolean noDeadlock = true;
+	protected boolean noDeadlock = false;
 	
 	/** Alphabet size to generate. */
 	protected IAlphabet<?> alphabet = new IntegerAlphabet(2);
@@ -46,6 +46,7 @@ public class RandomDFAInput extends DefaultRandomGraphInput {
 	@Override
 	protected void installOptions() {
 		super.installOptions();
+		super.addOption("stateCount", false, Integer.class, null);
 		super.addOption("stateMultFactor", false, Double.class, null);
 		super.addOption("accepting", false, Double.class, null);
 		super.addOption("maxOutDegree", false, Double.class, null);
@@ -58,6 +59,11 @@ public class RandomDFAInput extends DefaultRandomGraphInput {
 	/** Sets state count multiplication factor. */
 	public void setStateMultFactor(double stateMultFactor) {
 		this.stateMultFactor = stateMultFactor;
+	}
+
+	/** Sets the number of states to generate. */
+	public void setStateCount(int count) {
+		super.setVertexCount(count);
 	}
 	
 	/** Sets the probability to get an accepting state. */
@@ -86,7 +92,7 @@ public class RandomDFAInput extends DefaultRandomGraphInput {
 	}
 	
 	/** Rejects deadlock states?. */
-	public void setNoDeadLock(boolean noDeadlock) {
+	public void setNoDeadlock(boolean noDeadlock) {
 		this.noDeadlock = noDeadlock;
 	}
 
@@ -168,7 +174,7 @@ public class RandomDFAInput extends DefaultRandomGraphInput {
 				// current number of edges
 				double ec = g.getEdgesTotalOrder().size();
 				// maximal number of edges
-				double maxe = (st * maxd);
+				double maxe = (st * maxd)/1.5;
 				// at least one half of all possible edges reached?
 				if (ec >= maxe) {
 					return true;
