@@ -1,5 +1,5 @@
 export AWT_TOOLKIT=MToolkit
-JAIL_HOME=/home/blambeau/Work/devel/java/be.uclouvain.jail/dist/jail
+JAIL_HOME=`pwd` 
 export CLASSPATH=.:$JAIL_HOME/lib
 for i in $JAIL_HOME/lib/*.jar 
 do
