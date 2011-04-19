@@ -6,7 +6,7 @@
     <property name="icgi" location="contribs" />
     <property name="build" location="bin" />
     <property name="dist" location="dist" />
-    <property name="lib" location="../_libs"/>
+    <property name="lib" location="vendor"/>
     
     <!-- initialization target -->
     <target name="init">
@@ -64,9 +64,6 @@
         
         <!-- Put everything in ${build} into the be.uclouvain.jail.${DSTAMP}.jar file -->
         <jar jarfile="${dist}/lib/be.uclouvain.jail.jar" basedir="${build}" />
-        
-        <!-- jarying to common be.uclouvain libraries -->
-        <jar jarfile="${lib}/be.uclouvain/be.uclouvain.jail.jar" basedir="${build}"/>
 	</target>
 	
     <!-- distribution target -->
