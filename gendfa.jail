@@ -1,0 +1,57 @@
+A = <§seqp Q0. §>;                                                                                               
+G = (randdfa A :stateCount 80 :alphabetSize 2 :maxOutDegree 2.0 :accepting 0.5 :minimize true :determinize true);
+(save G "2-1.adl");
+G = (randdfa A :stateCount 80 :alphabetSize 2 :maxOutDegree 2.0 :accepting 0.5 :minimize true :determinize true);
+(save G "2-2.adl");
+G = (randdfa A :stateCount 80 :alphabetSize 2 :maxOutDegree 2.0 :accepting 0.5 :minimize true :determinize true);
+(save G "2-3.adl");
+G = (randdfa A :stateCount 80 :alphabetSize 2 :maxOutDegree 2.0 :accepting 0.5 :minimize true :determinize true);
+(save G "2-4.adl");
+G = (randdfa A :stateCount 80 :alphabetSize 2 :maxOutDegree 2.0 :accepting 0.5 :minimize true :determinize true);
+(save G "2-5.adl");
+
+G = (randdfa A :stateCount 45 :alphabetSize 5 :maxOutDegree 3.0 :accepting 0.5 :minimize true :determinize true);
+(save G "5-1.adl");
+G = (randdfa A :stateCount 45 :alphabetSize 5 :maxOutDegree 3.0 :accepting 0.5 :minimize true :determinize true);
+(save G "5-2.adl");
+G = (randdfa A :stateCount 45 :alphabetSize 5 :maxOutDegree 3.0 :accepting 0.5 :minimize true :determinize true);
+(save G "5-3.adl");
+G = (randdfa A :stateCount 45 :alphabetSize 5 :maxOutDegree 3.0 :accepting 0.5 :minimize true :determinize true);
+(save G "5-4.adl");
+G = (randdfa A :stateCount 45 :alphabetSize 5 :maxOutDegree 3.0 :accepting 0.5 :minimize true :determinize true);
+(save G "5-5.adl");
+
+G = (randdfa A :stateCount 40 :alphabetSize 10 :maxOutDegree 4.0 :accepting 0.5 :minimize true :determinize true);
+(save G "10-1.adl");
+G = (randdfa A :stateCount 40 :alphabetSize 10 :maxOutDegree 4.0 :accepting 0.5 :minimize true :determinize true);
+(save G "10-2.adl");
+G = (randdfa A :stateCount 40 :alphabetSize 10 :maxOutDegree 4.0 :accepting 0.5 :minimize true :determinize true);
+(save G "10-3.adl");
+G = (randdfa A :stateCount 40 :alphabetSize 10 :maxOutDegree 4.0 :accepting 0.5 :minimize true :determinize true);
+(save G "10-4.adl");
+G = (randdfa A :stateCount 40 :alphabetSize 10 :maxOutDegree 4.0 :accepting 0.5 :minimize true :determinize true);
+(save G "10-5.adl");
+
+G = (randdfa A :stateCount 40 :alphabetSize 20 :maxOutDegree 4.0 :accepting 0.5 :minimize true :determinize true);
+(save G "20-1.adl");
+G = (randdfa A :stateCount 40 :alphabetSize 20 :maxOutDegree 4.0 :accepting 0.5 :minimize true :determinize true);
+(save G "20-2.adl");
+G = (randdfa A :stateCount 40 :alphabetSize 20 :maxOutDegree 4.0 :accepting 0.5 :minimize true :determinize true);
+(save G "20-3.adl");
+G = (randdfa A :stateCount 40 :alphabetSize 20 :maxOutDegree 4.0 :accepting 0.5 :minimize true :determinize true);
+(save G "20-4.adl");
+G = (randdfa A :stateCount 40 :alphabetSize 20 :maxOutDegree 4.0 :accepting 0.5 :minimize true :determinize true);
+(save G "20-5.adl");
+
+G = (randdfa A :stateCount 40 :alphabetSize 50 :maxOutDegree 4.0 :accepting 0.5 :minimize true :determinize true);
+(save G "50-1.adl");
+G = (randdfa A :stateCount 40 :alphabetSize 50 :maxOutDegree 4.0 :accepting 0.5 :minimize true :determinize true);
+(save G "50-2.adl");
+G = (randdfa A :stateCount 40 :alphabetSize 50 :maxOutDegree 4.0 :accepting 0.5 :minimize true :determinize true);
+(save G "50-3.adl");
+G = (randdfa A :stateCount 40 :alphabetSize 50 :maxOutDegree 4.0 :accepting 0.5 :minimize true :determinize true);
+(save G "50-4.adl");
+G = (randdfa A :stateCount 40 :alphabetSize 50 :maxOutDegree 4.0 :accepting 0.5 :minimize true :determinize true);
+(save G "50-5.adl");
+
+
